@@ -8,6 +8,27 @@ function LoginPage() {
     function Acceder(e) {
         console.log(username);
         console.log(password);
+
+        const loginPostConfig = {
+            method: 'post',
+            url: 'https://localhost:8080/api/login',
+            data: {
+              firstName: username,
+              lastName: password
+            }
+          }
+      
+          axios.post(loginPostConfig).then(
+            (autorizado) => {
+              if(autorizado) {
+                // Redireccionar menu principal
+              }
+              else {
+                // Pop up login fallido
+              }
+            }
+          );
+
     }
 
     return(
