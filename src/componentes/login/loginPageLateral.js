@@ -84,7 +84,7 @@ function LoginPage() {
                         </div>
                     </div>
                 </div>
-            <div className="w-1/2 shadow-2xl bg-supermarket1V">
+            <div className="w-1/2 shadow-2xl bg-supermarket4V">
                 <img className="hidden object-cover w-full h-screen md:block" />
             </div>
         </div>

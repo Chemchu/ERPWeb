@@ -28,9 +28,6 @@ function LoginPage() {
     }
     
     function Acceder(e) {
-        console.log(username);
-        console.log(password);
-
         const loginPostConfig = {
             method: 'post',
             url: 'https://localhost:8080/api/login',
@@ -53,8 +50,11 @@ function LoginPage() {
 
     }
 
+    // Se elige 6 como maximo y 1 como minimo porq hay 5 fotos diferentes de bg (6 exclusivo)
+    const randomBg =  "bg-supermarket" + Math.floor(Math.random() * (6 - 1) + 1).toString();
+    
     return(
-        <div className="min-h-screen bg-supermarket2 bg-no-repeat bg-top flex flex-col justify-center sm:py-12 bg-cover"> 
+        <div className= {`min-h-screen bg-no-repeat bg-top flex flex-col justify-center sm:py-12 bg-cover ${randomBg}`} > 
             <motion.div className="p-10 xs:p-0 mx-auto md:w-full md:max-w-md" animate="visible" initial="hidden" variants={container}>
                 <motion.h1 className="font-bold text-center text-2xl mb-5" variants={item}>Logo</motion.h1>  
                 <div className="bg-white shadow w-full rounded-lg divide-y divide-gray-200" >
