@@ -1,10 +1,8 @@
 import './App.css';
-import Header from '../componentes/header.js';
-import LoginPage from '../componentes/login/loginPage';
+import LoginPage from '../componentes/login/loginPage.js';
 
 function App() {
   return (
-    //<Header/>
     <LoginPage/>
   );
 }

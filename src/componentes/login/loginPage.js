@@ -1,5 +1,6 @@
 import { motion } from 'framer-motion';
 import { useState } from 'react';
+import {axios} from 'axios';
 
 function LoginPage() {
     const [username, setUsername] = useState("");
@@ -32,7 +33,7 @@ function LoginPage() {
     }
 
     return(
-        <div className="min-h-screen bg-gray-100 flex flex-col justify-center sm:py-12">
+        <div className="min-h-screen bg-supermarket2 flex flex-col justify-center sm:py-12 bg-cover">
             <div className="p-10 xs:p-0 mx-auto md:w-full md:max-w-md">
                 <h1 className="font-bold text-center text-2xl mb-5">Logo</h1>  
                 <div className="bg-white shadow w-full rounded-lg divide-y divide-gray-200">
@@ -90,7 +91,9 @@ function LoginPage() {
                 </div>
             </div>
         </div>
-        );
+
+
+    );
 }
 
 export default LoginPage;
