@@ -1,57 +1,64 @@
 import { motion } from 'framer-motion';
 import { useState } from 'react';
-import {axios} from 'axios';
+import { axios } from 'axios';
+import { useHistory  } from 'react-router-dom';
+
+const container = {
+    hidden: { opacity: 0, scale: 0 },
+    visible: {
+        opacity: 1,
+        scale: 1,
+        transition: {
+        delayChildren: 0.3,
+        staggerChildren: 0.2,
+        staggerDirection: -1
+        }
+    }
+}    
+const item = {
+    hidden: { y: 20, opacity: 0 },
+    visible: {
+        y: 0,
+        opacity: 1
+    }
+}
+// Se elige 6 como maximo y 1 como minimo porq hay 5 fotos diferentes de bg (6 exclusivo)
+const randomBg =  "bg-supermarket" + Math.floor(Math.random() * (6 - 1) + 1).toString();
 
 function LoginPage() {
     const [username, setUsername] = useState("");
     const [password, setPassword] = useState("");
-
-    const container = {
-        hidden: { opacity: 0, scale: 0 },
-        visible: {
-          opacity: 1,
-          scale: 1,
-          transition: {
-            delayChildren: 0.3,
-            staggerChildren: 0.2,
-            staggerDirection: -1
-          }
-        }
-      }
-        
-    const item = {
-        hidden: { y: 20, opacity: 0 },
-        visible: {
-            y: 0,
-            opacity: 1
-        }
-    }
+    const history = useHistory();
     
     function Acceder(e) {
         const loginPostConfig = {
             method: 'post',
             url: 'https://localhost:8080/api/login',
             data: {
-              firstName: username,
-              lastName: password
+                FirstName: username,
+                PassWord: password
             }
-          }
-      
-          axios.post(loginPostConfig).then(
-            (autorizado) => {
-              if(autorizado) {
-                // Redireccionar menu principal
-              }
-              else {
-                // Pop up login fallido
-              }
-            }
-          );
+        }
+
+        history.push('/perfil');
+        
+        // Petición login
+        //   axios.post(loginPostConfig).then(
+        //     (autorizado) => {
+        //       if(autorizado) {
+        //         // Redireccionar menu principal
+        //       }
+        //       else {
+        //         // Pop up login fallido
+        //       }
+        //     }
+        //   );
 
     }
 
-    // Se elige 6 como maximo y 1 como minimo porq hay 5 fotos diferentes de bg (6 exclusivo)
-    const randomBg =  "bg-supermarket" + Math.floor(Math.random() * (6 - 1) + 1).toString();
+    function Volver(e) {
+        history.push('/');
+    }   
     
     return(
         <div className= {`min-h-screen bg-no-repeat bg-top flex flex-col justify-center sm:py-12 bg-cover ${randomBg}`} > 
@@ -79,7 +86,7 @@ function LoginPage() {
                         </motion.div>
 
                         <motion.div variants={item}>
-                            <button className="transition duration-200 py-2.5 cursor-pointer font-normal text-sm rounded-lg text-white bg-red-500 hover:bg-red-600 focus:outline-none focus:bg-red-700 focus:ring-2 focus:ring-gray-400 focus:ring-opacity-50 w-full ring-inset">
+                            <button onClick={Volver} className="transition duration-200 py-2.5 cursor-pointer font-normal text-sm rounded-lg text-white bg-red-500 hover:bg-red-600 focus:outline-none focus:bg-red-700 focus:ring-2 focus:ring-gray-400 focus:ring-opacity-50 w-full ring-inset">
                                 <span className="inline-block mr-2">Volver</span>
                                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" className="w-4 h-4 inline-block">
                                     <path strokeLinecap="round" strokeWidth="2" d="M10 19l-7-7m0 0l7-7m-7 7h18" />
