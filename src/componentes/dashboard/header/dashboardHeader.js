@@ -31,3 +31,5 @@ function DashboardHeader() {
         </header>
     );
 }
+
+export default DashboardHeader;
