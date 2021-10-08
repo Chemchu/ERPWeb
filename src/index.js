@@ -8,7 +8,7 @@ import { BrowserRouter, Route, Switch } from 'react-router-dom';
 import Dashboard from './componentes/dashboard/dashboard.js'; 
 import LoginPage from './componentes/login/loginPage';
 import NotFound from './componentes/404/notFound.js';
-import HiddenSideBar from './componentes/sidebar/sideBarHidden';
+import HiddenSideBar from './componentes/dashboard/sidebar/sideBarHidden';
 import PointOfSale from './componentes/pointOfSale/pointOfSale';
 import ProductCard from './componentes/pointOfSale/productCard';
 import ReportCard from './componentes/dashboard/reportCards';
