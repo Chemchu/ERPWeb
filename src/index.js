@@ -9,6 +9,10 @@ import Dashboard from './componentes/dashboard/dashboard.js';
 import LoginPage from './componentes/login/loginPage';
 import NotFound from './componentes/404/notFound.js';
 import HiddenSideBar from './componentes/sidebar/sideBarHidden';
+import PointOfSale from './componentes/pointOfSale/pointOfSale';
+import ProductCard from './componentes/pointOfSale/productCard';
+import ReportCard from './componentes/dashboard/reportCards';
+import ProductPage from './componentes/productPage/productPage';
 
 ReactDOM.render(
   <BrowserRouter>
@@ -16,7 +20,12 @@ ReactDOM.render(
         <Route exact path = "/" component={App}/>
         <Route exact path = "/login" component={LoginPage}/>
         <Route exact path = "/perfil" component= {Dashboard}/> 
-        <Route exact path = "/pene" component= {HiddenSideBar}/> 
+        <Route exact path = "/notfound" component= {NotFound}/> 
+        <Route exact path = "/hidden" component= {HiddenSideBar}/> 
+        <Route exact path = "/pos" component= {PointOfSale}/>         
+        <Route exact path = "/pCard" component= {ProductCard}/>       
+        <Route exact path = "/rCard" component= {ReportCard}/>   
+        <Route exact path = "/productos" component= {ProductPage}/> 
       </Switch>
   </BrowserRouter>,
   document.getElementById("root")
