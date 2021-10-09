@@ -27,8 +27,7 @@ const item = {
 
 const exitVariant= {
     initial: {
-        x: "-100vw",
-        
+        x: "-100vw",        
       },
       animate: {
         x: "0vw",
@@ -39,6 +38,7 @@ const exitVariant= {
       },
       exit: {
         y: '-100vh',
+        opacity: 0,
         transition:{ 
             ease: [0.87, 0, 0.13, 1], 
             duration: 1
@@ -89,7 +89,6 @@ function LoginPage() {
         <motion.div className="bg-black w-full h-full items-center " exit={exitVariant.exit} variants={exitVariant} >
             <motion.div className= {`inset-0 flex items-center min-h-screen bg-no-repeat bg-top justify-center sm:py-12 bg-cover ${randomBg}`} 
                 variants={exitVariant} initial={ exitVariant.initial } animate={exitVariant.animate} > 
-                {/* <InitTransition color="bg-black" shouldExpand={false}/> */}
                 <motion.div className="p-10 xs:p-0 mx-auto md:w-full md:max-w-md" animate="visible" initial="hidden" variants={container}>
                     <div className="bg-white shadow w-full rounded-lg divide-y divide-gray-200" >
                         <div className="px-5 py-7">
@@ -102,7 +101,7 @@ function LoginPage() {
                             
                             <motion.div variants={item}>
                                 <label className="font-semibold text-sm text-gray-600 pb-1 block">Contraseña</label>
-                                <input type="text" className="border rounded-lg px-3 py-2 mt-1 mb-5 text-sm w-full" onChange={(e) => setPassword(e.target.value)}/>
+                                <input type="password" className="border rounded-lg px-3 py-2 mt-1 mb-5 text-sm w-full" onChange={(e) => setPassword(e.target.value)}/>
                             </motion.div>
                             
                             <motion.div variants={item}>
