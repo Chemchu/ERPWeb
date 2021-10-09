@@ -2,6 +2,8 @@ import { motion } from 'framer-motion';
 import { useState } from 'react';
 import { axios } from 'axios';
 import { useHistory  } from 'react-router-dom';
+import InitTransition from '../compAnimados/Transition'
+import LandingPage from '../landingPage/landingPage';
 
 const container = {
     hidden: { opacity: 0, scale: 0 },
@@ -9,9 +11,10 @@ const container = {
         opacity: 1,
         scale: 1,
         transition: {
-        delayChildren: 0.3,
-        staggerChildren: 0.2,
-        staggerDirection: -1
+            delay: 1.5,
+            delayChildren: 1.8,
+            staggerChildren: 0.2,
+            staggerDirection: -1
         }
     }
 }    
@@ -61,11 +64,13 @@ function LoginPage() {
     }   
     
     return(
-        <div className= {`min-h-screen bg-no-repeat bg-top flex flex-col justify-center sm:py-12 bg-cover ${randomBg}`} > 
+        <div className= {`min-h-screen bg-no-repeat bg-top flex flex-col justify-center sm:py-12 bg-cover ${randomBg}`}  > 
+            <InitTransition color="bg-black" shouldExpand={false}/>
             <motion.div className="p-10 xs:p-0 mx-auto md:w-full md:max-w-md" animate="visible" initial="hidden" variants={container}>
-                <motion.h1 className="font-bold text-center text-2xl mb-5" variants={item}>Logo</motion.h1>  
                 <div className="bg-white shadow w-full rounded-lg divide-y divide-gray-200" >
                     <div className="px-5 py-7">
+                        <motion.h1 className="font-bold text-center text-2xl mb-5" variants={item}>ERPWeb</motion.h1>  
+
                         <motion.div variants={item}>
                             <label className="font-semibold text-sm text-gray-600 pb-1 block">Dirección de correo</label>
                             <input type="text" className="border rounded-lg px-3 py-2 mt-1 mb-5 text-sm w-full" onChange={(e) => setUsername(e.target.value)} />

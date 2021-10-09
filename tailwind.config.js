@@ -13,7 +13,8 @@ module.exports = {
         'supermarket2V': "url('/src/img/marketv-2.jpeg')",
         'supermarket3V': "url('/src/img/marketv-3.jpeg')",
         'supermarket4V': "url('/src/img/marketv-4.jpeg')",
-        'supermarketVideo': "url('/src/video/marketVideo-1.mp4')"
+        'supermarketVideo': "url('/src/video/marketVideo-1.mp4')",
+        'landing1': "url('/src/img/landing-1.jpg')",
       }
     },
   },
