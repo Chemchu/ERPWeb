@@ -13,12 +13,11 @@ import { AnimatePresence } from 'framer-motion';
 import LandingPage from '../componentes/landingPage/landingPage.js';
 
 function App() {
-    //const location = useLocation();
+    const location = useLocation();
     return(
-        <BrowserRouter>
+        <AnimatePresence initial={false} exitBeforeEnter>
             {/* <Sidebar/> */}
-            <AnimatePresence>
-            <Switch >
+            <Switch location={location} key={location.key}>
                 <Route exact path = "/" component={LandingPage}/>
                 <Route exact path = "/login" component={LoginPage}/>
                 <Route exact path = "/perfil" component= {Dashboard}/> 
@@ -29,8 +28,7 @@ function App() {
                 <Route exact path = "/rCard" component= {ReportCard}/>   
                 <Route exact path = "/productos" component= {ProductPage}/>   
             </Switch>
-            </AnimatePresence>
-        </BrowserRouter>
+        </AnimatePresence>
     );    
 }
 

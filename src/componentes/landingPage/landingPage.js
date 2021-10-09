@@ -1,15 +1,14 @@
 import { motion } from 'framer-motion';
 import { useHistory } from 'react-router-dom';
-import Transition from '../compAnimados/Transition.js'
+import {TransitionExit} from '../compAnimados/Transition.js'
 import { useState } from 'react';
 
 function LandingPage() {
   const history = useHistory();
-  const [InitTransition, setInitTransition] = useState(false);
 
   return (    
     <div className="relative overflow-hidden h-screen bg-landing1 bg-cover bg-center">
-        {InitTransition && <Transition color="bg-black" shouldExpand={true} />}
+        <TransitionExit color="bg-black" />
         <motion.div></motion.div>
         <div className="inset-0 bg-black opacity-25 absolute">
         </div>
@@ -27,7 +26,7 @@ function LandingPage() {
                         </div>
                     </div>
                     <div className="hidden md:flex items-center">
-                        <motion.a whileHover={{ scale: 1.2 }} whileTap={{ scale: 0.8 }} className="text-lg uppercase mx-3 text-white cursor-pointer hover:text-gray-300" onClick={() => { setInitTransition(true);  history.push("/login")}}>
+                        <motion.a whileHover={{ scale: 1.2 }} whileTap={{ scale: 0.8 }} className="text-lg uppercase mx-3 text-white cursor-pointer hover:text-gray-300" onClick={() => { history.push("/login")}}>
                             Iniciar sesión
                         </motion.a>
                     </div>
