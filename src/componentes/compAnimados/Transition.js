@@ -34,8 +34,8 @@ const exitVariants = {
     width: "0",
   },
   animate: {
-    height: "250vh",
-    width: "250vh",
+    height: "300vh",
+    width: "300vh",
     transition: {
       duration: 1.5,
       ease: [0.87, 0, 0.13, 1],

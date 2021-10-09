@@ -7,7 +7,7 @@ function LandingPage() {
   const history = useHistory();
 
   return (    
-    <div className="relative overflow-hidden h-screen bg-landing1 bg-cover bg-center">
+    <div className="min-h-screen bg-no-repeat flex flex-col justify-center sm:py-12 relative overflow-hidden h-screen bg-landing1 bg-cover bg-center">
         <TransitionExit color="bg-black" />
         <motion.div></motion.div>
         <div className="inset-0 bg-black opacity-25 absolute">
