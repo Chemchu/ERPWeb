@@ -1,7 +1,7 @@
 import { motion } from 'framer-motion';
 import { useHistory } from 'react-router-dom';
-import {TransitionExit} from '../compAnimados/Transition.js'
-import { useState } from 'react';
+import {TransitionExit} from '../compAnimados/Transition.js';
+import {SplitWords, SplitLetters} from '../compAnimados/SplitText.js';
 
 function LandingPage() {
   const history = useHistory();
@@ -26,8 +26,12 @@ function LandingPage() {
                         </div>
                     </div>
                     <div className="hidden md:flex items-center">
-                        <motion.a whileHover={{ scale: 1.2 }} whileTap={{ scale: 0.8 }} className="text-lg uppercase mx-3 text-white cursor-pointer hover:text-gray-300" onClick={() => { history.push("/login")}}>
-                            Iniciar sesión
+                        <motion.a initial={{ opacity: 1 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} 
+                            whileHover={{ scale: 1.2 }} whileTap={{ scale: 0.8 }} className="text-lg uppercase mx-3 text-white cursor-pointer hover:text-gray-300" 
+                            onClick={() => { history.push("/login")}}>
+                                <SplitWords initial={{ y: '100%', rotate: 90, }} animate="visible" variants={{ visible: i => ({rotate: 0, y: 0, transition: { delay: 0.15 + (i * 0.1)}})}} >
+                                    Iniciar sesión
+                                </SplitWords>
                         </motion.a>
                     </div>
                 </div>
@@ -36,7 +40,9 @@ function LandingPage() {
         <div className="container mx-auto px-6 md:px-12 relative z-10 flex items-center py-32 xl:py-40">
             <div className="w-full flex flex-col items-center relative z-10">
                 <h1 className="font-extrabold text-7xl text-center sm:text-8xl text-white leading-tight mt-4">
-                    ERPWeb
+                    <SplitLetters initial={{ y: '100%', rotate: 90 }} animate="visible" variants={{ visible: i => ({rotate: 0, y: 0, transition: { delay: 0.15 + (i * 0.1)}})}}>
+                        ERPWeb
+                    </SplitLetters>
                 </h1>
                 <motion.a href="#" className="block bg-gray-800 hover:bg-gray-900 py-3 px-4 text-lg text-white font-bold uppercase mt-10" whileHover={{ scale: 1.2 }} whileTap={{ scale: 0.8 }}>
                     Contáctanos

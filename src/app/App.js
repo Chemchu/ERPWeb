@@ -16,7 +16,6 @@ function App() {
     const location = useLocation();
     return(
         <AnimatePresence initial={false} exitBeforeEnter>
-            {/* <Sidebar/> */}
             <Switch location={location} key={location.key}>
                 <Route exact path = "/" component={LandingPage}/>
                 <Route exact path = "/login" component={LoginPage}/>

@@ -3,6 +3,7 @@ import { useState } from 'react';
 import { axios } from 'axios';
 import { useHistory  } from 'react-router-dom';
 import LandingPage from '../landingPage/landingPage';
+import { SplitLetters } from '../compAnimados/SplitText';
 
 const container = {
     hidden: { opacity: 0, scale: 0 },
@@ -92,7 +93,11 @@ function LoginPage() {
                 <motion.div className="p-10 xs:p-0 mx-auto md:w-full md:max-w-md" animate="visible" initial="hidden" variants={container}>
                     <div className="bg-white shadow w-full rounded-lg divide-y divide-gray-200" >
                         <div className="px-5 py-7">
-                            <motion.h1 className="font-bold text-center text-2xl mb-5" variants={item}>ERPWeb</motion.h1>  
+                            <motion.h1 className="font-bold text-center text-2xl mb-5" variants={item}>
+                                <SplitLetters initial={{ y: '100%', rotate: 90, }} animate="visible" variants={{ visible: i => ({ rotate: 0, y: 0, transition: { delay: (2.8) + (i * 0.1)}})}}>
+                                    ERPWeb
+                                </SplitLetters>
+                            </motion.h1>  
 
                             <motion.div variants={item}>
                                 <label className="font-semibold text-sm text-gray-600 pb-1 block">Dirección de correo</label>
