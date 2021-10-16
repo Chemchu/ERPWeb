@@ -59,9 +59,9 @@ export default function Dashboard() {
                         <svg width="35" height="30" viewBox="0 0 256 366" version="1.1" preserveAspectRatio="xMidYMid">
                             <defs>
                                 <linearGradient x1="12.5189534%" y1="85.2128611%" x2="88.2282959%" y2="10.0225497%" id="linearGradient-1">
-                                    <stop stop-color="#FF0057" stop-opacity="0.16" offset="0%">
+                                    <stop stopColor="#FF0057" stopOpacity="0.16" offset="0%">
                                     </stop>
-                                    <stop stop-color="#FF0057" offset="86.1354%">
+                                    <stop stopColor="#FF0057" offset="86.1354%">
                                     </stop>
                                 </linearGradient>
                             </defs>

@@ -1,8 +1,7 @@
 import { motion } from 'framer-motion';
 import { useState } from 'react';
-import { axios } from 'axios';
+import axios from 'axios';
 import { useHistory  } from 'react-router-dom';
-import LandingPage from '../landingPage/landingPage';
 import { SplitLetters } from '../compAnimados/SplitText';
 
 const container = {
@@ -53,32 +52,28 @@ const randomBg =  "bg-supermarket" + Math.floor(Math.random() * (6 - 1) + 1).toS
 function LoginPage() {
     const [username, setUsername] = useState("");
     const [password, setPassword] = useState("");
+    const [autheticationFailed, setAuthenticationFailed] = useState(false);
     const history = useHistory();
     
-    function Acceder(e) {
-        const loginPostConfig = {
-            method: 'post',
-            url: 'https://localhost:8080/api/login',
-            data: {
-                FirstName: username,
-                PassWord: password
+    const Acceder = async () => {
+        try {
+            const loginPostConfig = {
+                email: username,
+                password: password
+            }
+            
+            // Petición login
+            const resFromAPI = await axios.post('http://localhost:8080/api/login/authenticate', loginPostConfig);
+            if(resFromAPI.data.success) {
+                history.push('/perfil');
+            }
+            else {
+                setAuthenticationFailed(true);
             }
         }
-
-        history.push('/perfil');
-        
-        // Petición login
-        //   axios.post(loginPostConfig).then(
-        //     (autorizado) => {
-        //       if(autorizado) {
-        //         // Redireccionar menu principal
-        //       }
-        //       else {
-        //         // Pop up login fallido
-        //       }
-        //     }
-        //   );
-
+        catch(err) {
+            console.log(err);
+        }
     }
 
     function Volver(e) {
@@ -100,13 +95,13 @@ function LoginPage() {
                             </motion.h1>  
 
                             <motion.div variants={item}>
-                                <label className="font-semibold text-sm text-gray-600 pb-1 block">Dirección de correo</label>
-                                <input type="text" className="border rounded-lg px-3 py-2 mt-1 mb-5 text-sm w-full" onChange={(e) => setUsername(e.target.value)} />
+                                <motion.label animate={{ color: autheticationFailed ? '#f22' : '#111' }}  className="font-semibold text-sm text-gray-600 pb-1 block">Dirección de correo</motion.label>
+                                <motion.input animate={{ borderColor: autheticationFailed ? '#f22' : '#ddd', color: autheticationFailed ? '#f22' : '#111' } } type="text" className="border rounded-lg px-3 py-2 mt-1 mb-5 text-sm w-full" onChange={(e) => {setUsername(e.target.value); setAuthenticationFailed(false);} } />
                             </motion.div>
                             
                             <motion.div variants={item}>
-                                <label className="font-semibold text-sm text-gray-600 pb-1 block">Contraseña</label>
-                                <input type="password" className="border rounded-lg px-3 py-2 mt-1 mb-5 text-sm w-full" onChange={(e) => setPassword(e.target.value)}/>
+                                <motion.label animate={{ color: autheticationFailed ? '#f22' : '#111' }} className="font-semibold text-sm text-gray-600 pb-1 block">Contraseña</motion.label>
+                                <motion.input animate={{ borderColor: autheticationFailed ? '#f22' : '#ddd', color: autheticationFailed ? '#f22' : '#111'}} type="password" className="border rounded-lg px-3 py-2 mt-1 mb-5 text-sm w-full" onChange={(e) => {setPassword(e.target.value); setAuthenticationFailed(false); }}/>
                             </motion.div>
                             
                             <motion.div variants={item}>
