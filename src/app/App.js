@@ -5,12 +5,13 @@ import LoginPage from '../componentes/login/loginPage';
 import NotFound from '../componentes/404/notFound.js';
 import HiddenSideBar from '../componentes/dashboard/sidebar/sideBarHidden';
 import Sidebar from '../componentes/dashboard/sidebar/sidebar';
-import PointOfSale from '../componentes/pointOfSale/pointOfSale';
+import {ProductList} from '../componentes/pointOfSale/productList';
 import ProductCard from '../componentes/pointOfSale/productCard';
 import ReportCard from '../componentes/dashboard/reportCards';
 import ProductPage from '../componentes/productPage/productPage';
 import { AnimatePresence } from 'framer-motion';
 import LandingPage from '../componentes/landingPage/landingPage.js';
+import { POS } from '../componentes/pointOfSale/pos.js';
 
 function App() {
     const location = useLocation();
@@ -22,7 +23,8 @@ function App() {
                 <Route exact path = "/perfil" component= {Dashboard}/> 
                 <Route exact path = "/notfound" component= {NotFound}/> 
                 <Route exact path = "/hidden" component= {HiddenSideBar}/> 
-                <Route exact path = "/pos" component= {PointOfSale}/>         
+                <Route exact path = "/prodList" component= {ProductList}/>         
+                <Route exact path = "/pos" component= {POS}/>    
                 <Route exact path = "/pCard" component= {ProductCard}/>       
                 <Route exact path = "/rCard" component= {ReportCard}/>   
                 <Route exact path = "/productos" component= {ProductPage}/>   

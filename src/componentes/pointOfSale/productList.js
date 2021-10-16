@@ -1,4 +1,4 @@
-function PointOfSale() {
+export function ProductList() {
     return(
         <div>
             <body class="flex flex-col w-screen min-h-screen p-10 bg-gray-100 text-gray-800">
@@ -265,5 +265,3 @@ function PointOfSale() {
         </div>
     );
 }
-
-export default PointOfSale;
