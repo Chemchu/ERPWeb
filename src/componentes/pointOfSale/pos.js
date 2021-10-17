@@ -6,18 +6,20 @@ export const POS = () => {
     const [showGenericModal, setGenericModal] = useState(false);
     const [showResumenCompra, setShowResumenCompra] = useState(false);
     const [numProductosCarrito, setNumProductosCarrito] = useState(0);
+    const [precioTotal, setPrecioTotal] = useState(0);
+    const [dineroEntregado, setDineroEntregado] = useState(0);
     const [productos, setProductos] = useState([]);
 
     return(
         <div>
-            <div className="hide-print flex flex-row h-screen antialiased text-blue-gray-800">
+            <div className="hide-print flex flex-row h-screen antialiased text-gray-800">
             {/* Página principal del POS */}
             <div className="flex-grow flex">
                 {/* Menú tienda, donde se muestran los productos */}
                 <ProductDisplay/>
                 {/* Menú tienda */}
                 {/* Sidebar derecho */}
-                <div className="w-5/12 flex flex-col bg-blue-gray-50 h-full bg-white pr-4 pl-2 py-4">
+                <div className="w-5/12 flex flex-col bg-gray-100 h-full pr-4 pl-2 py-4">
                     <div className="bg-white rounded-3xl flex flex-col h-full shadow">
                         {/* En caso de carrito vacío o con productos */}
                         {productos.length <= 0 ? <CarritoVacio/> : <CarritoConProductos/>}
@@ -26,38 +28,67 @@ export const POS = () => {
                         <div className="select-none h-auto w-full text-center pt-3 pb-4 px-4">
                         <div className="flex mb-3 text-lg font-semibold text-blue-gray-700">
                             <div>TOTAL</div>
-                            <div className="text-right w-full" x-text="priceFormat(getTotalPrice())" />
+                            <div className="text-right w-full">
+                                {/*Cambiar en caso de que la cesta tenga productos y calcular el valor total*/}
+                                {numProductosCarrito <= 0 ? 0 : precioTotal} €
+                            </div>
                         </div>
-                        <div className="mb-3 text-blue-gray-700 px-3 pt-2 pb-3 rounded-lg bg-blue-gray-50">
+                        <div className="mb-3 text-gray-700 px-3 pt-2 pb-3 rounded-lg bg-gray-200">
                             <div className="flex text-lg font-semibold">
                             <div className="flex-grow text-left">EFECTIVO</div>
                             <div className="flex text-right">
                                 <div className="mr-2">€</div>
-                                <input type="text" className="w-28 text-right bg-white shadow rounded-lg focus:bg-white focus:shadow-lg px-2 focus:outline-none" />
+                                <input className="w-28 text-right bg-white shadow rounded-lg 
+                                    focus:bg-white focus:shadow-lg px-2 focus:outline-none" onChange={(e) => setDineroEntregado(e.target.value)} value={dineroEntregado}/>
                             </div>
                             </div>
                             <hr className="my-2" />
                             <div className="grid grid-cols-3 gap-2 mt-2">
-                            <template x-for="money in moneys" />
+                                {/* Botones de dinero rápido */}
+                                <button className="bg-white shadow rounded-lg hover:shadow-lg hover:bg-green-200 focus:outline-none" onClick={() => {setDineroEntregado(+(dineroEntregado) + 1)}}>1€</button>
+                                <button className="bg-white shadow rounded-lg hover:shadow-lg hover:bg-green-200 focus:outline-none" onClick={() => {setDineroEntregado(+(dineroEntregado) + 5)}}>5€</button>
+                                <button className="bg-white shadow rounded-lg hover:shadow-lg hover:bg-green-200 focus:outline-none" onClick={() => {setDineroEntregado(+(dineroEntregado) + 10)}}>10€</button>
+                                <button className="bg-white shadow rounded-lg hover:shadow-lg hover:bg-green-200 focus:outline-none" onClick={() => {setDineroEntregado(+(dineroEntregado) + 20)}}>20€</button>
+                                <button className="bg-white shadow rounded-lg hover:shadow-lg hover:bg-green-200 focus:outline-none" onClick={() => {setDineroEntregado(+(dineroEntregado) + 50)}}>50€</button>
+                                <button className="bg-white shadow rounded-lg hover:shadow-lg hover:bg-green-200 focus:outline-none" onClick={() => {setDineroEntregado(+(dineroEntregado) + 100)}}>100€</button>
+
                             </div>
                         </div>
                         <div x-show="change > 0" className="flex mb-3 text-lg font-semibold bg-cyan-50 text-blue-gray-700 rounded-lg py-2 px-3">
                             <div className="text-cyan-800">CAMBIO</div>
-                            <div className="text-right flex-grow text-cyan-600" x-text="priceFormat(change)">
+                            <div className="text-right flex-grow text-cyan-600" text="buenasss">
+                                {}
                             </div>
                         </div>
-                        <div x-show="change < 0" className="flex mb-3 text-lg font-semibold bg-pink-100 text-blue-gray-700 rounded-lg py-2 px-3">
-                            <div className="text-right flex-grow text-pink-600" x-text="priceFormat(change)">
+                        
+                        {/* Mostrar en caso de que el cambio sea negativo */}
+                        {
+                            dineroEntregado - precioTotal < 0 ? 
+                            <div className="flex mb-3 text-lg font-semibold bg-pink-100 text-blue-gray-700 rounded-lg py-2 px-3">
+                                <div className="text-right flex-grow text-pink-600">
+                                    <span className="inline-block ml-1">{dineroEntregado - precioTotal}</span>
+                                </div>
                             </div>
-                        </div>
-                        <div x-show="change == 0 && cart.length > 0" className="flex justify-center mb-3 text-lg font-semibold bg-cyan-50 text-cyan-700 rounded-lg py-2 px-3">
-                            <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6 inline-block" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M14 10h4.764a2 2 0 011.789 2.894l-3.5 7A2 2 0 0115.263 21h-4.017c-.163 0-.326-.02-.485-.06L7 20m7-10V5a2 2 0 00-2-2h-.095c-.5 0-.905.405-.905.905 0 .714-.211 1.412-.608 2.006L7 11v9m7-10h-2M7 20H5a2 2 0 01-2-2v-6a2 2 0 012-2h2.5" />
-                            </svg>
-                        </div>
-                        <button className="text-white rounded-2xl text-lg w-full py-3 focus:outline-none">
-                            ACEPTAR
-                        </button>
+                            : null
+                        }
+
+                        {/* Mostrar en caso de que el cambio sea exactamente 0 y hayan productos en el carrito */}
+                        {
+                            dineroEntregado - precioTotal == 0 && numProductosCarrito > 0 ? 
+                            <div>
+                                <div x-show="change == 0 && cart.length > 0" className="flex justify-center mb-3 text-lg font-semibold bg-cyan-50 text-cyan-700 rounded-lg py-2 px-3">
+                                    <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6 inline-block" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M14 10h4.764a2 2 0 011.789 2.894l-3.5 7A2 2 0 0115.263 21h-4.017c-.163 0-.326-.02-.485-.06L7 20m7-10V5a2 2 0 00-2-2h-.095c-.5 0-.905.405-.905.905 0 .714-.211 1.412-.608 2.006L7 11v9m7-10h-2M7 20H5a2 2 0 01-2-2v-6a2 2 0 012-2h2.5" />
+                                    </svg>
+                                </div>
+                                <button className="text-white rounded-2xl text-lg w-full py-3 focus:outline-none">
+                                    <span className="inline-block ml-1"> </span>
+                                </button>
+                            </div>
+                            : 
+                            null
+                        }
+                        
                         </div>
                         {/* end of payment info */}
                     </div>
@@ -180,7 +211,7 @@ const ProductDisplay = (props) => {
     }, [])
 
     return (
-        <div className="flex flex-col bg-blue-gray-50 h-full w-full py-4">
+        <div className="flex flex-col bg-gray-100 h-full w-full py-4">
             <div className="flex px-2 flex-row relative">
                 <div className="absolute left-5 top-3 px-2 py-2 rounded-full bg-cyan-500 text-white">
                 <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -212,7 +243,7 @@ const BBDDVacia = () => {
             <p className="text-xl">
                 NO TIENES
                 <br />
-                NINGÚN PRODUCTO
+                PRODUCTOS
             </p>
             </div>
         </div>
@@ -238,14 +269,24 @@ const ProductosEncontrados = (props) => {
     return(
         <div className="grid grid-cols-4 gap-4 pb-3">
             {props.productos.map((producto) => {
+                console.log(producto.img);
+                var base64Img = ConvertBufferToBase64(producto.img);
                 return (
                     <button id={producto._id} onClick={(e)=> console.log(e.currentTarget.id) }>
-                        <ProductCard nombreProducto={producto.nombre} precioProducto={producto.precioVenta} imagenProducto={`data:image/jpeg;base64,${producto.imagen}`}/>
+                        <ProductCard nombreProducto={producto.nombre} precioProducto={producto.precioVenta} imagenProducto={`data:image/jpeg;base64,${base64Img}`}/>
                     </button>
                 );
             })}
         </div>
     );
+}
+
+function ConvertBufferToBase64(buffer) {
+    var res = ""
+    if(buffer) {
+        return Buffer.from(buffer.data, 'binary').toString('base64');
+    }
+    else return res;
 }
 
 const CarritoVacio = () => {
