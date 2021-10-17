@@ -1,8 +1,12 @@
-import {useState} from 'react';
+import {useState, useEffect} from 'react';
+import ProductCard from './productCard';
+import axios from 'axios';
 
 export const POS = () => {
-    const [ShowGenericModal, setGenericModal] = useState(false);
-    const [ShowResumenCompra, setShowResumenCompra] = useState(false);
+    const [showGenericModal, setGenericModal] = useState(false);
+    const [showResumenCompra, setShowResumenCompra] = useState(false);
+    const [numProductosCarrito, setNumProductosCarrito] = useState(0);
+    const [productos, setProductos] = useState([]);
 
     return(
         <div>
@@ -15,40 +19,10 @@ export const POS = () => {
                 {/* Sidebar derecho */}
                 <div className="w-5/12 flex flex-col bg-blue-gray-50 h-full bg-white pr-4 pl-2 py-4">
                     <div className="bg-white rounded-3xl flex flex-col h-full shadow">
-                        {/* empty cart */}
-                        <div x-show="cart.length === 0" className="flex-1 w-full p-4 opacity-25 select-none flex flex-col flex-wrap content-center justify-center">
-                        <svg xmlns="http://www.w3.org/2000/svg" className="h-16 inline-block" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z" />
-                        </svg>
-                        <p>
-                            CART EMPTY
-                        </p>
-                        </div>
-                        {/* cart items */}
-                        <div x-show="cart.length > 0" className="flex-1 flex flex-col overflow-auto">
-                        <div className="h-16 text-center flex justify-center">
-                            <div className="pl-8 text-left text-lg py-4 relative">
-                            {/* cart icon */}
-                            <svg xmlns="http://www.w3.org/2000/svg" className="h-6 inline-block" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z" />
-                            </svg>
-                            <div x-show="getItemsCount() > 0" className="text-center absolute bg-cyan-500 text-white w-5 h-5 text-xs p-0 leading-5 rounded-full -right-2 top-3" x-text="getItemsCount()" />
-                            </div>
-                            <div className="flex-grow px-8 text-right text-lg py-4 relative">
-                            {/* trash button */}
-                            <button className="text-blue-gray-300 hover:text-pink-500 focus:outline-none">
-                                <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6 inline-block" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
-                                </svg>
-                            </button>
-                            </div>
-                        </div>
-                        <div className="flex-1 w-full px-4 overflow-auto">
-                            {/* <template x-for="item in cart" :key="item.productId" /> */}
-                        </div>
-                        </div>
-                        {/* end of cart items */}
-                        {/* payment info */}
+                        {/* En caso de carrito vacío o con productos */}
+                        {productos.length <= 0 ? <CarritoVacio/> : <CarritoConProductos/>}
+                        
+                        {/* Información del pago */}
                         <div className="select-none h-auto w-full text-center pt-3 pb-4 px-4">
                         <div className="flex mb-3 text-lg font-semibold text-blue-gray-700">
                             <div>TOTAL</div>
@@ -56,9 +30,9 @@ export const POS = () => {
                         </div>
                         <div className="mb-3 text-blue-gray-700 px-3 pt-2 pb-3 rounded-lg bg-blue-gray-50">
                             <div className="flex text-lg font-semibold">
-                            <div className="flex-grow text-left">CASH</div>
+                            <div className="flex-grow text-left">EFECTIVO</div>
                             <div className="flex text-right">
-                                <div className="mr-2">Rp</div>
+                                <div className="mr-2">€</div>
                                 <input type="text" className="w-28 text-right bg-white shadow rounded-lg focus:bg-white focus:shadow-lg px-2 focus:outline-none" />
                             </div>
                             </div>
@@ -68,7 +42,7 @@ export const POS = () => {
                             </div>
                         </div>
                         <div x-show="change > 0" className="flex mb-3 text-lg font-semibold bg-cyan-50 text-blue-gray-700 rounded-lg py-2 px-3">
-                            <div className="text-cyan-800">CHANGE</div>
+                            <div className="text-cyan-800">CAMBIO</div>
                             <div className="text-right flex-grow text-cyan-600" x-text="priceFormat(change)">
                             </div>
                         </div>
@@ -82,18 +56,18 @@ export const POS = () => {
                             </svg>
                         </div>
                         <button className="text-white rounded-2xl text-lg w-full py-3 focus:outline-none">
-                            SUBMIT
+                            ACEPTAR
                         </button>
                         </div>
                         {/* end of payment info */}
                     </div>
                 </div>
-                {/* end of right sidebar */}
+                {/* Fin sidebar derecho */}
             </div>
-            {/* modal first time */}
-            {ShowGenericModal? <ModalGeneric/>: null}
-            {/* modal receipt */}
-            {ShowResumenCompra? <ModalResumenCompra/>: null}
+            {/* Modal generico */}
+            {showGenericModal? <ModalGenerico/>: null}
+            {/* Modal ticket */}
+            {showResumenCompra? <ModalTicket/>: null}
             </div>
             {/* end of noprint-area */}
             <div id="print-area" className="print-area" />
@@ -102,7 +76,7 @@ export const POS = () => {
     );
 }
 
-export const ModalResumenCompra = (props) => {
+const ModalTicket = (props) => {
     return(
         <div x-show="isShowModalReceipt" className="fixed w-full h-screen left-0 top-0 z-10 flex flex-wrap justify-center content-center p-24">
             <div x-show="isShowModalReceipt" className="fixed glass w-full h-screen left-0 top-0 z-0" />
@@ -110,8 +84,8 @@ export const ModalResumenCompra = (props) => {
             <div id="receipt-content" className="text-left w-full text-sm p-6 overflow-auto">
                 <div className="text-center">
                 <img src="img/receipt-logo.png" alt="Tailwind POS" className="mb-3 w-8 h-8 inline-block" />
-                <h2 className="text-xl font-semibold">TAILWIND POS</h2>
-                <p>CABANG KONOHA SELATAN</p>
+                <h2 className="text-xl font-semibold">ERPWeb Punto de venta</h2>
+                <p> Nombre empresa </p>
                 </div>
                 <div className="flex mt-4 text-xs">
                 <div className="flex-grow">No: <span x-text="receiptNo" /></div>
@@ -140,12 +114,12 @@ export const ModalResumenCompra = (props) => {
                     <div x-text="priceFormat(getTotalPrice())" />
                 </div>
                 <div className="flex text-xs font-semibold">
-                    <div className="flex-grow">PAY AMOUNT</div>
+                    <div className="flex-grow">CANTIDAD A PAGAR</div>
                     <div x-text="priceFormat(cash)" />
                 </div>
                 <hr className="my-2" />
                 <div className="flex text-xs font-semibold">
-                    <div className="flex-grow">CHANGE</div>
+                    <div className="flex-grow">CAMBIO</div>
                     <div x-text="priceFormat(change)" />
                 </div>
                 </div>
@@ -158,7 +132,7 @@ export const ModalResumenCompra = (props) => {
     );
 }
 
-export const ModalGeneric = (props) => {
+const ModalGenerico = (props) => {
     return (
         <div x-show="firstTime" className="fixed glass w-full h-screen left-0 top-0 z-10 flex flex-wrap justify-center content-center p-24">
                 <div className="w-96 rounded-3xl p-8 bg-white shadow-xl">
@@ -187,9 +161,23 @@ export const ModalGeneric = (props) => {
     )
 }
 
-export const ProductDisplay = (props) => {
-    const [ProductoBuscado, setProductoBuscado] = useState("");
-    const [ListaProductos, setListaProductos] = useState([]);
+const ProductDisplay = (props) => {
+    const [busqueda, setBusqueda] = useState("");
+    const [listaProductos, setListaProductos] = useState([{}]);
+    const [listaTodosProductos, setListaTodosProductos] = useState([{}]);
+
+    useEffect(() => {
+        const fetchProductos = () => {
+            axios.get('http://localhost:8080/api/productos').then(
+                (res) => {
+                    setListaTodosProductos(res.data.message);
+                    setListaProductos(res.data.message);
+                }
+            );
+            
+        };
+        fetchProductos();
+    }, [])
 
     return (
         <div className="flex flex-col bg-blue-gray-50 h-full w-full py-4">
@@ -199,38 +187,104 @@ export const ProductDisplay = (props) => {
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
                 </svg>
                 </div>
-                <input onChange={(e) => {setProductoBuscado(e.target.value);}} className="bg-white rounded-3xl shadow text-lg full w-full h-16 py-4 pl-16 transition-shadow focus:shadow-2xl focus:outline-none" placeholder="Buscar producto o código de barras..."/>
+                <input onChange={(e) => {setBusqueda(e.target.value);}} className="bg-white rounded-3xl shadow text-lg full w-full h-16 py-4 pl-16 transition-shadow focus:shadow-2xl focus:outline-none" placeholder="Buscar producto o código de barras..."/>
             </div>
             <div className="h-full overflow-hidden mt-4">
                 <div className="h-full overflow-y-auto px-2">
-                    <div className="select-none bg-blue-gray-100 rounded-3xl flex flex-wrap content-center justify-center h-full opacity-25" x-show="products.length === 0">
-                        <div className="w-full text-center">
-                        <svg xmlns="http://www.w3.org/2000/svg" className="h-24 w-24 inline-block" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 7v10c0 2.21 3.582 4 8 4s8-1.79 8-4V7M4 7c0 2.21 3.582 4 8 4s8-1.79 8-4M4 7c0-2.21 3.582-4 8-4s8 1.79 8 4m0 5c0 2.21-3.582 4-8 4s-8-1.79-8-4" />
-                        </svg>
-                        <p className="text-xl">
-                            NO TIENES
-                            <br />
-                            NINGÚN PRODUCTO
-                        </p>
-                        </div>
-                    </div>
-                    <div className="select-none bg-blue-gray-100 rounded-3xl flex flex-wrap content-center justify-center h-full opacity-25">
-                        <div className="w-full text-center">
-                        <svg xmlns="http://www.w3.org/2000/svg" className="h-24 w-24 inline-block" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
-                        </svg>
-                        <p className="text-xl">
-                            EMPTY SEARCH RESULT
-                            <br />
-                            "<span x-text="keyword" className="font-semibold" />"
-                        </p>
-                        </div>
-                    </div>
-                    <div className="grid grid-cols-4 gap-4 pb-3">
-                        {/* <template x-for="product in filteredProducts()" :key="product.id" /> */}
-                    </div>
+                    {/* Base de datos vacía */}
+                    {listaTodosProductos.length <= 0 ? <BBDDVacia/> : null}
+                    
+                    {/* Producto no encontrado en la lista de productos */}
+                    {listaProductos.length <= 0 && listaTodosProductos.length <= 0 ? <ProductoNoEncontrado/> : <ProductosEncontrados productos={listaProductos}/>}
                 </div>
+            </div>
+        </div>
+    )
+}
+
+const BBDDVacia = () => {
+    return(
+        <div className="select-none bg-blue-gray-100 rounded-3xl flex flex-wrap content-center justify-center h-full opacity-25" x-show="products.length === 0">
+            <div className="w-full text-center">
+            <svg xmlns="http://www.w3.org/2000/svg" className="h-24 w-24 inline-block" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 7v10c0 2.21 3.582 4 8 4s8-1.79 8-4V7M4 7c0 2.21 3.582 4 8 4s8-1.79 8-4M4 7c0-2.21 3.582-4 8-4s8 1.79 8 4m0 5c0 2.21-3.582 4-8 4s-8-1.79-8-4" />
+            </svg>
+            <p className="text-xl">
+                NO TIENES
+                <br />
+                NINGÚN PRODUCTO
+            </p>
+            </div>
+        </div>
+    );
+}
+
+const ProductoNoEncontrado = () => {
+    return (
+        <div className="select-none bg-blue-gray-100 rounded-3xl flex flex-wrap content-center justify-center h-full opacity-25">
+            <div className="w-full text-center">
+                <svg xmlns="http://www.w3.org/2000/svg" className="h-24 w-24 inline-block" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                </svg>
+                <p className="text-xl">
+                    PRODUCTO NO ENCONTRADO
+                </p>
+            </div>
+        </div>
+    )
+}
+
+const ProductosEncontrados = (props) => {
+    return(
+        <div className="grid grid-cols-4 gap-4 pb-3">
+            {props.productos.map((producto) => {
+                return (
+                    <button id={producto._id} onClick={(e)=> console.log(e.currentTarget.id) }>
+                        <ProductCard nombreProducto={producto.nombre} precioProducto={producto.precioVenta}/>
+                    </button>
+                );
+            })}
+        </div>
+    );
+}
+
+const CarritoVacio = () => {
+    return(
+        <div x-show="cart.length === 0" className="flex-1 w-full p-4 opacity-25 select-none flex flex-col flex-wrap content-center justify-center">
+            <svg xmlns="http://www.w3.org/2000/svg" className="h-16 inline-block" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z" />
+            </svg>
+            <p>
+                CARRITO VACÍO
+            </p>
+        </div>
+    );
+}
+
+const CarritoConProductos = (props) => {
+    const [productos, setproductos] = useState([])
+    return (
+        <div x-show="cart.length > 0" className="flex-1 flex flex-col overflow-auto">
+            <div className="h-16 text-center flex justify-center">
+                <div className="pl-8 text-left text-lg py-4 relative">
+                {/* Icono carrito */}
+                <svg xmlns="http://www.w3.org/2000/svg" className="h-6 inline-block" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z" />
+                </svg>
+                <div className="text-center absolute bg-cyan-500 text-white w-5 h-5 text-xs p-0 leading-5 rounded-full -right-2 top-3"/>
+                {` ${productos.length}`}
+                </div>
+                <div className="flex-grow px-8 text-right text-lg py-4 relative">
+                {/* Boton basura */}
+                <button className="text-blue-gray-300 hover:text-pink-500 focus:outline-none">
+                    <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6 inline-block" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                    </svg>
+                </button>
+                </div>
+            </div>
+            <div className="flex-1 w-full px-4 overflow-auto">
+                {/* <template x-for="item in cart" :key="item.productId" /> */}
             </div>
         </div>
     )
