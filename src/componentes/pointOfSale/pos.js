@@ -163,8 +163,8 @@ const ModalGenerico = (props) => {
 
 const ProductDisplay = (props) => {
     const [busqueda, setBusqueda] = useState("");
-    const [listaProductos, setListaProductos] = useState([{}]);
-    const [listaTodosProductos, setListaTodosProductos] = useState([{}]);
+    const [listaProductos, setListaProductos] = useState([]);
+    const [listaTodosProductos, setListaTodosProductos] = useState([]);
 
     useEffect(() => {
         const fetchProductos = () => {
@@ -195,7 +195,7 @@ const ProductDisplay = (props) => {
                     {listaTodosProductos.length <= 0 ? <BBDDVacia/> : null}
                     
                     {/* Producto no encontrado en la lista de productos */}
-                    {listaProductos.length <= 0 && listaTodosProductos.length <= 0 ? <ProductoNoEncontrado/> : <ProductosEncontrados productos={listaProductos}/>}
+                    {listaProductos.length <= 0 && listaTodosProductos.length > 0 ? <ProductoNoEncontrado/> : <ProductosEncontrados productos={listaProductos}/>}
                 </div>
             </div>
         </div>
@@ -240,7 +240,7 @@ const ProductosEncontrados = (props) => {
             {props.productos.map((producto) => {
                 return (
                     <button id={producto._id} onClick={(e)=> console.log(e.currentTarget.id) }>
-                        <ProductCard nombreProducto={producto.nombre} precioProducto={producto.precioVenta}/>
+                        <ProductCard nombreProducto={producto.nombre} precioProducto={producto.precioVenta} imagenProducto={`data:image/jpeg;base64,${producto.imagen}`}/>
                     </button>
                 );
             })}
