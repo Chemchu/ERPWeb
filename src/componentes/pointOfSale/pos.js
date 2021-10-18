@@ -1,7 +1,7 @@
 import React, {useState, useEffect, useContext} from 'react';
 import ProductCard from './productCard';
 import axios from 'axios';
-import {ProductsContext, ProductsProvider} from './productsContext';
+import {ProductsProvider, useProducts, useProductsUpdate} from './productsContext';
 
 export const POS = () => {
     return(
@@ -17,16 +17,14 @@ const POSComponent = () => {
     const [numProductosCarrito, setNumProductosCarrito] = useState(0);
     const [precioTotal, setPrecioTotal] = useState(0);
     const [dineroEntregado, setDineroEntregado] = useState(0);
-    const [productos, setProductos] = useContext(ProductsContext);
+    const productos = useProducts();
+    const setProductos = useProductsUpdate();
 
     useEffect(() => {
         const fetchProductos = () => {
             axios.get('http://localhost:8080/api/productos').then(
                 (res) => {
-                    //console.log(productos);
                     setProductos([...res.data.message]);
-                    console.log(res.data.message); 
-                    console.log(productos);
                 }
             );
             
@@ -224,7 +222,7 @@ const ModalGenerico = (props) => {
 const ProductDisplay = (props) => {
     const [busqueda, setBusqueda] = useState("");
     const [productosFiltrados, setProductosFiltrados] = useState([]);
-    const productos = useContext(ProductsContext);
+    const productos = useProducts();
 
     // useEffect(() => {
     //     const fetchProductos = () => {
