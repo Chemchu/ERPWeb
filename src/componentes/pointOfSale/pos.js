@@ -1,13 +1,13 @@
 import React, {useState, useEffect, useContext} from 'react';
 import ProductCard from './productCard';
 import axios from 'axios';
-import {ProductsProvider, useProducts, useProductsUpdate} from './productsContext';
+import {POSProvider, useDBProducts, usePrice, useConsumerMoney} from './productsContext';
 
 export const POS = () => {
     return(
-        <ProductsProvider>
+        <POSProvider>
             <POSComponent/>
-        </ProductsProvider>
+        </POSProvider>
     );
 }
 
@@ -15,22 +15,10 @@ const POSComponent = () => {
     const [showGenericModal, setGenericModal] = useState(false);
     const [showResumenCompra, setShowResumenCompra] = useState(false);
     const [numProductosCarrito, setNumProductosCarrito] = useState(0);
-    const [precioTotal, setPrecioTotal] = useState(0);
-    const [dineroEntregado, setDineroEntregado] = useState(0);
-    const productos = useProducts();
-    const setProductos = useProductsUpdate();
 
-    useEffect(() => {
-        const fetchProductos = () => {
-            axios.get('http://localhost:8080/api/productos').then(
-                (res) => {
-                    setProductos([...res.data.message]);
-                }
-            );
-            
-        };
-        fetchProductos();
-    }, [])
+    const [productos, setProductos] = useDBProducts();
+    const [precioTotal, setPrecioTotal] = usePrice();
+    const [dineroEntregado, setDineroEntregado] = useConsumerMoney();
 
     return(
         <div>
@@ -44,7 +32,7 @@ const POSComponent = () => {
                 <div className="w-5/12 flex flex-col bg-gray-100 h-full pr-4 pl-2 py-4">
                     <div className="bg-white rounded-3xl flex flex-col h-full shadow">
                         {/* En caso de carrito vacío o con productos */}
-                        {productos.length <= 0 ? <CarritoVacio/> : <CarritoConProductos/>}
+                        {productos.length <= 0 ? <CarritoVacio/> : null}
                         
                         {/* Información del pago */}
                         <div className="select-none h-auto w-full text-center pt-3 pb-4 px-4">
@@ -220,22 +208,29 @@ const ModalGenerico = (props) => {
 }
 
 const ProductDisplay = (props) => {
-    const [busqueda, setBusqueda] = useState("");
     const [productosFiltrados, setProductosFiltrados] = useState([]);
-    const productos = useProducts();
+    const [productos, setProductos] = useDBProducts();
 
-    // useEffect(() => {
-    //     const fetchProductos = () => {
-    //         axios.get('http://localhost:8080/api/productos').then(
-    //             (res) => {
-    //                 setProductos(res.data.message);
-    //                 console.log("useffect")
-    //             }
-    //         );
+    useEffect(() => {
+        const fetchProductos = () => {
+            axios.get('http://localhost:8080/api/productos').then(
+                (res) => {
+                    setProductos([...res.data.message]);
+                    setProductosFiltrados([...res.data.message]);
+                }
+            );
             
-    //     };
-    //     fetchProductos();
-    // }, [])
+        };
+        fetchProductos();
+    }, [])
+
+    var filtrarProd = (cadena) => {
+        var prodFiltrados = productos.filter(prod => prod.nombre.toLowerCase().includes(cadena.toLowerCase()));
+        
+        if(prodFiltrados.length <= 0) prodFiltrados = productos.filter(prod => prod.ean.some(r => r == cadena));
+
+        setProductosFiltrados(prodFiltrados);
+    }
 
     return (
         <div className="flex flex-col bg-gray-100 h-full w-full py-4">
@@ -245,12 +240,12 @@ const ProductDisplay = (props) => {
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
                 </svg>
                 </div>
-                <input onChange={(e) => {setBusqueda(e.target.value);}} className="bg-white rounded-3xl shadow text-lg full w-full h-16 py-4 pl-16 transition-shadow focus:shadow-2xl focus:outline-none" placeholder="Buscar producto o código de barras..."/>
+                <input onChange={(e) => {filtrarProd(e.target.value);}} className="bg-white rounded-3xl shadow text-lg full w-full h-16 py-4 pl-16 transition-shadow focus:shadow-2xl focus:outline-none" placeholder="Buscar producto o código de barras..."/>
             </div>
             <div className="h-full overflow-hidden mt-4">
                 <div className="h-full overflow-y-auto px-2">
                     {/* Base de datos vacía */}
-                    {productos.length <= 0 ? <BBDDVacia/> : null}
+                    {productos.length <= 0 || !productos  ? <BBDDVacia/> : null}
                     
                     {/* Producto no encontrado en la lista de productos */}
                     {productosFiltrados.length <= 0 && productos.length > 0 ? <ProductoNoEncontrado/> : <GenerarProductsCards productos={productosFiltrados}/>}
@@ -293,15 +288,13 @@ const ProductoNoEncontrado = () => {
 }
 
 const GenerarProductsCards = (props) => {
-    const Productos = useContext(ProductsProvider);
-
     return(
         <div className="grid grid-cols-4 gap-4 pb-3">
-            {props.productos.map((producto) => {
-                var base64Img = ConvertBufferToBase64(producto.img);
+            {props.productos.map((prod) => {
+                var base64Img = ConvertBufferToBase64(prod.img);
                 return (
-                    <button id={producto._id} onClick={(e)=> console.log("yey") }>
-                        <ProductCard nombreProducto={producto.nombre} precioProducto={producto.precioVenta} imagenProducto={`data:image/(png|jpeg);base64,${base64Img}`}/>
+                    <button id={prod._id} onClick={(e)=> console.log("yey") }>
+                        <ProductCard nombreProducto={prod.nombre} precioProducto={prod.precioVenta} imagenProducto={`data:image/(png|jpeg);base64,${base64Img}`}/>
                     </button>
                 );
             })}

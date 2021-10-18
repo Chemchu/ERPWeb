@@ -1,31 +1,38 @@
 import {useState, createContext, useContext} from 'react'
 
 const ProductsContext = createContext();
-const ProductsUpdateContext = createContext();
+const PriceContext = createContext();
+const ConstumerMoneyContext = createContext();
 
-export const useProducts = () => {
+// Todos los productos de la db
+export const useDBProducts = () => {
     return useContext(ProductsContext);
 }
 
-export const useProductsUpdate = () => {
-    return useContext(ProductsUpdateContext);
+// El precio total de la compra (todo lo que hay en el carrito)
+export const usePrice = () => {
+    return useContext(PriceContext);
 }
 
-export const ProductsProvider = (props) => {
-    const [productos, setProductos] = useState([]);
+// El dinero que ha dado el cliente al cajero
+export const useConsumerMoney = () => {
+    return useContext(ConstumerMoneyContext);
+}
 
-    function updateProductList (prods) {
-        setProductos([...prods]);
-        // console.log(productos);
-        // console.log(prods);
-    }
+export const POSProvider = (props) => {
+    const [productos, setProductos] = useState([]);
+    const [busqueda, setBusqueda] = useState("");
+    const [precioTotal, setPrecioTotal] = useState(0);
+    const [dineroEntregado, setDineroEntregado] = useState(0);
 
     return (
         <div>
-            <ProductsContext.Provider value={productos}>
-                <ProductsUpdateContext.Provider value={updateProductList}>
-                    {props.children}
-                </ProductsUpdateContext.Provider>
+            <ProductsContext.Provider value={[productos, setProductos]}>
+                <PriceContext.Provider value={[precioTotal, setPrecioTotal]}>
+                    <ConstumerMoneyContext.Provider value={[dineroEntregado, setDineroEntregado]}>
+                        {props.children}
+                    </ConstumerMoneyContext.Provider>
+                </PriceContext.Provider>
             </ProductsContext.Provider>
         </div>        
     )
