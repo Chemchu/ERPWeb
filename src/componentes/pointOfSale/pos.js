@@ -1,14 +1,38 @@
-import {useState, useEffect} from 'react';
+import React, {useState, useEffect, useContext} from 'react';
 import ProductCard from './productCard';
 import axios from 'axios';
+import {ProductsContext, ProductsProvider} from './productsContext';
 
 export const POS = () => {
+    return(
+        <ProductsProvider>
+            <POSComponent/>
+        </ProductsProvider>
+    );
+}
+
+const POSComponent = () => {
     const [showGenericModal, setGenericModal] = useState(false);
     const [showResumenCompra, setShowResumenCompra] = useState(false);
     const [numProductosCarrito, setNumProductosCarrito] = useState(0);
     const [precioTotal, setPrecioTotal] = useState(0);
     const [dineroEntregado, setDineroEntregado] = useState(0);
-    const [productos, setProductos] = useState([]);
+    const [productos, setProductos] = useContext(ProductsContext);
+
+    useEffect(() => {
+        const fetchProductos = () => {
+            axios.get('http://localhost:8080/api/productos').then(
+                (res) => {
+                    //console.log(productos);
+                    setProductos([...res.data.message]);
+                    console.log(res.data.message); 
+                    console.log(productos);
+                }
+            );
+            
+        };
+        fetchProductos();
+    }, [])
 
     return(
         <div>
@@ -45,21 +69,27 @@ export const POS = () => {
                             <hr className="my-2" />
                             <div className="grid grid-cols-3 gap-2 mt-2">
                                 {/* Botones de dinero rápido */}
-                                <button className="bg-white shadow rounded-lg hover:shadow-lg hover:bg-green-200 focus:outline-none" onClick={() => {setDineroEntregado(+(dineroEntregado) + 1)}}>1€</button>
-                                <button className="bg-white shadow rounded-lg hover:shadow-lg hover:bg-green-200 focus:outline-none" onClick={() => {setDineroEntregado(+(dineroEntregado) + 5)}}>5€</button>
-                                <button className="bg-white shadow rounded-lg hover:shadow-lg hover:bg-green-200 focus:outline-none" onClick={() => {setDineroEntregado(+(dineroEntregado) + 10)}}>10€</button>
-                                <button className="bg-white shadow rounded-lg hover:shadow-lg hover:bg-green-200 focus:outline-none" onClick={() => {setDineroEntregado(+(dineroEntregado) + 20)}}>20€</button>
-                                <button className="bg-white shadow rounded-lg hover:shadow-lg hover:bg-green-200 focus:outline-none" onClick={() => {setDineroEntregado(+(dineroEntregado) + 50)}}>50€</button>
-                                <button className="bg-white shadow rounded-lg hover:shadow-lg hover:bg-green-200 focus:outline-none" onClick={() => {setDineroEntregado(+(dineroEntregado) + 100)}}>100€</button>
+                                <button className="bg-white shadow rounded-lg hover:shadow-lg hover:bg-green-200 focus:outline-none" onClick={() => {setDineroEntregado(0)}}>0€</button>
+                                <button className="bg-white shadow rounded-lg hover:shadow-lg hover:bg-green-200 focus:outline-none" onClick={() => {setDineroEntregado(+(dineroEntregado) + 1)}}>+1€</button>
+                                <button className="bg-white shadow rounded-lg hover:shadow-lg hover:bg-green-200 focus:outline-none" onClick={() => {setDineroEntregado(+(dineroEntregado) + 5)}}>+5€</button>
+                                <button className="bg-white shadow rounded-lg hover:shadow-lg hover:bg-green-200 focus:outline-none" onClick={() => {setDineroEntregado(+(dineroEntregado) + 10)}}>+10€</button>
+                                <button className="bg-white shadow rounded-lg hover:shadow-lg hover:bg-green-200 focus:outline-none" onClick={() => {setDineroEntregado(+(dineroEntregado) + 20)}}>+20€</button>
+                                <button className="bg-white shadow rounded-lg hover:shadow-lg hover:bg-green-200 focus:outline-none" onClick={() => {setDineroEntregado(+(dineroEntregado) + 50)}}>+50€</button>
 
                             </div>
                         </div>
-                        <div x-show="change > 0" className="flex mb-3 text-lg font-semibold bg-cyan-50 text-blue-gray-700 rounded-lg py-2 px-3">
-                            <div className="text-cyan-800">CAMBIO</div>
-                            <div className="text-right flex-grow text-cyan-600" text="buenasss">
-                                {}
+                        {/* El cambio debe aparecer cuando el dinero entregado sea mayor q cero */}
+                        {
+                            dineroEntregado > 0 ?
+                            <div className="flex mb-3 text-lg font-semibold bg-green-100 rounded-lg py-2 px-3">
+                                <div className="text-green-600">CAMBIO</div>
+                                <div className="text-right flex-grow text-green-600" text="buenasss">
+                                    {+(dineroEntregado)-(precioTotal)} €
+                                </div>
                             </div>
-                        </div>
+                            :
+                            null
+                        }
                         
                         {/* Mostrar en caso de que el cambio sea negativo */}
                         {
@@ -76,7 +106,7 @@ export const POS = () => {
                         {
                             dineroEntregado - precioTotal == 0 && numProductosCarrito > 0 ? 
                             <div>
-                                <div x-show="change == 0 && cart.length > 0" className="flex justify-center mb-3 text-lg font-semibold bg-cyan-50 text-cyan-700 rounded-lg py-2 px-3">
+                                <div x-show="change == 0 && cart.length > 0" className="flex justify-center mb-3 text-lg font-semibold bg-blue-50 text-blue-700 rounded-lg py-2 px-3">
                                     <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6 inline-block" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M14 10h4.764a2 2 0 011.789 2.894l-3.5 7A2 2 0 0115.263 21h-4.017c-.163 0-.326-.02-.485-.06L7 20m7-10V5a2 2 0 00-2-2h-.095c-.5 0-.905.405-.905.905 0 .714-.211 1.412-.608 2.006L7 11v9m7-10h-2M7 20H5a2 2 0 01-2-2v-6a2 2 0 012-2h2.5" />
                                     </svg>
@@ -103,7 +133,6 @@ export const POS = () => {
             {/* end of noprint-area */}
             <div id="print-area" className="print-area" />
         </div>
-
     );
 }
 
@@ -156,7 +185,7 @@ const ModalTicket = (props) => {
                 </div>
             </div>
             <div className="p-4 w-full">
-                <button className="bg-cyan-500 text-white text-lg px-4 py-3 rounded-2xl w-full focus:outline-none">PROCEED</button>
+                <button className="bg-blue-500 text-white text-lg px-4 py-3 rounded-2xl w-full focus:outline-none">PROCEED</button>
             </div>
             </div>
         </div>
@@ -166,54 +195,54 @@ const ModalTicket = (props) => {
 const ModalGenerico = (props) => {
     return (
         <div x-show="firstTime" className="fixed glass w-full h-screen left-0 top-0 z-10 flex flex-wrap justify-center content-center p-24">
-                <div className="w-96 rounded-3xl p-8 bg-white shadow-xl">
-                <div className="text-center">
-                    <svg xmlns="http://www.w3.org/2000/svg" className="inline-block" width="123.3" height="123.233" viewBox="0 0 32.623 32.605">
-                    <path d="M15.612 0c-.36.003-.705.01-1.03.021C8.657.223 5.742 1.123 3.4 3.472.714 6.166-.145 9.758.019 17.607c.137 6.52.965 9.271 3.542 11.768 1.31 1.269 2.658 2 4.73 2.57.846.232 2.73.547 3.56.596.36.021 2.336.048 4.392.06 3.162.018 4.031-.016 5.63-.221 3.915-.504 6.43-1.778 8.234-4.173 1.806-2.396 2.514-5.731 2.516-11.846.001-4.407-.42-7.59-1.278-9.643-1.463-3.501-4.183-5.53-8.394-6.258-1.634-.283-4.823-.475-7.339-.46z" fill="#fff" /><path d="M16.202 13.758c-.056 0-.11 0-.16.003-.926.031-1.38.172-1.747.538-.42.421-.553.982-.528 2.208.022 1.018.151 1.447.553 1.837.205.198.415.313.739.402.132.036.426.085.556.093.056.003.365.007.686.009.494.003.63-.002.879-.035.611-.078 1.004-.277 1.286-.651.282-.374.392-.895.393-1.85 0-.688-.066-1.185-.2-1.506-.228-.547-.653-.864-1.31-.977a7.91 7.91 0 00-1.147-.072zM16.22 19.926c-.056 0-.11 0-.16.003-.925.031-1.38.172-1.746.539-.42.42-.554.981-.528 2.207.02 1.018.15 1.448.553 1.838.204.198.415.312.738.4.132.037.426.086.556.094.056.003.365.007.686.009.494.003.63-.002.88-.034.61-.08 1.003-.278 1.285-.652.282-.374.393-.895.393-1.85 0-.688-.066-1.185-.2-1.506-.228-.547-.653-.863-1.31-.977a7.91 7.91 0 00-1.146-.072zM22.468 13.736c-.056 0-.11.001-.161.003-.925.032-1.38.172-1.746.54-.42.42-.554.98-.528 2.207.021 1.018.15 1.447.553 1.837.205.198.415.313.739.401.132.037.426.086.556.094.056.003.364.007.685.009.494.003.63-.002.88-.035.611-.078 1.004-.277 1.285-.651.282-.375.393-.895.393-1.85 0-.688-.065-1.185-.2-1.506-.228-.547-.653-.864-1.31-.977a7.91 7.91 0 00-1.146-.072z" fill="#00dace" /><path d="M9.937 13.736c-.056 0-.11.001-.161.003-.925.032-1.38.172-1.746.54-.42.42-.554.98-.528 2.207.021 1.018.15 1.447.553 1.837.204.198.415.313.738.401.133.037.427.086.556.094.056.003.365.007.686.009.494.003.63-.002.88-.035.61-.078 1.003-.277 1.285-.651.282-.375.393-.895.393-1.85 0-.688-.066-1.185-.2-1.506-.228-.547-.653-.864-1.31-.977a7.91 7.91 0 00-1.146-.072zM16.202 7.59c-.056 0-.11 0-.16.002-.926.032-1.38.172-1.747.54-.42.42-.553.98-.528 2.206.022 1.019.151 1.448.553 1.838.205.198.415.312.739.401.132.037.426.086.556.093.056.003.365.007.686.01.494.002.63-.003.879-.035.611-.079 1.004-.278 1.286-.652.282-.374.392-.895.393-1.85 0-.688-.066-1.185-.2-1.505-.228-.547-.653-.864-1.31-.978a7.91 7.91 0 00-1.147-.071z" fill="#00bcd4" /><g><path d="M15.612 0c-.36.003-.705.01-1.03.021C8.657.223 5.742 1.123 3.4 3.472.714 6.166-.145 9.758.019 17.607c.137 6.52.965 9.271 3.542 11.768 1.31 1.269 2.658 2 4.73 2.57.846.232 2.73.547 3.56.596.36.021 2.336.048 4.392.06 3.162.018 4.031-.016 5.63-.221 3.915-.504 6.43-1.778 8.234-4.173 1.806-2.396 2.514-5.731 2.516-11.846.001-4.407-.42-7.59-1.278-9.643-1.463-3.501-4.183-5.53-8.394-6.258-1.634-.283-4.823-.475-7.339-.46z" fill="#fff" /><path d="M16.202 13.758c-.056 0-.11 0-.16.003-.926.031-1.38.172-1.747.538-.42.421-.553.982-.528 2.208.022 1.018.151 1.447.553 1.837.205.198.415.313.739.402.132.036.426.085.556.093.056.003.365.007.686.009.494.003.63-.002.879-.035.611-.078 1.004-.277 1.286-.651.282-.374.392-.895.393-1.85 0-.688-.066-1.185-.2-1.506-.228-.547-.653-.864-1.31-.977a7.91 7.91 0 00-1.147-.072zM16.22 19.926c-.056 0-.11 0-.16.003-.925.031-1.38.172-1.746.539-.42.42-.554.981-.528 2.207.02 1.018.15 1.448.553 1.838.204.198.415.312.738.4.132.037.426.086.556.094.056.003.365.007.686.009.494.003.63-.002.88-.034.61-.08 1.003-.278 1.285-.652.282-.374.393-.895.393-1.85 0-.688-.066-1.185-.2-1.506-.228-.547-.653-.863-1.31-.977a7.91 7.91 0 00-1.146-.072zM22.468 13.736c-.056 0-.11.001-.161.003-.925.032-1.38.172-1.746.54-.42.42-.554.98-.528 2.207.021 1.018.15 1.447.553 1.837.205.198.415.313.739.401.132.037.426.086.556.094.056.003.364.007.685.009.494.003.63-.002.88-.035.611-.078 1.004-.277 1.285-.651.282-.375.393-.895.393-1.85 0-.688-.065-1.185-.2-1.506-.228-.547-.653-.864-1.31-.977a7.91 7.91 0 00-1.146-.072z" fill="#00dace" /><path d="M9.937 13.736c-.056 0-.11.001-.161.003-.925.032-1.38.172-1.746.54-.42.42-.554.98-.528 2.207.021 1.018.15 1.447.553 1.837.204.198.415.313.738.401.133.037.427.086.556.094.056.003.365.007.686.009.494.003.63-.002.88-.035.61-.078 1.003-.277 1.285-.651.282-.375.393-.895.393-1.85 0-.688-.066-1.185-.2-1.506-.228-.547-.653-.864-1.31-.977a7.91 7.91 0 00-1.146-.072zM16.202 7.59c-.056 0-.11 0-.16.002-.926.032-1.38.172-1.747.54-.42.42-.553.98-.528 2.206.022 1.019.151 1.448.553 1.838.205.198.415.312.739.401.132.037.426.086.556.093.056.003.365.007.686.01.494.002.63-.003.879-.035.611-.079 1.004-.278 1.286-.652.282-.374.392-.895.393-1.85 0-.688-.066-1.185-.2-1.505-.228-.547-.653-.864-1.31-.978a7.91 7.91 0 00-1.147-.071z" fill="#00bcd4" /></g>
-                    </svg>
-                    <h3 className="text-center text-2xl mb-8">FIRST TIME?</h3>
-                </div>
-                <div className="text-left">
-                    <button className="text-left w-full mb-3 rounded-xl bg-blue-gray-500 text-white focus:outline-none hover:bg-cyan-400 px-4 py-4">
-                    <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6 inline-block -mt-1 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 4H6a2 2 0 00-2 2v12a2 2 0 002 2h12a2 2 0 002-2V6a2 2 0 00-2-2h-2m-4-1v8m0 0l3-3m-3 3L9 8m-5 5h2.586a1 1 0 01.707.293l2.414 2.414a1 1 0 00.707.293h3.172a1 1 0 00.707-.293l2.414-2.414a1 1 0 01.707-.293H20" />
-                    </svg>
-                    LOAD SAMPLE DATA
-                    </button>
-                    <button className="text-left w-full rounded-xl bg-blue-gray-500 text-white focus:outline-none hover:bg-teal-400 px-4 py-4">
-                    <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6 inline-block -mt-1 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M20 13V6a2 2 0 00-2-2H6a2 2 0 00-2 2v7m16 0v5a2 2 0 01-2 2H6a2 2 0 01-2-2v-5m16 0h-2.586a1 1 0 00-.707.293l-2.414 2.414a1 1 0 01-.707.293h-3.172a1 1 0 01-.707-.293l-2.414-2.414A1 1 0 006.586 13H4" />
-                    </svg>
-                    LEAVE IT EMPTY
-                    </button>
-                </div>
-                </div>
+            <div className="w-96 rounded-3xl p-8 bg-white shadow-xl">
+            <div className="text-center">
+                <svg xmlns="http://www.w3.org/2000/svg" className="inline-block" width="123.3" height="123.233" viewBox="0 0 32.623 32.605">
+                <path d="M15.612 0c-.36.003-.705.01-1.03.021C8.657.223 5.742 1.123 3.4 3.472.714 6.166-.145 9.758.019 17.607c.137 6.52.965 9.271 3.542 11.768 1.31 1.269 2.658 2 4.73 2.57.846.232 2.73.547 3.56.596.36.021 2.336.048 4.392.06 3.162.018 4.031-.016 5.63-.221 3.915-.504 6.43-1.778 8.234-4.173 1.806-2.396 2.514-5.731 2.516-11.846.001-4.407-.42-7.59-1.278-9.643-1.463-3.501-4.183-5.53-8.394-6.258-1.634-.283-4.823-.475-7.339-.46z" fill="#fff" /><path d="M16.202 13.758c-.056 0-.11 0-.16.003-.926.031-1.38.172-1.747.538-.42.421-.553.982-.528 2.208.022 1.018.151 1.447.553 1.837.205.198.415.313.739.402.132.036.426.085.556.093.056.003.365.007.686.009.494.003.63-.002.879-.035.611-.078 1.004-.277 1.286-.651.282-.374.392-.895.393-1.85 0-.688-.066-1.185-.2-1.506-.228-.547-.653-.864-1.31-.977a7.91 7.91 0 00-1.147-.072zM16.22 19.926c-.056 0-.11 0-.16.003-.925.031-1.38.172-1.746.539-.42.42-.554.981-.528 2.207.02 1.018.15 1.448.553 1.838.204.198.415.312.738.4.132.037.426.086.556.094.056.003.365.007.686.009.494.003.63-.002.88-.034.61-.08 1.003-.278 1.285-.652.282-.374.393-.895.393-1.85 0-.688-.066-1.185-.2-1.506-.228-.547-.653-.863-1.31-.977a7.91 7.91 0 00-1.146-.072zM22.468 13.736c-.056 0-.11.001-.161.003-.925.032-1.38.172-1.746.54-.42.42-.554.98-.528 2.207.021 1.018.15 1.447.553 1.837.205.198.415.313.739.401.132.037.426.086.556.094.056.003.364.007.685.009.494.003.63-.002.88-.035.611-.078 1.004-.277 1.285-.651.282-.375.393-.895.393-1.85 0-.688-.065-1.185-.2-1.506-.228-.547-.653-.864-1.31-.977a7.91 7.91 0 00-1.146-.072z" fill="#00dace" /><path d="M9.937 13.736c-.056 0-.11.001-.161.003-.925.032-1.38.172-1.746.54-.42.42-.554.98-.528 2.207.021 1.018.15 1.447.553 1.837.204.198.415.313.738.401.133.037.427.086.556.094.056.003.365.007.686.009.494.003.63-.002.88-.035.61-.078 1.003-.277 1.285-.651.282-.375.393-.895.393-1.85 0-.688-.066-1.185-.2-1.506-.228-.547-.653-.864-1.31-.977a7.91 7.91 0 00-1.146-.072zM16.202 7.59c-.056 0-.11 0-.16.002-.926.032-1.38.172-1.747.54-.42.42-.553.98-.528 2.206.022 1.019.151 1.448.553 1.838.205.198.415.312.739.401.132.037.426.086.556.093.056.003.365.007.686.01.494.002.63-.003.879-.035.611-.079 1.004-.278 1.286-.652.282-.374.392-.895.393-1.85 0-.688-.066-1.185-.2-1.505-.228-.547-.653-.864-1.31-.978a7.91 7.91 0 00-1.147-.071z" fill="#00bcd4" /><g><path d="M15.612 0c-.36.003-.705.01-1.03.021C8.657.223 5.742 1.123 3.4 3.472.714 6.166-.145 9.758.019 17.607c.137 6.52.965 9.271 3.542 11.768 1.31 1.269 2.658 2 4.73 2.57.846.232 2.73.547 3.56.596.36.021 2.336.048 4.392.06 3.162.018 4.031-.016 5.63-.221 3.915-.504 6.43-1.778 8.234-4.173 1.806-2.396 2.514-5.731 2.516-11.846.001-4.407-.42-7.59-1.278-9.643-1.463-3.501-4.183-5.53-8.394-6.258-1.634-.283-4.823-.475-7.339-.46z" fill="#fff" /><path d="M16.202 13.758c-.056 0-.11 0-.16.003-.926.031-1.38.172-1.747.538-.42.421-.553.982-.528 2.208.022 1.018.151 1.447.553 1.837.205.198.415.313.739.402.132.036.426.085.556.093.056.003.365.007.686.009.494.003.63-.002.879-.035.611-.078 1.004-.277 1.286-.651.282-.374.392-.895.393-1.85 0-.688-.066-1.185-.2-1.506-.228-.547-.653-.864-1.31-.977a7.91 7.91 0 00-1.147-.072zM16.22 19.926c-.056 0-.11 0-.16.003-.925.031-1.38.172-1.746.539-.42.42-.554.981-.528 2.207.02 1.018.15 1.448.553 1.838.204.198.415.312.738.4.132.037.426.086.556.094.056.003.365.007.686.009.494.003.63-.002.88-.034.61-.08 1.003-.278 1.285-.652.282-.374.393-.895.393-1.85 0-.688-.066-1.185-.2-1.506-.228-.547-.653-.863-1.31-.977a7.91 7.91 0 00-1.146-.072zM22.468 13.736c-.056 0-.11.001-.161.003-.925.032-1.38.172-1.746.54-.42.42-.554.98-.528 2.207.021 1.018.15 1.447.553 1.837.205.198.415.313.739.401.132.037.426.086.556.094.056.003.364.007.685.009.494.003.63-.002.88-.035.611-.078 1.004-.277 1.285-.651.282-.375.393-.895.393-1.85 0-.688-.065-1.185-.2-1.506-.228-.547-.653-.864-1.31-.977a7.91 7.91 0 00-1.146-.072z" fill="#00dace" /><path d="M9.937 13.736c-.056 0-.11.001-.161.003-.925.032-1.38.172-1.746.54-.42.42-.554.98-.528 2.207.021 1.018.15 1.447.553 1.837.204.198.415.313.738.401.133.037.427.086.556.094.056.003.365.007.686.009.494.003.63-.002.88-.035.61-.078 1.003-.277 1.285-.651.282-.375.393-.895.393-1.85 0-.688-.066-1.185-.2-1.506-.228-.547-.653-.864-1.31-.977a7.91 7.91 0 00-1.146-.072zM16.202 7.59c-.056 0-.11 0-.16.002-.926.032-1.38.172-1.747.54-.42.42-.553.98-.528 2.206.022 1.019.151 1.448.553 1.838.205.198.415.312.739.401.132.037.426.086.556.093.056.003.365.007.686.01.494.002.63-.003.879-.035.611-.079 1.004-.278 1.286-.652.282-.374.392-.895.393-1.85 0-.688-.066-1.185-.2-1.505-.228-.547-.653-.864-1.31-.978a7.91 7.91 0 00-1.147-.071z" fill="#00bcd4" /></g>
+                </svg>
+                <h3 className="text-center text-2xl mb-8">FIRST TIME?</h3>
             </div>
+            <div className="text-left">
+                <button className="text-left w-full mb-3 rounded-xl bg-blue-gray-500 text-white focus:outline-none hover:bg-blue-400 px-4 py-4">
+                <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6 inline-block -mt-1 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 4H6a2 2 0 00-2 2v12a2 2 0 002 2h12a2 2 0 002-2V6a2 2 0 00-2-2h-2m-4-1v8m0 0l3-3m-3 3L9 8m-5 5h2.586a1 1 0 01.707.293l2.414 2.414a1 1 0 00.707.293h3.172a1 1 0 00.707-.293l2.414-2.414a1 1 0 01.707-.293H20" />
+                </svg>
+                LOAD SAMPLE DATA
+                </button>
+                <button className="text-left w-full rounded-xl bg-blue-gray-500 text-white focus:outline-none hover:bg-teal-400 px-4 py-4">
+                <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6 inline-block -mt-1 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M20 13V6a2 2 0 00-2-2H6a2 2 0 00-2 2v7m16 0v5a2 2 0 01-2 2H6a2 2 0 01-2-2v-5m16 0h-2.586a1 1 0 00-.707.293l-2.414 2.414a1 1 0 01-.707.293h-3.172a1 1 0 01-.707-.293l-2.414-2.414A1 1 0 006.586 13H4" />
+                </svg>
+                LEAVE IT EMPTY
+                </button>
+            </div>
+            </div>
+        </div>
     )
 }
 
 const ProductDisplay = (props) => {
     const [busqueda, setBusqueda] = useState("");
-    const [listaProductos, setListaProductos] = useState([]);
-    const [listaTodosProductos, setListaTodosProductos] = useState([]);
+    const [productosFiltrados, setProductosFiltrados] = useState([]);
+    const productos = useContext(ProductsContext);
 
-    useEffect(() => {
-        const fetchProductos = () => {
-            axios.get('http://localhost:8080/api/productos').then(
-                (res) => {
-                    setListaTodosProductos(res.data.message);
-                    setListaProductos(res.data.message);
-                }
-            );
+    // useEffect(() => {
+    //     const fetchProductos = () => {
+    //         axios.get('http://localhost:8080/api/productos').then(
+    //             (res) => {
+    //                 setProductos(res.data.message);
+    //                 console.log("useffect")
+    //             }
+    //         );
             
-        };
-        fetchProductos();
-    }, [])
+    //     };
+    //     fetchProductos();
+    // }, [])
 
     return (
         <div className="flex flex-col bg-gray-100 h-full w-full py-4">
             <div className="flex px-2 flex-row relative">
-                <div className="absolute left-5 top-3 px-2 py-2 rounded-full bg-cyan-500 text-white">
+                <div className="absolute left-5 top-3 px-2 py-2 rounded-full bg-blue-300 text-white">
                 <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
                 </svg>
@@ -223,10 +252,10 @@ const ProductDisplay = (props) => {
             <div className="h-full overflow-hidden mt-4">
                 <div className="h-full overflow-y-auto px-2">
                     {/* Base de datos vacía */}
-                    {listaTodosProductos.length <= 0 ? <BBDDVacia/> : null}
+                    {productos.length <= 0 ? <BBDDVacia/> : null}
                     
                     {/* Producto no encontrado en la lista de productos */}
-                    {listaProductos.length <= 0 && listaTodosProductos.length > 0 ? <ProductoNoEncontrado/> : <ProductosEncontrados productos={listaProductos}/>}
+                    {productosFiltrados.length <= 0 && productos.length > 0 ? <ProductoNoEncontrado/> : <GenerarProductsCards productos={productosFiltrados}/>}
                 </div>
             </div>
         </div>
@@ -265,15 +294,16 @@ const ProductoNoEncontrado = () => {
     )
 }
 
-const ProductosEncontrados = (props) => {
+const GenerarProductsCards = (props) => {
+    const Productos = useContext(ProductsProvider);
+
     return(
         <div className="grid grid-cols-4 gap-4 pb-3">
             {props.productos.map((producto) => {
-                console.log(producto.img);
                 var base64Img = ConvertBufferToBase64(producto.img);
                 return (
-                    <button id={producto._id} onClick={(e)=> console.log(e.currentTarget.id) }>
-                        <ProductCard nombreProducto={producto.nombre} precioProducto={producto.precioVenta} imagenProducto={`data:image/jpeg;base64,${base64Img}`}/>
+                    <button id={producto._id} onClick={(e)=> console.log("yey") }>
+                        <ProductCard nombreProducto={producto.nombre} precioProducto={producto.precioVenta} imagenProducto={`data:image/(png|jpeg);base64,${base64Img}`}/>
                     </button>
                 );
             })}
@@ -312,7 +342,7 @@ const CarritoConProductos = (props) => {
                 <svg xmlns="http://www.w3.org/2000/svg" className="h-6 inline-block" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z" />
                 </svg>
-                <div className="text-center absolute bg-cyan-500 text-white w-5 h-5 text-xs p-0 leading-5 rounded-full -right-2 top-3"/>
+                <div className="text-center absolute bg-blue-300 text-white w-5 h-5 text-xs p-0 leading-5 rounded-full -right-2 top-3"/>
                 {` ${productos.length}`}
                 </div>
                 <div className="flex-grow px-8 text-right text-lg py-4 relative">
@@ -325,8 +355,35 @@ const CarritoConProductos = (props) => {
                 </div>
             </div>
             <div className="flex-1 w-full px-4 overflow-auto">
-                {/* <template x-for="item in cart" :key="item.productId" /> */}
+                {/* Añadir producto al carrito (fila con información y cantidad)*/}
             </div>
         </div>
     )
+}
+
+const ProductoEnCarrito = (props) => {
+    return(
+        <div class="select-none mb-3 bg-blue-gray-50 rounded-lg w-full text-blue-gray-700 py-2 px-2 flex justify-center">
+            <img alt="" class="rounded-lg h-10 w-10 bg-white shadow mr-2" />
+            <div class="flex-grow">
+            <h5 class="text-sm" x-text="item.name"></h5>
+            <p class="text-xs block" x-text="priceFormat(item.price)"></p>
+            </div>
+            <div class="py-1">
+            <div class="w-28 grid grid-cols-3 gap-2 ml-2">
+                <button class="rounded-lg text-center py-1 text-white bg-blue-gray-600 hover:bg-blue-gray-700 focus:outline-none">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-3 inline-block" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 12H4" />
+                </svg>
+                </button>
+                <input type="text" class="bg-white rounded-lg text-center shadow focus:outline-none focus:shadow-lg text-sm" />
+                <button class="rounded-lg text-center py-1 text-white bg-blue-gray-600 hover:bg-blue-gray-700 focus:outline-none">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-3 inline-block" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
+                </svg>
+                </button>
+            </div>
+            </div>
+        </div>
+    );
 }
