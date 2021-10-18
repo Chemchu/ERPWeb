@@ -1,7 +1,7 @@
 import React, {useState, useEffect, useContext} from 'react';
 import ProductCard from './productCard';
 import axios from 'axios';
-import {POSProvider, useDBProducts, usePrice, useConsumerMoney} from './productsContext';
+import {POSProvider, useDBProducts, usePrice, useConsumerMoney, useSelectedProducts} from './productsContext';
 
 export const POS = () => {
     return(
@@ -16,7 +16,7 @@ const POSComponent = () => {
     const [showResumenCompra, setShowResumenCompra] = useState(false);
     const [numProductosCarrito, setNumProductosCarrito] = useState(0);
 
-    const [productos, setProductos] = useDBProducts();
+    const [productos, SetProductos] = useSelectedProducts();
     const [precioTotal, setPrecioTotal] = usePrice();
     const [dineroEntregado, setDineroEntregado] = useConsumerMoney();
 
@@ -32,7 +32,8 @@ const POSComponent = () => {
                 <div className="w-5/12 flex flex-col bg-gray-100 h-full pr-4 pl-2 py-4">
                     <div className="bg-white rounded-3xl flex flex-col h-full shadow">
                         {/* En caso de carrito vacío o con productos */}
-                        {productos.length <= 0 ? <CarritoVacio/> : null}
+                        {console.log(productos.length)}
+                        {productos.length <= 0 ? <CarritoVacio/> : <CarritoConProductos/>}
                         
                         {/* Información del pago */}
                         <div className="select-none h-auto w-full text-center pt-3 pb-4 px-4">
@@ -40,7 +41,7 @@ const POSComponent = () => {
                             <div>TOTAL</div>
                             <div className="text-right w-full">
                                 {/*Cambiar en caso de que la cesta tenga productos y calcular el valor total*/}
-                                {numProductosCarrito <= 0 ? 0 : precioTotal} €
+                                {numProductosCarrito < 0 ? 0 : precioTotal} €
                             </div>
                         </div>
                         <div className="mb-3 text-gray-700 px-3 pt-2 pb-3 rounded-lg bg-gray-200">
@@ -208,15 +209,15 @@ const ModalGenerico = (props) => {
 }
 
 const ProductDisplay = (props) => {
-    const [productosFiltrados, setProductosFiltrados] = useState([]);
-    const [productos, setProductos] = useDBProducts();
+    const [productosFiltrados, SetProductosFiltrados] = useState([]);
+    const [allProductos, SetAllProductos] = useDBProducts();
 
     useEffect(() => {
         const fetchProductos = () => {
             axios.get('http://localhost:8080/api/productos').then(
                 (res) => {
-                    setProductos([...res.data.message]);
-                    setProductosFiltrados([...res.data.message]);
+                    SetAllProductos([...res.data.message]);
+                    SetProductosFiltrados([...res.data.message]);
                 }
             );
             
@@ -225,11 +226,11 @@ const ProductDisplay = (props) => {
     }, [])
 
     var filtrarProd = (cadena) => {
-        var prodFiltrados = productos.filter(prod => prod.nombre.toLowerCase().includes(cadena.toLowerCase()));
-        
-        if(prodFiltrados.length <= 0) prodFiltrados = productos.filter(prod => prod.ean.some(r => r == cadena));
+        var prodFiltrados = allProductos.filter(prod => prod.nombre.toLowerCase().includes(cadena.toLowerCase()));
 
-        setProductosFiltrados(prodFiltrados);
+        if(prodFiltrados.length <= 0) prodFiltrados = allProductos.filter(prod => prod.ean.some(r => r == cadena));
+
+        SetProductosFiltrados(prodFiltrados);
     }
 
     return (
@@ -245,10 +246,10 @@ const ProductDisplay = (props) => {
             <div className="h-full overflow-hidden mt-4">
                 <div className="h-full overflow-y-auto px-2">
                     {/* Base de datos vacía */}
-                    {productos.length <= 0 || !productos  ? <BBDDVacia/> : null}
+                    {allProductos.length <= 0 || !allProductos  ? <BBDDVacia/> : null}
                     
                     {/* Producto no encontrado en la lista de productos */}
-                    {productosFiltrados.length <= 0 && productos.length > 0 ? <ProductoNoEncontrado/> : <GenerarProductsCards productos={productosFiltrados}/>}
+                    {productosFiltrados.length <= 0 && allProductos.length > 0 ? <ProductoNoEncontrado/> : <GenerarProductsCards productos={productosFiltrados}/>}
                 </div>
             </div>
         </div>
@@ -293,8 +294,8 @@ const GenerarProductsCards = (props) => {
             {props.productos.map((prod) => {
                 var base64Img = ConvertBufferToBase64(prod.img);
                 return (
-                    <button id={prod._id} onClick={(e)=> console.log("yey") }>
-                        <ProductCard nombreProducto={prod.nombre} precioProducto={prod.precioVenta} imagenProducto={`data:image/(png|jpeg);base64,${base64Img}`}/>
+                    <button key={prod._id} id={prod._id} onClick={(e)=> console.log("yey") }>
+                        <ProductCard  nombreProducto={prod.nombre} precioProducto={prod.precioVenta} imagenProducto={`data:image/(png|jpeg);base64,${base64Img}`}/>
                     </button>
                 );
             })}
