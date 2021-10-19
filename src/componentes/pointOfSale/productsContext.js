@@ -36,17 +36,19 @@ export const POSProvider = (props) => {
     }
 
     const SetProductosSeleccionados = (newProductToAdd) => {
-        //if(Object.keys(newProductToAdd).length === 0) {setProductosSeleccionados([]); return;}
+        if(Object.keys(newProductToAdd).length === 0) {setProductosSeleccionados([]); return;}
         
-        var prodsRepes = productosSeleccionados.filter(p => p._id == newProductToAdd._id);
-        var prodsDiferentes = productosSeleccionados.filter(p => p._id != newProductToAdd._id);
-
-        if(prodsRepes.length > 0) {
-            prodsDiferentes.push({_id: newProductToAdd._id, cantidad: prodsRepes.length + 1})
-            setProductosSeleccionados([prodsDiferentes]);
+        let prodsRepes = productosSeleccionados.filter(p => p._id == newProductToAdd._id);
+        let prodsDiferentes = productosSeleccionados.filter(p => p._id != newProductToAdd._id);
+        
+        if(prodsRepes.length > 0) {              
+            const newUpdatedObject = {_id: newProductToAdd._id, cantidad: prodsRepes[0].cantidad + parseInt(1)};
+            prodsDiferentes.push(newUpdatedObject);
+            setProductosSeleccionados(prodsDiferentes);
         }
         else {
-            setProductosSeleccionados([...productosSeleccionados, {_id: newProductToAdd._id, cantidad: 1}])
+            productosSeleccionados.push({_id: newProductToAdd._id, cantidad: parseInt(1)});
+            setProductosSeleccionados([...productosSeleccionados])
         }
     }
 
