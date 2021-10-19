@@ -17,36 +17,35 @@ export const ProductCard = (props) => {
 
 
 export const ProductSelectedCard = (props) => {
-    //const [cantidad, setCantidad] = useState(1);
-    const [productos, SetProductos] = useSelectedProducts();
+    const [productos, AddProductos] = useSelectedProducts();
 
-    {return productos.filter(p => p._id == props.id).cantidad > 0 ? 
+    {return productos.filter(p => p._id == props.id)[0].cantidad > 0 ?
         <div className="select-none mb-3 bg-gray-200 rounded-lg w-full py-2 px-2 flex justify-center">
             <img alt="" className="rounded-lg h-10 w-10 bg-white shadow mr-2" />
             <div className="flex-grow">
             <h5 className="text-sm">{props.nombreProducto}</h5>
-            <p className="text-xs block">{props.precioVenta}</p>
+            <p className="text-xs block">{props.precioVenta} €</p>
             </div>
             <div className="py-1">
             <div className="w-28 grid grid-cols-3 gap-2 ml-2">
                 <button className="rounded-lg text-center py-1 text-white bg-gray-500 hover:bg-gray-700 focus:outline-none" 
                 onClick={() => {
-                    var prod = productos.filter(p => p._id == props._id);
-                    prod.cantidad = parseInt(prod.cantidad) - 1;
-                    SetProductos(prod);
+                    AddProductos({_id: props.id, cantidad: parseInt(- 1)});
                 }}>
                 <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-3 inline-block" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M20 12H4" />
                 </svg>
                 </button>
-                <input type="text" inputMode="numeric" className="bg-white rounded-lg text-center shadow focus:outline-none focus:shadow-lg text-sm"  
+                <input type="text" inputMode="numeric" value={props.cantidad} className="bg-white rounded-lg text-center shadow focus:outline-none focus:shadow-lg text-sm"  
                     onChange={(e) =>{ 
                         console.log(productos);
-                        var prod = productos.filter(p => p._id == props._id);
-                        prod.cantidad = parseInt(e.target.value);
-                        SetProductos(prod);
+                        AddProductos({_id: props.id, cantidad: parseInt(e.target.value)});
                     }} />
-                <button className="rounded-lg text-center py-1 text-white bg-gray-500 hover:bg-gray-700 focus:outline-none" onClick={() => SetProductos({_id: props.id, cantidad: 1})}>
+                <button id={props.id} className="rounded-lg text-center py-1 text-white bg-gray-500 hover:bg-gray-700 focus:outline-none" 
+                onClick={() => {
+                    console.log()
+                    AddProductos({_id: props.id, cantidad: parseInt(1)});
+                }}>
                 <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-3 inline-block" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
                 </svg>

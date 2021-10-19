@@ -35,19 +35,26 @@ export const POSProvider = (props) => {
         setAllProductos(prods);
     }
 
-    const SetProductosSeleccionados = (newProductToAdd) => {
-        if(Object.keys(newProductToAdd).length === 0) {setProductosSeleccionados([]); return;}
+    const SetProductosSeleccionados = (productRawObject) => {
+        if(Object.keys(productRawObject).length === 0) {setProductosSeleccionados([]); return;}
+
+        let prodsRepes = productosSeleccionados.filter(p => p._id == productRawObject._id);
         
-        let prodsRepes = productosSeleccionados.filter(p => p._id == newProductToAdd._id);
-        let prodsDiferentes = productosSeleccionados.filter(p => p._id != newProductToAdd._id);
-        
+        if(prodsRepes && productRawObject.cantidad <= 0) 
+        {
+            if(prodsRepes[0].cantidad == 1) {setProductosSeleccionados(productosSeleccionados.filter(p => p._id != productRawObject._id)); return;}
+        }
+
         if(prodsRepes.length > 0) {              
-            const newUpdatedObject = {_id: newProductToAdd._id, cantidad: prodsRepes[0].cantidad + parseInt(1)};
-            prodsDiferentes.push(newUpdatedObject);
-            setProductosSeleccionados(prodsDiferentes);
+            const prodCant = productRawObject.cantidad < 0 ? parseInt(prodsRepes[0].cantidad - 1) : parseInt(prodsRepes[0].cantidad + 1); 
+            const prodToAdd = {_id: productRawObject._id, cantidad: prodCant};
+
+            const index = productosSeleccionados.findIndex(p => p._id == productRawObject._id);
+            productosSeleccionados[index] = prodToAdd;
+            setProductosSeleccionados([...productosSeleccionados]);
         }
         else {
-            productosSeleccionados.push({_id: newProductToAdd._id, cantidad: parseInt(1)});
+            productosSeleccionados.push({_id: productRawObject._id, cantidad: parseInt(1)});
             setProductosSeleccionados([...productosSeleccionados])
         }
     }

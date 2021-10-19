@@ -358,7 +358,7 @@ const CarritoConProductos = (props) => {
                 {/* {console.log(productos)} */}
                 {productos.map(product => {
                     const foundProd = allProducts.find(dbProd => dbProd._id == product._id);
-                    if(foundProd) return <ProductSelectedCard key={foundProd._id} id={foundProd._id} nombreProducto={foundProd.nombre} precioVenta={foundProd.precioVenta} /> ;
+                    if(foundProd) return <ProductSelectedCard key={foundProd._id} id={foundProd._id} nombreProducto={foundProd.nombre} precioVenta={foundProd.precioVenta} cantidad={product.cantidad} /> ;
                 })}
             </div>
         </div>
