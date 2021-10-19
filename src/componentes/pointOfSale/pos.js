@@ -1,7 +1,7 @@
 import React, {useState, useEffect, useContext} from 'react';
-import ProductCard from './productCard';
-import axios from 'axios';
+import {ProductCard, ProductSelectedCard} from './productCard';
 import {POSProvider, useDBProducts, usePrice, useConsumerMoney, useSelectedProducts} from './productsContext';
+import axios from 'axios';
 
 export const POS = () => {
     return(
@@ -32,7 +32,6 @@ const POSComponent = () => {
                 <div className="w-5/12 flex flex-col bg-gray-100 h-full pr-4 pl-2 py-4">
                     <div className="bg-white rounded-3xl flex flex-col h-full shadow">
                         {/* En caso de carrito vacío o con productos */}
-                        {console.log(productos.length)}
                         {productos.length <= 0 ? <CarritoVacio/> : <CarritoConProductos/>}
                         
                         {/* Información del pago */}
@@ -289,13 +288,19 @@ const ProductoNoEncontrado = () => {
 }
 
 const GenerarProductsCards = (props) => {
+    const [productos, SetProductos] = useSelectedProducts();
+
+    const removeProductoCarrito = (productoID) => {
+        SetProductos(productos.filter(prodId => prodId !== productoID));
+    }
+
     return(
         <div className="grid grid-cols-4 gap-4 pb-3">
             {props.productos.map((prod) => {
                 var base64Img = ConvertBufferToBase64(prod.img);
                 return (
-                    <button key={prod._id} id={prod._id} onClick={(e)=> console.log("yey") }>
-                        <ProductCard  nombreProducto={prod.nombre} precioProducto={prod.precioVenta} imagenProducto={`data:image/(png|jpeg);base64,${base64Img}`}/>
+                    <button key={prod._id} id={prod._id} onClick={(e)=> {SetProductos(e.currentTarget.id);} }>
+                        <ProductCard nombreProducto={prod.nombre} precioProducto={prod.precioVenta} imagenProducto={`data:image/(png|jpeg);base64,${base64Img}`}/>
                     </button>
                 );
             })}
@@ -325,7 +330,9 @@ const CarritoVacio = () => {
 }
 
 const CarritoConProductos = (props) => {
-    const [productos, setproductos] = useState([])
+    const [productos, SetProductos] = useSelectedProducts();
+    const [allProducts, SetAllProducts] = useDBProducts();
+
     return (
         <div x-show="cart.length > 0" className="flex-1 flex flex-col overflow-auto">
             <div className="h-16 text-center flex justify-center">
@@ -334,12 +341,12 @@ const CarritoConProductos = (props) => {
                 <svg xmlns="http://www.w3.org/2000/svg" className="h-6 inline-block" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z" />
                 </svg>
-                <div className="text-center absolute bg-blue-300 text-white w-5 h-5 text-xs p-0 leading-5 rounded-full -right-2 top-3"/>
+                <div className="text-center absolute text-white w-5 h-5 text-xs p-0 leading-5 rounded-full -right-2 top-3"/>
                 {` ${productos.length}`}
                 </div>
                 <div className="flex-grow px-8 text-right text-lg py-4 relative">
                 {/* Boton basura */}
-                <button className="text-blue-gray-300 hover:text-pink-500 focus:outline-none">
+                <button className="text-blue-gray-300 hover:text-pink-500 focus:outline-none" onClick={() => {SetProductos({})}}>
                     <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6 inline-block" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
                     </svg>
@@ -348,34 +355,12 @@ const CarritoConProductos = (props) => {
             </div>
             <div className="flex-1 w-full px-4 overflow-auto">
                 {/* Añadir producto al carrito (fila con información y cantidad)*/}
+                {console.log(productos)}
+                {productos.map(product => {
+                    const foundProd = allProducts.find(dbProd => dbProd._id == product._id);
+                    if(foundProd) return <ProductSelectedCard key={product} nombreProducto={foundProd.nombre} precioVenta={foundProd.precioVenta} cantidad={foundProd.cantidad} /> ;
+                })}
             </div>
         </div>
     )
-}
-
-const ProductoEnCarrito = (props) => {
-    return(
-        <div class="select-none mb-3 bg-blue-gray-50 rounded-lg w-full text-blue-gray-700 py-2 px-2 flex justify-center">
-            <img alt="" class="rounded-lg h-10 w-10 bg-white shadow mr-2" />
-            <div class="flex-grow">
-            <h5 class="text-sm" x-text="item.name"></h5>
-            <p class="text-xs block" x-text="priceFormat(item.price)"></p>
-            </div>
-            <div class="py-1">
-            <div class="w-28 grid grid-cols-3 gap-2 ml-2">
-                <button class="rounded-lg text-center py-1 text-white bg-blue-gray-600 hover:bg-blue-gray-700 focus:outline-none">
-                <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-3 inline-block" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 12H4" />
-                </svg>
-                </button>
-                <input type="text" class="bg-white rounded-lg text-center shadow focus:outline-none focus:shadow-lg text-sm" />
-                <button class="rounded-lg text-center py-1 text-white bg-blue-gray-600 hover:bg-blue-gray-700 focus:outline-none">
-                <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-3 inline-block" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
-                </svg>
-                </button>
-            </div>
-            </div>
-        </div>
-    );
 }

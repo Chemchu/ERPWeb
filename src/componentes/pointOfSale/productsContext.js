@@ -35,6 +35,21 @@ export const POSProvider = (props) => {
         setAllProductos(prods);
     }
 
+    const SetProductosSeleccionados = (newProductToAdd) => {
+        //if(Object.keys(newProductToAdd).length === 0) {setProductosSeleccionados([]); return;}
+        
+        var prodsRepes = productosSeleccionados.filter(p => p._id == newProductToAdd._id);
+        var prodsDiferentes = productosSeleccionados.filter(p => p._id != newProductToAdd._id);
+
+        if(prodsRepes.length > 0) {
+            prodsDiferentes.push({_id: newProductToAdd._id, cantidad: prodsRepes.length + 1})
+            setProductosSeleccionados([prodsDiferentes]);
+        }
+        else {
+            setProductosSeleccionados([...productosSeleccionados, {_id: newProductToAdd._id, cantidad: 1}])
+        }
+    }
+
     const SetPrecioTotal = (precio) => {
         setPrecioTotal(precio);
     }
@@ -46,7 +61,7 @@ export const POSProvider = (props) => {
     return (
         <div>
             <ProductsContext.Provider value={[allProductos, SetAllProducts]}>
-                <SelectedProductsContext.Provider value={[productosSeleccionados, setProductosSeleccionados]}>
+                <SelectedProductsContext.Provider value={[productosSeleccionados, SetProductosSeleccionados]}>
                     <PriceContext.Provider value={[precioTotal, SetPrecioTotal]}>
                         <ConstumerMoneyContext.Provider value={[dineroEntregado, SetDineroEntregado]}>
                             {props.children}
