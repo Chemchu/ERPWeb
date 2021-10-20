@@ -65,7 +65,7 @@ const POSComponent = () => {
                         </div>
                         {/* El cambio debe aparecer cuando el dinero entregado sea mayor q cero */}
                         {
-                            dineroEntregado > 0 ?
+                            dineroEntregado > 0 && parseFloat(dineroEntregado - precioTotal).toFixed(2) >= 0 ?
                             <div className="flex mb-3 text-lg font-semibold bg-green-100 rounded-lg py-2 px-3">
                                 <div className="text-green-600">CAMBIO</div>
                                 <div className="text-right flex-grow text-green-600" text="buenasss">
