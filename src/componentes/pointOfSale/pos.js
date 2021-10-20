@@ -14,7 +14,6 @@ export const POS = () => {
 const POSComponent = () => {
     const [showGenericModal, setGenericModal] = useState(false);
     const [showResumenCompra, setShowResumenCompra] = useState(false);
-    const [numProductosCarrito, setNumProductosCarrito] = useState(0);
 
     const [productos, SetProductos] = useSelectedProducts();
     const [precioTotal, setPrecioTotal] = usePrice();
@@ -40,7 +39,7 @@ const POSComponent = () => {
                             <div>TOTAL</div>
                             <div className="text-right w-full">
                                 {/*Cambiar en caso de que la cesta tenga productos y calcular el valor total*/}
-                                {numProductosCarrito < 0 ? 0 : precioTotal} €
+                                {productos.length <= 0 ? 0 : precioTotal} €
                             </div>
                         </div>
                         <div className="mb-3 text-gray-700 px-3 pt-2 pb-3 rounded-lg bg-gray-200">
@@ -48,8 +47,8 @@ const POSComponent = () => {
                             <div className="flex-grow text-left">EFECTIVO</div>
                             <div className="flex text-right">
                                 <div className="mr-2">€</div>
-                                <input className="w-28 text-right bg-white shadow rounded-lg 
-                                    focus:bg-white focus:shadow-lg px-2 focus:outline-none" onChange={(e) => setDineroEntregado(e.target.value)} value={dineroEntregado}/>
+                                <input type="text" inputMode="numeric" className="w-28 text-right bg-white shadow rounded-lg 
+                                    focus:bg-white focus:shadow-lg px-2 focus:outline-none" onChange={(e) => !isNaN(e.target.value) ? setDineroEntregado(e.target.value) : 0} value={dineroEntregado}/>
                             </div>
                             </div>
                             <hr className="my-2" />
@@ -70,7 +69,7 @@ const POSComponent = () => {
                             <div className="flex mb-3 text-lg font-semibold bg-green-100 rounded-lg py-2 px-3">
                                 <div className="text-green-600">CAMBIO</div>
                                 <div className="text-right flex-grow text-green-600" text="buenasss">
-                                    {+(dineroEntregado)-(precioTotal)} €
+                                    {parseFloat(dineroEntregado - precioTotal).toFixed(2)} €
                                 </div>
                             </div>
                             :
@@ -90,7 +89,7 @@ const POSComponent = () => {
 
                         {/* Mostrar en caso de que el cambio sea exactamente 0 y hayan productos en el carrito */}
                         {
-                            dineroEntregado - precioTotal == 0 && numProductosCarrito > 0 ? 
+                            dineroEntregado - precioTotal == 0 && productos.length > 0 ? 
                             <div>
                                 <div x-show="change == 0 && cart.length > 0" className="flex justify-center mb-3 text-lg font-semibold bg-blue-50 text-blue-700 rounded-lg py-2 px-3">
                                     <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6 inline-block" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -297,23 +296,14 @@ const GenerarProductsCards = (props) => {
     return(
         <div className="grid grid-cols-4 gap-4 pb-3">
             {props.productos.map((prod) => {
-                var base64Img = ConvertBufferToBase64(prod.img);
                 return (
-                    <button key={prod._id} id={prod._id} onClick={(e)=> {SetProductos({_id: e.currentTarget.id, cantidad: 1});} }>
-                        <ProductCard nombreProducto={prod.nombre} precioProducto={prod.precioVenta} imagenProducto={`data:image/(png|jpeg);base64,${base64Img}`}/>
+                    <button key={prod._id} id={prod._id} onClick={(e)=> {SetProductos({_id: e.currentTarget.id, cantidad: 1, valorEscrito: false});} }>
+                        <ProductCard nombreProducto={prod.nombre} precioProducto={prod.precioVenta} imagenProducto={prod.img}/>
                     </button>
                 );
             })}
         </div>
     );
-}
-
-function ConvertBufferToBase64(buffer) {
-    var res = ""
-    if(buffer) {
-        return Buffer.from(buffer.data, 'binary').toString('base64');
-    }
-    else return res;
 }
 
 const CarritoVacio = () => {
@@ -332,6 +322,7 @@ const CarritoVacio = () => {
 const CarritoConProductos = (props) => {
     const [productos, SetProductos] = useSelectedProducts();
     const [allProducts, SetAllProducts] = useDBProducts();
+    const [precioTotal, SetPrecioTotal] = usePrice();
 
     return (
         <div x-show="cart.length > 0" className="flex-1 flex flex-col overflow-auto">
@@ -355,10 +346,9 @@ const CarritoConProductos = (props) => {
             </div>
             <div className="flex-1 w-full px-4 overflow-auto">
                 {/* Añadir producto al carrito (fila con información y cantidad)*/}
-                {/* {console.log(productos)} */}
                 {productos.map(product => {
                     const foundProd = allProducts.find(dbProd => dbProd._id == product._id);
-                    if(foundProd) return <ProductSelectedCard key={foundProd._id} id={foundProd._id} nombreProducto={foundProd.nombre} precioVenta={foundProd.precioVenta} cantidad={product.cantidad} /> ;
+                    if(foundProd) return <ProductSelectedCard key={foundProd._id} id={foundProd._id} nombreProducto={foundProd.nombre} precioVenta={foundProd.precioVenta} cantidad={product.cantidad} img={foundProd.img} /> ;
                 })}
             </div>
         </div>
