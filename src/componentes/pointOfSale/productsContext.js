@@ -101,9 +101,7 @@ export const POSProvider = (props) => {
         var precioTotal = productosEnCarrito.reduce((total, prodActual) => {
             return total + (prodActual.cantidad * productosEnBD.find(p => p._id == prodActual._id).precioVenta); 
         }, 0);
-
-        console.log(precioTotal);
-        setPrecioTotal(precioTotal);
+        setPrecioTotal(parseFloat(precioTotal).toFixed(2));
     }
 
     const SetDineroEntregado = (dinero) => {
