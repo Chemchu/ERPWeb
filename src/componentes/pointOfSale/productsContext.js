@@ -33,7 +33,7 @@ export const POSProvider = (props) => {
 
     useEffect(() => {
         var precioTotal = productosSeleccionados.reduce((total, prodActual) => {
-            return total + (prodActual.cantidad * allProductos.find(p => p._id == prodActual._id).precioVenta); 
+            return total + ((prodActual.cantidad * allProductos.find(p => p._id == prodActual._id).precioVenta) * parseFloat(isNaN(prodActual.dto) ? 1 : 1 - (prodActual.dto/100))); 
         }, 0);
         setPrecioTotal(parseFloat(precioTotal).toFixed(2));
     },[productosSeleccionados]);
@@ -62,14 +62,14 @@ export const POSProvider = (props) => {
                 const prodCant = productRawObject.cantidad < 0 ? parseInt(prodsRepes[0].cantidad - 1) : parseInt(prodsRepes[0].cantidad + 1); 
 
                 // Crea el objeto del producto a añadir
-                let prodToAdd = {_id: productRawObject._id, cantidad: prodCant};
+                let prodToAdd = {_id: productRawObject._id, cantidad: prodCant, dto: productRawObject.dto};
                 
                 // En caso de que la cantidad se esté cambiando por teclado
                 if(productRawObject.valorEscrito) {
                     // Si se escribe 0, elimina dicho producto
                     if(productRawObject.cantidad == 0) { setProductosSeleccionados(finalList);  return; }
                     // En caso de que reciba un NaN, pone un "" en su lugar
-                    if(isNaN(productRawObject.cantidad)) prodToAdd = {_id: productRawObject._id, cantidad: "", valorEscrito: true};
+                    if(isNaN(productRawObject.cantidad)) prodToAdd = {_id: productRawObject._id, cantidad: "", valorEscrito: true, dto: productRawObject.dto};
                     // En caso contrario, el objeto sirve para añadir al carrito
                     else prodToAdd = productRawObject;
                 }
@@ -81,7 +81,7 @@ export const POSProvider = (props) => {
             }
             // En caso de que este producto no esté ya en carrito, se añade
             else {
-                var prodToList = {_id: productRawObject._id, cantidad: parseInt(1)};
+                var prodToList = {_id: productRawObject._id, cantidad: parseInt(1), dto: productRawObject.dto};
                 productosSeleccionados.push(prodToList);
                 setProductosSeleccionados([...productosSeleccionados])
             }

@@ -116,7 +116,8 @@ const POSComponent = () => {
                                     productos.length > 0 ? 
                                     <div className="grid grid-cols-1 gap-2 mt-2">
                                     {/* <button className="bg-red-400 h-12 shadow text-white rounded-lg hover:shadow-lg hover:bg-red-500 focus:outline-none" onClick={() => {setDineroEntregado(0)}}>Borrar</button> */}
-                                    <button className={botonPagarColores} onClick={() => {}}>{dineroEntregado - precioTotal >= 0  ? "PAGAR" : "DINERO INSUFICIENTE"}</button>
+                                        <button className={botonPagarColores} onClick={() => {}}>{dineroEntregado - precioTotal >= 0  ? "EFECTIVO" : "DINERO INSUFICIENTE"}</button>
+                                        <button className="bg-blue-500 h-12 shadow rounded-lg hover:shadow-lg hover:bg-blue-600 text-white focus:outline-none" onClick={() => {}}>TARJETA</button>
                                     </div>
                                     :
                                     null
