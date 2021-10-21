@@ -19,13 +19,37 @@ const POSComponent = () => {
     const [precioTotal, setPrecioTotal] = usePrice();
     const [dineroEntregado, setDineroEntregado] = useConsumerMoney();
 
+    const [allProductos, SetAllProductos] = useDBProducts();
+    const [productosFiltrados, SetProductosFiltrados] = useState([]);
+
+    useEffect(() => {
+        const fetchProductos = () => {
+            const erpBackURL = process.env.REACT_APP_ERP_BACKURL;
+            axios.get(`${erpBackURL}api/productos`).then(
+                (res) => {
+                    SetAllProductos([...res.data.message]);
+                    SetProductosFiltrados([...res.data.message]);
+                }
+            );
+            
+        };
+        fetchProductos();
+    }, []);
+
+    useEffect(() => {
+        var precioTotal = productos.reduce((total, prodActual) => {
+            return total + (prodActual.cantidad * allProductos.find(p => p._id == prodActual._id).precioVenta); 
+        }, 0);
+        setPrecioTotal(parseFloat(precioTotal).toFixed(2));
+    },[productos]);
+
     return(
         <div>
             <div className="hide-print flex flex-row h-screen antialiased text-gray-800">
             {/* Página principal del POS */}
             <div className="flex-grow flex">
                 {/* Menú tienda, donde se muestran los productos */}
-                <ProductDisplay/>
+                <ProductDisplay listFiltrados={[productosFiltrados,SetProductosFiltrados]} listaTodosProductos={[allProductos, SetAllProductos]}/>
                 {/* Menú tienda */}
                 {/* Sidebar derecho */}
                 <div className="w-5/12 flex flex-col bg-gray-100 h-full pr-4 pl-2 py-4">
@@ -207,22 +231,8 @@ const ModalGenerico = (props) => {
 }
 
 const ProductDisplay = (props) => {
-    const [productosFiltrados, SetProductosFiltrados] = useState([]);
-    const [allProductos, SetAllProductos] = useDBProducts();
-
-    useEffect(() => {
-        const fetchProductos = () => {
-            const erpBackURL = process.env.REACT_APP_ERP_BACKURL;
-            axios.get(`${erpBackURL}api/productos`).then(
-                (res) => {
-                    SetAllProductos([...res.data.message]);
-                    SetProductosFiltrados([...res.data.message]);
-                }
-            );
-            
-        };
-        fetchProductos();
-    }, [])
+    const [productosFiltrados, SetProductosFiltrados] = props.listFiltrados;
+    const [allProductos, SetAllProductos] = props.listaTodosProductos;
 
     var filtrarProd = (cadena) => {
         var prodFiltrados = allProductos.filter(prod => prod.nombre.toLowerCase().includes(cadena.toLowerCase()));

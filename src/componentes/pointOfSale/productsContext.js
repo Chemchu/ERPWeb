@@ -31,8 +31,8 @@ export const POSProvider = (props) => {
     const [precioTotal, setPrecioTotal] = useState(0);
     const [dineroEntregado, setDineroEntregado] = useState(0);
 
-    const SetAllProducts = (prods) => {
-        setAllProductos(prods);
+    const SetAllProducts = (productos) => {
+        setAllProductos(productos);
     }
 
     const SetProductosSeleccionados = (productRawObject) => {
@@ -53,9 +53,6 @@ export const POSProvider = (props) => {
             if(prodsRepes.length > 0) {             
                 // Se suma uno o resta uno en función de la cantidad
                 const prodCant = productRawObject.cantidad < 0 ? parseInt(prodsRepes[0].cantidad - 1) : parseInt(prodsRepes[0].cantidad + 1); 
-                
-                // En caso de detectar el boton menos cliqueado cuando la cantidad es NaN, se elimina dicho producto
-                if(prodsRepes[0].cantidad == "" && productRawObject.cantidad < 0) { setProductosSeleccionados(finalList); return; } 
 
                 // Crea el objeto del producto a añadir
                 let prodToAdd = {_id: productRawObject._id, cantidad: prodCant};
@@ -86,22 +83,6 @@ export const POSProvider = (props) => {
             console.log(err);
             setProductosSeleccionados(productosSeleccionados.filter(p => p._id != productRawObject._id));
         }
-        finally{
-            // Actualiza el precio total
-            if(Object.keys(productRawObject).length === 0) {
-                setPrecioTotal(0);
-            }
-            else {
-                SetPrecioTotal(productosSeleccionados, allProductos);
-            }
-        }
-    }
-
-    const SetPrecioTotal = (productosEnCarrito, productosEnBD) => {
-        var precioTotal = productosEnCarrito.reduce((total, prodActual) => {
-            return total + (prodActual.cantidad * productosEnBD.find(p => p._id == prodActual._id).precioVenta); 
-        }, 0);
-        setPrecioTotal(parseFloat(precioTotal).toFixed(2));
     }
 
     const SetDineroEntregado = (dinero) => {
@@ -112,7 +93,7 @@ export const POSProvider = (props) => {
         <div>
             <ProductsContext.Provider value={[allProductos, SetAllProducts]}>
                 <SelectedProductsContext.Provider value={[productosSeleccionados, SetProductosSeleccionados]}>
-                    <PriceContext.Provider value={[precioTotal, SetPrecioTotal]}>
+                    <PriceContext.Provider value={[precioTotal, setPrecioTotal]}>
                         <ConstumerMoneyContext.Provider value={[dineroEntregado, SetDineroEntregado]}>
                             {props.children}
                         </ConstumerMoneyContext.Provider>

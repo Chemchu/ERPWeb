@@ -1,5 +1,4 @@
-import { useState } from "react";
-import {useSelectedProducts} from './productsContext';
+import {useSelectedProducts, useDBProducts, usePrice} from './productsContext';
 
 function ConvertBufferToBase64(buffer) {
     var res = ""
