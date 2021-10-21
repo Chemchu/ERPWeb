@@ -333,7 +333,6 @@ const CarritoVacio = () => {
 const CarritoConProductos = (props) => {
     const [productos, SetProductos] = useSelectedProducts();
     const [allProducts, SetAllProducts] = useDBProducts();
-    const [precioTotal, SetPrecioTotal] = usePrice();
 
     return (
         <div x-show="cart.length > 0" className="flex-1 flex flex-col overflow-auto">
