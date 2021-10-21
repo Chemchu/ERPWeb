@@ -1,4 +1,4 @@
-import {useState, createContext, useContext} from 'react'
+import {useState, createContext, useContext, useEffect} from 'react'
 
 const ProductsContext = createContext();
 const SelectedProductsContext = createContext();
@@ -30,6 +30,13 @@ export const POSProvider = (props) => {
     const [productosSeleccionados, setProductosSeleccionados] = useState([]);
     const [precioTotal, setPrecioTotal] = useState(0);
     const [dineroEntregado, setDineroEntregado] = useState(0);
+
+    useEffect(() => {
+        var precioTotal = productosSeleccionados.reduce((total, prodActual) => {
+            return total + (prodActual.cantidad * allProductos.find(p => p._id == prodActual._id).precioVenta); 
+        }, 0);
+        setPrecioTotal(parseFloat(precioTotal).toFixed(2));
+    },[productosSeleccionados]);
 
     const SetAllProducts = (productos) => {
         setAllProductos(productos);

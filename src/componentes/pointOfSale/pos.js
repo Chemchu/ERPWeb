@@ -36,12 +36,7 @@ const POSComponent = () => {
         fetchProductos();
     }, []);
 
-    useEffect(() => {
-        var precioTotal = productos.reduce((total, prodActual) => {
-            return total + (prodActual.cantidad * allProductos.find(p => p._id == prodActual._id).precioVenta); 
-        }, 0);
-        setPrecioTotal(parseFloat(precioTotal).toFixed(2));
-    },[productos]);
+    const botonPagarColores = dineroEntregado - precioTotal >= 0 ? "bg-blue-500 h-12 shadow text-white rounded-lg hover:shadow-lg hover:bg-blue-600 focus:outline-none" : "bg-white h-12 shadow cursor-default rounded-lg hover:shadow-lg border-2 border-red-400 hover:bg-red-200 focus:outline-none"
 
     return(
         <div>
@@ -59,75 +54,74 @@ const POSComponent = () => {
                         
                         {/* Información del pago */}
                         <div className="select-none h-auto w-full text-center pt-3 pb-4 px-4">
-                        <div className="flex mb-3 text-lg font-semibold text-blue-gray-700">
-                            <div>TOTAL</div>
-                            <div className="text-right w-full">
-                                {/*Cambiar en caso de que la cesta tenga productos y calcular el valor total*/}
-                                {productos.length <= 0 ? 0 : precioTotal} €
+                            <div className="flex mb-3 text-lg font-semibold text-blue-gray-700">
+                                <div>TOTAL</div>
+                                <div className="text-right w-full">
+                                    {/*Cambiar en caso de que la cesta tenga productos y calcular el valor total*/}
+                                    {productos.length <= 0 ? 0 : precioTotal} €
+                                </div>
                             </div>
-                        </div>
-                        <div className="mb-3 text-gray-700 px-3 pt-2 pb-3 rounded-lg bg-gray-200">
-                            <div className="flex text-lg font-semibold">
-                            <div className="flex-grow text-left">EFECTIVO</div>
-                            <div className="flex text-right">
-                                <div className="mr-2">€</div>
-                                <input type="text" inputMode="numeric" className="w-28 text-right bg-white shadow rounded-lg 
-                                    focus:bg-white focus:shadow-lg px-2 focus:outline-none" onChange={(e) => !isNaN(e.target.value) ? setDineroEntregado(e.target.value) : 0} value={dineroEntregado}/>
-                            </div>
-                            </div>
-                            <hr className="my-2" />
-                            <div className="grid grid-cols-3 gap-2 mt-2">
-                                {/* Botones de dinero rápido */}
-                                <button className="bg-white shadow rounded-lg hover:shadow-lg hover:bg-green-200 focus:outline-none" onClick={() => {setDineroEntregado(0)}}>0€</button>
-                                <button className="bg-white shadow rounded-lg hover:shadow-lg hover:bg-green-200 focus:outline-none" onClick={() => {setDineroEntregado(+(dineroEntregado) + 1)}}>+1€</button>
-                                <button className="bg-white shadow rounded-lg hover:shadow-lg hover:bg-green-200 focus:outline-none" onClick={() => {setDineroEntregado(+(dineroEntregado) + 5)}}>+5€</button>
-                                <button className="bg-white shadow rounded-lg hover:shadow-lg hover:bg-green-200 focus:outline-none" onClick={() => {setDineroEntregado(+(dineroEntregado) + 10)}}>+10€</button>
-                                <button className="bg-white shadow rounded-lg hover:shadow-lg hover:bg-green-200 focus:outline-none" onClick={() => {setDineroEntregado(+(dineroEntregado) + 20)}}>+20€</button>
-                                <button className="bg-white shadow rounded-lg hover:shadow-lg hover:bg-green-200 focus:outline-none" onClick={() => {setDineroEntregado(+(dineroEntregado) + 50)}}>+50€</button>
+                            {/* El cambio debe aparecer cuando el dinero entregado sea mayor q cero */}
+                            {
+                                dineroEntregado > 0 && parseFloat(dineroEntregado - precioTotal).toFixed(2) >= 0 ?
+                                <div className="flex mb-3 text-lg font-semibold bg-green-100 rounded-lg py-2 px-3">
+                                    <div className="text-green-600">CAMBIO</div>
+                                    <div className="text-right flex-grow text-green-600" text="buenasss">
+                                        {parseFloat(dineroEntregado - precioTotal).toFixed(2)} €
+                                    </div>
+                                </div>
+                                :
+                                null
+                            }
+                            {/* Mostrar en caso de que el cambio sea negativo */}
+                            {
+                                dineroEntregado - precioTotal < 0 ? 
+                                <div className="flex mb-3 text-lg font-semibold bg-pink-100 text-blue-gray-700 rounded-lg py-2 px-3">
+                                    <div className="text-right flex-grow text-pink-600">
+                                        <span className="inline-block ml-1">{parseFloat(dineroEntregado - precioTotal).toFixed(2)} €</span>
+                                    </div>
+                                </div>
+                                : null
+                            }
 
-                            </div>
-                        </div>
-                        {/* El cambio debe aparecer cuando el dinero entregado sea mayor q cero */}
-                        {
-                            dineroEntregado > 0 && parseFloat(dineroEntregado - precioTotal).toFixed(2) >= 0 ?
-                            <div className="flex mb-3 text-lg font-semibold bg-green-100 rounded-lg py-2 px-3">
-                                <div className="text-green-600">CAMBIO</div>
-                                <div className="text-right flex-grow text-green-600" text="buenasss">
-                                    {parseFloat(dineroEntregado - precioTotal).toFixed(2)} €
+                            <div className="mb-3 text-gray-700 px-3 pt-2 pb-3 rounded-lg bg-gray-200">
+                                <div className="flex text-lg font-semibold">
+                                <div className="flex-grow text-left">EFECTIVO</div>
+                                    <div className="flex text-right">
+                                        <div className="mr-2">€</div>
+                                        <input type="text" inputMode="numeric" className="w-28 text-right bg-white shadow rounded-lg 
+                                            focus:bg-white focus:shadow-lg px-2 focus:outline-none" onChange={(e) => !isNaN(e.target.value) ? setDineroEntregado(e.target.value) : 0} value={dineroEntregado}/>
+                                    </div>
                                 </div>
-                            </div>
-                            :
-                            null
-                        }
-                        
-                        {/* Mostrar en caso de que el cambio sea negativo */}
-                        {
-                            dineroEntregado - precioTotal < 0 ? 
-                            <div className="flex mb-3 text-lg font-semibold bg-pink-100 text-blue-gray-700 rounded-lg py-2 px-3">
-                                <div className="text-right flex-grow text-pink-600">
-                                    <span className="inline-block ml-1">{parseFloat(dineroEntregado - precioTotal).toFixed(2)} €</span>
-                                </div>
-                            </div>
-                            : null
-                        }
+                                <hr className="my-2" />
+                                <div className="grid grid-cols-3 gap-2 mt-2">
+                                    {/* Botones números rápidos */}
+                                    <button className="bg-white h-12 shadow rounded-lg hover:shadow-lg hover:bg-blue-400 focus:outline-none" onClick={() => {setDineroEntregado(`${dineroEntregado + 7}`)}}>7</button>
+                                    <button className="bg-white h-12 shadow rounded-lg hover:shadow-lg hover:bg-blue-400 focus:outline-none" onClick={() => {setDineroEntregado(`${dineroEntregado + 8}`)}}>8</button>
+                                    <button className="bg-white h-12 shadow rounded-lg hover:shadow-lg hover:bg-blue-400 focus:outline-none" onClick={() => {setDineroEntregado(`${dineroEntregado + 9}`)}}>9</button>
 
-                        {/* Mostrar en caso de que el cambio sea exactamente 0 y hayan productos en el carrito */}
-                        {
-                            dineroEntregado - precioTotal == 0 && productos.length > 0 ? 
-                            <div>
-                                <div x-show="change == 0 && cart.length > 0" className="flex justify-center mb-3 text-lg font-semibold bg-blue-50 text-blue-700 rounded-lg py-2 px-3">
-                                    <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6 inline-block" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M14 10h4.764a2 2 0 011.789 2.894l-3.5 7A2 2 0 0115.263 21h-4.017c-.163 0-.326-.02-.485-.06L7 20m7-10V5a2 2 0 00-2-2h-.095c-.5 0-.905.405-.905.905 0 .714-.211 1.412-.608 2.006L7 11v9m7-10h-2M7 20H5a2 2 0 01-2-2v-6a2 2 0 012-2h2.5" />
-                                    </svg>
+                                    <button className="bg-white h-12 shadow rounded-lg hover:shadow-lg hover:bg-blue-400 focus:outline-none" onClick={() => {setDineroEntregado(`${dineroEntregado + 4}`)}}>4</button>
+                                    <button className="bg-white h-12 shadow rounded-lg hover:shadow-lg hover:bg-blue-400 focus:outline-none" onClick={() => {setDineroEntregado(`${dineroEntregado + 5}`)}}>5</button>
+                                    <button className="bg-white h-12 shadow rounded-lg hover:shadow-lg hover:bg-blue-400 focus:outline-none" onClick={() => {setDineroEntregado(`${dineroEntregado + 6}`)}}>6</button>
+
+                                    <button className="bg-white h-12 shadow rounded-lg hover:shadow-lg hover:bg-blue-400 focus:outline-none" onClick={() => {setDineroEntregado(`${dineroEntregado + 1}`)}}>1</button>
+                                    <button className="bg-white h-12 shadow rounded-lg hover:shadow-lg hover:bg-blue-400 focus:outline-none" onClick={() => {setDineroEntregado(`${dineroEntregado + 2}`)}}>2</button>
+                                    <button className="bg-white h-12 shadow rounded-lg hover:shadow-lg hover:bg-blue-400 focus:outline-none" onClick={() => {setDineroEntregado(`${dineroEntregado + 3}`)}}>3</button>
+
+                                    <button className="bg-white h-12 shadow rounded-lg hover:shadow-lg text-2xl hover:bg-blue-400 focus:outline-none" onClick={() => {setDineroEntregado(`${dineroEntregado}.`)}}>.,</button>
+                                    <button className="bg-white h-12 shadow rounded-lg hover:shadow-lg hover:bg-blue-400 focus:outline-none" onClick={() => {setDineroEntregado(`${dineroEntregado + 0}`)}}>0</button>
+                                    <button className="bg-white h-12 shadow rounded-lg hover:shadow-lg hover:bg-red-500 hover:text-white focus:outline-none" onClick={() => {setDineroEntregado(dineroEntregado.substring(0, dineroEntregado.length - 1))}}>←</button>
                                 </div>
-                                <button className="text-white rounded-2xl text-lg w-full py-3 focus:outline-none">
-                                    <span className="inline-block ml-1"> </span>
-                                </button>
-                            </div>
-                            : 
-                            null
-                        }
-                        
+                                {
+                                    productos.length > 0 ? 
+                                    <div className="grid grid-cols-1 gap-2 mt-2">
+                                    {/* <button className="bg-red-400 h-12 shadow text-white rounded-lg hover:shadow-lg hover:bg-red-500 focus:outline-none" onClick={() => {setDineroEntregado(0)}}>Borrar</button> */}
+                                    <button className={botonPagarColores} onClick={() => {}}>{dineroEntregado - precioTotal >= 0  ? "PAGAR" : "DINERO INSUFICIENTE"}</button>
+                                    </div>
+                                    :
+                                    null
+                                }
+                            </div>                                                
                         </div>
                         {/* end of payment info */}
                     </div>
