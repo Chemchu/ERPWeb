@@ -15,7 +15,7 @@ const POSComponent = () => {
     const [showGenericModal, setGenericModal] = useState(false);
     const [showResumenCompra, setShowResumenCompra] = useState(false);
 
-    const [productos, SetProductos] = useSelectedProducts();
+    const [productos, AddProduct] = useSelectedProducts();
     const [precioTotal, setPrecioTotal] = usePrice();
     const [dineroEntregado, setDineroEntregado] = useConsumerMoney();
 
@@ -81,7 +81,7 @@ const POSComponent = () => {
                             dineroEntregado - precioTotal < 0 ? 
                             <div className="flex mb-3 text-lg font-semibold bg-pink-100 text-blue-gray-700 rounded-lg py-2 px-3">
                                 <div className="text-right flex-grow text-pink-600">
-                                    <span className="inline-block ml-1">{parseFloat(dineroEntregado - precioTotal).toFixed(2)}</span>
+                                    <span className="inline-block ml-1">{parseFloat(dineroEntregado - precioTotal).toFixed(2)} €</span>
                                 </div>
                             </div>
                             : null
@@ -212,7 +212,8 @@ const ProductDisplay = (props) => {
 
     useEffect(() => {
         const fetchProductos = () => {
-            axios.get('http://localhost:8080/api/productos').then(
+            const erpBackURL = process.env.REACT_APP_ERP_BACKURL;
+            axios.get(`${erpBackURL}api/productos`).then(
                 (res) => {
                     SetAllProductos([...res.data.message]);
                     SetProductosFiltrados([...res.data.message]);

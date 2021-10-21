@@ -39,7 +39,7 @@ export const ProductSelectedCard = (props) => {
             <div className="w-28 grid grid-cols-3 gap-2 ml-2">
                 <button className="rounded-lg text-center py-1 text-white bg-gray-500 hover:bg-gray-700 focus:outline-none" 
                 onClick={() => {
-                    AddProductos({_id: props.id, cantidad: parseInt(- 1), valorEscrito: false});
+                    AddProductos({_id: props.id, cantidad: parseInt(-1), valorEscrito: false});
                 }}>
                 <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-3 inline-block" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M20 12H4" />

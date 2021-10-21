@@ -14,6 +14,7 @@ import LandingPage from '../componentes/landingPage/landingPage.js';
 import { POS } from '../componentes/pointOfSale/pos.js';
 
 function App() {
+
     const location = useLocation();
     return(
         <AnimatePresence initial={false} exitBeforeEnter>
