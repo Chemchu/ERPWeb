@@ -32,8 +32,9 @@ export const POSProvider = (props) => {
     const [dineroEntregado, setDineroEntregado] = useState(0);
 
     useEffect(() => {
+        if(productos.length <= 0) setDineroEntregado(0);
+        
         var precioTotal = productos.reduce((total, prodActual) => {
-            console.log(prodActual)
             return total + ((prodActual.cantidad * allProductos.find(p => p._id == prodActual._id).precioVenta) * parseFloat(isNaN(prodActual.dto) ? 1 : 1 - (prodActual.dto/100))); 
         }, 0);
         setPrecioTotal(parseFloat(precioTotal).toFixed(2));

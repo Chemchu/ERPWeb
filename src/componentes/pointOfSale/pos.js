@@ -2,6 +2,8 @@ import React, {useState, useEffect, useContext} from 'react';
 import {ProductCard, ProductSelectedCard} from './productCard';
 import {POSProvider, useDBProducts, usePrice, useConsumerMoney, useSelectedProducts} from './productsContext';
 import axios from 'axios';
+import { AnimatePresence, motion } from 'framer-motion'; 
+import { ModalPagar } from '../modal/modal';
 
 export const POS = () => {
     return(
@@ -13,6 +15,7 @@ export const POS = () => {
 
 const POSComponent = () => {
     const [showGenericModal, setGenericModal] = useState(false);
+    const [showModalPagar, setPagarModal] = useState(false);
     const [showResumenCompra, setShowResumenCompra] = useState(false);
 
     const [productos, AddProduct] = useSelectedProducts();
@@ -36,7 +39,11 @@ const POSComponent = () => {
         fetchProductos();
     }, []);
 
-    const botonPagarColores = dineroEntregado - precioTotal >= 0 ? "bg-blue-500 h-12 shadow text-white rounded-lg hover:shadow-lg hover:bg-blue-600 focus:outline-none" : "bg-white h-12 shadow cursor-default rounded-lg hover:shadow-lg border-2 border-red-400 hover:bg-red-200 focus:outline-none"
+    const cerrarModal = () => {
+        setPagarModal(false);
+    }
+
+    const botonPagarColores = dineroEntregado - precioTotal >= 0 ? "bg-blue-500 h-12 shadow text-white rounded-lg hover:shadow-lg hover:bg-blue-600 focus:outline-none" : "bg-blue-300 h-12 shadow text-white rounded-lg hover:shadow-lg focus:outline-none cursor-default"
 
     return(
         <div>
@@ -75,13 +82,12 @@ const POSComponent = () => {
                             }
                             {/* Mostrar en caso de que el cambio sea negativo */}
                             {
-                                dineroEntregado - precioTotal < 0 ? 
+                                dineroEntregado - precioTotal < 0 &&
                                 <div className="flex mb-3 text-lg font-semibold bg-pink-100 text-blue-gray-700 rounded-lg py-2 px-3">
                                     <div className="text-right flex-grow text-pink-600">
                                         <span className="inline-block ml-1">{parseFloat(dineroEntregado - precioTotal).toFixed(2)} €</span>
                                     </div>
                                 </div>
-                                : null
                             }
 
                             <div className="mb-3 text-gray-700 px-3 pt-2 pb-3 rounded-lg bg-gray-200">
@@ -96,31 +102,28 @@ const POSComponent = () => {
                                 <hr className="my-2" />
                                 <div className="grid grid-cols-3 gap-2 mt-2">
                                     {/* Botones números rápidos */}
-                                    <button className="bg-white h-12 shadow rounded-lg hover:shadow-lg hover:bg-blue-400 hover:text-white focus:outline-none" onClick={() => {setDineroEntregado(`${dineroEntregado + 7}`)}}>7</button>
-                                    <button className="bg-white h-12 shadow rounded-lg hover:shadow-lg hover:bg-blue-400 hover:text-white focus:outline-none" onClick={() => {setDineroEntregado(`${dineroEntregado + 8}`)}}>8</button>
-                                    <button className="bg-white h-12 shadow rounded-lg hover:shadow-lg hover:bg-blue-400 hover:text-white focus:outline-none" onClick={() => {setDineroEntregado(`${dineroEntregado + 9}`)}}>9</button>
+                                    <motion.button whileTap={{scale: 0.9}} className="bg-white h-12 shadow rounded-lg hover:shadow-lg hover:bg-blue-400 hover:text-white focus:outline-none" onClick={() => {setDineroEntregado(`${dineroEntregado + 7}`)}}>7</motion.button>
+                                    <motion.button whileTap={{scale: 0.9}} className="bg-white h-12 shadow rounded-lg hover:shadow-lg hover:bg-blue-400 hover:text-white focus:outline-none" onClick={() => {setDineroEntregado(`${dineroEntregado + 8}`)}}>8</motion.button>
+                                    <motion.button whileTap={{scale: 0.9}} className="bg-white h-12 shadow rounded-lg hover:shadow-lg hover:bg-blue-400 hover:text-white focus:outline-none" onClick={() => {setDineroEntregado(`${dineroEntregado + 9}`)}}>9</motion.button>
 
-                                    <button className="bg-white h-12 shadow rounded-lg hover:shadow-lg hover:bg-blue-400 hover:text-white focus:outline-none" onClick={() => {setDineroEntregado(`${dineroEntregado + 4}`)}}>4</button>
-                                    <button className="bg-white h-12 shadow rounded-lg hover:shadow-lg hover:bg-blue-400 hover:text-white focus:outline-none" onClick={() => {setDineroEntregado(`${dineroEntregado + 5}`)}}>5</button>
-                                    <button className="bg-white h-12 shadow rounded-lg hover:shadow-lg hover:bg-blue-400 hover:text-white focus:outline-none" onClick={() => {setDineroEntregado(`${dineroEntregado + 6}`)}}>6</button>
+                                    <motion.button whileTap={{scale: 0.9}} className="bg-white h-12 shadow rounded-lg hover:shadow-lg hover:bg-blue-400 hover:text-white focus:outline-none" onClick={() => {setDineroEntregado(`${dineroEntregado + 4}`)}}>4</motion.button>
+                                    <motion.button whileTap={{scale: 0.9}} className="bg-white h-12 shadow rounded-lg hover:shadow-lg hover:bg-blue-400 hover:text-white focus:outline-none" onClick={() => {setDineroEntregado(`${dineroEntregado + 5}`)}}>5</motion.button>
+                                    <motion.button whileTap={{scale: 0.9}} className="bg-white h-12 shadow rounded-lg hover:shadow-lg hover:bg-blue-400 hover:text-white focus:outline-none" onClick={() => {setDineroEntregado(`${dineroEntregado + 6}`)}}>6</motion.button>
 
-                                    <button className="bg-white h-12 shadow rounded-lg hover:shadow-lg hover:bg-blue-400 hover:text-white focus:outline-none" onClick={() => {setDineroEntregado(`${dineroEntregado + 1}`)}}>1</button>
-                                    <button className="bg-white h-12 shadow rounded-lg hover:shadow-lg hover:bg-blue-400 hover:text-white focus:outline-none" onClick={() => {setDineroEntregado(`${dineroEntregado + 2}`)}}>2</button>
-                                    <button className="bg-white h-12 shadow rounded-lg hover:shadow-lg hover:bg-blue-400 hover:text-white focus:outline-none" onClick={() => {setDineroEntregado(`${dineroEntregado + 3}`)}}>3</button>
+                                    <motion.button whileTap={{scale: 0.9}} className="bg-white h-12 shadow rounded-lg hover:shadow-lg hover:bg-blue-400 hover:text-white focus:outline-none" onClick={() => {setDineroEntregado(`${dineroEntregado + 1}`)}}>1</motion.button>
+                                    <motion.button whileTap={{scale: 0.9}} className="bg-white h-12 shadow rounded-lg hover:shadow-lg hover:bg-blue-400 hover:text-white focus:outline-none" onClick={() => {setDineroEntregado(`${dineroEntregado + 2}`)}}>2</motion.button>
+                                    <motion.button whileTap={{scale: 0.9}} className="bg-white h-12 shadow rounded-lg hover:shadow-lg hover:bg-blue-400 hover:text-white focus:outline-none" onClick={() => {setDineroEntregado(`${dineroEntregado + 3}`)}}>3</motion.button>
 
-                                    <button className="bg-white h-12 shadow rounded-lg hover:shadow-lg text-2xl hover:bg-blue-400 focus:outline-none" onClick={() => {setDineroEntregado(`${dineroEntregado}.`)}}>.,</button>
-                                    <button className="bg-white h-12 shadow rounded-lg hover:shadow-lg hover:bg-blue-400 focus:outline-none" onClick={() => {setDineroEntregado(`${dineroEntregado + 0}`)}}>0</button>
-                                    <button className="bg-white h-12 shadow rounded-lg hover:shadow-lg hover:bg-red-500 hover:text-white focus:outline-none" onClick={() => {setDineroEntregado(dineroEntregado.substring(0, dineroEntregado.length - 1))}}>←</button>
+                                    <motion.button whileTap={{scale: 0.9}} className="bg-white h-12 shadow rounded-lg hover:shadow-lg text-2xl hover:bg-blue-400 focus:outline-none" onClick={() => {setDineroEntregado(`${dineroEntregado}.`)}}>.,</motion.button>
+                                    <motion.button whileTap={{scale: 0.9}} className="bg-white h-12 shadow rounded-lg hover:shadow-lg hover:bg-blue-400 focus:outline-none" onClick={() => {setDineroEntregado(`${dineroEntregado + 0}`)}}>0</motion.button>
+                                    <motion.button whileTap={{scale: 0.9}} className="bg-white h-12 shadow rounded-lg hover:shadow-lg hover:bg-red-500 hover:text-white focus:outline-none" onClick={() => {setDineroEntregado(dineroEntregado.substring(0, dineroEntregado.length - 1))}}>←</motion.button>
                                 </div>
                                 {
-                                    productos.length > 0 ? 
+                                    productos.length > 0 &&
                                     <div className="grid grid-cols-1 gap-2 mt-2">
-                                    {/* <button className="bg-red-400 h-12 shadow text-white rounded-lg hover:shadow-lg hover:bg-red-500 focus:outline-none" onClick={() => {setDineroEntregado(0)}}>Borrar</button> */}
-                                        <button className={botonPagarColores} onClick={() => {}}>{dineroEntregado - precioTotal >= 0  ? "EFECTIVO" : "DINERO INSUFICIENTE"}</button>
-                                        <button className="bg-blue-500 h-12 shadow rounded-lg hover:shadow-lg hover:bg-blue-600 text-white focus:outline-none" onClick={() => {}}>TARJETA</button>
+                                        <motion.button whileTap={{scale: 0.9}} className={botonPagarColores} onClick={() => {dineroEntregado - precioTotal >= 0 && setPagarModal(true)}}>EFECTIVO</motion.button>
+                                        <motion.button whileTap={{scale: 0.9}} className="bg-blue-500 h-12 shadow rounded-lg hover:shadow-lg hover:bg-blue-600 text-white focus:outline-none" onClick={() => {setPagarModal(true)}}>TARJETA</motion.button>
                                     </div>
-                                    :
-                                    null
                                 }
                             </div>                                                
                         </div>
@@ -129,10 +132,16 @@ const POSComponent = () => {
                 </div>
                 {/* Fin sidebar derecho */}
             </div>
-            {/* Modal generico */}
-            {showGenericModal? <ModalGenerico/>: null}
-            {/* Modal ticket */}
-            {showResumenCompra? <ModalTicket/>: null}
+
+            <AnimatePresence initial={false} exitBeforeEnter={true}>
+                {/* Modal aceptar compra */}
+                {showModalPagar && <ModalPagar handleClose={cerrarModal} />}
+                {/* Modal generico */}
+                {showGenericModal && <ModalGenerico/>}
+                {/* Modal ticket */}
+                {showResumenCompra && <ModalTicket/>}
+            </AnimatePresence>
+            
             </div>
             {/* end of noprint-area */}
             <div id="print-area" className="print-area" />

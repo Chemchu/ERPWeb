@@ -1,6 +1,7 @@
 import React from 'react';
 import { BrowserRouter, Route, Switch, useLocation } from 'react-router-dom';
 import Dashboard from '../componentes/dashboard/dashboard.js'; 
+import {Dashboard2} from '../componentes/dashboard/dashboard2.js'; 
 import LoginPage from '../componentes/login/loginPage';
 import NotFound from '../componentes/404/notFound.js';
 import HiddenSideBar from '../componentes/dashboard/sidebar/sideBarHidden';
@@ -17,11 +18,12 @@ function App() {
 
     const location = useLocation();
     return(
-        <AnimatePresence initial={false} exitBeforeEnter>
+        <AnimatePresence initial={false} exitBeforeEnter={true} onExitComplete={() => null}>
             <Switch location={location} key={location.key}>
                 <Route exact path = "/" component={LandingPage}/>
                 <Route exact path = "/login" component={LoginPage}/>
                 <Route exact path = "/dashboard" component= {Dashboard}/> 
+                <Route exact path = "/dashboard2" component= {Dashboard2}/> 
                 <Route exact path = "/notfound" component= {NotFound}/> 
                 <Route exact path = "/hidden" component= {HiddenSideBar}/> 
                 <Route exact path = "/prodList" component= {ProductList}/>         
