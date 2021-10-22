@@ -32,12 +32,20 @@ export const ProductSelectedCard = (props) => {
             <img src={`data:image/(png|jpeg);base64,${ConvertBufferToBase64(props.img)}`} className="rounded-lg h-10 w-10 bg-white shadow mr-2" />
             <div className="flex-grow">
                 <h5 className="text-sm">{props.nombreProducto}</h5>
-                <p className="text-xs block">{props.precioVenta} €</p>
+                {
+                    isNaN(prod.dto) || prod.dto == 0 ? 
+                    <p className="text-xs block">{parseFloat(props.precioVenta * prod.cantidad).toFixed(2)}€</p>
+                    :
+                    <div className="flex-grow-0">
+                        <p className="text-xs inline-block line-through">{parseFloat(props.precioVenta * prod.cantidad).toFixed(2)}€</p>
+                        <h className="pl-2 text-sm font-semibold inline-block">{parseFloat((props.precioVenta * prod.cantidad) * (1 - (prod.dto/100))).toFixed(2) }€</h>
+                    </div>
+                }
             </div>
 
             <div className="py-2 inline-block align-middle">
-                <input type="text" inputMode="numeric" className="text-xs text-center rounded-lg w-10 h-6 shadow" onChange={(e) => AddProductos({_id: props.id, cantidad: prod.cantidad, valorEscrito: true, dto: e.target.value})} />
-                <text> %</text>
+                <input type="text" inputMode="numeric" className="text-xs text-center rounded-lg w-10 h-6 shadow" value={prod.dto} onChange={(e) => AddProductos({_id: props.id, cantidad: prod.cantidad, valorEscrito: true, dto: e.target.value})} />
+                <> %</>
             </div>
             
             <div className="py-1">
@@ -47,9 +55,9 @@ export const ProductSelectedCard = (props) => {
                     onClick={() => {
                         AddProductos({_id: props.id, cantidad: parseInt(-1), valorEscrito: false, dto: prod.dto});
                     }}>
-                    <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-3 inline-block" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M20 12H4" />
-                    </svg>
+                        <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-3 inline-block" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M20 12H4" />
+                        </svg>
                     </button>
                     <input type="text" inputMode="numeric" value={productos.find(p => p._id ==props.id).cantidad} className="bg-white rounded-lg text-center shadow focus:outline-none focus:shadow-lg text-sm"  
                         onChange={(e) =>{ AddProductos({_id: props.id, cantidad: parseInt(e.target.value), valorEscrito: true, dto: prod.dto});}} />
@@ -57,9 +65,9 @@ export const ProductSelectedCard = (props) => {
                     onClick={() => {
                         AddProductos({_id: props.id, cantidad: parseInt(1), valorEscrito: false, dto: prod.dto});
                     }}>
-                    <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-3 inline-block" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
-                    </svg>
+                        <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-3 inline-block" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
+                        </svg>
                     </button>
                 </div>
             </div>

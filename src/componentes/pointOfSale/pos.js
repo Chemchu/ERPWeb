@@ -96,17 +96,17 @@ const POSComponent = () => {
                                 <hr className="my-2" />
                                 <div className="grid grid-cols-3 gap-2 mt-2">
                                     {/* Botones números rápidos */}
-                                    <button className="bg-white h-12 shadow rounded-lg hover:shadow-lg hover:bg-blue-400 focus:outline-none" onClick={() => {setDineroEntregado(`${dineroEntregado + 7}`)}}>7</button>
-                                    <button className="bg-white h-12 shadow rounded-lg hover:shadow-lg hover:bg-blue-400 focus:outline-none" onClick={() => {setDineroEntregado(`${dineroEntregado + 8}`)}}>8</button>
-                                    <button className="bg-white h-12 shadow rounded-lg hover:shadow-lg hover:bg-blue-400 focus:outline-none" onClick={() => {setDineroEntregado(`${dineroEntregado + 9}`)}}>9</button>
+                                    <button className="bg-white h-12 shadow rounded-lg hover:shadow-lg hover:bg-blue-400 hover:text-white focus:outline-none" onClick={() => {setDineroEntregado(`${dineroEntregado + 7}`)}}>7</button>
+                                    <button className="bg-white h-12 shadow rounded-lg hover:shadow-lg hover:bg-blue-400 hover:text-white focus:outline-none" onClick={() => {setDineroEntregado(`${dineroEntregado + 8}`)}}>8</button>
+                                    <button className="bg-white h-12 shadow rounded-lg hover:shadow-lg hover:bg-blue-400 hover:text-white focus:outline-none" onClick={() => {setDineroEntregado(`${dineroEntregado + 9}`)}}>9</button>
 
-                                    <button className="bg-white h-12 shadow rounded-lg hover:shadow-lg hover:bg-blue-400 focus:outline-none" onClick={() => {setDineroEntregado(`${dineroEntregado + 4}`)}}>4</button>
-                                    <button className="bg-white h-12 shadow rounded-lg hover:shadow-lg hover:bg-blue-400 focus:outline-none" onClick={() => {setDineroEntregado(`${dineroEntregado + 5}`)}}>5</button>
-                                    <button className="bg-white h-12 shadow rounded-lg hover:shadow-lg hover:bg-blue-400 focus:outline-none" onClick={() => {setDineroEntregado(`${dineroEntregado + 6}`)}}>6</button>
+                                    <button className="bg-white h-12 shadow rounded-lg hover:shadow-lg hover:bg-blue-400 hover:text-white focus:outline-none" onClick={() => {setDineroEntregado(`${dineroEntregado + 4}`)}}>4</button>
+                                    <button className="bg-white h-12 shadow rounded-lg hover:shadow-lg hover:bg-blue-400 hover:text-white focus:outline-none" onClick={() => {setDineroEntregado(`${dineroEntregado + 5}`)}}>5</button>
+                                    <button className="bg-white h-12 shadow rounded-lg hover:shadow-lg hover:bg-blue-400 hover:text-white focus:outline-none" onClick={() => {setDineroEntregado(`${dineroEntregado + 6}`)}}>6</button>
 
-                                    <button className="bg-white h-12 shadow rounded-lg hover:shadow-lg hover:bg-blue-400 focus:outline-none" onClick={() => {setDineroEntregado(`${dineroEntregado + 1}`)}}>1</button>
-                                    <button className="bg-white h-12 shadow rounded-lg hover:shadow-lg hover:bg-blue-400 focus:outline-none" onClick={() => {setDineroEntregado(`${dineroEntregado + 2}`)}}>2</button>
-                                    <button className="bg-white h-12 shadow rounded-lg hover:shadow-lg hover:bg-blue-400 focus:outline-none" onClick={() => {setDineroEntregado(`${dineroEntregado + 3}`)}}>3</button>
+                                    <button className="bg-white h-12 shadow rounded-lg hover:shadow-lg hover:bg-blue-400 hover:text-white focus:outline-none" onClick={() => {setDineroEntregado(`${dineroEntregado + 1}`)}}>1</button>
+                                    <button className="bg-white h-12 shadow rounded-lg hover:shadow-lg hover:bg-blue-400 hover:text-white focus:outline-none" onClick={() => {setDineroEntregado(`${dineroEntregado + 2}`)}}>2</button>
+                                    <button className="bg-white h-12 shadow rounded-lg hover:shadow-lg hover:bg-blue-400 hover:text-white focus:outline-none" onClick={() => {setDineroEntregado(`${dineroEntregado + 3}`)}}>3</button>
 
                                     <button className="bg-white h-12 shadow rounded-lg hover:shadow-lg text-2xl hover:bg-blue-400 focus:outline-none" onClick={() => {setDineroEntregado(`${dineroEntregado}.`)}}>.,</button>
                                     <button className="bg-white h-12 shadow rounded-lg hover:shadow-lg hover:bg-blue-400 focus:outline-none" onClick={() => {setDineroEntregado(`${dineroEntregado + 0}`)}}>0</button>
@@ -326,7 +326,7 @@ const CarritoVacio = () => {
 }
 
 const CarritoConProductos = (props) => {
-    const [productos, SetProductos] = useSelectedProducts();
+    const [productos, AddProductos] = useSelectedProducts();
     const [allProducts, SetAllProducts] = useDBProducts();
 
     return (
@@ -342,7 +342,7 @@ const CarritoConProductos = (props) => {
                 </div>
                 <div className="flex-grow px-8 text-right text-lg py-4 relative">
                 {/* Boton basura */}
-                <button className="text-blue-gray-300 hover:text-pink-500 focus:outline-none" onClick={() => {SetProductos({})}}> 
+                <button className="text-blue-gray-300 hover:text-pink-500 focus:outline-none" onClick={() => {AddProductos(null)}}> 
                     <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6 inline-block" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
                     </svg>

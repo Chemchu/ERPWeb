@@ -27,16 +27,17 @@ export const useConsumerMoney = () => {
 
 export const POSProvider = (props) => {
     const [allProductos, setAllProductos] = useState([]);    
-    const [productosSeleccionados, setProductosSeleccionados] = useState([]);
+    const [productos, setProductos] = useState([]);
     const [precioTotal, setPrecioTotal] = useState(0);
     const [dineroEntregado, setDineroEntregado] = useState(0);
 
     useEffect(() => {
-        var precioTotal = productosSeleccionados.reduce((total, prodActual) => {
+        var precioTotal = productos.reduce((total, prodActual) => {
+            console.log(prodActual)
             return total + ((prodActual.cantidad * allProductos.find(p => p._id == prodActual._id).precioVenta) * parseFloat(isNaN(prodActual.dto) ? 1 : 1 - (prodActual.dto/100))); 
         }, 0);
         setPrecioTotal(parseFloat(precioTotal).toFixed(2));
-    },[productosSeleccionados]);
+    },[productos]);
 
     const SetAllProducts = (productos) => {
         setAllProductos(productos);
@@ -45,15 +46,18 @@ export const POSProvider = (props) => {
     const SetProductosSeleccionados = (productRawObject) => {
         try
         {
+            if(!productRawObject) { setProductos([]); return;}
+
+            if(productRawObject.dto < 0 || isNaN(productRawObject.dto)) productRawObject.dto = 0;
+            
             // Comprueba si está recibiendo un objeto vacío, en tal caso borra todo
-            if(Object.keys(productRawObject).length === 0) {setProductosSeleccionados([]); return;}
-            let prodsRepes = productosSeleccionados.filter(p => p._id == productRawObject._id);
-            var finalList = productosSeleccionados.filter(p => p._id != productRawObject._id);
+            let prodsRepes = productos.filter(p => p._id == productRawObject._id);
+            var finalList = productos.filter(p => p._id != productRawObject._id);
 
             // Elimina un producto de la lista de productos en carrito en caso de que su cantidad == 0
             if(prodsRepes && productRawObject.cantidad <= 0) 
             {
-                if(prodsRepes[0].cantidad == 1) { setProductosSeleccionados(finalList); return; }
+                if(prodsRepes[0].cantidad == 1) { setProductos(finalList); return; }
             }
 
             // En caso de querer añadir un producto que ya está en el carrito
@@ -67,7 +71,7 @@ export const POSProvider = (props) => {
                 // En caso de que la cantidad se esté cambiando por teclado
                 if(productRawObject.valorEscrito) {
                     // Si se escribe 0, elimina dicho producto
-                    if(productRawObject.cantidad == 0) { setProductosSeleccionados(finalList);  return; }
+                    if(productRawObject.cantidad == 0) { setProductos(finalList);  return; }
                     // En caso de que reciba un NaN, pone un "" en su lugar
                     if(isNaN(productRawObject.cantidad)) prodToAdd = {_id: productRawObject._id, cantidad: "", valorEscrito: true, dto: productRawObject.dto};
                     // En caso contrario, el objeto sirve para añadir al carrito
@@ -75,20 +79,20 @@ export const POSProvider = (props) => {
                 }
 
                 // Pone el objeto en la fila que correcta, sin desbaratar el carrito
-                const index = productosSeleccionados.findIndex(p => p._id == productRawObject._id);
-                productosSeleccionados[index] = prodToAdd;
-                setProductosSeleccionados([...productosSeleccionados]);
+                const index = productos.findIndex(p => p._id == productRawObject._id);
+                productos[index] = prodToAdd;
+                setProductos([...productos]);
             }
             // En caso de que este producto no esté ya en carrito, se añade
             else {
                 var prodToList = {_id: productRawObject._id, cantidad: parseInt(1), dto: productRawObject.dto};
-                productosSeleccionados.push(prodToList);
-                setProductosSeleccionados([...productosSeleccionados])
+                productos.push(prodToList);
+                setProductos([...productos])
             }
         }catch(err)
         {
             console.log(err);
-            setProductosSeleccionados(productosSeleccionados.filter(p => p._id != productRawObject._id));
+            setProductos(productos.filter(p => p._id != productRawObject._id));
         }
     }
 
@@ -99,7 +103,7 @@ export const POSProvider = (props) => {
     return (
         <div>
             <ProductsContext.Provider value={[allProductos, SetAllProducts]}>
-                <SelectedProductsContext.Provider value={[productosSeleccionados, SetProductosSeleccionados]}>
+                <SelectedProductsContext.Provider value={[productos, SetProductosSeleccionados]}>
                     <PriceContext.Provider value={[precioTotal, setPrecioTotal]}>
                         <ConstumerMoneyContext.Provider value={[dineroEntregado, SetDineroEntregado]}>
                             {props.children}
