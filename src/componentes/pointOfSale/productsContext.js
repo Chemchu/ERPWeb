@@ -4,6 +4,7 @@ const ProductsContext = createContext();
 const SelectedProductsContext = createContext();
 const PriceContext = createContext();
 const ConstumerMoneyContext = createContext();
+const ClientContext = createContext();
 
 // Todos los productos de la db
 export const useDBProducts = () => {
@@ -25,11 +26,16 @@ export const useConsumerMoney = () => {
     return useContext(ConstumerMoneyContext);
 }
 
+export const useClients = () => {
+    return useContext(ClientContext);
+}
+
 export const POSProvider = (props) => {
     const [allProductos, setAllProductos] = useState([]);    
     const [productos, setProductos] = useState([]);
     const [precioTotal, setPrecioTotal] = useState(0);
     const [dineroEntregado, setDineroEntregado] = useState(0);
+    const [clientes, setClientes] = useState([]);
 
     useEffect(() => {
         if(productos.length <= 0) setDineroEntregado(0);
@@ -103,15 +109,17 @@ export const POSProvider = (props) => {
 
     return (
         <div>
-            <ProductsContext.Provider value={[allProductos, SetAllProducts]}>
-                <SelectedProductsContext.Provider value={[productos, SetProductosSeleccionados]}>
-                    <PriceContext.Provider value={[precioTotal, setPrecioTotal]}>
-                        <ConstumerMoneyContext.Provider value={[dineroEntregado, SetDineroEntregado]}>
-                            {props.children}
-                        </ConstumerMoneyContext.Provider>
-                    </PriceContext.Provider>
-                </SelectedProductsContext.Provider>
-            </ProductsContext.Provider>
+            <ClientContext.Provider value={[clientes, setClientes]}>
+                <ProductsContext.Provider value={[allProductos, SetAllProducts]}>
+                    <SelectedProductsContext.Provider value={[productos, SetProductosSeleccionados]}>
+                        <PriceContext.Provider value={[precioTotal, setPrecioTotal]}>
+                            <ConstumerMoneyContext.Provider value={[dineroEntregado, SetDineroEntregado]}>
+                                {props.children}
+                            </ConstumerMoneyContext.Provider>
+                        </PriceContext.Provider>
+                    </SelectedProductsContext.Provider>
+                </ProductsContext.Provider>
+            </ClientContext.Provider>
         </div>        
     )
 }

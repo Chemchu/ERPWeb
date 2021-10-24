@@ -1,6 +1,6 @@
 import React, {useState, useEffect, useContext} from 'react';
 import {ProductCard, ProductSelectedCard} from './productCard';
-import {POSProvider, useDBProducts, usePrice, useConsumerMoney, useSelectedProducts} from './productsContext';
+import {POSProvider, useDBProducts, usePrice, useConsumerMoney, useSelectedProducts, useClients} from './productsContext';
 import axios from 'axios';
 import { AnimatePresence, motion } from 'framer-motion'; 
 import { ModalPagar } from '../modal/modal';
@@ -25,6 +25,10 @@ const POSComponent = () => {
     const [allProductos, SetAllProductos] = useDBProducts();
     const [productosFiltrados, SetProductosFiltrados] = useState([]);
 
+    const [customers, setCustomers] = useClients();
+
+    const [isEfectivo, setIsEfectivo] = useState(false);
+
     useEffect(() => {
         const fetchProductos = () => {
             const erpBackURL = process.env.REACT_APP_ERP_BACKURL;
@@ -32,6 +36,11 @@ const POSComponent = () => {
                 (res) => {
                     SetAllProductos([...res.data.message]);
                     SetProductosFiltrados([...res.data.message]);
+                }
+            );
+            axios.get(`${erpBackURL}api/clientes`).then(
+                (res) => {
+                    setCustomers([...res.data.message]);
                 }
             );
             
@@ -121,8 +130,8 @@ const POSComponent = () => {
                                 {
                                     productos.length > 0 &&
                                     <div className="grid grid-cols-1 gap-2 mt-2">
-                                        <motion.button whileTap={{scale: 0.9}} className={botonPagarColores} onClick={() => {dineroEntregado - precioTotal >= 0 && setPagarModal(true)}}>EFECTIVO</motion.button>
-                                        <motion.button whileTap={{scale: 0.9}} className="bg-blue-500 h-12 shadow rounded-lg hover:shadow-lg hover:bg-blue-600 text-white focus:outline-none" onClick={() => {setPagarModal(true)}}>TARJETA</motion.button>
+                                        <motion.button whileTap={{scale: 0.9}} className={botonPagarColores} onClick={(e) => {dineroEntregado - precioTotal >= 0 && setPagarModal(true) && setIsEfectivo(true)}}>EFECTIVO</motion.button>
+                                        <motion.button whileTap={{scale: 0.9}} className="bg-blue-500 h-12 shadow rounded-lg hover:shadow-lg hover:bg-blue-600 text-white focus:outline-none" onClick={ (e) => {setPagarModal(true); setIsEfectivo(false)} }>TARJETA</motion.button>
                                     </div>
                                 }
                             </div>                                                
@@ -135,7 +144,7 @@ const POSComponent = () => {
 
             <AnimatePresence initial={false} exitBeforeEnter={true}>
                 {/* Modal aceptar compra */}
-                {showModalPagar && <ModalPagar handleClose={cerrarModal} />}
+                {showModalPagar && <ModalPagar handleClose={cerrarModal} isEfectivo={isEfectivo} customerProducts={productos} finalPrice={precioTotal} cambio={isEfectivo ? parseFloat(dineroEntregado - precioTotal).toFixed(2) : 0}/>}
                 {/* Modal generico */}
                 {showGenericModal && <ModalGenerico/>}
                 {/* Modal ticket */}
