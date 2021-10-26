@@ -1,14 +1,20 @@
 import React, {useState, useEffect, useContext} from 'react';
 import {ProductCard, ProductSelectedCard} from './productCard';
-import {POSProvider, useDBProducts, usePrice, useConsumerMoney, useSelectedProducts, useClients} from './productsContext';
+import {POSProvider, useDBProducts, usePrice, useConsumerMoney, useSelectedProducts} from './productsContext';
 import axios from 'axios';
 import { AnimatePresence, motion } from 'framer-motion'; 
 import { ModalPagar } from '../modal/modal';
+import ClientProvider, { useDBClients } from './clientContext';
+import { DBProduct } from '../../tipos/DBProduct';
+import { SelectedProduct } from '../../tipos/SelectedProduct';
+import { FilteredProds } from '../../tipos/FilteredProducts';
 
 export const POS = () => {
     return(
-        <POSProvider>
-            <POSComponent/>
+        <POSProvider key={"undefined"} type={"undefined"} props={undefined}>
+            <ClientProvider key={"undefined2"} type={"undefined2"} props={undefined}>
+                <POSComponent/>
+            </ClientProvider>
         </POSProvider>
     );
 }
@@ -23,9 +29,9 @@ const POSComponent = () => {
     const [dineroEntregado, setDineroEntregado] = useConsumerMoney();
 
     const [allProductos, SetAllProductos] = useDBProducts();
-    const [productosFiltrados, SetProductosFiltrados] = useState([]);
+    const [productosFiltrados, SetProductosFiltrados] = useState<DBProduct[]>([]);
 
-    const [customers, setCustomers] = useClients();
+    const [, setCustomers] = useDBClients();
 
     const [isEfectivo, setIsEfectivo] = useState(false);
 
@@ -52,7 +58,8 @@ const POSComponent = () => {
         setPagarModal(false);
     }
 
-    const botonPagarColores = dineroEntregado - precioTotal >= 0 ? "bg-blue-500 h-12 shadow text-white rounded-lg hover:shadow-lg hover:bg-blue-600 focus:outline-none" : "bg-blue-300 h-12 shadow text-white rounded-lg hover:shadow-lg focus:outline-none cursor-default"
+    const cambio = parseFloat((dineroEntregado - precioTotal).toFixed(2));
+    const botonPagarColores = cambio >= 0 ? "bg-blue-500 h-12 shadow text-white rounded-lg hover:shadow-lg hover:bg-blue-600 focus:outline-none" : "bg-blue-300 h-12 shadow text-white rounded-lg hover:shadow-lg focus:outline-none cursor-default"
 
     return(
         <div>
@@ -60,7 +67,7 @@ const POSComponent = () => {
             {/* Página principal del POS */}
             <div className="flex-grow flex">
                 {/* Menú tienda, donde se muestran los productos */}
-                <ProductDisplay listFiltrados={[productosFiltrados,SetProductosFiltrados]} listaTodosProductos={[allProductos, SetAllProductos]}/>
+                <ProductDisplay listFiltrados={[productosFiltrados, SetProductosFiltrados]} listaTodosProductos={[allProductos, SetAllProductos]}/>
                 {/* Menú tienda */}
                 {/* Sidebar derecho */}
                 <div className="w-5/12 flex flex-col bg-gray-100 h-full pr-4 pl-2 py-4">
@@ -79,11 +86,11 @@ const POSComponent = () => {
                             </div>
                             {/* El cambio debe aparecer cuando el dinero entregado sea mayor q cero */}
                             {
-                                dineroEntregado > 0 && parseFloat(dineroEntregado - precioTotal).toFixed(2) >= 0 ?
+                                dineroEntregado > 0 && cambio >= 0 ?
                                 <div className="flex mb-3 text-lg font-semibold bg-green-100 rounded-lg py-2 px-3">
                                     <div className="text-green-600">CAMBIO</div>
-                                    <div className="text-right flex-grow text-green-600" text="buenasss">
-                                        {parseFloat(dineroEntregado - precioTotal).toFixed(2)} €
+                                    <div className="text-right flex-grow text-green-600">
+                                        {cambio} €
                                     </div>
                                 </div>
                                 :
@@ -94,7 +101,7 @@ const POSComponent = () => {
                                 dineroEntregado - precioTotal < 0 &&
                                 <div className="flex mb-3 text-lg font-semibold bg-pink-100 text-blue-gray-700 rounded-lg py-2 px-3">
                                     <div className="text-right flex-grow text-pink-600">
-                                        <span className="inline-block ml-1">{parseFloat(dineroEntregado - precioTotal).toFixed(2)} €</span>
+                                        <span className="inline-block ml-1">{cambio} €</span>
                                     </div>
                                 </div>
                             }
@@ -105,7 +112,7 @@ const POSComponent = () => {
                                     <div className="flex text-right">
                                         <div className="mr-2">€</div>
                                         <input type="text" inputMode="numeric" className="w-28 text-right bg-white shadow rounded-lg 
-                                            focus:bg-white focus:shadow-lg px-2 focus:outline-none" onChange={(e) => !isNaN(e.target.value) ? setDineroEntregado(e.target.value) : 0} value={dineroEntregado}/>
+                                            focus:bg-white focus:shadow-lg px-2 focus:outline-none" onChange={(e) => !isNaN(parseFloat(e.target.value)) ? setDineroEntregado(parseFloat(e.target.value)) : 0} value={dineroEntregado}/>
                                     </div>
                                 </div>
                                 <hr className="my-2" />
@@ -125,12 +132,12 @@ const POSComponent = () => {
 
                                     <motion.button whileTap={{scale: 0.9}} className="bg-white h-12 shadow rounded-lg hover:shadow-lg text-2xl hover:bg-blue-400 focus:outline-none" onClick={() => {setDineroEntregado(`${dineroEntregado}.`)}}>.,</motion.button>
                                     <motion.button whileTap={{scale: 0.9}} className="bg-white h-12 shadow rounded-lg hover:shadow-lg hover:bg-blue-400 focus:outline-none" onClick={() => {setDineroEntregado(`${dineroEntregado + 0}`)}}>0</motion.button>
-                                    <motion.button whileTap={{scale: 0.9}} className="bg-white h-12 shadow rounded-lg hover:shadow-lg hover:bg-red-500 hover:text-white focus:outline-none" onClick={() => {setDineroEntregado(dineroEntregado.substring(0, dineroEntregado.length - 1))}}>←</motion.button>
+                                    <motion.button whileTap={{scale: 0.9}} className="bg-white h-12 shadow rounded-lg hover:shadow-lg hover:bg-red-500 hover:text-white focus:outline-none" onClick={() => {setDineroEntregado(dineroEntregado.toString().substring(0, dineroEntregado.toString().length - 1))}}>←</motion.button>
                                 </div>
                                 {
                                     productos.length > 0 &&
                                     <div className="grid grid-cols-1 gap-2 mt-2">
-                                        <motion.button whileTap={{scale: 0.9}} className={botonPagarColores} onClick={(e) => {dineroEntregado - precioTotal >= 0 && setPagarModal(true) && setIsEfectivo(true)}}>EFECTIVO</motion.button>
+                                        <motion.button whileTap={{scale: 0.9}} className={botonPagarColores} onClick={(e) => {cambio >= 0 && setPagarModal(true) && setIsEfectivo(true)}}>EFECTIVO</motion.button>
                                         <motion.button whileTap={{scale: 0.9}} className="bg-blue-500 h-12 shadow rounded-lg hover:shadow-lg hover:bg-blue-600 text-white focus:outline-none" onClick={ (e) => {setPagarModal(true); setIsEfectivo(false)} }>TARJETA</motion.button>
                                     </div>
                                 }
@@ -144,7 +151,7 @@ const POSComponent = () => {
 
             <AnimatePresence initial={false} exitBeforeEnter={true}>
                 {/* Modal aceptar compra */}
-                {showModalPagar && <ModalPagar handleClose={cerrarModal} isEfectivo={isEfectivo} customerProducts={productos} finalPrice={precioTotal} cambio={isEfectivo ? parseFloat(dineroEntregado - precioTotal).toFixed(2) : 0}/>}
+                {showModalPagar && <ModalPagar handleClose={cerrarModal} isEfectivo={isEfectivo} customerProducts={productos} finalPrice={precioTotal} cambio={isEfectivo ? (dineroEntregado - precioTotal).toFixed(2) : 0}/>}
                 {/* Modal generico */}
                 {showGenericModal && <ModalGenerico/>}
                 {/* Modal ticket */}
@@ -158,7 +165,7 @@ const POSComponent = () => {
     );
 }
 
-const ModalTicket = (props) => {
+const ModalTicket = () => {
     return(
         <div x-show="isShowModalReceipt" className="fixed w-full h-screen left-0 top-0 z-10 flex flex-wrap justify-center content-center p-24">
             <div x-show="isShowModalReceipt" className="fixed glass w-full h-screen left-0 top-0 z-0" />
@@ -214,7 +221,7 @@ const ModalTicket = (props) => {
     );
 }
 
-const ModalGenerico = (props) => {
+const ModalGenerico = () => {
     return (
         <div x-show="firstTime" className="fixed glass w-full h-screen left-0 top-0 z-10 flex flex-wrap justify-center content-center p-24">
             <div className="w-96 rounded-3xl p-8 bg-white shadow-xl">
@@ -243,14 +250,15 @@ const ModalGenerico = (props) => {
     )
 }
 
-const ProductDisplay = (props) => {
-    const [productosFiltrados, SetProductosFiltrados] = props.listFiltrados;
+// Arreglar tipado del props
+const ProductDisplay = (props: { listFiltrados: [any, any]; listaTodosProductos: [any, any]; }) => {
+    const [productosFiltrados, SetProductosFiltrados] = props.listFiltrados as [DBProduct[], Function];
     const [allProductos, SetAllProductos] = props.listaTodosProductos;
 
-    var filtrarProd = (cadena) => {
-        var prodFiltrados = allProductos.filter(prod => prod.nombre.toLowerCase().includes(cadena.toLowerCase()));
+    var filtrarProd = (cadena: string) => {
+        var prodFiltrados = allProductos.filter((prod: DBProduct) => prod.nombre.toLowerCase().includes(cadena.toLowerCase()));
 
-        if(prodFiltrados.length <= 0) prodFiltrados = allProductos.filter(prod => prod.ean.some(r => r == cadena));
+        if(prodFiltrados.length <= 0) prodFiltrados = allProductos.filter((prod: DBProduct) => prod.ean.some(r => r == cadena));
 
         SetProductosFiltrados(prodFiltrados);
     }
@@ -271,7 +279,7 @@ const ProductDisplay = (props) => {
                     {allProductos.length <= 0 || !allProductos  ? <BBDDVacia/> : null}
                     
                     {/* Producto no encontrado en la lista de productos */}
-                    {productosFiltrados.length <= 0 && allProductos.length > 0 ? <ProductoNoEncontrado/> : <GenerarProductsCards productos={productosFiltrados}/>}
+                    {productosFiltrados.length <= 0 && allProductos.length > 0 ? <ProductoNoEncontrado/> : <GenerarProductsCards filteredProds={productosFiltrados}/>}
                 </div>
             </div>
         </div>
@@ -310,19 +318,18 @@ const ProductoNoEncontrado = () => {
     )
 }
 
-const GenerarProductsCards = (props) => {
-    const [productos, SetProductos] = useSelectedProducts();
-
-    const removeProductoCarrito = (productoID) => {
-        SetProductos(productos.filter(prodId => prodId !== productoID));
-    }
-
+const GenerarProductsCards = (props: FilteredProds) => {
+    const [productosSeleccionados, SetProductos] = useSelectedProducts();
     return(
         <div className="grid grid-cols-4 gap-4 pb-3">
-            {props.productos.map((prod) => {
+            {props.filteredProds.map((prod: DBProduct) => {
                 return (
-                    <button key={prod._id} id={prod._id} onClick={(e)=> {SetProductos({_id: e.currentTarget.id, cantidad: 1, valorEscrito: false});} }>
-                        <ProductCard nombreProducto={prod.nombre} precioProducto={prod.precioVenta} imagenProducto={prod.img}/>
+                    <button key={prod._id} id={prod._id} 
+                        onClick={(e)=> {SetProductos(
+                            {_id: e.currentTarget.id, cantidad: 1, valorEscrito: false, dto: 0, ean: prod.ean, familia: prod.familia, img: prod.img, precioVenta: prod.precioVenta, nombre: prod.nombre, operacionMod: ""});} }>
+                        <ProductCard _id={prod._id} alta={prod.alta} descripción={prod.descripción} ean={prod.ean} familia={prod.familia}
+                                        nombre={prod.nombre} precioVenta={prod.precioVenta} img={prod.img} 
+                                        iva={prod.iva} precioCompra={prod.precioCompra} tags={prod.tags} />
                     </button>
                 );
             })}
@@ -343,7 +350,7 @@ const CarritoVacio = () => {
     );
 }
 
-const CarritoConProductos = (props) => {
+const CarritoConProductos = () => {
     const [productos, AddProductos] = useSelectedProducts();
     const [allProducts, SetAllProducts] = useDBProducts();
 
@@ -370,8 +377,13 @@ const CarritoConProductos = (props) => {
             <div className="flex-1 w-full px-4 overflow-auto">
                 {/* Añadir producto al carrito (fila con información y cantidad)*/}
                 {productos.map(product => {
-                    const foundProd = allProducts.find(dbProd => dbProd._id == product._id);
-                    if(foundProd) return <ProductSelectedCard key={foundProd._id} id={foundProd._id} nombreProducto={foundProd.nombre} precioVenta={foundProd.precioVenta} cantidad={product.cantidad} img={foundProd.img} /> ;
+                    const foundProd = allProducts.find(dbProd => dbProd._id == product._id) as DBProduct;
+                    if(foundProd) 
+                    {
+                        return <ProductSelectedCard key={foundProd._id} _id={foundProd._id} cantidad={product.cantidad}
+                                dto={product.dto} precioVenta={foundProd.precioVenta} valorEscrito={product.valorEscrito} img={foundProd.img} nombre={foundProd.nombre} 
+                                familia={foundProd.familia} ean={foundProd.ean} operacionMod={""}/> ;
+                    }
                 })}
             </div>
         </div>

@@ -2,7 +2,8 @@ import { Backdrop } from "../backdrop.js/dropdown.js";
 import { AnimatePresence, motion } from "framer-motion";
 import { useState } from "react";
 import axios from "axios";
-import { useClients, useDBProducts } from "../pointOfSale/productsContext.js";
+import { useDBProducts } from "../pointOfSale/productsContext";
+import { useDBClients } from "../pointOfSale/clientContext";
 
 const In = {
     hidden: {
@@ -28,7 +29,7 @@ const In = {
 export const ModalPagar = ({handleClose: cerrarModal, finalPrice, cambio, customerProducts, isEfectivo}) => {
     const [cliente, setCliente] = useState({});
     const [dbProducts] = useDBProducts();
-    const [customers, setCustomers] = useClients();
+    const [customers, setCustomers] = useDBClients();
 
     const addSale = () => {
         const clienteSeleccionado = customers.filter(c => c.nif == cliente.nif)[0];
