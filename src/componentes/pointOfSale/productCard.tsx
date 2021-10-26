@@ -1,10 +1,9 @@
-import {useSelectedProducts, useDBProducts, usePrice} from './productsContext';
-import { AnimatePresence, motion } from 'framer-motion';
+import {useSelectedProducts} from './productsContext';
+import { motion } from 'framer-motion';
 import React from 'react';
 import { DBProduct } from '../../tipos/DBProduct';
 import { SelectedProduct } from '../../tipos/SelectedProduct';
 import { JSONBuffer } from '../../tipos/JsonBuffer';
-import { stringify } from 'querystring';
 
 function ConvertBufferToBase64(buffer: JSONBuffer): string {
     var res = ""

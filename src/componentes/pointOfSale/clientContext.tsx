@@ -1,4 +1,4 @@
-import React, {createContext, PropsWithChildren, ReactElement, useContext, useState} from 'react'
+import {createContext, PropsWithChildren, ReactElement, useContext, useState} from 'react'
 import { Client } from '../../tipos/Client';
 
 const ClientContext = createContext<[Client[], Function]>({} as [Client[], Function]);

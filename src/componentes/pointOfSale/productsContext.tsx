@@ -1,12 +1,12 @@
 import { PropsWithChildren, ReactElement } from 'react';
-import React, {useState, createContext, useContext, useEffect} from 'react'
+import { useState, createContext, useContext, useEffect } from 'react'
 import { DBProduct } from '../../tipos/DBProduct';
 import { SelectedProduct } from '../../tipos/SelectedProduct';
 
 const ProductsContext = createContext<[DBProduct[], Function]>({} as [DBProduct[], Function]);
 const SelectedProductsContext = createContext<[SelectedProduct[], Function]>({} as [SelectedProduct[], Function]);
 const PriceContext = createContext<[number, Function]>({} as [number, Function]);
-const ConstumerMoneyContext = createContext<[number, Function]>({} as [number, Function]);
+const ConstumerMoneyContext = createContext<[string, Function]>({} as [string, Function]);
 
 
 // Todos los productos de la db
@@ -32,12 +32,12 @@ export const useConsumerMoney = () => {
 
 export const POSProvider= (props: PropsWithChildren<ReactElement>) => {
     const [allProductos, setDBProductos] = useState<DBProduct[]>([{} as DBProduct]);    
-    const [productos, setProductos] = useState<SelectedProduct[]>([{} as SelectedProduct]);
+    const [productos, setProductos] = useState<SelectedProduct[]>([]);
     const [precioTotal, setPrecioTotal] = useState(0);
-    const [dineroEntregado, setDineroEntregado] = useState<number>(0);
+    const [dineroEntregado, setDineroEntregado] = useState<string>("0");
 
     useEffect(() => {
-        if(productos.length <= 0) setDineroEntregado(0);        
+        if(productos.length <= 0) setDineroEntregado("0");        
 
         let precioTotal = 0;
         productos.forEach(prodActual => {
@@ -106,25 +106,27 @@ export const POSProvider= (props: PropsWithChildren<ReactElement>) => {
     }
 
     const SetPrecioCompra = (precio: number) => {
+        if(isNaN(precio)) precio = 0;
         setPrecioTotal(precio);
     }
 
-    const SetDineroCliente = (dineroDelCliente: number | string) => {
-        var dinero =  typeof dineroDelCliente === "string" ? parseFloat(dineroDelCliente) : dineroDelCliente;
-        setDineroEntregado(dinero);
+    const SetDineroCliente = (dineroDelCliente: string) => {
+        if(!dineroDelCliente.match("^[+-]?([0-9]+([.][0-9]*)?|[.][0-9]+)$")) dineroDelCliente = dineroDelCliente.substring(0, dineroDelCliente.length - 1);
+        
+        setDineroEntregado(dineroDelCliente);
     }
 
     return (
         <div>
             <ProductsContext.Provider value={[allProductos, SetAllProducts]}>
-                    <SelectedProductsContext.Provider value={[productos, SetProductosSeleccionados]}>
-                        <PriceContext.Provider value={[precioTotal, SetPrecioCompra]}>
-                            <ConstumerMoneyContext.Provider value={[dineroEntregado, SetDineroCliente]}>
-                                {props.children}
-                            </ConstumerMoneyContext.Provider>
-                        </PriceContext.Provider>
-                    </SelectedProductsContext.Provider>
-                </ProductsContext.Provider>
+                <SelectedProductsContext.Provider value={[productos, SetProductosSeleccionados]}>
+                    <PriceContext.Provider value={[precioTotal, SetPrecioCompra]}>
+                        <ConstumerMoneyContext.Provider value={[dineroEntregado, SetDineroCliente]}>
+                            {props.children}
+                        </ConstumerMoneyContext.Provider>
+                    </PriceContext.Provider>
+                </SelectedProductsContext.Provider>
+            </ProductsContext.Provider>
         </div>        
     )
 }

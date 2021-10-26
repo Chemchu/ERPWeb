@@ -1,4 +1,4 @@
-import React, {useState, useEffect, useContext} from 'react';
+import {useState, useEffect} from 'react';
 import {ProductCard, ProductSelectedCard} from './productCard';
 import {POSProvider, useDBProducts, usePrice, useConsumerMoney, useSelectedProducts} from './productsContext';
 import axios from 'axios';
@@ -6,7 +6,6 @@ import { AnimatePresence, motion } from 'framer-motion';
 import { ModalPagar } from '../modal/modal';
 import ClientProvider, { useDBClients } from './clientContext';
 import { DBProduct } from '../../tipos/DBProduct';
-import { SelectedProduct } from '../../tipos/SelectedProduct';
 import { FilteredProds } from '../../tipos/FilteredProducts';
 
 export const POS = () => {
@@ -58,7 +57,7 @@ const POSComponent = () => {
         setPagarModal(false);
     }
 
-    const cambio = parseFloat((dineroEntregado - precioTotal).toFixed(2));
+    const cambio = parseFloat((parseFloat(dineroEntregado) - precioTotal).toFixed(2));
     const botonPagarColores = cambio >= 0 ? "bg-blue-500 h-12 shadow text-white rounded-lg hover:shadow-lg hover:bg-blue-600 focus:outline-none" : "bg-blue-300 h-12 shadow text-white rounded-lg hover:shadow-lg focus:outline-none cursor-default"
 
     return(
@@ -86,7 +85,7 @@ const POSComponent = () => {
                             </div>
                             {/* El cambio debe aparecer cuando el dinero entregado sea mayor q cero */}
                             {
-                                dineroEntregado > 0 && cambio >= 0 ?
+                                parseFloat(dineroEntregado) > 0 && cambio >= 0 ?
                                 <div className="flex mb-3 text-lg font-semibold bg-green-100 rounded-lg py-2 px-3">
                                     <div className="text-green-600">CAMBIO</div>
                                     <div className="text-right flex-grow text-green-600">
@@ -98,7 +97,7 @@ const POSComponent = () => {
                             }
                             {/* Mostrar en caso de que el cambio sea negativo */}
                             {
-                                dineroEntregado - precioTotal < 0 &&
+                                parseFloat(dineroEntregado) - precioTotal < 0 &&
                                 <div className="flex mb-3 text-lg font-semibold bg-pink-100 text-blue-gray-700 rounded-lg py-2 px-3">
                                     <div className="text-right flex-grow text-pink-600">
                                         <span className="inline-block ml-1">{cambio} €</span>
@@ -112,23 +111,23 @@ const POSComponent = () => {
                                     <div className="flex text-right">
                                         <div className="mr-2">€</div>
                                         <input type="text" inputMode="numeric" className="w-28 text-right bg-white shadow rounded-lg 
-                                            focus:bg-white focus:shadow-lg px-2 focus:outline-none" onChange={(e) => !isNaN(parseFloat(e.target.value)) ? setDineroEntregado(parseFloat(e.target.value)) : 0} value={dineroEntregado}/>
+                                            focus:bg-white focus:shadow-lg px-2 focus:outline-none" onChange={(e) => setDineroEntregado(e.target.value)} value={dineroEntregado}/>
                                     </div>
                                 </div>
                                 <hr className="my-2" />
                                 <div className="grid grid-cols-3 gap-2 mt-2">
                                     {/* Botones números rápidos */}
-                                    <motion.button whileTap={{scale: 0.9}} className="bg-white h-12 shadow rounded-lg hover:shadow-lg hover:bg-blue-400 hover:text-white focus:outline-none" onClick={() => {setDineroEntregado(`${dineroEntregado + 7}`)}}>7</motion.button>
-                                    <motion.button whileTap={{scale: 0.9}} className="bg-white h-12 shadow rounded-lg hover:shadow-lg hover:bg-blue-400 hover:text-white focus:outline-none" onClick={() => {setDineroEntregado(`${dineroEntregado + 8}`)}}>8</motion.button>
-                                    <motion.button whileTap={{scale: 0.9}} className="bg-white h-12 shadow rounded-lg hover:shadow-lg hover:bg-blue-400 hover:text-white focus:outline-none" onClick={() => {setDineroEntregado(`${dineroEntregado + 9}`)}}>9</motion.button>
+                                    <motion.button whileTap={{scale: 0.9}} className="bg-white h-12 shadow rounded-lg hover:shadow-lg hover:bg-blue-400 hover:text-white focus:outline-none" onClick={() => {setDineroEntregado(`${parseFloat(dineroEntregado.toString() + 7)}`)}}>7</motion.button>
+                                    <motion.button whileTap={{scale: 0.9}} className="bg-white h-12 shadow rounded-lg hover:shadow-lg hover:bg-blue-400 hover:text-white focus:outline-none" onClick={() => {setDineroEntregado(`${parseFloat(dineroEntregado.toString() + 8)}`)}}>8</motion.button>
+                                    <motion.button whileTap={{scale: 0.9}} className="bg-white h-12 shadow rounded-lg hover:shadow-lg hover:bg-blue-400 hover:text-white focus:outline-none" onClick={() => {setDineroEntregado(`${parseFloat(dineroEntregado.toString() + 9)}`)}}>9</motion.button>
 
-                                    <motion.button whileTap={{scale: 0.9}} className="bg-white h-12 shadow rounded-lg hover:shadow-lg hover:bg-blue-400 hover:text-white focus:outline-none" onClick={() => {setDineroEntregado(`${dineroEntregado + 4}`)}}>4</motion.button>
-                                    <motion.button whileTap={{scale: 0.9}} className="bg-white h-12 shadow rounded-lg hover:shadow-lg hover:bg-blue-400 hover:text-white focus:outline-none" onClick={() => {setDineroEntregado(`${dineroEntregado + 5}`)}}>5</motion.button>
-                                    <motion.button whileTap={{scale: 0.9}} className="bg-white h-12 shadow rounded-lg hover:shadow-lg hover:bg-blue-400 hover:text-white focus:outline-none" onClick={() => {setDineroEntregado(`${dineroEntregado + 6}`)}}>6</motion.button>
+                                    <motion.button whileTap={{scale: 0.9}} className="bg-white h-12 shadow rounded-lg hover:shadow-lg hover:bg-blue-400 hover:text-white focus:outline-none" onClick={() => {setDineroEntregado(`${parseFloat(dineroEntregado.toString() + 4)}`)}}>4</motion.button>
+                                    <motion.button whileTap={{scale: 0.9}} className="bg-white h-12 shadow rounded-lg hover:shadow-lg hover:bg-blue-400 hover:text-white focus:outline-none" onClick={() => {setDineroEntregado(`${parseFloat(dineroEntregado.toString() + 5)}`)}}>5</motion.button>
+                                    <motion.button whileTap={{scale: 0.9}} className="bg-white h-12 shadow rounded-lg hover:shadow-lg hover:bg-blue-400 hover:text-white focus:outline-none" onClick={() => {setDineroEntregado(`${parseFloat(dineroEntregado.toString() + 6)}`)}}>6</motion.button>
 
-                                    <motion.button whileTap={{scale: 0.9}} className="bg-white h-12 shadow rounded-lg hover:shadow-lg hover:bg-blue-400 hover:text-white focus:outline-none" onClick={() => {setDineroEntregado(`${dineroEntregado + 1}`)}}>1</motion.button>
-                                    <motion.button whileTap={{scale: 0.9}} className="bg-white h-12 shadow rounded-lg hover:shadow-lg hover:bg-blue-400 hover:text-white focus:outline-none" onClick={() => {setDineroEntregado(`${dineroEntregado + 2}`)}}>2</motion.button>
-                                    <motion.button whileTap={{scale: 0.9}} className="bg-white h-12 shadow rounded-lg hover:shadow-lg hover:bg-blue-400 hover:text-white focus:outline-none" onClick={() => {setDineroEntregado(`${dineroEntregado + 3}`)}}>3</motion.button>
+                                    <motion.button whileTap={{scale: 0.9}} className="bg-white h-12 shadow rounded-lg hover:shadow-lg hover:bg-blue-400 hover:text-white focus:outline-none" onClick={() => {setDineroEntregado(`${parseFloat(dineroEntregado.toString() + 1)}`)}}>1</motion.button>
+                                    <motion.button whileTap={{scale: 0.9}} className="bg-white h-12 shadow rounded-lg hover:shadow-lg hover:bg-blue-400 hover:text-white focus:outline-none" onClick={() => {setDineroEntregado(`${parseFloat(dineroEntregado.toString() + 2)}`)}}>2</motion.button>
+                                    <motion.button whileTap={{scale: 0.9}} className="bg-white h-12 shadow rounded-lg hover:shadow-lg hover:bg-blue-400 hover:text-white focus:outline-none" onClick={() => {setDineroEntregado(`${parseFloat(dineroEntregado.toString() + 3)}`)}}>3</motion.button>
 
                                     <motion.button whileTap={{scale: 0.9}} className="bg-white h-12 shadow rounded-lg hover:shadow-lg text-2xl hover:bg-blue-400 focus:outline-none" onClick={() => {setDineroEntregado(`${dineroEntregado}.`)}}>.,</motion.button>
                                     <motion.button whileTap={{scale: 0.9}} className="bg-white h-12 shadow rounded-lg hover:shadow-lg hover:bg-blue-400 focus:outline-none" onClick={() => {setDineroEntregado(`${dineroEntregado + 0}`)}}>0</motion.button>
@@ -151,7 +150,7 @@ const POSComponent = () => {
 
             <AnimatePresence initial={false} exitBeforeEnter={true}>
                 {/* Modal aceptar compra */}
-                {showModalPagar && <ModalPagar handleClose={cerrarModal} isEfectivo={isEfectivo} customerProducts={productos} finalPrice={precioTotal} cambio={isEfectivo ? (dineroEntregado - precioTotal).toFixed(2) : 0}/>}
+                {showModalPagar && <ModalPagar handleClose={cerrarModal} isEfectivo={isEfectivo} customerProducts={productos} finalPrice={precioTotal} cambio={isEfectivo ? (parseFloat(dineroEntregado) - precioTotal).toFixed(2) : 0}/>}
                 {/* Modal generico */}
                 {showGenericModal && <ModalGenerico/>}
                 {/* Modal ticket */}

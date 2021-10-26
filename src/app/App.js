@@ -1,5 +1,4 @@
-import React from 'react';
-import { BrowserRouter, Route, Switch, useLocation } from 'react-router-dom';
+import { Route, Switch, useLocation } from 'react-router-dom';
 import Dashboard from '../componentes/dashboard/dashboard.js'; 
 import {Dashboard2} from '../componentes/dashboard/dashboard2.js'; 
 import LoginPage from '../componentes/login/loginPage';
