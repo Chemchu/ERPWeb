@@ -134,7 +134,7 @@ const POSComponent = () => {
                                     <motion.button whileTap={{scale: 0.9}} className="bg-white h-12 shadow rounded-lg hover:shadow-lg hover:bg-red-500 hover:text-white focus:outline-none" onClick={() => {setDineroEntregado(dineroEntregado.toString().substring(0, dineroEntregado.toString().length - 1))}}>←</motion.button>
                                 </div>
                                 {
-                                    productos.length > 0 &&
+                                    productos.length > 0 && !isNaN(precioTotal) &&
                                     <div className="grid grid-cols-1 gap-2 mt-2">
                                         <motion.button whileTap={{scale: 0.9}} className={botonPagarColores} onClick={(e) => {cambio >= 0 && setPagarModal(true) && setIsEfectivo(true)}}>EFECTIVO</motion.button>
                                         <motion.button whileTap={{scale: 0.9}} className="bg-blue-500 h-12 shadow rounded-lg hover:shadow-lg hover:bg-blue-600 text-white focus:outline-none" onClick={ (e) => {setPagarModal(true); setIsEfectivo(false)} }>TARJETA</motion.button>
@@ -325,7 +325,7 @@ const GenerarProductsCards = (props: FilteredProds) => {
                 return (
                     <button key={prod._id} id={prod._id} 
                         onClick={(e)=> {SetProductos(
-                            {_id: e.currentTarget.id, cantidad: 1, valorEscrito: false, dto: 0, ean: prod.ean, familia: prod.familia, img: prod.img, precioVenta: prod.precioVenta, nombre: prod.nombre, operacionMod: ""});} }>
+                            {_id: e.currentTarget.id, cantidad: "1", dto: 0, ean: prod.ean, familia: prod.familia, img: prod.img, precioVenta: prod.precioVenta, nombre: prod.nombre, operacionMod: "add"});} }>
                         <ProductCard _id={prod._id} alta={prod.alta} descripción={prod.descripción} ean={prod.ean} familia={prod.familia}
                                         nombre={prod.nombre} precioVenta={prod.precioVenta} img={prod.img} 
                                         iva={prod.iva} precioCompra={prod.precioCompra} tags={prod.tags} />
@@ -380,7 +380,7 @@ const CarritoConProductos = () => {
                     if(foundProd) 
                     {
                         return <ProductSelectedCard key={foundProd._id} _id={foundProd._id} cantidad={product.cantidad}
-                                dto={product.dto} precioVenta={foundProd.precioVenta} valorEscrito={product.valorEscrito} img={foundProd.img} nombre={foundProd.nombre} 
+                                dto={product.dto} precioVenta={foundProd.precioVenta} img={foundProd.img} nombre={foundProd.nombre} 
                                 familia={foundProd.familia} ean={foundProd.ean} operacionMod={""}/> ;
                     }
                 })}

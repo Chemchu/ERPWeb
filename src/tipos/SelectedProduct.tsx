@@ -8,7 +8,6 @@ export type SelectedProduct = {
     ean: string[],
     dto: number,
     cantidad: string,
-    valorEscrito: boolean,
     operacionMod: string,
     img: JSONBuffer
 }

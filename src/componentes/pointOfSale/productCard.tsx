@@ -34,7 +34,7 @@ export const ProductSelectedCard: React.FC<SelectedProduct> = (props) => {
 
     {
         let prod = productos.filter((p: SelectedProduct) => p._id == props._id)[0];
-        return (parseInt(prod.cantidad) > 0 || prod.valorEscrito) ?
+        return (parseInt(prod.cantidad) > 0 || prod.cantidad == "") ?
             <div className="select-none mb-3 bg-gray-200 rounded-lg w-full py-2 px-2 flex justify-center">
                 <img src={`data:image/(png|jpeg);base64,${ConvertBufferToBase64(props.img)}`} className="rounded-lg h-10 w-10 bg-white shadow mr-2" />
                 <div className="flex-grow">
@@ -60,17 +60,21 @@ export const ProductSelectedCard: React.FC<SelectedProduct> = (props) => {
                         
                         <motion.button whileTap={{scale: 0.9}} className="rounded-lg text-center py-1 text-white bg-gray-500 hover:bg-gray-700 focus:outline-none" 
                         onClick={() => {
-                            AddProductos({_id: props._id, cantidad: -1, valorEscrito: false, dto: prod.dto});
+                            AddProductos({_id: prod._id, cantidad: "-1", dto: prod.dto, nombre: prod.nombre, 
+                            precioVenta: prod.precioVenta, ean: prod.ean, familia: prod.familia, img: prod.img, operacionMod: "resta"} as SelectedProduct);
                         }}>
                             <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-3 inline-block" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M20 12H4" />
                             </svg>
                         </motion.button>
                         <input type="text" inputMode="numeric" value={productos.filter((p:SelectedProduct) => p._id ==props._id)[0].cantidad} className="bg-white rounded-lg text-center shadow focus:outline-none focus:shadow-lg text-sm"  
-                            onChange={(e) =>{ AddProductos({_id: props._id, cantidad: parseInt(e.target.value), valorEscrito: true, dto: prod.dto});}} />
+                            onChange={(e) =>{ AddProductos({_id: prod._id, cantidad: e.target.value, dto: prod.dto, nombre: prod.nombre, 
+                            precioVenta: prod.precioVenta, ean: prod.ean, familia: prod.familia, img: prod.img, operacionMod: "escritura"} as SelectedProduct);}} />
+
                         <motion.button whileTap={{scale: 0.9}} id={props._id} className="rounded-lg text-center py-1 text-white bg-gray-500 hover:bg-gray-700 focus:outline-none" 
                         onClick={() => {
-                            AddProductos({_id: props._id, cantidad: 1, valorEscrito: false, dto: prod.dto});
+                            AddProductos({_id: prod._id, cantidad: "1", dto: prod.dto, nombre: prod.nombre, 
+                                            precioVenta: prod.precioVenta, ean: prod.ean, familia: prod.familia, img: prod.img, operacionMod: "suma"} as SelectedProduct);
                         }}>
                             <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-3 inline-block" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6" />

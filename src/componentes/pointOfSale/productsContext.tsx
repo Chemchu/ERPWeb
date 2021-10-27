@@ -41,59 +41,77 @@ export const POSProvider= (props: PropsWithChildren<ReactElement>) => {
 
         let precioTotal = 0;
         productos.forEach(prodActual => {
-            precioTotal += (parseInt(prodActual.cantidad) * prodActual.precioVenta * (isNaN(prodActual.dto) ? 1 : 1 - (prodActual.dto/100)) ); 
+            precioTotal += (Number(prodActual.cantidad) * prodActual.precioVenta * (isNaN(prodActual.dto) ? 1 : 1 - (prodActual.dto/100)) ); 
         });
 
-        setPrecioTotal(parseFloat(precioTotal.toFixed(2)));
+        setPrecioTotal(Number(precioTotal.toFixed(2)));
     },[productos]);
 
     const SetProductosSeleccionados = (productRawObject: SelectedProduct) => {
         try
         {
+            // En caso de recibir un objeto nulo, vacía la lista
             if(!productRawObject) { setProductos([] as SelectedProduct[]); return;}
 
+            // En caso de que se escriba un 0, se elimina dicho producto del carrito
+            if(productRawObject.cantidad == "0") { setProductos(productos.filter(p => p._id != productRawObject._id)); return; }
+
+            // Si la cantidad no es un entero y no es vacío, no hace nada (en el input de cantidad solo puede hacer entero o "")
+            if(!Number.isInteger(Number(productRawObject.cantidad)) && productRawObject.cantidad != "") { return; }
+
+            // Fija el descuento inicial o erroneo a 0
             if(productRawObject.dto < 0 || isNaN(productRawObject.dto)) productRawObject.dto = 0;
             
-            // Comprueba si está recibiendo un objeto vacío, en tal caso borra todo
             let prodsRepes = productos.filter(p => p._id == productRawObject._id);
-            var finalList = productos.filter(p => p._id != productRawObject._id);
+            
+            let prodToAdd = productos.filter(p => p._id == productRawObject._id)[0];
+            if(!prodToAdd) prodToAdd = productRawObject;
+            
+            switch(productRawObject.operacionMod) {
+                case "suma":
+                    if(!Number.isInteger(Number(productRawObject.cantidad))){
+                        prodToAdd.cantidad = "1";
+                    }
+                    else {
+                        prodToAdd.cantidad = (Number(prodToAdd.cantidad) + 1).toString();
+                    }
+                    break;
+                
+                case "resta":
+                    if(!Number.isInteger(Number(productRawObject.cantidad))){
+                        prodToAdd.cantidad = "0";
+                    }
+                    else {
+                        prodToAdd.cantidad = (Number(prodToAdd.cantidad) - 1).toString();
+                    }
+                    break;
 
-            // Elimina un producto de la lista de productos en carrito en caso de que su cantidad == 0
-            if(prodsRepes && parseInt(productRawObject.cantidad) <= 0) 
-            {
-                if(prodsRepes[0].cantidad == "1") { setProductos(finalList); return; }
+                case "escritura": 
+                    prodToAdd.cantidad = !Number.isInteger(Number(productRawObject.cantidad)) ? "" : productRawObject.cantidad;
+                    break;
+
+                case "add": 
+                    if(prodsRepes.length > 0) {
+                        prodToAdd.cantidad = (Number(prodToAdd.cantidad) + 1).toString();
+                    }
+                    else {
+                        productos.push(productRawObject);
+                    }
+                    break;
+
+                default:
+                    console.log("Default en switch, no debería de ir por aquí");
+
             }
 
-            // En caso de querer añadir un producto que ya está en el carrito
-            if(prodsRepes.length > 0) {             
-                // Se suma uno o resta uno en función de la cantidad
-                const prodCant = productRawObject.operacionMod == 'resta' ? parseInt(prodsRepes[0].cantidad) - 1 : parseInt(prodsRepes[0].cantidad) + 1; 
-
-                // Crea el objeto del producto a añadir
-                let prodToAdd: SelectedProduct = productRawObject
-                prodToAdd.cantidad = prodCant.toString();
-                
-                // En caso de que la cantidad se esté cambiando por teclado
-                if(productRawObject.valorEscrito) {
-                    // Si se escribe 0, elimina dicho producto
-                    if(productRawObject.cantidad == "0") { setProductos(finalList);  return; }
-                    // En caso de que reciba un NaN, pone un "" en su lugar
-                    if(isNaN(parseInt(productRawObject.cantidad))) prodToAdd = {_id: productRawObject._id, cantidad: "", valorEscrito: true, dto: productRawObject.dto} as SelectedProduct;
-                    // En caso contrario, el objeto sirve para añadir al carrito
-                    else prodToAdd = productRawObject;
-                }
-
-                // Pone el objeto en la fila que correcta, sin desbaratar el carrito
+            //Pone el objeto en la fila que correcta, sin desbaratar el carrito
+            if(prodToAdd.cantidad == "0") {
+                setProductos(productos.filter(p => p._id != productRawObject._id));
+            }
+            else {
                 const index = productos.findIndex(p => p._id == productRawObject._id);
                 productos[index] = prodToAdd;
                 setProductos([...productos]);
-            }
-            // En caso de que este producto no esté ya en carrito, se añade
-            else {
-                var prodToList: SelectedProduct = productRawObject;
-                prodToList.cantidad = "1";
-                productos.push(prodToList);
-                setProductos([...productos])
             }
         }catch(err)
         {
@@ -112,7 +130,7 @@ export const POSProvider= (props: PropsWithChildren<ReactElement>) => {
 
     const SetDineroCliente = (dineroDelCliente: string) => {
         if(!dineroDelCliente.match("^[+-]?([0-9]+([.][0-9]*)?|[.][0-9]+)$")) dineroDelCliente = dineroDelCliente.substring(0, dineroDelCliente.length - 1);
-        
+
         setDineroEntregado(dineroDelCliente);
     }
 
