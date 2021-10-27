@@ -137,7 +137,7 @@ const POSComponent = () => {
                                 {
                                     productos.length > 0 && !isNaN(precioTotal) && allProductsHaveQuantity &&
                                     <div className="grid grid-cols-1 gap-2 mt-2">
-                                        <motion.button whileTap={{scale: 0.9}} className={botonPagarColores} onClick={(e) => {cambio >= 0 && setPagarModal(true) && setIsEfectivo(true)}}>EFECTIVO</motion.button>
+                                        <motion.button whileTap={{scale: cambio >= 0 ? 0.9 : 1}} className={botonPagarColores} onClick={(e) => {cambio >= 0 && setPagarModal(true) && setIsEfectivo(true)}}>EFECTIVO</motion.button>
                                         <motion.button whileTap={{scale: 0.9}} className="bg-blue-500 h-12 shadow rounded-lg hover:shadow-lg hover:bg-blue-600 text-white focus:outline-none" onClick={ (e) => {setPagarModal(true); setIsEfectivo(false)} }>TARJETA</motion.button>
                                     </div>
                                 }
