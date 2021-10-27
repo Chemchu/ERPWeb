@@ -51,7 +51,9 @@ export const ProductSelectedCard: React.FC<SelectedProduct> = (props) => {
                 </div>
 
                 <div className="py-2 inline-block align-middle">
-                    <input type="text" inputMode="numeric" className="text-xs text-center rounded-lg w-10 h-6 shadow" value={prod.dto} onChange={(e) => AddProductos({_id: props._id, cantidad: prod.cantidad, valorEscrito: true, dto: e.target.value})} />
+                    <input type="text" inputMode="numeric" className="text-xs text-center rounded-lg w-10 h-6 shadow" 
+                            value={prod.dto} onChange={(e) => AddProductos({_id: props._id, cantidad: prod.cantidad, dto: Number(e.target.value), 
+                                                            ean: prod.ean, familia: prod.familia, img: prod.img, nombre: prod.nombre, operacionMod: "descuento", precioVenta: prod.precioVenta} as SelectedProduct)} />
                     <> %</>
                 </div>
                 

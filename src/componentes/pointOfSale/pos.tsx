@@ -59,6 +59,7 @@ const POSComponent = () => {
 
     const cambio = parseFloat((parseFloat(dineroEntregado) - precioTotal).toFixed(2));
     const botonPagarColores = cambio >= 0 ? "bg-blue-500 h-12 shadow text-white rounded-lg hover:shadow-lg hover:bg-blue-600 focus:outline-none" : "bg-blue-300 h-12 shadow text-white rounded-lg hover:shadow-lg focus:outline-none cursor-default"
+    const allProductsHaveQuantity = productos.filter(p => p.cantidad == "").length <= 0;
 
     return(
         <div>
@@ -134,7 +135,7 @@ const POSComponent = () => {
                                     <motion.button whileTap={{scale: 0.9}} className="bg-white h-12 shadow rounded-lg hover:shadow-lg hover:bg-red-500 hover:text-white focus:outline-none" onClick={() => {setDineroEntregado(dineroEntregado.toString().substring(0, dineroEntregado.toString().length - 1))}}>←</motion.button>
                                 </div>
                                 {
-                                    productos.length > 0 && !isNaN(precioTotal) &&
+                                    productos.length > 0 && !isNaN(precioTotal) && allProductsHaveQuantity &&
                                     <div className="grid grid-cols-1 gap-2 mt-2">
                                         <motion.button whileTap={{scale: 0.9}} className={botonPagarColores} onClick={(e) => {cambio >= 0 && setPagarModal(true) && setIsEfectivo(true)}}>EFECTIVO</motion.button>
                                         <motion.button whileTap={{scale: 0.9}} className="bg-blue-500 h-12 shadow rounded-lg hover:shadow-lg hover:bg-blue-600 text-white focus:outline-none" onClick={ (e) => {setPagarModal(true); setIsEfectivo(false)} }>TARJETA</motion.button>

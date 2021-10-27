@@ -29,7 +29,6 @@ export const useConsumerMoney = () => {
     return useContext(ConstumerMoneyContext);
 }
 
-
 export const POSProvider= (props: PropsWithChildren<ReactElement>) => {
     const [allProductos, setDBProductos] = useState<DBProduct[]>([{} as DBProduct]);    
     const [productos, setProductos] = useState<SelectedProduct[]>([]);
@@ -56,11 +55,11 @@ export const POSProvider= (props: PropsWithChildren<ReactElement>) => {
             // En caso de que se escriba un 0, se elimina dicho producto del carrito
             if(productRawObject.cantidad == "0") { setProductos(productos.filter(p => p._id != productRawObject._id)); return; }
 
-            // Si la cantidad no es un entero y no es vacío, no hace nada (en el input de cantidad solo puede hacer entero o "")
-            if(!Number.isInteger(Number(productRawObject.cantidad)) && productRawObject.cantidad != "") { return; }
-
             // Fija el descuento inicial o erroneo a 0
             if(productRawObject.dto < 0 || isNaN(productRawObject.dto)) productRawObject.dto = 0;
+            
+            // Si la cantidad no es un entero y no es vacío, no hace nada (en el input de cantidad solo puede hacer entero o "")
+            if(!Number.isInteger(Number(productRawObject.cantidad)) && productRawObject.cantidad != "") { return; }
             
             let prodsRepes = productos.filter(p => p._id == productRawObject._id);
             
@@ -96,6 +95,12 @@ export const POSProvider= (props: PropsWithChildren<ReactElement>) => {
                     }
                     else {
                         productos.push(productRawObject);
+                    }
+                    break;
+
+                case "descuento": 
+                    if(prodsRepes.length > 0) {
+                        prodToAdd.dto = productRawObject.dto >= 0 && productRawObject.dto <= 100 ? productRawObject.dto : prodToAdd.dto;
                     }
                     break;
 
