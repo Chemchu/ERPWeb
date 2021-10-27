@@ -1,8 +1,8 @@
 import { Route, Switch, useLocation } from 'react-router-dom';
-import Dashboard from '../componentes/dashboard/dashboard.js'; 
-import {Dashboard2} from '../componentes/dashboard/dashboard2.js'; 
+import Dashboard from '../componentes/dashboard/dashboard'; 
+import {Dashboard2} from '../componentes/dashboard/dashboard2'; 
 import LoginPage from '../componentes/login/loginPage';
-import NotFound from '../componentes/404/notFound.js';
+import NotFound from '../componentes/404/notFound';
 import HiddenSideBar from '../componentes/dashboard/sidebar/sideBarHidden';
 import Sidebar from '../componentes/dashboard/sidebar/sidebar';
 import {ProductList} from '../componentes/pointOfSale/productList';

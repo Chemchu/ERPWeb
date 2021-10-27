@@ -67,7 +67,7 @@ const POSComponent = () => {
             {/* Página principal del POS */}
             <div className="flex-grow flex">
                 {/* Menú tienda, donde se muestran los productos */}
-                <ProductDisplay listFiltrados={[productosFiltrados, SetProductosFiltrados]} listaTodosProductos={[allProductos, SetAllProductos]}/>
+                <ProductDisplay listFiltrados={[productosFiltrados, SetProductosFiltrados]}/>
                 {/* Menú tienda */}
                 {/* Sidebar derecho */}
                 <div className="w-5/12 flex flex-col bg-gray-100 h-full pr-4 pl-2 py-4">
@@ -151,7 +151,7 @@ const POSComponent = () => {
 
             <AnimatePresence initial={false} exitBeforeEnter={true}>
                 {/* Modal aceptar compra */}
-                {showModalPagar && <ModalPagar handleClose={cerrarModal} isEfectivo={isEfectivo} customerProducts={productos} finalPrice={precioTotal} cambio={isEfectivo ? (parseFloat(dineroEntregado) - precioTotal).toFixed(2) : 0}/>}
+                {showModalPagar && <ModalPagar handleClose={cerrarModal} isEfectivo={isEfectivo} customerProducts={productos} finalPrice={precioTotal} cambio={isEfectivo ? Number((Number(dineroEntregado) - precioTotal).toFixed(2)) : 0}/>}
                 {/* Modal generico */}
                 {showGenericModal && <ModalGenerico/>}
                 {/* Modal ticket */}
@@ -250,10 +250,9 @@ const ModalGenerico = () => {
     )
 }
 
-// Arreglar tipado del props
-const ProductDisplay = (props: { listFiltrados: [any, any]; listaTodosProductos: [any, any]; }) => {
-    const [productosFiltrados, SetProductosFiltrados] = props.listFiltrados as [DBProduct[], Function];
-    const [allProductos, SetAllProductos] = props.listaTodosProductos;
+const ProductDisplay = (props: { listFiltrados: [DBProduct[], Function]; }) => {
+    const [productosFiltrados, SetProductosFiltrados] = props.listFiltrados;
+    const [allProductos, ] = useDBProducts();
 
     var filtrarProd = (cadena: string) => {
         var prodFiltrados = allProductos.filter((prod: DBProduct) => prod.nombre.toLowerCase().includes(cadena.toLowerCase()));
