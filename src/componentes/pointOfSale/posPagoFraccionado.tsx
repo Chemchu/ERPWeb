@@ -3,7 +3,7 @@ import {ProductCard, ProductSelectedCard} from './productCard';
 import {POSProvider, useDBProducts, usePrice, useConsumerMoney, useSelectedProducts} from './productsContext';
 import axios from 'axios';
 import { AnimatePresence, motion } from 'framer-motion'; 
-import { ModalResumenCompra } from '../modal/modal';
+import { ModalPagar } from '../modal/modal';
 import ClientProvider, { useCurrentClient, useDBClients } from './clientContext';
 import { DBProduct } from '../../tipos/DBProduct';
 import { FilteredProds } from '../../tipos/FilteredProducts';
@@ -54,8 +54,6 @@ const POSComponent = () => {
     }, []);
 
     useEffect(() => {
-        //console.log(!montado.current);
-
         if(!montado.current) {return;}
         else setPagarModal(true);
         
@@ -92,64 +90,13 @@ const POSComponent = () => {
                                     {productos.length <= 0 ? 0 : precioTotal} €
                                 </div>
                             </div>
-                            {/* El cambio debe aparecer cuando el dinero entregado sea mayor q cero */}
+
                             {
-                                parseFloat(dineroEntregado) > 0 && cambio >= 0 ?
-                                <div className="flex mb-3 text-lg font-semibold bg-green-100 rounded-lg py-2 px-3">
-                                    <div className="text-green-600">CAMBIO</div>
-                                    <div className="text-right flex-grow text-green-600">
-                                        {cambio} €
-                                    </div>
-                                </div>
-                                :
-                                null
-                            }
-                            {/* Mostrar en caso de que el cambio sea negativo */}
-                            {
-                                parseFloat(dineroEntregado) - precioTotal < 0 &&
-                                <div className="flex mb-3 text-lg font-semibold bg-pink-100 text-blue-gray-700 rounded-lg py-2 px-3">
-                                    <div className="text-right flex-grow text-pink-600">
-                                        <span className="inline-block ml-1">{cambio} €</span>
-                                    </div>
+                                productos.length > 0 && !isNaN(precioTotal) && allProductsHaveQuantity &&
+                                <div className="grid grid-cols-1 gap-2 mt-2">
+                                    <motion.button whileTap={{scale: 0.9}} className="bg-blue-500 h-12 shadow rounded-lg hover:shadow-lg hover:bg-blue-600 text-white focus:outline-none" onClick={ (e) => {setPagarModal(true)} }>PAGAR</motion.button>
                                 </div>
                             }
-
-                            <div className="mb-3 text-gray-700 px-3 pt-2 pb-3 rounded-lg bg-gray-200">
-                                <div className="flex text-lg font-semibold">
-                                <div className="flex-grow text-left">EFECTIVO</div>
-                                    <div className="flex text-right">
-                                        <div className="mr-2">€</div>
-                                        <input type="text" inputMode="numeric" className="w-28 text-right bg-white shadow rounded-lg 
-                                            focus:bg-white focus:shadow-lg px-2 focus:outline-none" onChange={(e) => setDineroEntregado(e.target.value)} value={dineroEntregado}/>
-                                    </div>
-                                </div>
-                                <hr className="my-2" />
-                                <div className="grid grid-cols-3 gap-2 mt-2">
-                                    {/* Botones números rápidos */}
-                                    <motion.button whileTap={{scale: 0.9}} className="bg-white h-12 shadow rounded-lg hover:shadow-lg hover:bg-blue-400 hover:text-white focus:outline-none" onClick={() => {setDineroEntregado(`${parseFloat(dineroEntregado.toString() + 7)}`)}}>7</motion.button>
-                                    <motion.button whileTap={{scale: 0.9}} className="bg-white h-12 shadow rounded-lg hover:shadow-lg hover:bg-blue-400 hover:text-white focus:outline-none" onClick={() => {setDineroEntregado(`${parseFloat(dineroEntregado.toString() + 8)}`)}}>8</motion.button>
-                                    <motion.button whileTap={{scale: 0.9}} className="bg-white h-12 shadow rounded-lg hover:shadow-lg hover:bg-blue-400 hover:text-white focus:outline-none" onClick={() => {setDineroEntregado(`${parseFloat(dineroEntregado.toString() + 9)}`)}}>9</motion.button>
-
-                                    <motion.button whileTap={{scale: 0.9}} className="bg-white h-12 shadow rounded-lg hover:shadow-lg hover:bg-blue-400 hover:text-white focus:outline-none" onClick={() => {setDineroEntregado(`${parseFloat(dineroEntregado.toString() + 4)}`)}}>4</motion.button>
-                                    <motion.button whileTap={{scale: 0.9}} className="bg-white h-12 shadow rounded-lg hover:shadow-lg hover:bg-blue-400 hover:text-white focus:outline-none" onClick={() => {setDineroEntregado(`${parseFloat(dineroEntregado.toString() + 5)}`)}}>5</motion.button>
-                                    <motion.button whileTap={{scale: 0.9}} className="bg-white h-12 shadow rounded-lg hover:shadow-lg hover:bg-blue-400 hover:text-white focus:outline-none" onClick={() => {setDineroEntregado(`${parseFloat(dineroEntregado.toString() + 6)}`)}}>6</motion.button>
-
-                                    <motion.button whileTap={{scale: 0.9}} className="bg-white h-12 shadow rounded-lg hover:shadow-lg hover:bg-blue-400 hover:text-white focus:outline-none" onClick={() => {setDineroEntregado(`${parseFloat(dineroEntregado.toString() + 1)}`)}}>1</motion.button>
-                                    <motion.button whileTap={{scale: 0.9}} className="bg-white h-12 shadow rounded-lg hover:shadow-lg hover:bg-blue-400 hover:text-white focus:outline-none" onClick={() => {setDineroEntregado(`${parseFloat(dineroEntregado.toString() + 2)}`)}}>2</motion.button>
-                                    <motion.button whileTap={{scale: 0.9}} className="bg-white h-12 shadow rounded-lg hover:shadow-lg hover:bg-blue-400 hover:text-white focus:outline-none" onClick={() => {setDineroEntregado(`${parseFloat(dineroEntregado.toString() + 3)}`)}}>3</motion.button>
-
-                                    <motion.button whileTap={{scale: 0.9}} className="bg-white h-12 shadow rounded-lg hover:shadow-lg text-2xl hover:bg-blue-400 focus:outline-none" onClick={() => {setDineroEntregado(`${dineroEntregado}.`)}}>.,</motion.button>
-                                    <motion.button whileTap={{scale: 0.9}} className="bg-white h-12 shadow rounded-lg hover:shadow-lg hover:bg-blue-400 focus:outline-none" onClick={() => {setDineroEntregado(`${dineroEntregado + 0}`)}}>0</motion.button>
-                                    <motion.button whileTap={{scale: 0.9}} className="bg-white h-12 shadow rounded-lg hover:shadow-lg hover:bg-red-500 hover:text-white focus:outline-none" onClick={() => {setDineroEntregado(dineroEntregado.toString().substring(0, dineroEntregado.toString().length - 1))}}>←</motion.button>
-                                </div>
-                                {
-                                    productos.length > 0 && !isNaN(precioTotal) && allProductsHaveQuantity &&
-                                    <div className="grid grid-cols-1 gap-2 mt-2">
-                                        <motion.button whileTap={{scale: cambio >= 0 ? 0.9 : 1}} className={botonPagarColores} onClick={(e) => {cambio >= 0 && setIsEfectivo(!!true)}}>EFECTIVO</motion.button>
-                                        <motion.button whileTap={{scale: 0.9}} className="bg-blue-500 h-12 shadow rounded-lg hover:shadow-lg hover:bg-blue-600 text-white focus:outline-none" onClick={ (e) => {setIsEfectivo(!!false)} }>TARJETA</motion.button>
-                                    </div>
-                                }
-                            </div>                                                
                         </div>
                         {/* end of payment info */}
                     </div>
@@ -159,7 +106,7 @@ const POSComponent = () => {
 
             <AnimatePresence initial={false} exitBeforeEnter={true}>
                 {/* Modal aceptar compra */}
-                {showModalPagar && <ModalResumenCompra handleClose={cerrarModal} cliente={cliente} isEfectivo={isEfectivo} customerProducts={productos} dineroEntregado={Number(parseFloat(dineroEntregado).toFixed(2))} finalPrice={precioTotal}/>}
+                {showModalPagar && <ModalPagar handleClose={cerrarModal} cliente={cliente} isEfectivo={isEfectivo} customerProducts={productos} dineroEntregado={Number(parseFloat(dineroEntregado).toFixed(2))} finalPrice={precioTotal}/>}
             </AnimatePresence>
             
             </div>

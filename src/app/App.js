@@ -11,7 +11,7 @@ import ReportCard from '../componentes/dashboard/reportCards';
 import ProductPage from '../componentes/productPage/productPage';
 import { AnimatePresence } from 'framer-motion';
 import LandingPage from '../componentes/landingPage/landingPage';
-import { POS } from '../componentes/pointOfSale/pos';
+import { POS } from '../componentes/pointOfSale/posPagoFraccionado';
 
 function App() {
 
