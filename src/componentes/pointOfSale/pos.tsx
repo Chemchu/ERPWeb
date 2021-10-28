@@ -1,4 +1,4 @@
-import {useState, useEffect} from 'react';
+import {useState, useEffect, useRef} from 'react';
 import {ProductCard, ProductSelectedCard} from './productCard';
 import {POSProvider, useDBProducts, usePrice, useConsumerMoney, useSelectedProducts} from './productsContext';
 import axios from 'axios';
@@ -19,20 +19,21 @@ export const POS = () => {
 }
 
 const POSComponent = () => {
-    const [showGenericModal, setGenericModal] = useState(false);
+    const [showGenericModal, ] = useState(false);
     const [showModalPagar, setPagarModal] = useState(false);
-    const [showResumenCompra, setShowResumenCompra] = useState(false);
+    const [showResumenCompra, ] = useState(false);
 
-    const [productos, AddProduct] = useSelectedProducts();
-    const [precioTotal, setPrecioTotal] = usePrice();
+    const [productos, ] = useSelectedProducts();
+    const [precioTotal, ] = usePrice();
     const [dineroEntregado, setDineroEntregado] = useConsumerMoney();
 
-    const [allProductos, SetAllProductos] = useDBProducts();
+    const [, SetAllProductos] = useDBProducts();
     const [productosFiltrados, SetProductosFiltrados] = useState<DBProduct[]>([]);
 
     const [, setCustomers] = useDBClients();
 
-    const [isEfectivo, setIsEfectivo] = useState(false);
+    const [isEfectivo, setIsEfectivo] = useState<boolean>(false);
+    const montado = useRef(false);
 
     useEffect(() => {
         const fetchProductos = () => {
@@ -48,10 +49,18 @@ const POSComponent = () => {
                     setCustomers([...res.data.message]);
                 }
             );
-            
         };
         fetchProductos();
+        montado.current = true;
     }, []);
+
+    useEffect(() => {
+        //console.log(!montado.current);
+
+        if(!montado.current) {return;}
+        else setPagarModal(true);
+        
+    }, [isEfectivo])
 
     const cerrarModal = () => {
         setPagarModal(false);
@@ -137,8 +146,8 @@ const POSComponent = () => {
                                 {
                                     productos.length > 0 && !isNaN(precioTotal) && allProductsHaveQuantity &&
                                     <div className="grid grid-cols-1 gap-2 mt-2">
-                                        <motion.button whileTap={{scale: cambio >= 0 ? 0.9 : 1}} className={botonPagarColores} onClick={(e) => {cambio >= 0 && setPagarModal(true) && setIsEfectivo(true)}}>EFECTIVO</motion.button>
-                                        <motion.button whileTap={{scale: 0.9}} className="bg-blue-500 h-12 shadow rounded-lg hover:shadow-lg hover:bg-blue-600 text-white focus:outline-none" onClick={ (e) => {setPagarModal(true); setIsEfectivo(false)} }>TARJETA</motion.button>
+                                        <motion.button whileTap={{scale: cambio >= 0 ? 0.9 : 1}} className={botonPagarColores} onClick={(e) => {cambio >= 0 && setIsEfectivo(!!true)}}>EFECTIVO</motion.button>
+                                        <motion.button whileTap={{scale: 0.9}} className="bg-blue-500 h-12 shadow rounded-lg hover:shadow-lg hover:bg-blue-600 text-white focus:outline-none" onClick={ (e) => {setIsEfectivo(!!false)} }>TARJETA</motion.button>
                                     </div>
                                 }
                             </div>                                                
@@ -151,7 +160,7 @@ const POSComponent = () => {
 
             <AnimatePresence initial={false} exitBeforeEnter={true}>
                 {/* Modal aceptar compra */}
-                {showModalPagar && <ModalPagar handleClose={cerrarModal} isEfectivo={isEfectivo} customerProducts={productos} finalPrice={precioTotal} cambio={isEfectivo ? Number((Number(dineroEntregado) - precioTotal).toFixed(2)) : 0}/>}
+                {showModalPagar && <ModalPagar handleClose={cerrarModal} isEfectivo={isEfectivo} customerProducts={productos} dineroEntregado={Number(parseFloat(dineroEntregado).toFixed(2))} finalPrice={precioTotal}/>}
                 {/* Modal generico */}
                 {showGenericModal && <ModalGenerico/>}
                 {/* Modal ticket */}

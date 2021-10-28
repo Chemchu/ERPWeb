@@ -4,7 +4,7 @@ import { SelectedProduct } from "./SelectedProduct";
 export type ModalProps = {
     handleClose: MouseEventHandler<HTMLButtonElement>,
     finalPrice: number,
-    cambio: number,
+    dineroEntregado: number,
     customerProducts: SelectedProduct[],
     isEfectivo: boolean
 }
