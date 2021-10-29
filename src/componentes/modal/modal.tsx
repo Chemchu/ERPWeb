@@ -36,29 +36,42 @@ const In = {
 export const ModalPagar = (props: ModalProps) => {
     const [cliente, ] = useState<Client>({nif: 'Genérico', calle: '', cp: '', nombre: 'Genérico'} as Client);
     const [customers, ] = useDBClients();
-    
-    const [dineroEntregado, setDineroEntregado] = useConsumerMoney();
+
+    const [dineroEntregado, setDineroEntregado] = useState<string>("0");
+    const [dineroEntregadoTarjeta, setDineroEntregadoTarjeta] = useState<string>("0");
 
     let date = new Date();
     const fechaActual = `${date.getDate().toLocaleString('es-ES', { minimumIntegerDigits: 2})}/${parseInt(date.getUTCMonth().toLocaleString('es-ES', { minimumIntegerDigits: 2})) + 1}/${date.getFullYear()} - ${date.getHours().toLocaleString('es-ES', { minimumIntegerDigits: 2})}:${date.getMinutes().toLocaleString('es-ES', { minimumIntegerDigits: 2})}:${date.getSeconds().toLocaleString('es-ES', { minimumIntegerDigits: 2})}`;
+    const cambio: number = isNaN((Number(dineroEntregado) + Number(dineroEntregadoTarjeta) - props.finalPrice)) ? Number(dineroEntregado) + Number(dineroEntregadoTarjeta) : (Number(dineroEntregado) + Number(dineroEntregadoTarjeta) - props.finalPrice);
+
+    const SetDineroClienteEfectivo = (dineroDelCliente: string) => {
+        if(!dineroDelCliente.match("^[+-]?([0-9]+([.][0-9]*)?|[.][0-9]+)$") && dineroDelCliente != "") return;
+        setDineroEntregado(dineroDelCliente);
+    }
+
+    const SetDineroClienteTarjeta = (dineroDelCliente: string) => {
+        if(!dineroDelCliente.match("^[+-]?([0-9]+([.][0-9]*)?|[.][0-9]+)$") && dineroDelCliente != "") return;
+        setDineroEntregadoTarjeta(dineroDelCliente);
+    }
 
     const addSale = () => {
-        const clienteSeleccionado = customers.filter(c => c.nif == cliente.nif)[0];
-        const erpBackURL = process.env.REACT_APP_ERP_BACKURL;
-        const tipo = props.isEfectivo ? "Efectivo" : "Tarjeta"
-        const data = {
-            productos: props.customerProducts.map(p => p._id),
-            precioVentaTotal: props.finalPrice,
-            cambio: props.dineroEntregado - props.finalPrice,
-            cliente: clienteSeleccionado,
-            tipo: tipo
-        }
-        axios.put(`${erpBackURL}api/ventas/add`, data).then(
-            (res) => {
-                console.log(res);
-            }
-        );
+        // const clienteSeleccionado = customers.filter(c => c.nif == cliente.nif)[0];
+        // const erpBackURL = process.env.REACT_APP_ERP_BACKURL;
+        // const tipo = props.isEfectivo ? "Efectivo" : "Tarjeta"
+        // const data = {
+        //     productos: props.customerProducts.map(p => p._id),
+        //     precioVentaTotal: props.finalPrice,
+        //     cambio: cambio,
+        //     cliente: clienteSeleccionado,
+        //     tipo: tipo
+        // }
+        // axios.put(`${erpBackURL}api/ventas/add`, data).then(
+        //     (res) => {
+        //         console.log(res);
+        //     }
+        // );
     }
+
 
     return(
         <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity:0 }} >
@@ -73,7 +86,7 @@ export const ModalPagar = (props: ModalProps) => {
 
                     <div id="receipt-content" className="text-left w-full text-sm p-6 overflow-auto">
                         {/* <div className="text-center">
-                            <h1 className="text-4xl font-semibold">ERPWeb</h1>
+                            <h1 className="text-3xl font-semibold">ERPWeb</h1>
                         </div> */}
 
                         <div className="grid grid-cols-2">
@@ -92,18 +105,22 @@ export const ModalPagar = (props: ModalProps) => {
                                     <div className="text-2xl font-semibold">Método de pago</div>
                                     <hr/>
 
-                                    <div className="grid grid-rows-2 grid-cols-2 justify-items-center gap-6 p-10 ">
-                                        <div className="text-xl">
-                                            Efectivo
+                                    <div className="grid grid-cols-2 justify-items gap-6 p-10">
+                                        <div>
+                                            <div className="text-xl text-left">
+                                                Efectivo
+                                            </div>
+                                            <div className="text-xl">
+                                                <InputDinero inputDinero={dineroEntregado} setDinero={SetDineroClienteEfectivo}/>
+                                            </div>
                                         </div>
-                                        <div className="text-xl">
-                                            <InputDinero inputDinero={dineroEntregado} setDinero={setDineroEntregado}/>
-                                        </div>
-                                        <div className="text-xl col-end-auto">
-                                            Tarjeta
-                                        </div>
-                                        <div className="text-xl">
-                                            <InputDinero inputDinero={dineroEntregado} setDinero={setDineroEntregado}/>
+                                        <div>
+                                            <div className="text-xl text-left">
+                                                Tarjeta
+                                            </div>
+                                            <div className="text-xl">
+                                                <InputDinero inputDinero={dineroEntregadoTarjeta} setDinero={SetDineroClienteTarjeta}/>
+                                            </div>
                                         </div>
                                     </div>
                                     {/* <h2 className="py-6 text-lg font-semibold">PRECIO TOTAL: {props.finalPrice.toFixed(2)}€</h2> */}
@@ -142,10 +159,19 @@ export const ModalPagar = (props: ModalProps) => {
                                     </div> */}
                                 </div>
 
-                                <div className="grid grid-cols-3">
-                                    <div>Total a pagar</div>
-                                    <div>Tipo de pago actual</div>
-                                    <div>Pendiente</div>
+                                <div className="grid grid-cols-3 text-lg text-center justify-center">
+                                    <div>
+                                        <div>Total a pagar</div>
+                                        <div className="text-4xl font-semibold">{props.finalPrice.toFixed(2)}€</div>
+                                    </div>
+                                    <div>
+                                        <div>Dinero entregado</div>
+                                        <div className="text-4xl font-semibold">{isNaN(Number(dineroEntregado) + Number(dineroEntregadoTarjeta)) ? "0.00" : (Number(dineroEntregado) + Number(dineroEntregadoTarjeta)).toFixed(2)}€</div>
+                                    </div>
+                                    <div>
+                                        <div>{cambio < 0 ? 'Pendiente' : 'Cambio'}</div>
+                                        <div className={`text-4xl font-semibold ${cambio < 0 ? "text-red-500" : "text-green-500"}`}>{cambio.toFixed(2)}€</div>
+                                    </div>
                                 </div>
 
                             </div>
@@ -153,16 +179,16 @@ export const ModalPagar = (props: ModalProps) => {
 
                         <hr className="my-2"/>
                         <div className="grid grid-cols-2 justify-items-center">
-                            <button className="bg-red-500 hover:bg-red-600 text-white w-full h-10 hover:shadow-lg rounded-lg flex items-center justify-center" onClick={props.handleClose}>
+                            <button className="bg-red-500 hover:bg-red-600 text-white w-full h-12 hover:shadow-lg rounded-lg flex items-center justify-center" onClick={props.handleClose}>
                                 <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
                                 </svg>
                             </button>
-                            <button className="bg-blue-500 hover:bg-blue-600 text-white w-full h-10 hover:shadow-lg rounded-lg flex items-center justify-center" onClick={addSale}>
+                            <button className="bg-blue-500 hover:bg-blue-600 text-white w-full h-12 hover:shadow-lg rounded-lg flex items-center justify-center" onClick={addSale}>
                                 {/* <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
                                 </svg> */}
-                                <div className="text-lg">Completar venta</div>
+                                <div className="text-lg">COMPLETAR VENTA</div>
                             </button>
                         </div>
                     </div>
@@ -181,21 +207,21 @@ export const ModalResumenCompra = (props: ModalProps) => {
     const fechaActual = `${date.getDate().toLocaleString('es-ES', { minimumIntegerDigits: 2})}/${parseInt(date.getUTCMonth().toLocaleString('es-ES', { minimumIntegerDigits: 2})) + 1}/${date.getFullYear()} - ${date.getHours().toLocaleString('es-ES', { minimumIntegerDigits: 2})}:${date.getMinutes().toLocaleString('es-ES', { minimumIntegerDigits: 2})}:${date.getSeconds().toLocaleString('es-ES', { minimumIntegerDigits: 2})}`;
 
     const addSale = () => {
-        const clienteSeleccionado = customers.filter(c => c.nif == cliente.nif)[0];
-        const erpBackURL = process.env.REACT_APP_ERP_BACKURL;
-        const tipo = props.isEfectivo ? "Efectivo" : "Tarjeta"
-        const data = {
-            productos: props.customerProducts.map(p => p._id),
-            precioVentaTotal: props.finalPrice,
-            cambio: props.dineroEntregado - props.finalPrice,
-            cliente: clienteSeleccionado,
-            tipo: tipo
-        }
-        axios.put(`${erpBackURL}api/ventas/add`, data).then(
-            (res) => {
-                console.log(res);
-            }
-        );
+        // const clienteSeleccionado = customers.filter(c => c.nif == cliente.nif)[0];
+        // const erpBackURL = process.env.REACT_APP_ERP_BACKURL;
+        // const tipo = props.isEfectivo ? "Efectivo" : "Tarjeta"
+        // const data = {
+        //     productos: props.customerProducts.map(p => p._id),
+        //     precioVentaTotal: props.finalPrice,
+        //     cambio: props.dineroEntregado - props.finalPrice,
+        //     cliente: clienteSeleccionado,
+        //     tipo: tipo
+        // }
+        // axios.put(`${erpBackURL}api/ventas/add`, data).then(
+        //     (res) => {
+        //         console.log(res);
+        //     }
+        // );
     }
 
     return(
@@ -241,34 +267,34 @@ export const ModalResumenCompra = (props: ModalProps) => {
                             </div>
                             <hr className="my-2" />
                                 {
-                                    props.isEfectivo 
-                                    ?
-                                    <div>
-                                        <div className="flex font-semibold">
-                                            <div className="flex-grow">TOTAL</div>
-                                            <div> {props.finalPrice.toFixed(2)}€</div>
-                                        </div>
-                                        <div className="flex text-xs font-semibold">
-                                            <div className="flex-grow">CANTIDAD A PAGAR</div>
-                                            <div> {props.dineroEntregado.toFixed(2)}€</div>
-                                        </div>
-                                        <hr className="my-2" />
-                                        <div className="flex text-xs font-semibold">
-                                            <div className="flex-grow">CAMBIO</div>
-                                            <div> {(props.dineroEntregado - props.finalPrice).toFixed(2) }€ </div>
-                                        </div>
-                                    </div>
-                                    :
-                                    <div>
-                                        <div className="flex font-semibold">
-                                            <div className="flex-grow">TOTAL</div>
-                                            <div> {props.finalPrice.toFixed(2)}€ </div>
-                                        </div>
-                                        <hr className="my-2" />
-                                        <div className="flex text-xs font-semibold text-center">
-                                            <div className="flex-grow">PAGO CON TARJETA</div>
-                                        </div>
-                                    </div>
+                                    // props.isEfectivo 
+                                    // ?
+                                    // <div>
+                                    //     <div className="flex font-semibold">
+                                    //         <div className="flex-grow">TOTAL</div>
+                                    //         <div> {props.finalPrice.toFixed(2)}€</div>
+                                    //     </div>
+                                    //     <div className="flex text-xs font-semibold">
+                                    //         <div className="flex-grow">CANTIDAD A PAGAR</div>
+                                    //         <div> {props.dineroEntregado.toFixed(2)}€</div>
+                                    //     </div>
+                                    //     <hr className="my-2" />
+                                    //     <div className="flex text-xs font-semibold">
+                                    //         <div className="flex-grow">CAMBIO</div>
+                                    //         <div> {(props.dineroEntregado - props.finalPrice).toFixed(2) }€ </div>
+                                    //     </div>
+                                    // </div>
+                                    // :
+                                    // <div>
+                                    //     <div className="flex font-semibold">
+                                    //         <div className="flex-grow">TOTAL</div>
+                                    //         <div> {props.finalPrice.toFixed(2)}€ </div>
+                                    //     </div>
+                                    //     <hr className="my-2" />
+                                    //     <div className="flex text-xs font-semibold text-center">
+                                    //         <div className="flex-grow">PAGO CON TARJETA</div>
+                                    //     </div>
+                                    // </div>
                                 }
                                 
                             </div>

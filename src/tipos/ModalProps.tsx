@@ -6,7 +6,5 @@ export type ModalProps = {
     handleClose: MouseEventHandler<HTMLButtonElement>,
     cliente: Client,
     finalPrice: number,
-    dineroEntregado: number,
     customerProducts: SelectedProduct[],
-    isEfectivo: boolean
 }

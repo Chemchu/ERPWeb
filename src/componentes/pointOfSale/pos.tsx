@@ -159,7 +159,7 @@ const POSComponent = () => {
 
             <AnimatePresence initial={false} exitBeforeEnter={true}>
                 {/* Modal aceptar compra */}
-                {showModalPagar && <ModalResumenCompra handleClose={cerrarModal} cliente={cliente} isEfectivo={isEfectivo} customerProducts={productos} dineroEntregado={Number(parseFloat(dineroEntregado).toFixed(2))} finalPrice={precioTotal}/>}
+                {showModalPagar && <ModalResumenCompra handleClose={cerrarModal} cliente={cliente} customerProducts={productos} finalPrice={precioTotal}/>}
             </AnimatePresence>
             
             </div>

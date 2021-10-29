@@ -134,8 +134,7 @@ export const POSProvider= (props: PropsWithChildren<ReactElement>) => {
     }
 
     const SetDineroCliente = (dineroDelCliente: string) => {
-        if(!dineroDelCliente.match("^[+-]?([0-9]+([.][0-9]*)?|[.][0-9]+)$")) dineroDelCliente = dineroDelCliente.substring(0, dineroDelCliente.length - 1);
-
+        if(!dineroDelCliente.match("^[+-]?([0-9]+([.][0-9]*)?|[.][0-9]+)$") && dineroDelCliente != "") return;
         setDineroEntregado(dineroDelCliente);
     }
 
