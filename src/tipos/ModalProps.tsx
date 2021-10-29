@@ -7,4 +7,5 @@ export type ModalProps = {
     cliente: Client,
     finalPrice: number,
     customerProducts: SelectedProduct[],
+    tipoCobro?: string
 }

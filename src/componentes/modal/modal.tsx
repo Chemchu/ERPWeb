@@ -8,6 +8,7 @@ import { Client } from "../../tipos/Client";
 import { useConsumerMoney } from "../pointOfSale/productsContext";
 import { Teclado } from "../teclado/tecladoPago";
 import { InputDinero } from "../input/inputDinero";
+import { SSL_OP_NO_SESSION_RESUMPTION_ON_RENEGOTIATION } from "constants";
 
 const In = {
     hidden: {
@@ -34,11 +35,11 @@ const In = {
 }
 
 export const ModalPagar = (props: ModalProps) => {
-    const [cliente, ] = useState<Client>({nif: 'Genérico', calle: '', cp: '', nombre: 'Genérico'} as Client);
     const [customers, ] = useDBClients();
 
     const [dineroEntregado, setDineroEntregado] = useState<string>("0");
     const [dineroEntregadoTarjeta, setDineroEntregadoTarjeta] = useState<string>("0");
+    const [showModalResumen, setModalResumen] = useState<boolean>(false);
 
     let date = new Date();
     const fechaActual = `${date.getDate().toLocaleString('es-ES', { minimumIntegerDigits: 2})}/${parseInt(date.getUTCMonth().toLocaleString('es-ES', { minimumIntegerDigits: 2})) + 1}/${date.getFullYear()} - ${date.getHours().toLocaleString('es-ES', { minimumIntegerDigits: 2})}:${date.getMinutes().toLocaleString('es-ES', { minimumIntegerDigits: 2})}:${date.getSeconds().toLocaleString('es-ES', { minimumIntegerDigits: 2})}`;
@@ -52,6 +53,14 @@ export const ModalPagar = (props: ModalProps) => {
     const SetDineroClienteTarjeta = (dineroDelCliente: string) => {
         if(!dineroDelCliente.match("^[+-]?([0-9]+([.][0-9]*)?|[.][0-9]+)$") && dineroDelCliente != "") return;
         setDineroEntregadoTarjeta(dineroDelCliente);
+    }
+
+    const OpenResumen = () => {
+        setModalResumen(true);
+    }
+
+    const CloseResumen = () => {
+        setModalResumen(false);
     }
 
     const addSale = () => {
@@ -184,13 +193,14 @@ export const ModalPagar = (props: ModalProps) => {
                                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
                                 </svg>
                             </button>
-                            <button className="bg-blue-500 hover:bg-blue-600 text-white w-full h-12 hover:shadow-lg rounded-lg flex items-center justify-center" onClick={addSale}>
+                            <button className="bg-blue-500 hover:bg-blue-600 text-white w-full h-12 hover:shadow-lg rounded-lg flex items-center justify-center" onClick={OpenResumen}>
                                 {/* <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
                                 </svg> */}
                                 <div className="text-lg">COMPLETAR VENTA</div>
                             </button>
                         </div>
+                        {showModalResumen && <ModalResumenCompra cliente={props.cliente} customerProducts={props.customerProducts} finalPrice= {props.finalPrice} handleClose={CloseResumen} tipoCobro={"Efectivo"} />}
                     </div>
                     
                 </motion.div>
@@ -200,9 +210,6 @@ export const ModalPagar = (props: ModalProps) => {
 }
 
 export const ModalResumenCompra = (props: ModalProps) => {
-    const [cliente, ] = useState<Client>({nif: 'Genérico', calle: '', cp: '', nombre: 'Genérico'} as Client);
-    const [customers, ] = useDBClients();
-
     let date = new Date();
     const fechaActual = `${date.getDate().toLocaleString('es-ES', { minimumIntegerDigits: 2})}/${parseInt(date.getUTCMonth().toLocaleString('es-ES', { minimumIntegerDigits: 2})) + 1}/${date.getFullYear()} - ${date.getHours().toLocaleString('es-ES', { minimumIntegerDigits: 2})}:${date.getMinutes().toLocaleString('es-ES', { minimumIntegerDigits: 2})}:${date.getSeconds().toLocaleString('es-ES', { minimumIntegerDigits: 2})}`;
 
@@ -242,7 +249,7 @@ export const ModalResumenCompra = (props: ModalProps) => {
                                 <p> Resumen de la compra </p>
                             </div>
                             <div className="grid grid-cols-2 grid-rows-1 mt-4 text-xs text-center justify-center">
-                                <div className="text-left relative ">Cliente: {props.cliente.nombre? props.cliente.nombre : "general"} </div>
+                                <div className="text-left relative ">Cliente: {props.cliente.nombre} </div>
                                 <div className="text-right relative "> {fechaActual} </div>
                             </div>
                             <hr className="my-2"/>
@@ -265,38 +272,7 @@ export const ModalResumenCompra = (props: ModalProps) => {
                                 </tbody>
                             </table>
                             </div>
-                            <hr className="my-2" />
-                                {
-                                    // props.isEfectivo 
-                                    // ?
-                                    // <div>
-                                    //     <div className="flex font-semibold">
-                                    //         <div className="flex-grow">TOTAL</div>
-                                    //         <div> {props.finalPrice.toFixed(2)}€</div>
-                                    //     </div>
-                                    //     <div className="flex text-xs font-semibold">
-                                    //         <div className="flex-grow">CANTIDAD A PAGAR</div>
-                                    //         <div> {props.dineroEntregado.toFixed(2)}€</div>
-                                    //     </div>
-                                    //     <hr className="my-2" />
-                                    //     <div className="flex text-xs font-semibold">
-                                    //         <div className="flex-grow">CAMBIO</div>
-                                    //         <div> {(props.dineroEntregado - props.finalPrice).toFixed(2) }€ </div>
-                                    //     </div>
-                                    // </div>
-                                    // :
-                                    // <div>
-                                    //     <div className="flex font-semibold">
-                                    //         <div className="flex-grow">TOTAL</div>
-                                    //         <div> {props.finalPrice.toFixed(2)}€ </div>
-                                    //     </div>
-                                    //     <hr className="my-2" />
-                                    //     <div className="flex text-xs font-semibold text-center">
-                                    //         <div className="flex-grow">PAGO CON TARJETA</div>
-                                    //     </div>
-                                    // </div>
-                                }
-                                
+                            <hr className="my-2" />                                
                             </div>
                         </div>
                         <div className="px-4 pb-2 w-full flex flex-grow text-center">

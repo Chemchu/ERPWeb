@@ -1,12 +1,13 @@
-import {useState, useEffect, useRef} from 'react';
+import {useState, useEffect} from 'react';
 import {ProductCard, ProductSelectedCard} from './productCard';
 import {POSProvider, useDBProducts, usePrice, useConsumerMoney, useSelectedProducts} from './productsContext';
 import axios from 'axios';
 import { AnimatePresence, motion } from 'framer-motion'; 
-import { ModalPagar } from '../modal/modal';
-import ClientProvider, { useCurrentClient, useDBClients } from './clientContext';
+import { ModalPagar, ModalResumenCompra } from '../modal/modal';
+import ClientProvider, { useDBClients } from './clientContext';
 import { DBProduct } from '../../tipos/DBProduct';
 import { FilteredProds } from '../../tipos/FilteredProducts';
+import { Client } from '../../tipos/Client';
 
 export const POS = () => {
     return(
@@ -20,19 +21,18 @@ export const POS = () => {
 
 const POSComponent = () => {
     const [showModalPagar, setPagarModal] = useState(false);
+    const [showModalResumen, setResumenModal] = useState(false);
 
     const [productos, ] = useSelectedProducts();
     const [precioTotal, ] = usePrice();
-    const [dineroEntregado, setDineroEntregado] = useConsumerMoney();
+    const [dineroEntregado, ] = useConsumerMoney();
 
-    const [, SetAllProductos] = useDBProducts();
+    const [allProducts, SetAllProductos] = useDBProducts();
     const [productosFiltrados, SetProductosFiltrados] = useState<DBProduct[]>([]);
 
     const [, setCustomers] = useDBClients();
-    const [cliente, setCliente] = useCurrentClient();
-
-    const [isEfectivo, setIsEfectivo] = useState<boolean>(false);
-    const montado = useRef(false);
+    let clienteActual: Client = {nombre: "Genérico", calle: "Genérico", cp: "Genérico", nif: "Genérico"}
+    let familias: string[] = [];
 
     useEffect(() => {
         const fetchProductos = () => {
@@ -50,21 +50,35 @@ const POSComponent = () => {
             );
         };
         fetchProductos();
-        montado.current = true;
     }, []);
 
     useEffect(() => {
-        if(!montado.current) {return;}
-        else setPagarModal(true);
-        
-    }, [isEfectivo])
+        function uniq_fast(a: DBProduct[]) {
+            var seenMap: Map<string, number> = new Map();
+            var out: string[] = [];
+            var len = a.length;
+            var j = 0;
+            for(var i = 0; i < len; i++) {
+                 var item = a[i].familia;
+                 if(!seenMap.has(item)) {
+                       seenMap.set(item, 1);
+                       out[j++] = item;
+                 }
+            }
+            return out;
+        }
+        familias = uniq_fast(allProducts);
+        console.log(familias);
+    }, [allProducts]);
 
     const cerrarModal = () => {
         setPagarModal(false);
     }
 
-    const cambio = parseFloat((parseFloat(dineroEntregado) - precioTotal).toFixed(2));
-    const botonPagarColores = cambio >= 0 ? "bg-blue-500 h-12 shadow text-white rounded-lg hover:shadow-lg hover:bg-blue-600 focus:outline-none" : "bg-blue-300 h-12 shadow text-white rounded-lg hover:shadow-lg focus:outline-none cursor-default"
+    const cerrarModalResumen = () => {
+        setResumenModal(false);
+    }
+
     const allProductsHaveQuantity = productos.filter(p => p.cantidad == "").length <= 0;
 
     return(
@@ -73,10 +87,10 @@ const POSComponent = () => {
             {/* Página principal del POS */}
             <div className="flex-grow flex">
                 {/* Menú tienda, donde se muestran los productos */}
-                <ProductDisplay listFiltrados={[productosFiltrados, SetProductosFiltrados]}/>
+                <ProductDisplay listFiltrados={[productosFiltrados, SetProductosFiltrados]} familias={familias}/>
                 {/* Menú tienda */}
                 {/* Sidebar derecho */}
-                <div className="w-5/12 flex flex-col bg-gray-100 h-full pr-4 pl-2 py-4">
+                <div className="w-5/12 flex flex-col bg-gray-50 h-full pr-4 pl-2 py-4">
                     <div className="bg-white rounded-3xl flex flex-col h-full shadow">
                         {/* En caso de carrito vacío o con productos */}
                         {productos.length <= 0 ? <CarritoVacio/> : <CarritoConProductos/>}
@@ -95,6 +109,7 @@ const POSComponent = () => {
                                 productos.length > 0 && !isNaN(precioTotal) && allProductsHaveQuantity &&
                                 <div className="grid grid-cols-1 gap-2 mt-2">
                                     <motion.button whileTap={{scale: 0.9}} className="bg-blue-500 h-12 shadow rounded-lg hover:shadow-lg hover:bg-blue-600 text-white focus:outline-none" onClick={ (e) => {setPagarModal(true)} }>PAGAR</motion.button>
+                                    <motion.button whileTap={{scale: 0.9}} className="bg-blue-500 h-12 shadow rounded-lg hover:shadow-lg hover:bg-blue-600 text-white focus:outline-none" onClick={ (e) => {setResumenModal(true)} }>COBRO RAPIDO</motion.button>
                                 </div>
                             }
                         </div>
@@ -106,7 +121,8 @@ const POSComponent = () => {
 
             <AnimatePresence initial={false} exitBeforeEnter={true}>
                 {/* Modal aceptar compra */}
-                {showModalPagar && <ModalPagar handleClose={cerrarModal} cliente={cliente} customerProducts={productos} finalPrice={precioTotal}/>}
+                {showModalPagar && <ModalPagar handleClose={cerrarModal} cliente={clienteActual} customerProducts={productos} finalPrice={precioTotal}/>}
+                {showModalResumen && <ModalResumenCompra handleClose={cerrarModalResumen} cliente={clienteActual} customerProducts={productos} finalPrice={precioTotal} tipoCobro="Efectivo"/>}
             </AnimatePresence>
             
             </div>
@@ -116,7 +132,7 @@ const POSComponent = () => {
     );
 }
 
-const ProductDisplay = (props: { listFiltrados: [DBProduct[], Function]; }) => {
+const ProductDisplay = (props: { listFiltrados: [DBProduct[], Function], familias: string[]}) => {
     const [productosFiltrados, SetProductosFiltrados] = props.listFiltrados;
     const [allProductos, ] = useDBProducts();
 
@@ -129,17 +145,24 @@ const ProductDisplay = (props: { listFiltrados: [DBProduct[], Function]; }) => {
     }
 
     return (
-        <div className="flex flex-col bg-gray-100 h-full w-full py-4">
+        <div className="flex flex-col bg-gray-50 h-full w-full py-4">
             <div className="flex px-2 flex-row relative">
-                <div className="absolute left-5 top-3 px-2 py-2 rounded-full bg-blue-300 text-white">
+                <div className="absolute left-5 top-3 px-2 py-2 rounded-full bg-blue-400 text-white">
                 <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
                 </svg>
                 </div>
-                <input onChange={(e) => {filtrarProd(e.target.value);}} className="bg-white rounded-3xl shadow text-lg full w-full h-16 py-4 pl-16 transition-shadow focus:shadow-2xl focus:outline-none" placeholder="Buscar producto o código de barras..."/>
+                <input onChange={(e) => {filtrarProd(e.target.value);}} autoFocus={true} className="bg-white rounded-3xl shadow text-lg full w-full h-16 py-4 pl-16 transition-shadow focus:shadow-2xl focus:outline-none" placeholder="Buscar producto o código de barras..."/>
             </div>
-            <div className="h-full overflow-hidden mt-4">
-                <div className="h-full overflow-y-auto px-2">
+            <div className="flex flex-row ml-4 mt-4">
+                {props.familias && props.familias.map(f => {
+                    console.log(f)
+                    return <button className="bg-yellow-400 font-semibold hover:bg-yellow-500 text-white rounded-lg px-2 h-10 w-1/6">{f}</button>
+                })}
+
+            </div>
+            <div className="h-full overflow-hidden pt-2">
+                <div className="h-full overflow-y-auto overflow-x-hidden px-2">
                     {/* Base de datos vacía */}
                     {allProductos.length <= 0 || !allProductos  ? <BBDDVacia/> : null}
                     
@@ -181,6 +204,10 @@ const ProductoNoEncontrado = () => {
             </div>
         </div>
     )
+}
+
+const GenerarFavorito = () => {
+    
 }
 
 const GenerarProductsCards = (props: FilteredProds) => {

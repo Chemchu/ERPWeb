@@ -17,13 +17,13 @@ function ConvertBufferToBase64(buffer: JSONBuffer): string {
 
 export const ProductCard: React.FC<DBProduct> = (props) => {
     return(
-        <motion.div whileHover={{scale: 1.1}} whileTap={{scale: 0.9}} className="relative max-w-sm min-w-[340px] max-h-sm min-h-[100px]bg-white shadow-md rounded-3xl p-2 mx-1 my-3 cursor-pointer hover:shadow-2xl">
+        <motion.div whileHover={{scale: 1.1}} whileTap={{scale: 0.9}} className="bg-gray-200 border-2 border-gray-300 relative max-w-sm min-w-[340px] max-h-sm min-h-[100px]bg-white shadow-md rounded-3xl p-2 mx-1 my-3 cursor-pointer hover:shadow-2xl">
             <div className="overflow-x-hidden rounded-2xl relative">
                 <img className="h-40 rounded-2xl w-full object-cover " src={`data:image/(png|jpeg);base64,${ConvertBufferToBase64(props.img)}`}/>
             </div>
             <div className="mt-4 pl-3 pr-3 mb-2 flex justify-between ">
                 <p className="lg:text-lg sm:text-sm xs:text-xs font-semibold text-gray-800 mb-0">{props.nombre}</p>
-                <p className="lg:text-lg sm:text-sm xs:text-xs font-semibold text-gray-800 mt-0">{props.precioVenta}€</p>
+                <p className="lg:text-lg sm:text-sm xs:text-xs font-semibold text-gray-800 mt-0">{props.precioVenta.toFixed(2)}€</p>
             </div>
         </motion.div>
     );
