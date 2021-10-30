@@ -8,6 +8,7 @@ import ClientProvider, { useDBClients } from './clientContext';
 import { DBProduct } from '../../tipos/DBProduct';
 import { FilteredProds } from '../../tipos/FilteredProducts';
 import { Client } from '../../tipos/Client';
+import { CustomerPaymentInformation } from '../../tipos/CustomerPayment';
 
 export const POS = () => {
     return(
@@ -29,10 +30,10 @@ const POSComponent = () => {
 
     const [allProducts, SetAllProductos] = useDBProducts();
     const [productosFiltrados, SetProductosFiltrados] = useState<DBProduct[]>([]);
+    const [familias, setFamilias] = useState<string[]>([]);
 
     const [, setCustomers] = useDBClients();
     let clienteActual: Client = {nombre: "Genérico", calle: "Genérico", cp: "Genérico", nif: "Genérico"}
-    let familias: string[] = [];
 
     useEffect(() => {
         const fetchProductos = () => {
@@ -67,8 +68,7 @@ const POSComponent = () => {
             }
             return out;
         }
-        familias = uniq_fast(allProducts);
-        console.log(familias);
+        setFamilias(uniq_fast(allProducts));
     }, [allProducts]);
 
     const cerrarModal = () => {
@@ -90,7 +90,7 @@ const POSComponent = () => {
                 <ProductDisplay listFiltrados={[productosFiltrados, SetProductosFiltrados]} familias={familias}/>
                 {/* Menú tienda */}
                 {/* Sidebar derecho */}
-                <div className="w-5/12 flex flex-col bg-gray-50 h-full pr-4 pl-2 py-4">
+                <div className="w-4/12 flex flex-col bg-gray-50 h-full pr-4 pl-2 py-4">
                     <div className="bg-white rounded-3xl flex flex-col h-full shadow">
                         {/* En caso de carrito vacío o con productos */}
                         {productos.length <= 0 ? <CarritoVacio/> : <CarritoConProductos/>}
@@ -122,7 +122,7 @@ const POSComponent = () => {
             <AnimatePresence initial={false} exitBeforeEnter={true}>
                 {/* Modal aceptar compra */}
                 {showModalPagar && <ModalPagar handleClose={cerrarModal} cliente={clienteActual} customerProducts={productos} finalPrice={precioTotal}/>}
-                {showModalResumen && <ModalResumenCompra handleClose={cerrarModalResumen} cliente={clienteActual} customerProducts={productos} finalPrice={precioTotal} tipoCobro="Efectivo"/>}
+                {showModalResumen && <ModalResumenCompra customerPayment={{tipo: "Cobro rápido", efectivo: precioTotal, tarjeta: 0} as CustomerPaymentInformation} handleClose={cerrarModalResumen} cliente={clienteActual} cambio={0} customerProducts={productos} finalPrice={precioTotal} tipoCobro="Efectivo"/>}
             </AnimatePresence>
             
             </div>
@@ -154,10 +154,12 @@ const ProductDisplay = (props: { listFiltrados: [DBProduct[], Function], familia
                 </div>
                 <input onChange={(e) => {filtrarProd(e.target.value);}} autoFocus={true} className="bg-white rounded-3xl shadow text-lg full w-full h-16 py-4 pl-16 transition-shadow focus:shadow-2xl focus:outline-none" placeholder="Buscar producto o código de barras..."/>
             </div>
-            <div className="flex flex-row ml-4 mt-4">
+            <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 2xl:grid-cols-6 justify-items-start gap-2 m-4">
+                <button key={"Todos"} id={"Todos"} className="bg-blue-400 font-semibold hover:bg-yellow-500 text-white rounded-lg h-10 w-full"
+                            onClick={() => SetProductosFiltrados(allProductos)}>Todos</button>
                 {props.familias && props.familias.map(f => {
-                    console.log(f)
-                    return <button className="bg-yellow-400 font-semibold hover:bg-yellow-500 text-white rounded-lg px-2 h-10 w-1/6">{f}</button>
+                    return <button key={f} id={f} className="bg-blue-400 font-semibold hover:bg-yellow-500 text-white rounded-lg h-10 w-full"
+                            onClick={(e) => SetProductosFiltrados(allProductos.filter(p => p.familia == e.currentTarget.id))}>{f}</button>
                 })}
 
             </div>
@@ -206,14 +208,12 @@ const ProductoNoEncontrado = () => {
     )
 }
 
-const GenerarFavorito = () => {
-    
-}
-
 const GenerarProductsCards = (props: FilteredProds) => {
-    const [productosSeleccionados, SetProductos] = useSelectedProducts();
+    const [, SetProductos] = useSelectedProducts();
+
     return(
-        <div className="grid grid-cols-4 gap-4 pb-3">
+        <div className="grid gap-4 pb-3 grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 2xl:grid-cols-6
+                            text-xs">
             {props.filteredProds.map((prod: DBProduct) => {
                 return (
                     <button key={prod._id} id={prod._id} 

@@ -3,12 +3,13 @@ import { AnimatePresence, motion } from "framer-motion";
 import { useState } from "react";
 import axios from "axios";
 import { useDBClients } from "../pointOfSale/clientContext";
-import { ModalProps } from "../../tipos/ModalProps";
+import { ModalProps, ModalResumenProps } from "../../tipos/ModalProps";
 import { Client } from "../../tipos/Client";
 import { useConsumerMoney } from "../pointOfSale/productsContext";
 import { Teclado } from "../teclado/tecladoPago";
 import { InputDinero } from "../input/inputDinero";
 import { SSL_OP_NO_SESSION_RESUMPTION_ON_RENEGOTIATION } from "constants";
+import { CustomerPaymentInformation } from "../../tipos/CustomerPayment";
 
 const In = {
     hidden: {
@@ -34,17 +35,21 @@ const In = {
     }
 }
 
+let date = new Date();
+
 export const ModalPagar = (props: ModalProps) => {
     const [customers, ] = useDBClients();
-
+    
     const [dineroEntregado, setDineroEntregado] = useState<string>("0");
     const [dineroEntregadoTarjeta, setDineroEntregadoTarjeta] = useState<string>("0");
     const [showModalResumen, setModalResumen] = useState<boolean>(false);
 
-    let date = new Date();
+    const [customerPayment, setCustomerPaymentInfo] = useState<CustomerPaymentInformation>({tipo: "default", efectivo: 0, tarjeta: 0});
+    
     const fechaActual = `${date.getDate().toLocaleString('es-ES', { minimumIntegerDigits: 2})}/${parseInt(date.getUTCMonth().toLocaleString('es-ES', { minimumIntegerDigits: 2})) + 1}/${date.getFullYear()} - ${date.getHours().toLocaleString('es-ES', { minimumIntegerDigits: 2})}:${date.getMinutes().toLocaleString('es-ES', { minimumIntegerDigits: 2})}:${date.getSeconds().toLocaleString('es-ES', { minimumIntegerDigits: 2})}`;
     const cambio: number = isNaN((Number(dineroEntregado) + Number(dineroEntregadoTarjeta) - props.finalPrice)) ? Number(dineroEntregado) + Number(dineroEntregadoTarjeta) : (Number(dineroEntregado) + Number(dineroEntregadoTarjeta) - props.finalPrice);
-
+    let tipoCobro = "Efectivo";
+    
     const SetDineroClienteEfectivo = (dineroDelCliente: string) => {
         if(!dineroDelCliente.match("^[+-]?([0-9]+([.][0-9]*)?|[.][0-9]+)$") && dineroDelCliente != "") return;
         setDineroEntregado(dineroDelCliente);
@@ -56,6 +61,17 @@ export const ModalPagar = (props: ModalProps) => {
     }
 
     const OpenResumen = () => {
+        switch(tipoCobro) {
+            case "Efectivo":
+                setCustomerPaymentInfo({tipo: "Efectivo", efectivo: Number(dineroEntregado), tarjeta: Number(dineroEntregadoTarjeta) });
+                break;
+            case "Tarjeta":
+                setCustomerPaymentInfo({tipo: "Tarjeta", efectivo: Number(dineroEntregado), tarjeta: Number(dineroEntregadoTarjeta)});
+                break;
+            case "Fraccionado":
+                setCustomerPaymentInfo({tipo: "Fraccionado", efectivo: Number(dineroEntregado), tarjeta:Number(dineroEntregadoTarjeta)});
+                break;
+        }
         setModalResumen(true);
     }
 
@@ -63,24 +79,13 @@ export const ModalPagar = (props: ModalProps) => {
         setModalResumen(false);
     }
 
-    const addSale = () => {
-        // const clienteSeleccionado = customers.filter(c => c.nif == cliente.nif)[0];
-        // const erpBackURL = process.env.REACT_APP_ERP_BACKURL;
-        // const tipo = props.isEfectivo ? "Efectivo" : "Tarjeta"
-        // const data = {
-        //     productos: props.customerProducts.map(p => p._id),
-        //     precioVentaTotal: props.finalPrice,
-        //     cambio: cambio,
-        //     cliente: clienteSeleccionado,
-        //     tipo: tipo
-        // }
-        // axios.put(`${erpBackURL}api/ventas/add`, data).then(
-        //     (res) => {
-        //         console.log(res);
-        //     }
-        // );
+    if(Number(dineroEntregado) > 0 && Number(dineroEntregadoTarjeta) <= 0) tipoCobro = "Efectivo";
+    if(Number(dineroEntregadoTarjeta) > 0) {
+        tipoCobro = "Tarjeta";
+        if(Number(dineroEntregado) > 0) {
+            tipoCobro = "Fraccionado";
+        }
     }
-
 
     return(
         <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity:0 }} >
@@ -94,10 +99,6 @@ export const ModalPagar = (props: ModalProps) => {
                 >     
 
                     <div id="receipt-content" className="text-left w-full text-sm p-6 overflow-auto">
-                        {/* <div className="text-center">
-                            <h1 className="text-3xl font-semibold">ERPWeb</h1>
-                        </div> */}
-
                         <div className="grid grid-cols-2">
                             <div className="bg-white text-center justify-center py-6">
                                 <div>
@@ -193,14 +194,19 @@ export const ModalPagar = (props: ModalProps) => {
                                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
                                 </svg>
                             </button>
-                            <button className="bg-blue-500 hover:bg-blue-600 text-white w-full h-12 hover:shadow-lg rounded-lg flex items-center justify-center" onClick={OpenResumen}>
-                                {/* <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
-                                </svg> */}
-                                <div className="text-lg">COMPLETAR VENTA</div>
-                            </button>
+                            {cambio < 0 ? 
+                                <button className="bg-blue-400 text-white w-full h-12 cursor-default rounded-lg flex items-center justify-center">
+                                    <div className="text-lg">DINERO INSUFICIENTE</div>
+                                </button>
+                                :
+                                <button className="bg-blue-500 hover:bg-blue-600 text-white w-full h-12 hover:shadow-lg rounded-lg flex items-center justify-center" onClick={OpenResumen}>
+                                    <div className="text-lg">COMPLETAR VENTA</div>
+                                </button>
+                            }
                         </div>
-                        {showModalResumen && <ModalResumenCompra cliente={props.cliente} customerProducts={props.customerProducts} finalPrice= {props.finalPrice} handleClose={CloseResumen} tipoCobro={"Efectivo"} />}
+                        <AnimatePresence>
+                            {showModalResumen && <ModalResumenCompra customerPayment={customerPayment} cliente={props.cliente} customerProducts={props.customerProducts} finalPrice= {props.finalPrice} cambio={cambio} handleClose={CloseResumen} tipoCobro={tipoCobro} />}
+                        </AnimatePresence>  
                     </div>
                     
                 </motion.div>
@@ -209,11 +215,12 @@ export const ModalPagar = (props: ModalProps) => {
     );
 }
 
-export const ModalResumenCompra = (props: ModalProps) => {
+export const ModalResumenCompra = (props: ModalResumenProps) => {
     let date = new Date();
     const fechaActual = `${date.getDate().toLocaleString('es-ES', { minimumIntegerDigits: 2})}/${parseInt(date.getUTCMonth().toLocaleString('es-ES', { minimumIntegerDigits: 2})) + 1}/${date.getFullYear()} - ${date.getHours().toLocaleString('es-ES', { minimumIntegerDigits: 2})}:${date.getMinutes().toLocaleString('es-ES', { minimumIntegerDigits: 2})}:${date.getSeconds().toLocaleString('es-ES', { minimumIntegerDigits: 2})}`;
 
     const addSale = () => {
+        console.log(props.customerPayment);
         // const clienteSeleccionado = customers.filter(c => c.nif == cliente.nif)[0];
         // const erpBackURL = process.env.REACT_APP_ERP_BACKURL;
         // const tipo = props.isEfectivo ? "Efectivo" : "Tarjeta"
@@ -242,7 +249,7 @@ export const ModalResumenCompra = (props: ModalProps) => {
                     exit="exit"
                 >     
 
-                    <div className="sm:w-96 w-96 rounded-3xl bg-white overflow-hidden z-10">
+                    <div className="sm:w-96 w-96 rounded-3xl bg-white z-10">
                         <div id="receipt-content" className="text-left w-full text-sm p-6 overflow-auto">
                             <div className="text-center">
                                 <h2 className="text-xl font-semibold">ERPWeb</h2>
@@ -260,33 +267,41 @@ export const ModalResumenCompra = (props: ModalProps) => {
                                         <th className="py-1 w-1/12 text-center">#</th>
                                         <th className="py-1 text-left">Producto</th>
                                         <th className="py-1 w-2/12 text-center">Cantidad</th>
-                                        <th className="py-1 w-3/12 text-right">Precio</th>
+                                        <th className="py-1 w-3/12 text-right">Total</th>
                                     </tr>
                                 </thead>
-                                <tbody className="overflow-auto">
+                                <tbody className="h-full overflow-y-auto">
                                 {
                                     props.customerProducts.map((prod, index) => {
-                                        return <GenerarFilaProducto numFila={index + 1} nombreProducto={prod.nombre} cantidad={Number(prod.cantidad)} precio={prod.precioVenta} />
+                                        return <GenerarFilaProducto numFila={index + 1} nombreProducto={prod.nombre} cantidad={Number(prod.cantidad)} precio={Number(prod.precioVenta * (1 - prod.dto/100) )} />
                                     })
                                 }
                                 </tbody>
                             </table>
                             </div>
-                            <hr className="my-2" />                                
-                            </div>
+                            <hr className="my-2" />              
+                            <div className="flex justify-between">
+                                <div>
+                                    Cambio: {props.cambio.toFixed(2)}€
+                                </div>
+                                <div>
+                                    Tipo de pago: {props.tipoCobro}
+                                </div>
+                            </div>                  
                         </div>
-                        <div className="px-4 pb-2 w-full flex flex-grow text-center">
-                            <button className="bg-red-500 hover:bg-red-600 text-white w-1/2 h-8 hover:shadow-lg rounded-lg ml-auto flex items-center justify-center" onClick={props.handleClose}>
-                                <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-                                </svg>
-                            </button>
-                            <button className="bg-green-500 hover:bg-green-600 text-white w-1/2 h-8 hover:shadow-lg rounded-lg flex items-center justify-center" onClick={addSale}>
-                                <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
-                                </svg>
-                            </button>
-                        </div>
+                    </div>
+                    <div className="px-4 pb-2 w-full flex flex-grow text-center gap-2">
+                        <button className="bg-red-500 hover:bg-red-600 text-white w-1/2 h-8 hover:shadow-lg rounded-lg ml-auto flex items-center justify-center" onClick={props.handleClose}>
+                            <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                            </svg>
+                        </button>
+                        <button className="bg-green-500 hover:bg-green-600 text-white w-1/2 h-8 hover:shadow-lg rounded-lg flex items-center justify-center" onClick={addSale}>
+                            <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                            </svg>
+                        </button>
+                    </div>
                 </motion.div>
             </Backdrop>        
         </motion.div>

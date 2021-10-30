@@ -38,12 +38,12 @@ export const POSProvider= (props: PropsWithChildren<ReactElement>) => {
     useEffect(() => {
         if(productos.length <= 0) setDineroEntregado("0");        
 
-        let precioTotal = 0;
+        let precio = 0;
         productos.forEach(prodActual => {
-            precioTotal += (Number(prodActual.cantidad) * prodActual.precioVenta * (isNaN(prodActual.dto) ? 1 : 1 - (prodActual.dto/100)) ); 
+            precio += (Number(prodActual.cantidad) * prodActual.precioVenta * (isNaN(prodActual.dto) ? 1 : 1 - (prodActual.dto/100)) ); 
         });
 
-        setPrecioTotal(Number(precioTotal.toFixed(2)));
+        setPrecioTotal(Number(precio.toFixed(2)));
     },[productos]);
 
     const SetProductosSeleccionados = (productRawObject: SelectedProduct) => {

@@ -7,6 +7,7 @@ import { ModalResumenCompra } from '../modal/modal';
 import ClientProvider, { useCurrentClient, useDBClients } from './clientContext';
 import { DBProduct } from '../../tipos/DBProduct';
 import { FilteredProds } from '../../tipos/FilteredProducts';
+import { CustomerPaymentInformation } from '../../tipos/CustomerPayment';
 
 export const POS = () => {
     return(
@@ -159,14 +160,14 @@ const POSComponent = () => {
 
             <AnimatePresence initial={false} exitBeforeEnter={true}>
                 {/* Modal aceptar compra */}
-                {showModalPagar && <ModalResumenCompra handleClose={cerrarModal} cliente={cliente} customerProducts={productos} finalPrice={precioTotal}/>}
+                {showModalPagar && <ModalResumenCompra cambio={cambio} tipoCobro="NotProperlyDone" customerPayment={{} as CustomerPaymentInformation} handleClose={cerrarModal} cliente={cliente} customerProducts={productos} finalPrice={precioTotal}/>}
             </AnimatePresence>
             
             </div>
             {/* end of noprint-area */}
             <div id="print-area" className="print-area" />
         </div>
-    );
+    ); 
 }
 
 const ProductDisplay = (props: { listFiltrados: [DBProduct[], Function]; }) => {
