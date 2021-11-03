@@ -1,6 +1,7 @@
 import { MouseEventHandler } from "react";
 import { Client } from "./Client";
 import { CustomerPaymentInformation } from "./CustomerPayment";
+import { TipoCobro } from "./Enums/TipoCobro";
 import { SelectedProduct } from "./SelectedProduct";
 
 export type ModalProps = {
@@ -8,15 +9,15 @@ export type ModalProps = {
     cliente: Client,
     finalPrice: number,
     customerProducts: SelectedProduct[],
-    tipoCobro?: string
 }
 
 export type ModalResumenProps = {
-    handleClose: MouseEventHandler<HTMLButtonElement>,
+    //handleClose: MouseEventHandler<HTMLButtonElement>,
+    handleClose: Function,
     cliente: Client,
     finalPrice: number,
     cambio: number,
     customerProducts: SelectedProduct[],
     customerPayment: CustomerPaymentInformation,
-    tipoCobro?: string
+    tipoCobro: TipoCobro
 }

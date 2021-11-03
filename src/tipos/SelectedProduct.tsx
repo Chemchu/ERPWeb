@@ -1,3 +1,4 @@
+import { OpModificacionProducto } from "./Enums/OpModificaciones";
 import { JSONBuffer } from "./JsonBuffer";
 
 export type SelectedProduct = {
@@ -8,6 +9,6 @@ export type SelectedProduct = {
     ean: string[],
     dto: number,
     cantidad: string,
-    operacionMod: string,
+    operacionMod: OpModificacionProducto,
     img: JSONBuffer
 }

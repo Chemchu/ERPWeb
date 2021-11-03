@@ -1,15 +1,13 @@
 import { Backdrop } from "../backdrop.js/dropdown";
 import { AnimatePresence, motion } from "framer-motion";
 import { useState } from "react";
-import axios from "axios";
 import { useDBClients } from "../pointOfSale/clientContext";
 import { ModalProps, ModalResumenProps } from "../../tipos/ModalProps";
-import { Client } from "../../tipos/Client";
-import { useConsumerMoney } from "../pointOfSale/productsContext";
-import { Teclado } from "../teclado/tecladoPago";
 import { InputDinero } from "../input/inputDinero";
-import { SSL_OP_NO_SESSION_RESUMPTION_ON_RENEGOTIATION } from "constants";
 import { CustomerPaymentInformation } from "../../tipos/CustomerPayment";
+import { TipoCobro } from "../../tipos/Enums/TipoCobro";
+import axios from "axios";
+import { useSelectedProducts } from "../pointOfSale/productsContext";
 
 const In = {
     hidden: {
@@ -48,7 +46,7 @@ export const ModalPagar = (props: ModalProps) => {
     
     const fechaActual = `${date.getDate().toLocaleString('es-ES', { minimumIntegerDigits: 2})}/${parseInt(date.getUTCMonth().toLocaleString('es-ES', { minimumIntegerDigits: 2})) + 1}/${date.getFullYear()} - ${date.getHours().toLocaleString('es-ES', { minimumIntegerDigits: 2})}:${date.getMinutes().toLocaleString('es-ES', { minimumIntegerDigits: 2})}:${date.getSeconds().toLocaleString('es-ES', { minimumIntegerDigits: 2})}`;
     const cambio: number = isNaN((Number(dineroEntregado) + Number(dineroEntregadoTarjeta) - props.finalPrice)) ? Number(dineroEntregado) + Number(dineroEntregadoTarjeta) : (Number(dineroEntregado) + Number(dineroEntregadoTarjeta) - props.finalPrice);
-    let tipoCobro = "Efectivo";
+    let tipoCobro: TipoCobro = TipoCobro.Efectivo;
     
     const SetDineroClienteEfectivo = (dineroDelCliente: string) => {
         if(!dineroDelCliente.match("^[+-]?([0-9]+([.][0-9]*)?|[.][0-9]+)$") && dineroDelCliente != "") return;
@@ -62,28 +60,28 @@ export const ModalPagar = (props: ModalProps) => {
 
     const OpenResumen = () => {
         switch(tipoCobro) {
-            case "Efectivo":
+            case TipoCobro.Efectivo:
                 setCustomerPaymentInfo({tipo: "Efectivo", efectivo: Number(dineroEntregado), tarjeta: Number(dineroEntregadoTarjeta) });
                 break;
-            case "Tarjeta":
+            case TipoCobro.Tarjeta:
                 setCustomerPaymentInfo({tipo: "Tarjeta", efectivo: Number(dineroEntregado), tarjeta: Number(dineroEntregadoTarjeta)});
                 break;
-            case "Fraccionado":
+            case TipoCobro.Fraccionado:
                 setCustomerPaymentInfo({tipo: "Fraccionado", efectivo: Number(dineroEntregado), tarjeta:Number(dineroEntregadoTarjeta)});
                 break;
         }
         setModalResumen(true);
     }
 
-    const CloseResumen = () => {
+    const CloseResumen = (): void => {
         setModalResumen(false);
     }
 
-    if(Number(dineroEntregado) > 0 && Number(dineroEntregadoTarjeta) <= 0) tipoCobro = "Efectivo";
+    if(Number(dineroEntregado) > 0 && Number(dineroEntregadoTarjeta) <= 0) tipoCobro = TipoCobro.Efectivo;
     if(Number(dineroEntregadoTarjeta) > 0) {
-        tipoCobro = "Tarjeta";
+        tipoCobro = TipoCobro.Tarjeta;
         if(Number(dineroEntregado) > 0) {
-            tipoCobro = "Fraccionado";
+            tipoCobro = TipoCobro.Fraccionado;
         }
     }
 
@@ -163,10 +161,6 @@ export const ModalPagar = (props: ModalProps) => {
                                             Tarjeta
                                         </div> */}
                                     </div>
-                                    {/* <div className="grid grid-rows-2 text-left">
-                                        <div>Efectivo</div>
-                                        <div>Tarjeta</div>
-                                    </div> */}
                                 </div>
 
                                 <div className="grid grid-cols-3 text-lg text-center justify-center">
@@ -215,32 +209,52 @@ export const ModalPagar = (props: ModalProps) => {
     );
 }
 
+type ProductoComprado = {
+    _id: string,
+    cantidad: number,
+    dto: number
+}
+
 export const ModalResumenCompra = (props: ModalResumenProps) => {
-    let date = new Date();
+    const [customers, ] = useDBClients();
+    const [, SetProductos] = useSelectedProducts();
     const fechaActual = `${date.getDate().toLocaleString('es-ES', { minimumIntegerDigits: 2})}/${parseInt(date.getUTCMonth().toLocaleString('es-ES', { minimumIntegerDigits: 2})) + 1}/${date.getFullYear()} - ${date.getHours().toLocaleString('es-ES', { minimumIntegerDigits: 2})}:${date.getMinutes().toLocaleString('es-ES', { minimumIntegerDigits: 2})}:${date.getSeconds().toLocaleString('es-ES', { minimumIntegerDigits: 2})}`;
 
-    const addSale = () => {
-        console.log(props.customerPayment);
-        // const clienteSeleccionado = customers.filter(c => c.nif == cliente.nif)[0];
-        // const erpBackURL = process.env.REACT_APP_ERP_BACKURL;
-        // const tipo = props.isEfectivo ? "Efectivo" : "Tarjeta"
-        // const data = {
-        //     productos: props.customerProducts.map(p => p._id),
-        //     precioVentaTotal: props.finalPrice,
-        //     cambio: props.dineroEntregado - props.finalPrice,
-        //     cliente: clienteSeleccionado,
-        //     tipo: tipo
-        // }
-        // axios.put(`${erpBackURL}api/ventas/add`, data).then(
-        //     (res) => {
-        //         console.log(res);
-        //     }
-        // );
+    const addSale = async() => {
+        const clienteSeleccionado = customers.filter(c => c.nif == props.cliente.nif)[0];
+        const erpBackURL = process.env.REACT_APP_ERP_BACKURL;
+        const productosComprados: ProductoComprado[] = [];
+        props.customerProducts.forEach(p => 
+            {
+                const pComprado = { _id: p._id, precioUnidad: p.precioVenta, cantidad: p.cantidad, dto: p.dto } as unknown as ProductoComprado;
+                productosComprados.push(pComprado);
+            }
+        );
+        
+        const data = {
+            productos: productosComprados,
+            precioVentaTotal: props.finalPrice,
+            precioVentaEfectivo: props.customerPayment.efectivo,
+            precioVentaTarjeta: props.customerPayment.tarjeta,
+            cambio: props.cambio,
+            cliente: clienteSeleccionado,
+            tipo: props.tipoCobro
+        }
+
+        const res = await axios.put(`${erpBackURL}api/ventas/add`, data);
+
+        if(res.status == 200) {
+            SetProductos(null);
+            props.handleClose();
+        }
+        else {
+            console.log("Error al realizar la venta");
+        }
     }
 
     return(
         <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity:0 }} >
-            <Backdrop onClick={props.handleClose} >
+            <Backdrop onClick={() => props.handleClose()} >
                 <motion.div className="m-auto py-2 flex flex-col items-center bg-white rounded-2xl" 
                     onClick={(e) => e.stopPropagation()} 
                     variants={In} 
@@ -291,7 +305,7 @@ export const ModalResumenCompra = (props: ModalResumenProps) => {
                         </div>
                     </div>
                     <div className="px-4 pb-2 w-full flex flex-grow text-center gap-2">
-                        <button className="bg-red-500 hover:bg-red-600 text-white w-1/2 h-8 hover:shadow-lg rounded-lg ml-auto flex items-center justify-center" onClick={props.handleClose}>
+                        <button className="bg-red-500 hover:bg-red-600 text-white w-1/2 h-8 hover:shadow-lg rounded-lg ml-auto flex items-center justify-center" onClick={() => props.handleClose()}>
                             <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
                             </svg>

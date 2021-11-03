@@ -1,6 +1,7 @@
 import { PropsWithChildren, ReactElement } from 'react';
 import { useState, createContext, useContext, useEffect } from 'react'
 import { DBProduct } from '../../tipos/DBProduct';
+import { OpModificacionProducto } from '../../tipos/Enums/OpModificaciones';
 import { SelectedProduct } from '../../tipos/SelectedProduct';
 
 const ProductsContext = createContext<[DBProduct[], Function]>({} as [DBProduct[], Function]);
@@ -67,7 +68,7 @@ export const POSProvider= (props: PropsWithChildren<ReactElement>) => {
             if(!prodToAdd) prodToAdd = productRawObject;
             
             switch(productRawObject.operacionMod) {
-                case "suma":
+                case OpModificacionProducto.Suma:
                     if(!Number.isInteger(Number(productRawObject.cantidad))){
                         prodToAdd.cantidad = "1";
                     }
@@ -76,7 +77,7 @@ export const POSProvider= (props: PropsWithChildren<ReactElement>) => {
                     }
                     break;
                 
-                case "resta":
+                case OpModificacionProducto.Resta:
                     if(!Number.isInteger(Number(productRawObject.cantidad))){
                         prodToAdd.cantidad = "0";
                     }
@@ -85,11 +86,11 @@ export const POSProvider= (props: PropsWithChildren<ReactElement>) => {
                     }
                     break;
 
-                case "escritura": 
+                case OpModificacionProducto.Escritura: 
                     prodToAdd.cantidad = !Number.isInteger(Number(productRawObject.cantidad)) ? "" : productRawObject.cantidad;
                     break;
 
-                case "add": 
+                case OpModificacionProducto.Añadir: 
                     if(prodsRepes.length > 0) {
                         prodToAdd.cantidad = (Number(prodToAdd.cantidad) + 1).toString();
                     }
@@ -98,13 +99,14 @@ export const POSProvider= (props: PropsWithChildren<ReactElement>) => {
                     }
                     break;
 
-                case "descuento": 
+                case OpModificacionProducto.Descuento: 
                     if(prodsRepes.length > 0) {
                         prodToAdd.dto = productRawObject.dto >= 0 && productRawObject.dto <= 100 ? productRawObject.dto : prodToAdd.dto;
                     }
                     break;
 
                 default:
+                    console.log(productRawObject.operacionMod);
                     console.log("Default en switch, no debería de ir por aquí");
 
             }

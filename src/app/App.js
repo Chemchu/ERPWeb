@@ -4,14 +4,13 @@ import {Dashboard2} from '../componentes/dashboard/dashboard2';
 import LoginPage from '../componentes/login/loginPage';
 import NotFound from '../componentes/404/notFound';
 import HiddenSideBar from '../componentes/dashboard/sidebar/sideBarHidden';
-import Sidebar from '../componentes/dashboard/sidebar/sidebar';
 import {ProductList} from '../componentes/pointOfSale/productList';
 import {ProductCard} from '../componentes/pointOfSale/productCard';
 import ReportCard from '../componentes/dashboard/reportCards';
 import ProductPage from '../componentes/productPage/productPage';
 import { AnimatePresence } from 'framer-motion';
 import LandingPage from '../componentes/landingPage/landingPage';
-import { POS } from '../componentes/pointOfSale/posPagoFraccionado';
+import { POS } from '../componentes/pointOfSale/pos';
 
 function App() {
 

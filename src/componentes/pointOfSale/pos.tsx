@@ -1,13 +1,17 @@
-import {useState, useEffect, useRef} from 'react';
+import {useState, useEffect} from 'react';
 import {ProductCard, ProductSelectedCard} from './productCard';
 import {POSProvider, useDBProducts, usePrice, useConsumerMoney, useSelectedProducts} from './productsContext';
 import axios from 'axios';
 import { AnimatePresence, motion } from 'framer-motion'; 
-import { ModalResumenCompra } from '../modal/modal';
-import ClientProvider, { useCurrentClient, useDBClients } from './clientContext';
+import { ModalPagar, ModalResumenCompra } from '../modal/modal';
+import ClientProvider, { useDBClients } from './clientContext';
 import { DBProduct } from '../../tipos/DBProduct';
 import { FilteredProds } from '../../tipos/FilteredProducts';
+import { Client } from '../../tipos/Client';
 import { CustomerPaymentInformation } from '../../tipos/CustomerPayment';
+import { OpModificacionProducto } from '../../tipos/Enums/OpModificaciones';
+import { SelectedProduct } from '../../tipos/SelectedProduct';
+import { TipoCobro } from '../../tipos/Enums/TipoCobro';
 
 export const POS = () => {
     return(
@@ -21,19 +25,18 @@ export const POS = () => {
 
 const POSComponent = () => {
     const [showModalPagar, setPagarModal] = useState(false);
+    const [showModalResumen, setResumenModal] = useState(false);
 
     const [productos, ] = useSelectedProducts();
     const [precioTotal, ] = usePrice();
-    const [dineroEntregado, setDineroEntregado] = useConsumerMoney();
+    const [dineroEntregado, ] = useConsumerMoney();
 
-    const [, SetAllProductos] = useDBProducts();
+    const [allProducts, SetAllProductos] = useDBProducts();
     const [productosFiltrados, SetProductosFiltrados] = useState<DBProduct[]>([]);
+    const [familias, setFamilias] = useState<string[]>([]);
 
     const [, setCustomers] = useDBClients();
-    const [cliente, setCliente] = useCurrentClient();
-
-    const [isEfectivo, setIsEfectivo] = useState<boolean>(false);
-    const montado = useRef(false);
+    let clienteActual: Client = {nombre: "Genérico", calle: "Genérico", cp: "Genérico", nif: "Genérico"}
 
     useEffect(() => {
         const fetchProductos = () => {
@@ -51,23 +54,34 @@ const POSComponent = () => {
             );
         };
         fetchProductos();
-        montado.current = true;
     }, []);
 
     useEffect(() => {
-        //console.log(!montado.current);
-
-        if(!montado.current) {return;}
-        else setPagarModal(true);
-        
-    }, [isEfectivo])
+        function uniq_fast(a: DBProduct[]) {
+            var seenMap: Map<string, number> = new Map();
+            var out: string[] = [];
+            var len = a.length;
+            var j = 0;
+            for(var i = 0; i < len; i++) {
+                 var item = a[i].familia;
+                 if(!seenMap.has(item)) {
+                       seenMap.set(item, 1);
+                       out[j++] = item;
+                 }
+            }
+            return out;
+        }
+        setFamilias(uniq_fast(allProducts));
+    }, [allProducts]);
 
     const cerrarModal = () => {
         setPagarModal(false);
     }
 
-    const cambio = parseFloat((parseFloat(dineroEntregado) - precioTotal).toFixed(2));
-    const botonPagarColores = cambio >= 0 ? "bg-blue-500 h-12 shadow text-white rounded-lg hover:shadow-lg hover:bg-blue-600 focus:outline-none" : "bg-blue-300 h-12 shadow text-white rounded-lg hover:shadow-lg focus:outline-none cursor-default"
+    const cerrarModalResumen = () => {
+        setResumenModal(false);
+    }
+
     const allProductsHaveQuantity = productos.filter(p => p.cantidad == "").length <= 0;
 
     return(
@@ -76,10 +90,10 @@ const POSComponent = () => {
             {/* Página principal del POS */}
             <div className="flex-grow flex">
                 {/* Menú tienda, donde se muestran los productos */}
-                <ProductDisplay listFiltrados={[productosFiltrados, SetProductosFiltrados]}/>
+                <ProductDisplay listFiltrados={[productosFiltrados, SetProductosFiltrados]} familias={familias}/>
                 {/* Menú tienda */}
                 {/* Sidebar derecho */}
-                <div className="w-5/12 flex flex-col bg-gray-100 h-full pr-4 pl-2 py-4">
+                <div className="w-4/12 flex flex-col bg-gray-50 h-full pr-4 pl-2 py-4">
                     <div className="bg-white rounded-3xl flex flex-col h-full shadow">
                         {/* En caso de carrito vacío o con productos */}
                         {productos.length <= 0 ? <CarritoVacio/> : <CarritoConProductos/>}
@@ -93,64 +107,14 @@ const POSComponent = () => {
                                     {productos.length <= 0 ? 0 : precioTotal} €
                                 </div>
                             </div>
-                            {/* El cambio debe aparecer cuando el dinero entregado sea mayor q cero */}
+
                             {
-                                parseFloat(dineroEntregado) > 0 && cambio >= 0 ?
-                                <div className="flex mb-3 text-lg font-semibold bg-green-100 rounded-lg py-2 px-3">
-                                    <div className="text-green-600">CAMBIO</div>
-                                    <div className="text-right flex-grow text-green-600">
-                                        {cambio} €
-                                    </div>
-                                </div>
-                                :
-                                null
-                            }
-                            {/* Mostrar en caso de que el cambio sea negativo */}
-                            {
-                                parseFloat(dineroEntregado) - precioTotal < 0 &&
-                                <div className="flex mb-3 text-lg font-semibold bg-pink-100 text-blue-gray-700 rounded-lg py-2 px-3">
-                                    <div className="text-right flex-grow text-pink-600">
-                                        <span className="inline-block ml-1">{cambio} €</span>
-                                    </div>
+                                productos.length > 0 && !isNaN(precioTotal) && allProductsHaveQuantity &&
+                                <div className="grid grid-cols-1 gap-2 mt-2">
+                                    <motion.button whileTap={{scale: 0.9}} className="bg-blue-500 h-12 shadow rounded-lg hover:shadow-lg hover:bg-blue-600 text-white focus:outline-none" onClick={ (e) => {setPagarModal(true)} }>PAGAR</motion.button>
+                                    <motion.button whileTap={{scale: 0.9}} className="bg-blue-500 h-12 shadow rounded-lg hover:shadow-lg hover:bg-blue-600 text-white focus:outline-none" onClick={ (e) => {setResumenModal(true)} }>COBRO RAPIDO</motion.button>
                                 </div>
                             }
-
-                            <div className="mb-3 text-gray-700 px-3 pt-2 pb-3 rounded-lg bg-gray-200">
-                                <div className="flex text-lg font-semibold">
-                                <div className="flex-grow text-left">EFECTIVO</div>
-                                    <div className="flex text-right">
-                                        <div className="mr-2">€</div>
-                                        <input type="text" inputMode="numeric" className="w-28 text-right bg-white shadow rounded-lg 
-                                            focus:bg-white focus:shadow-lg px-2 focus:outline-none" onChange={(e) => setDineroEntregado(e.target.value)} value={dineroEntregado}/>
-                                    </div>
-                                </div>
-                                <hr className="my-2" />
-                                <div className="grid grid-cols-3 gap-2 mt-2">
-                                    {/* Botones números rápidos */}
-                                    <motion.button whileTap={{scale: 0.9}} className="bg-white h-12 shadow rounded-lg hover:shadow-lg hover:bg-blue-400 hover:text-white focus:outline-none" onClick={() => {setDineroEntregado(`${parseFloat(dineroEntregado.toString() + 7)}`)}}>7</motion.button>
-                                    <motion.button whileTap={{scale: 0.9}} className="bg-white h-12 shadow rounded-lg hover:shadow-lg hover:bg-blue-400 hover:text-white focus:outline-none" onClick={() => {setDineroEntregado(`${parseFloat(dineroEntregado.toString() + 8)}`)}}>8</motion.button>
-                                    <motion.button whileTap={{scale: 0.9}} className="bg-white h-12 shadow rounded-lg hover:shadow-lg hover:bg-blue-400 hover:text-white focus:outline-none" onClick={() => {setDineroEntregado(`${parseFloat(dineroEntregado.toString() + 9)}`)}}>9</motion.button>
-
-                                    <motion.button whileTap={{scale: 0.9}} className="bg-white h-12 shadow rounded-lg hover:shadow-lg hover:bg-blue-400 hover:text-white focus:outline-none" onClick={() => {setDineroEntregado(`${parseFloat(dineroEntregado.toString() + 4)}`)}}>4</motion.button>
-                                    <motion.button whileTap={{scale: 0.9}} className="bg-white h-12 shadow rounded-lg hover:shadow-lg hover:bg-blue-400 hover:text-white focus:outline-none" onClick={() => {setDineroEntregado(`${parseFloat(dineroEntregado.toString() + 5)}`)}}>5</motion.button>
-                                    <motion.button whileTap={{scale: 0.9}} className="bg-white h-12 shadow rounded-lg hover:shadow-lg hover:bg-blue-400 hover:text-white focus:outline-none" onClick={() => {setDineroEntregado(`${parseFloat(dineroEntregado.toString() + 6)}`)}}>6</motion.button>
-
-                                    <motion.button whileTap={{scale: 0.9}} className="bg-white h-12 shadow rounded-lg hover:shadow-lg hover:bg-blue-400 hover:text-white focus:outline-none" onClick={() => {setDineroEntregado(`${parseFloat(dineroEntregado.toString() + 1)}`)}}>1</motion.button>
-                                    <motion.button whileTap={{scale: 0.9}} className="bg-white h-12 shadow rounded-lg hover:shadow-lg hover:bg-blue-400 hover:text-white focus:outline-none" onClick={() => {setDineroEntregado(`${parseFloat(dineroEntregado.toString() + 2)}`)}}>2</motion.button>
-                                    <motion.button whileTap={{scale: 0.9}} className="bg-white h-12 shadow rounded-lg hover:shadow-lg hover:bg-blue-400 hover:text-white focus:outline-none" onClick={() => {setDineroEntregado(`${parseFloat(dineroEntregado.toString() + 3)}`)}}>3</motion.button>
-
-                                    <motion.button whileTap={{scale: 0.9}} className="bg-white h-12 shadow rounded-lg hover:shadow-lg text-2xl hover:bg-blue-400 focus:outline-none" onClick={() => {setDineroEntregado(`${dineroEntregado}.`)}}>.,</motion.button>
-                                    <motion.button whileTap={{scale: 0.9}} className="bg-white h-12 shadow rounded-lg hover:shadow-lg hover:bg-blue-400 focus:outline-none" onClick={() => {setDineroEntregado(`${dineroEntregado + 0}`)}}>0</motion.button>
-                                    <motion.button whileTap={{scale: 0.9}} className="bg-white h-12 shadow rounded-lg hover:shadow-lg hover:bg-red-500 hover:text-white focus:outline-none" onClick={() => {setDineroEntregado(dineroEntregado.toString().substring(0, dineroEntregado.toString().length - 1))}}>←</motion.button>
-                                </div>
-                                {
-                                    productos.length > 0 && !isNaN(precioTotal) && allProductsHaveQuantity &&
-                                    <div className="grid grid-cols-1 gap-2 mt-2">
-                                        <motion.button whileTap={{scale: cambio >= 0 ? 0.9 : 1}} className={botonPagarColores} onClick={(e) => {cambio >= 0 && setIsEfectivo(!!true)}}>EFECTIVO</motion.button>
-                                        <motion.button whileTap={{scale: 0.9}} className="bg-blue-500 h-12 shadow rounded-lg hover:shadow-lg hover:bg-blue-600 text-white focus:outline-none" onClick={ (e) => {setIsEfectivo(!!false)} }>TARJETA</motion.button>
-                                    </div>
-                                }
-                            </div>                                                
                         </div>
                         {/* end of payment info */}
                     </div>
@@ -160,17 +124,19 @@ const POSComponent = () => {
 
             <AnimatePresence initial={false} exitBeforeEnter={true}>
                 {/* Modal aceptar compra */}
-                {showModalPagar && <ModalResumenCompra cambio={cambio} tipoCobro="NotProperlyDone" customerPayment={{} as CustomerPaymentInformation} handleClose={cerrarModal} cliente={cliente} customerProducts={productos} finalPrice={precioTotal}/>}
+                {showModalPagar && <ModalPagar handleClose={cerrarModal} cliente={clienteActual} customerProducts={productos} finalPrice={precioTotal} />}
+                {showModalResumen && <ModalResumenCompra customerPayment={{tipo: "Cobro rápido", efectivo: precioTotal, tarjeta: 0} as CustomerPaymentInformation} handleClose={cerrarModalResumen} cliente={clienteActual} cambio={0}
+                                         customerProducts={productos} finalPrice={precioTotal} tipoCobro={TipoCobro.Efectivo}/>}
             </AnimatePresence>
             
             </div>
             {/* end of noprint-area */}
             <div id="print-area" className="print-area" />
         </div>
-    ); 
+    );
 }
 
-const ProductDisplay = (props: { listFiltrados: [DBProduct[], Function]; }) => {
+const ProductDisplay = (props: { listFiltrados: [DBProduct[], Function], familias: string[]}) => {
     const [productosFiltrados, SetProductosFiltrados] = props.listFiltrados;
     const [allProductos, ] = useDBProducts();
 
@@ -183,26 +149,48 @@ const ProductDisplay = (props: { listFiltrados: [DBProduct[], Function]; }) => {
     }
 
     return (
-        <div className="flex flex-col bg-gray-100 h-full w-full py-4">
+        <div className="flex flex-col bg-gray-50 h-full w-full py-4">
             <div className="flex px-2 flex-row relative">
-                <div className="absolute left-5 top-3 px-2 py-2 rounded-full bg-blue-300 text-white">
+                <div className="absolute left-5 top-3 px-2 py-2 rounded-full bg-blue-400 text-white">
                 <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
                 </svg>
                 </div>
-                <input onChange={(e) => {filtrarProd(e.target.value);}} className="bg-white rounded-3xl shadow text-lg full w-full h-16 py-4 pl-16 transition-shadow focus:shadow-2xl focus:outline-none" placeholder="Buscar producto o código de barras..."/>
+                <input onChange={(e) => {filtrarProd(e.target.value);}} autoFocus={true} className="bg-white rounded-3xl shadow text-lg full w-full h-16 py-4 pl-16 transition-shadow focus:shadow-2xl focus:outline-none" placeholder="Buscar producto o código de barras..."/>
             </div>
-            <div className="h-full overflow-hidden mt-4">
-                <div className="h-full overflow-y-auto px-2">
-                    {/* Base de datos vacía */}
-                    {allProductos.length <= 0 || !allProductos  ? <BBDDVacia/> : null}
-                    
-                    {/* Producto no encontrado en la lista de productos */}
-                    {productosFiltrados.length <= 0 && allProductos.length > 0 ? <ProductoNoEncontrado/> : <GenerarProductsCards filteredProds={productosFiltrados}/>}
+
+            {
+                props.familias[0] != undefined && <GenerarFavoritos allProductos={allProductos} SetProductosFiltrados={SetProductosFiltrados} familias= {props.familias} />
+            }
+
+            <div className="h-full overflow-hidden pt-2">
+                <div className="h-full overflow-y-auto overflow-x-hidden px-2">
+                    {/* Base de datos vacía o con productos*/}
+                    {
+                        Object.keys(allProductos[0]).length === 0 ? 
+                        <BBDDVacia/> 
+                        : 
+                        productosFiltrados.length <= 0 && allProductos.length > 0 ? <ProductoNoEncontrado/> : <GenerarProductsCards filteredProds={productosFiltrados}/>
+                    }
                 </div>
             </div>
         </div>
     )
+}
+
+const GenerarFavoritos = (props: {familias: string[], allProductos: DBProduct[], SetProductosFiltrados: Function}) => {
+    return(
+        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 2xl:grid-cols-6 justify-items-start gap-2 m-4">
+            <button key={"Todos"} id={"Todos"} className="bg-blue-400 font-semibold hover:bg-yellow-500 text-white rounded-lg h-10 w-full"
+                        onClick={() => props.SetProductosFiltrados(props.allProductos)}>Todos</button>
+            {
+                props.familias.map(f => {
+                    return <button key={f} id={f} className="bg-blue-400 font-semibold hover:bg-yellow-500 text-white rounded-lg h-10 w-full"
+                            onClick={(e) => props.SetProductosFiltrados(props.allProductos.filter(p => p.familia == e.currentTarget.id))}>{f}</button>
+                })
+            }
+        </div>
+    );
 }
 
 const BBDDVacia = () => {
@@ -213,9 +201,9 @@ const BBDDVacia = () => {
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 7v10c0 2.21 3.582 4 8 4s8-1.79 8-4V7M4 7c0 2.21 3.582 4 8 4s8-1.79 8-4M4 7c0-2.21 3.582-4 8-4s8 1.79 8 4m0 5c0 2.21-3.582 4-8 4s-8-1.79-8-4" />
             </svg>
             <p className="text-xl">
-                NO TIENES
+                FALLO DE CONEXIÓN
                 <br />
-                PRODUCTOS
+                CON LA BBDD
             </p>
             </div>
         </div>
@@ -238,14 +226,17 @@ const ProductoNoEncontrado = () => {
 }
 
 const GenerarProductsCards = (props: FilteredProds) => {
-    const [productosSeleccionados, SetProductos] = useSelectedProducts();
+    const [, SetProductos] = useSelectedProducts();
+
     return(
-        <div className="grid grid-cols-4 gap-4 pb-3">
+        <div className="grid gap-4 pb-3 grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 2xl:grid-cols-6
+                            text-xs">
             {props.filteredProds.map((prod: DBProduct) => {
                 return (
                     <button key={prod._id} id={prod._id} 
                         onClick={(e)=> {SetProductos(
-                            {_id: e.currentTarget.id, cantidad: "1", dto: 0, ean: prod.ean, familia: prod.familia, img: prod.img, precioVenta: prod.precioVenta, nombre: prod.nombre, operacionMod: "add"});} }>
+                            {_id: e.currentTarget.id, cantidad: "1", dto: 0, ean: prod.ean, familia: prod.familia, img: prod.img, precioVenta: prod.precioVenta,
+                             nombre: prod.nombre, operacionMod: OpModificacionProducto.Añadir} as SelectedProduct);} }>
                         <ProductCard _id={prod._id} alta={prod.alta} descripción={prod.descripción} ean={prod.ean} familia={prod.familia}
                                         nombre={prod.nombre} precioVenta={prod.precioVenta} img={prod.img} 
                                         iva={prod.iva} precioCompra={prod.precioCompra} tags={prod.tags} />
@@ -301,7 +292,7 @@ const CarritoConProductos = () => {
                     {
                         return <ProductSelectedCard key={foundProd._id} _id={foundProd._id} cantidad={product.cantidad}
                                 dto={product.dto} precioVenta={foundProd.precioVenta} img={foundProd.img} nombre={foundProd.nombre} 
-                                familia={foundProd.familia} ean={foundProd.ean} operacionMod={""}/> ;
+                                familia={foundProd.familia} ean={foundProd.ean} operacionMod={OpModificacionProducto.Añadir}/> ;
                     }
                 })}
             </div>
