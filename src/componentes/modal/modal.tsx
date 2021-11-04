@@ -131,36 +131,6 @@ export const ModalPagar = (props: ModalProps) => {
                                             </div>
                                         </div>
                                     </div>
-                                    {/* <h2 className="py-6 text-lg font-semibold">PRECIO TOTAL: {props.finalPrice.toFixed(2)}€</h2> */}
-                                    <div className="grid grid-cols-2 gap-6">
-                                        {/* <button className="bg-blue-500 hover:bg-blue-600 text-white rounded-lg h-8 w-full">Efectivo</button>
-                                        <button className="bg-yellow-500 hover:bg-yellow-600 text-white rounded-lg h-8 w-full">Tarjeta</button> */}
-                                        {/* <div className="py-6 pb-0 text-xl">
-                                            <Teclado numInput={dineroEntregado} setNumInput={setDineroEntregado} tipoPago={"Efectivo"}/>
-                                            {
-                                                parseFloat(dineroEntregado) > 0 && (props.dineroEntregado - props.finalPrice) >= 0 ?
-                                                <div className="flex mb-3 text-lg font-semibold bg-green-100 rounded-lg py-2 px-3">
-                                                    <div className="text-green-600">CAMBIO</div>
-                                                    <div className="text-right flex-grow text-green-600">
-                                                        {(props.dineroEntregado - props.finalPrice).toFixed(2)} €
-                                                    </div>
-                                                </div>
-                                                :
-                                                null
-                                            }
-                                            {
-                                                parseFloat(dineroEntregado) - props.finalPrice < 0 &&
-                                                <div className="flex mb-3 text-lg font-semibold bg-pink-100 text-blue-gray-700 rounded-lg py-2 px-3">
-                                                    <div className="text-right flex-grow text-pink-600">
-                                                        <span className="inline-block ml-1">{(props.dineroEntregado - props.finalPrice).toFixed(2)} €</span>
-                                                    </div>
-                                                </div>
-                                            }
-                                        </div>
-                                        <div className="">
-                                            Tarjeta
-                                        </div> */}
-                                    </div>
                                 </div>
 
                                 <div className="grid grid-cols-3 text-lg text-center justify-center">
@@ -184,9 +154,7 @@ export const ModalPagar = (props: ModalProps) => {
                         <hr className="my-2"/>
                         <div className="grid grid-cols-2 justify-items-center">
                             <button className="bg-red-500 hover:bg-red-600 text-white w-full h-12 hover:shadow-lg rounded-lg flex items-center justify-center" onClick={props.handleClose}>
-                                <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-                                </svg>
+                                <div className="text-lg">CANCELAR</div>
                             </button>
                             {cambio < 0 ? 
                                 <button className="bg-blue-400 text-white w-full h-12 cursor-default rounded-lg flex items-center justify-center">
