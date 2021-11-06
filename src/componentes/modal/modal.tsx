@@ -8,6 +8,7 @@ import { CustomerPaymentInformation } from "../../tipos/CustomerPayment";
 import { TipoCobro } from "../../tipos/Enums/TipoCobro";
 import axios from "axios";
 import { useSelectedProducts } from "../pointOfSale/productsContext";
+import AutoComplete from "../autocomplete/autocomplete";
 
 const In = {
     hidden: {
@@ -102,9 +103,11 @@ export const ModalPagar = (props: ModalProps) => {
                                 <div>
                                     <div className="text-2xl font-semibold">Datos cliente</div>
                                     <hr/>
-                                    <div className="grid grid-cols-2 grid-rows-1 mt-4 text-xs text-center justify-center">
-                                        <div className="text-left relative ">Cliente: {props.cliente.nombre? props.cliente.nombre : "general"} </div>
-                                        <div className="text-right relative "> {fechaActual} </div>
+                                    <div className="flex justify-between mt-4 text-lg text-center">
+                                        <div>
+                                            <AutoComplete className="text-left text-lg" sugerencias={["Luca Lee","Simone","Miguel"]} nombreInput="Cliente" placeholder="General"/>
+                                        </div>
+                                        <div className="relative text-lg"> {fechaActual} </div>
                                     </div>
                                 </div>
                             </div>

@@ -28,7 +28,7 @@ function App() {
                 <Route exact path = "/pos" component= {POS}/>    
                 <Route exact path = "/pCard" component= {ProductCard}/>       
                 <Route exact path = "/rCard" component= {ReportCard}/>   
-                <Route exact path = "/productos" component= {ProductPage}/>   
+                <Route exact path = "/productos" component= {ProductPage}/>     
             </Switch>
         </AnimatePresence>
     );    
