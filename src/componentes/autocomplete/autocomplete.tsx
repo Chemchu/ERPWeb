@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import { className } from "../../tipos/className";
+import { Input } from "../input/input";
 
 type AutoCompleteProps = {
     sugerencias: string[],
@@ -78,10 +79,11 @@ const AutoComplete = (props: AutoCompleteProps & className) => {
                 <label className="text-gray-700">
                     {props.NombreInput}
                 </label>
-                <input className=" rounded-lg border-transparent flex-1 
+                <Input inputValue={props.InputValue} OnChangeCallback={props.OnChangeCallback} placeholder={props.Placeholder}/>
+                {/* <input className="rounded-lg border-transparent flex-1 
                                     appearance-none border border-gray-300 w-full py-2 px-4 bg-white text-gray-700 placeholder-gray-400 
                                     shadow-sm text-base focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-transparent" 
-                                    name="Input" placeholder={props.Placeholder} value={props.InputValue} onChange={props.OnChangeCallback} />
+                                    name="Input" type="text" placeholder={props.Placeholder} value={props.InputValue} onChange={props.OnChangeCallback} /> */}
             </div>
 
         );

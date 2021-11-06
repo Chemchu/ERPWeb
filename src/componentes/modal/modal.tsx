@@ -9,6 +9,7 @@ import { TipoCobro } from "../../tipos/Enums/TipoCobro";
 import axios from "axios";
 import { useSelectedProducts } from "../pointOfSale/productsContext";
 import AutoComplete from "../autocomplete/autocomplete";
+import { Input } from "../input/input";
 
 const In = {
     hidden: {
@@ -45,7 +46,8 @@ export const ModalPagar = (props: ModalProps) => {
 
     const [customerPayment, setCustomerPaymentInfo] = useState<CustomerPaymentInformation>({tipo: "default", efectivo: 0, tarjeta: 0});
     
-    const fechaActual = `${date.getDate().toLocaleString('es-ES', { minimumIntegerDigits: 2})}/${parseInt(date.getUTCMonth().toLocaleString('es-ES', { minimumIntegerDigits: 2})) + 1}/${date.getFullYear()} - ${date.getHours().toLocaleString('es-ES', { minimumIntegerDigits: 2})}:${date.getMinutes().toLocaleString('es-ES', { minimumIntegerDigits: 2})}:${date.getSeconds().toLocaleString('es-ES', { minimumIntegerDigits: 2})}`;
+    const fechaActual = `${date.getDate().toLocaleString('es-ES', { minimumIntegerDigits: 2})}/${parseInt(date.getUTCMonth().toLocaleString('es-ES', { minimumIntegerDigits: 2})) + 1}/${date.getFullYear()} `;
+    const horaActual = `${date.getHours().toLocaleString('es-ES', { minimumIntegerDigits: 2})}:${date.getMinutes().toLocaleString('es-ES', { minimumIntegerDigits: 2})}:${date.getSeconds().toLocaleString('es-ES', { minimumIntegerDigits: 2})}`
     const cambio: number = isNaN((Number(dineroEntregado) + Number(dineroEntregadoTarjeta) - props.finalPrice)) ? Number(dineroEntregado) + Number(dineroEntregadoTarjeta) : (Number(dineroEntregado) + Number(dineroEntregadoTarjeta) - props.finalPrice);
     let tipoCobro: TipoCobro = TipoCobro.Efectivo;
     
@@ -99,23 +101,43 @@ export const ModalPagar = (props: ModalProps) => {
 
                     <div id="receipt-content" className="text-left w-full text-sm p-6 overflow-auto">
                         <div className="grid grid-cols-2">
+                            {/* Parte izquierda, datos cliente */}
                             <div className="bg-white text-center justify-center py-6">
                                 <div>
                                     <div className="text-2xl font-semibold">Datos cliente</div>
-                                    <hr/>
-                                    <div className="flex justify-between mt-4 text-lg text-center">
-                                        <div>
+                                    <hr/>                                    
+                                    <div className="text-lg text-left px-2 pt-4">Fecha: {fechaActual} </div>
+                                    <div className="text-lg text-left px-2">Hora: {horaActual} </div>
+                                    <div className="flex justify-between mt-4 px-2  text-lg text-center">
+                                        <div className="w-80">
                                             <AutoComplete className="text-left text-lg" sugerencias={["Luca Lee","Simone","Miguel"]} nombreInput="Cliente" placeholder="General"/>
                                         </div>
-                                        <div className="relative text-lg"> {fechaActual} </div>
                                     </div>
                                 </div>
+                                <div className="grid grid-cols-2 py-6 px-2 gap-10 justify-items-start">
+                                    <div className="text-left w-80">
+                                        <h1 className="text-lg">Nombre completo</h1>
+                                        <Input placeholder="Nombre del cliente"/>
+                                    </div>
+                                    <div className="text-left w-80">
+                                        <h1 className="text-lg">Dirección completa</h1>
+                                        <Input placeholder="Ejem.: Calle Alcalá 14"/>
+                                    </div>
+                                    <div className="text-left w-80">
+                                        <h1 className="text-lg">NIF</h1>
+                                        <Input placeholder="Número de identificación fiscal"/>
+                                    </div>
+                                    <div className="text-left w-80">
+                                        <h1 className="text-lg">Código postal</h1>
+                                        <Input placeholder="Ejem.: 46006"/>
+                                    </div>
+                                </div> 
                             </div>
+                            {/* Parte derecha, forma de pago */}
                             <div className="text-center justify-center py-6">
                                 <div>
                                     <div className="text-2xl font-semibold">Método de pago</div>
                                     <hr/>
-
                                     <div className="grid grid-cols-2 justify-items gap-6 p-10">
                                         <div>
                                             <div className="text-xl text-left">
