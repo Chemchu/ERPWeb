@@ -2,6 +2,13 @@ module.exports = {
   purge: ['./src/**/*.{js,jsx,ts,tsx}', './public/index.html'],
   darkMode: false, // or 'media' or 'class'
   theme: {
+    fontFamily: {
+    'sans': ["'Roboto Condensed'",'Lato', 'sans-serif', 'system-ui' ],
+    'serif': ['serif', 'Georgia'],
+    'mono': ['monospace', 'SFMono-Regular'],
+    'display': ['Oswald'],
+    'body': ['"Open Sans"'],
+   },
     extend: {
       backgroundImage: {
         'supermarket1': "url('/src/img/market-1.jpg')",

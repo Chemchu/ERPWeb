@@ -40,21 +40,21 @@ const AutoComplete = (props: AutoCompleteProps & className) => {
     };
 
     const SuggestionsListComponent = (suggestionProps: className) => {
-        return filteredSuggestions.length ? (
-          <ul className={`${suggestionProps.className}`}>
-            {filteredSuggestions.map((sugerencia) => {
-              return (
-                <li className={`cursor-pointer border-2 border-separate hover:bg-gray-200`} key={sugerencia} onClick={Clicked}>
-                  {sugerencia}
-                </li>
-              );
-            })}
-          </ul>
-        ) : (
-          <div className={`${suggestionProps.className}`}>
-            <em className="truncate">Ninguno encontrado</em>
-          </div>
-        );
+      return filteredSuggestions.length ? (
+        <ul className={`${suggestionProps.className} absolute`}>
+          {filteredSuggestions.map((sugerencia) => {
+            return (
+              <li className={`cursor-pointer border-2 border-solid border-separate bg-white hover:bg-gray-200`} key={sugerencia} onClick={Clicked}>
+                {sugerencia}
+              </li>
+            );
+          })}
+        </ul>
+      ) : (
+        <div className={`${suggestionProps.className} border-2 border-solid border-separate bg-white absolute`}>
+          <em className="truncate">Ninguno encontrado</em>
+        </div>
+      );
     };
 
     return (
@@ -75,15 +75,11 @@ const AutoComplete = (props: AutoCompleteProps & className) => {
     const InputText = (props: InputProps) => {
         return(
             
-            <div className=" relative ">
+            <div className="relative">
                 <label className="text-gray-700">
                     {props.NombreInput}
                 </label>
                 <Input inputValue={props.InputValue} OnChangeCallback={props.OnChangeCallback} placeholder={props.Placeholder}/>
-                {/* <input className="rounded-lg border-transparent flex-1 
-                                    appearance-none border border-gray-300 w-full py-2 px-4 bg-white text-gray-700 placeholder-gray-400 
-                                    shadow-sm text-base focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-transparent" 
-                                    name="Input" type="text" placeholder={props.Placeholder} value={props.InputValue} onChange={props.OnChangeCallback} /> */}
             </div>
 
         );

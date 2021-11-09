@@ -28,9 +28,9 @@ export const ProductCard = (props: DBProduct) => {
             <div className="overflow-x-hidden rounded-2xl relative">
                 <img className="h-40 rounded-2xl w-full object-cover" src={productImage} onError={SetDefaultImage} />
             </div>
-            <div className="mt-4 pl-3 pr-3 mb-2 flex justify-between">
+            <div className="mt-4 pl-3 pr-3 mb-2">
                 <p className="lg:text-base sm:text-base xs:text-sm truncate text-left text-gray-800 mb-0">{props.nombre}</p>
-                <p className="lg:text-base sm:text-base xs:text-sm font-semibold text-right text-gray-800 mt-0">{props.precioVenta.toFixed(2)}€</p>
+                <p className="lg:text-base sm:text-base xs:text-sm font-semibold text-left text-gray-800 mt-0">{props.precioVenta.toFixed(2)}€</p>
             </div>
         </motion.div>
     );
@@ -49,8 +49,8 @@ export const ProductSelectedCard: React.FC<SelectedProduct> = (props) => {
         return (parseInt(prod.cantidad) > 0 || prod.cantidad == "") ?
             <div className="select-none mb-3 bg-gray-200 rounded-lg w-full py-2 px-2 flex justify-center">
                 <img src={productImage} className="rounded-lg h-10 w-10 bg-white shadow mr-2" onError={SetDefaultImage}/>
-                <div className="flex-grow">
-                    <p className="text-sm overflow-hidden">{props.nombre}</p>
+                <div className="grid grid-rows-2">
+                    <p className="text-sm truncate">{props.nombre}</p>
                     {
                         isNaN(prod.dto) || prod.dto == 0 ? 
                         <p className="text-xs block">{(props.precioVenta * parseInt(prod.cantidad)).toFixed(2)}€</p>
@@ -62,7 +62,7 @@ export const ProductSelectedCard: React.FC<SelectedProduct> = (props) => {
                     }
                 </div>
 
-                <div className="py-2 inline-block align-middle">
+                <div className="py-2 inline-block align-middle grid-rows-1">
                     <input type="text" inputMode="numeric" className="text-xs text-center rounded-lg w-10 h-6 shadow" 
                             value={prod.dto} onChange={(e) => AddProductos({_id: props._id, cantidad: prod.cantidad, dto: Number(Number(e.target.value).toFixed(2)), 
                                                             ean: prod.ean, familia: prod.familia, img: prod.img, nombre: prod.nombre, operacionMod: OpModificacionProducto.Descuento, precioVenta: prod.precioVenta} as SelectedProduct)} />

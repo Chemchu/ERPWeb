@@ -1,4 +1,4 @@
-import {useState, useEffect} from 'react';
+import {useState, useEffect, ReactChild, ReactFragment, ReactPortal} from 'react';
 import {ProductCard, ProductSelectedCard} from './productCard';
 import {POSProvider, useDBProducts, usePrice, useConsumerMoney, useSelectedProducts} from './productsContext';
 import axios from 'axios';
@@ -88,35 +88,24 @@ const POSComponent = () => {
         <div>
             <div className="hide-print flex flex-row h-screen antialiased text-gray-800">
             {/* Página principal del POS */}
-            <div className="flex-grow flex">
+            <div className="grid grid-cols-3 h-screen">
                 {/* Menú tienda, donde se muestran los productos */}
-                <ProductDisplay listFiltrados={[productosFiltrados, SetProductosFiltrados]} familias={familias}/>
+                <div className="col-span-2 h-screen">
+                    <ProductDisplay listFiltrados={[productosFiltrados, SetProductosFiltrados]} familias={familias}/>
+                </div>
                 {/* Menú tienda */}
                 {/* Sidebar derecho */}
-                <div className="w-4/12 flex flex-col bg-gray-50 h-full pr-4 pl-2 py-4">
-                    <div className="bg-white rounded-3xl flex flex-col h-full shadow">
+                <div className="col-span-1 bg-gray-50 h-screen pr-4 pl-2 py-4">
+                    <div className="bg-white rounded-3xl h-screen shadow">
                         {/* En caso de carrito vacío o con productos */}
-                        {productos.length <= 0 ? <CarritoVacio/> : <CarritoConProductos/>}
-                        
-                        {/* Información del pago */}
-                        <div className="select-none h-auto w-full text-center pt-3 pb-4 px-4">
-                            <div className="flex mb-3 text-lg font-semibold text-blue-gray-700">
-                                <div>TOTAL</div>
-                                <div className="text-right w-full">
-                                    {/*Cambiar en caso de que la cesta tenga productos y calcular el valor total*/}
-                                    {productos.length <= 0 ? 0 : precioTotal} €
-                                </div>
-                            </div>
-
-                            {
-                                productos.length > 0 && !isNaN(precioTotal) && allProductsHaveQuantity &&
-                                <div className="grid grid-cols-1 gap-2 mt-2">
-                                    <motion.button whileTap={{scale: 0.9}} className="bg-blue-500 h-12 shadow rounded-lg hover:shadow-lg hover:bg-blue-600 text-white focus:outline-none" onClick={ (e) => {setPagarModal(true)} }>PAGAR</motion.button>
-                                    <motion.button whileTap={{scale: 0.9}} className="bg-blue-500 h-12 shadow rounded-lg hover:shadow-lg hover:bg-blue-600 text-white focus:outline-none" onClick={ (e) => {setResumenModal(true)} }>COBRO RAPIDO</motion.button>
-                                </div>
-                            }
+                        {productos.length <= 0 ? 
+                        <div>
+                            <CarritoVacio productos={productos} precioTotal={precioTotal} /> 
                         </div>
-                        {/* end of payment info */}
+                        : 
+                        <div>
+                            <CarritoConProductos productos={productos} precioTotal={precioTotal} allProductsHaveQuantity={allProductsHaveQuantity} abrirCobro={setPagarModal} abrirCobroRapido={setResumenModal}/>
+                        </div>}
                     </div>
                 </div>
                 {/* Fin sidebar derecho */}
@@ -159,8 +148,9 @@ const ProductDisplay = (props: { listFiltrados: [DBProduct[], Function], familia
                 <input onChange={(e) => {filtrarProd(e.target.value);}} autoFocus={true} className="bg-white rounded-3xl shadow text-lg full w-full h-16 py-4 pl-16 transition-shadow focus:shadow-2xl focus:outline-none" placeholder="Buscar producto o código de barras..."/>
             </div>
 
+            {/* Genera los botones de favorito */}
             {
-                props.familias[0] != undefined && <GenerarFavoritos allProductos={allProductos} SetProductosFiltrados={SetProductosFiltrados} familias= {props.familias} />
+                <GenerarFavoritos allProductos={allProductos} SetProductosFiltrados={SetProductosFiltrados} familias= {props.familias} />
             }
 
             <div className="h-full overflow-hidden pt-2">
@@ -180,6 +170,7 @@ const ProductDisplay = (props: { listFiltrados: [DBProduct[], Function], familia
 
 const GenerarFavoritos = (props: {familias: string[], allProductos: DBProduct[], SetProductosFiltrados: Function}) => {
     return(
+        props.familias[0] != undefined ?
         <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 2xl:grid-cols-6 justify-items-start gap-2 m-4">
             <button key={"Todos"} id={"Todos"} className="bg-blue-400 font-semibold hover:bg-yellow-500 text-white rounded-lg h-10 w-full"
                         onClick={() => props.SetProductosFiltrados(props.allProductos)}>Todos</button>
@@ -190,6 +181,8 @@ const GenerarFavoritos = (props: {familias: string[], allProductos: DBProduct[],
                 })
             }
         </div>
+        :
+        null
     );
 }
 
@@ -247,44 +240,56 @@ const GenerarProductsCards = (props: FilteredProds) => {
     );
 }
 
-const CarritoVacio = () => {
+const CarritoVacio = (props: {productos: SelectedProduct[], precioTotal: number} ) => {
     return(
-        <div x-show="cart.length === 0" className="flex-1 w-full p-4 opacity-25 select-none flex flex-col flex-wrap content-center justify-center">
-            <svg xmlns="http://www.w3.org/2000/svg" className="h-16 inline-block" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z" />
-            </svg>
-            <p>
-                CARRITO VACÍO
-            </p>
+        <div className="w-full h-screen p-4 opacity-25 grid grid-cols-1 grid-rows-2">
+            <div className="grid grid-rows-2 grid-cols-1 justify-items-center justify-self-center self-end">
+                <svg xmlns="http://www.w3.org/2000/svg" className="h-16" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z" />
+                </svg>
+                <p className="self-center">
+                    CARRITO VACÍO
+                </p>
+            </div>
+
+            <div className="flex mb-3 text-lg font-semibold text-blue-gray-700 self-end">
+                <div>TOTAL</div>
+                <div className="text-right w-full">
+                    {/*Cambiar en caso de que la cesta tenga productos y calcular el valor total*/}
+                    {props.productos.length <= 0 ? 0 : props.precioTotal} €
+                </div>
+            </div>
         </div>
     );
 }
 
-const CarritoConProductos = () => {
+const CarritoConProductos = (props: {productos: SelectedProduct[], precioTotal: number, allProductsHaveQuantity: boolean, abrirCobro: Function, abrirCobroRapido: Function} ) => {
     const [productos, AddProductos] = useSelectedProducts();
     const [allProducts, ] = useDBProducts();
 
     return (
-        <div x-show="cart.length > 0" className="flex-1 flex flex-col overflow-auto">
-            <div className="h-16 text-center flex justify-center">
-                <div className="pl-8 text-left text-lg py-4 relative">
-                {/* Icono carrito */}
-                    <svg xmlns="http://www.w3.org/2000/svg" className="h-6 inline-block" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z" />
-                    </svg>
-                    <div className="text-center absolute text-white w-5 h-5 text-xs p-0 leading-5 rounded-full -right-2 top-3"/>
-                    {` ${productos.length}`}
-                </div>
-                <div className="flex-grow px-8 text-right text-lg py-4 relative">
-                    {/* Boton basura */}
-                    <button className="text-blue-gray-300 hover:text-pink-500 focus:outline-none" onClick={() => {AddProductos(null)}}> 
-                        <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6 inline-block" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+        <div className="grid grid-cols-1 h-screen">
+            <div className="text-center">
+                <div className="grid grid-cols-2">
+                    <div className="pl-8 text-left text-lg py-4 relative">
+                    {/* Icono carrito */}
+                        <svg xmlns="http://www.w3.org/2000/svg" className="h-6 inline-block" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z" />
                         </svg>
-                    </button>
+                        <div className="text-center absolute text-white w-5 h-5 text-xs p-0 leading-5 rounded-full -right-2 top-3"/>
+                        {` ${productos.length}`}
+                    </div>
+                    <div className="flex-grow px-8 text-right text-lg py-4 relative">
+                        {/* Boton basura */}
+                        <button className="text-blue-gray-300 hover:text-pink-500 focus:outline-none" onClick={() => {AddProductos(null)}}> 
+                            <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6 inline-block" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                            </svg>
+                        </button>
+                    </div>
                 </div>
             </div>
-            <div className="flex-1 w-full px-4 overflow-auto">
+            <div className="px-4 overflow-scroll overflow-x-hidden">
                 {/* Añadir producto al carrito (fila con información y cantidad)*/}
                 {productos.map(product => {
                     const foundProd = allProducts.find(dbProd => dbProd._id == product._id) as DBProduct;
@@ -295,6 +300,23 @@ const CarritoConProductos = () => {
                                 familia={foundProd.familia} ean={foundProd.ean} operacionMod={OpModificacionProducto.Añadir}/> ;
                     }
                 })}
+            </div>
+            <div className="select-none h-auto w-full text-center pt-3 pb-4 px-4">
+                <div className="flex mb-3 text-lg font-semibold text-blue-gray-700">
+                    <div>TOTAL</div>
+                    <div className="text-right w-full">
+                        {/*Cambiar en caso de que la cesta tenga productos y calcular el valor total*/}
+                        {productos.length <= 0 ? 0 : props.precioTotal} €
+                    </div>
+                </div>
+
+                {
+                    productos.length > 0 && !isNaN(props.precioTotal) && props.allProductsHaveQuantity &&
+                    <div className="grid grid-cols-1 gap-2 mt-2">
+                        <motion.button whileTap={{scale: 0.9}} className="bg-blue-500 h-12 shadow rounded-lg hover:shadow-lg hover:bg-blue-600 text-white focus:outline-none" onClick={ (e) => {props.abrirCobro(true)} }>PAGAR</motion.button>
+                        <motion.button whileTap={{scale: 0.9}} className="bg-blue-500 h-12 shadow rounded-lg hover:shadow-lg hover:bg-blue-600 text-white focus:outline-none" onClick={ (e) => {props.abrirCobroRapido(true)} }>COBRO RAPIDO</motion.button>
+                    </div>
+                }
             </div>
         </div>
     )

@@ -35,20 +35,19 @@ const In = {
     }
 }
 
-let date = new Date();
-
 export const ModalPagar = (props: ModalProps) => {
     const [customers, ] = useDBClients();
     
     const [dineroEntregado, setDineroEntregado] = useState<string>("0");
     const [dineroEntregadoTarjeta, setDineroEntregadoTarjeta] = useState<string>("0");
     const [showModalResumen, setModalResumen] = useState<boolean>(false);
-
+    
     const [customerPayment, setCustomerPaymentInfo] = useState<CustomerPaymentInformation>({tipo: "default", efectivo: 0, tarjeta: 0});
     
-    const fechaActual = `${date.getDate().toLocaleString('es-ES', { minimumIntegerDigits: 2})}/${parseInt(date.getUTCMonth().toLocaleString('es-ES', { minimumIntegerDigits: 2})) + 1}/${date.getFullYear()} `;
-    const horaActual = `${date.getHours().toLocaleString('es-ES', { minimumIntegerDigits: 2})}:${date.getMinutes().toLocaleString('es-ES', { minimumIntegerDigits: 2})}:${date.getSeconds().toLocaleString('es-ES', { minimumIntegerDigits: 2})}`
-    const cambio: number = isNaN((Number(dineroEntregado) + Number(dineroEntregadoTarjeta) - props.finalPrice)) ? Number(dineroEntregado) + Number(dineroEntregadoTarjeta) : (Number(dineroEntregado) + Number(dineroEntregadoTarjeta) - props.finalPrice);
+    let date = new Date();
+    let fechaActual = `${date.getDate().toLocaleString('es-ES', { minimumIntegerDigits: 2})}/${parseInt(date.getUTCMonth().toLocaleString('es-ES', { minimumIntegerDigits: 2})) + 1}/${date.getFullYear()} `;
+    let horaActual = `${date.getHours().toLocaleString('es-ES', { minimumIntegerDigits: 2})}:${date.getMinutes().toLocaleString('es-ES', { minimumIntegerDigits: 2})}:${date.getSeconds().toLocaleString('es-ES', { minimumIntegerDigits: 2})}`
+    let cambio: number = isNaN((Number(dineroEntregado) + Number(dineroEntregadoTarjeta) - props.finalPrice)) ? Number(dineroEntregado) + Number(dineroEntregadoTarjeta) : (Number(dineroEntregado) + Number(dineroEntregadoTarjeta) - props.finalPrice);
     let tipoCobro: TipoCobro = TipoCobro.Efectivo;
     
     const SetDineroClienteEfectivo = (dineroDelCliente: string) => {
@@ -109,9 +108,7 @@ export const ModalPagar = (props: ModalProps) => {
                                     <div className="text-lg text-left px-2 pt-4">Fecha: {fechaActual} </div>
                                     <div className="text-lg text-left px-2">Hora: {horaActual} </div>
                                     <div className="flex justify-between mt-4 px-2  text-lg text-center">
-                                        <div className="w-80">
-                                            <AutoComplete className="text-left text-lg" sugerencias={["Luca Lee","Simone","Miguel"]} nombreInput="Cliente" placeholder="General"/>
-                                        </div>
+                                        <AutoComplete className="text-left text-lg w-80" sugerencias={["Luca Lee","Simone","Miguel"]} nombreInput="Cliente" placeholder="General"/>
                                     </div>
                                 </div>
                                 <div className="grid grid-cols-2 py-6 px-2 gap-10 justify-items-start">
@@ -209,6 +206,8 @@ type ProductoComprado = {
 }
 
 export const ModalResumenCompra = (props: ModalResumenProps) => {
+    let date = new Date();
+
     const [customers, ] = useDBClients();
     const [, SetProductos] = useSelectedProducts();
     const fechaActual = `${date.getDate().toLocaleString('es-ES', { minimumIntegerDigits: 2})}/${parseInt(date.getUTCMonth().toLocaleString('es-ES', { minimumIntegerDigits: 2})) + 1}/${date.getFullYear()} - ${date.getHours().toLocaleString('es-ES', { minimumIntegerDigits: 2})}:${date.getMinutes().toLocaleString('es-ES', { minimumIntegerDigits: 2})}:${date.getSeconds().toLocaleString('es-ES', { minimumIntegerDigits: 2})}`;
@@ -264,7 +263,7 @@ export const ModalResumenCompra = (props: ModalResumenProps) => {
                             </div>
                             <div className="grid grid-cols-2 grid-rows-1 mt-4 text-xs text-center justify-center">
                                 <div className="text-left relative ">Cliente: {props.cliente.nombre} </div>
-                                <div className="text-right relative "> {fechaActual} </div>
+                                <div className="text-right relative text-black"> {fechaActual} </div>
                             </div>
                             <hr className="my-2"/>
                             <div>

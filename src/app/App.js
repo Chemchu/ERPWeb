@@ -16,21 +16,23 @@ function App() {
 
     const location = useLocation();
     return(
-        <AnimatePresence key={"AnimatePresenceApp"} initial={false} exitBeforeEnter={true} onExitComplete={() => null}>
-            <Switch location={location} key={location.key}>
-                <Route exact path = "/" component={LandingPage}/>
-                <Route exact path = "/login" component={LoginPage}/>
-                <Route exact path = "/dashboard" component= {Dashboard}/> 
-                <Route exact path = "/dashboard2" component= {Dashboard2}/> 
-                <Route exact path = "/notfound" component= {NotFound}/> 
-                <Route exact path = "/hidden" component= {HiddenSideBar}/> 
-                <Route exact path = "/prodList" component= {ProductList}/>         
-                <Route exact path = "/pos" component= {POS}/>    
-                <Route exact path = "/pCard" component= {ProductCard}/>       
-                <Route exact path = "/rCard" component= {ReportCard}/>   
-                <Route exact path = "/productos" component= {ProductPage}/>     
-            </Switch>
-        </AnimatePresence>
+        <div >
+            <AnimatePresence key={"AnimatePresenceApp"} initial={false} exitBeforeEnter={true} onExitComplete={() => null}>
+                <Switch location={location} key={location.key}>
+                    <Route exact path = "/" component={LandingPage}/>
+                    <Route exact path = "/login" component={LoginPage}/>
+                    <Route exact path = "/dashboard" component= {Dashboard}/> 
+                    <Route exact path = "/dashboard2" component= {Dashboard2}/> 
+                    <Route exact path = "/notfound" component= {NotFound}/> 
+                    <Route exact path = "/hidden" component= {HiddenSideBar}/> 
+                    <Route exact path = "/prodList" component= {ProductList}/>         
+                    <Route exact path = "/pos" component= {POS}/>    
+                    <Route exact path = "/pCard" component= {ProductCard}/>       
+                    <Route exact path = "/rCard" component= {ReportCard}/>   
+                    <Route exact path = "/productos" component= {ProductPage}/>     
+                </Switch>
+            </AnimatePresence>
+        </div>
     );    
 }
 
