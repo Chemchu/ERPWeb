@@ -86,37 +86,36 @@ const POSComponent = () => {
 
     return(
         <div>
-            <div className="hide-print flex flex-row h-screen antialiased text-gray-800">
-            {/* Página principal del POS */}
-            <div className="grid grid-cols-3 h-screen">
-                {/* Menú tienda, donde se muestran los productos */}
-                <div className="col-span-2 h-screen">
-                    <ProductDisplay listFiltrados={[productosFiltrados, SetProductosFiltrados]} familias={familias}/>
-                </div>
-                {/* Menú tienda */}
-                {/* Sidebar derecho */}
-                <div className="col-span-1 bg-gray-50 h-screen pr-4 pl-2 py-4">
-                    <div className="bg-white rounded-3xl h-screen shadow">
-                        {/* En caso de carrito vacío o con productos */}
-                        {productos.length <= 0 ? 
-                        <div>
-                            <CarritoVacio productos={productos} precioTotal={precioTotal} /> 
+            <div className="h-screen antialiased overflow-hidden text-gray-800">
+                {/* Página principal del POS */}
+                <div className="grid grid-cols-3 h-screen">
+                    {/* Menú tienda, donde se muestran los productos */}
+                    <div className="col-span-2 h-screen">
+                        <ProductDisplay listFiltrados={[productosFiltrados, SetProductosFiltrados]} familias={familias}/>
+                    </div>
+                    {/* Menú tienda */}
+                    {/* Sidebar derecho */}
+                    <div className="bg-gray-50 pr-4 pl-2 py-4 ">
+                        <div className="bg-white rounded-3xl shadow">
+                            {/* En caso de carrito vacío o con productos */}
+                            {productos.length <= 0 ? 
+                            <div>
+                                <CarritoVacio productos={productos} precioTotal={precioTotal} /> 
+                            </div>
+                            : 
+                            <div className="">
+                                <CarritoConProductos productos={productos} precioTotal={precioTotal} allProductsHaveQuantity={allProductsHaveQuantity} abrirCobro={setPagarModal} abrirCobroRapido={setResumenModal}/>
+                            </div>}
                         </div>
-                        : 
-                        <div>
-                            <CarritoConProductos productos={productos} precioTotal={precioTotal} allProductsHaveQuantity={allProductsHaveQuantity} abrirCobro={setPagarModal} abrirCobroRapido={setResumenModal}/>
-                        </div>}
                     </div>
                 </div>
-                {/* Fin sidebar derecho */}
-            </div>
 
-            <AnimatePresence initial={false} exitBeforeEnter={true}>
-                {/* Modal aceptar compra */}
-                {showModalPagar && <ModalPagar handleClose={cerrarModal} cliente={clienteActual} customerProducts={productos} finalPrice={precioTotal} />}
-                {showModalResumen && <ModalResumenCompra customerPayment={{tipo: "Cobro rápido", efectivo: precioTotal, tarjeta: 0} as CustomerPaymentInformation} handleClose={cerrarModalResumen} cliente={clienteActual} cambio={0}
-                                         customerProducts={productos} finalPrice={precioTotal} tipoCobro={TipoCobro.Efectivo}/>}
-            </AnimatePresence>
+                <AnimatePresence initial={false} exitBeforeEnter={true}>
+                    {/* Modal aceptar compra */}
+                    {showModalPagar && <ModalPagar handleClose={cerrarModal} cliente={clienteActual} customerProducts={productos} finalPrice={precioTotal} />}
+                    {showModalResumen && <ModalResumenCompra customerPayment={{tipo: "Cobro rápido", efectivo: precioTotal, tarjeta: 0} as CustomerPaymentInformation} handleClose={cerrarModalResumen} cliente={clienteActual} cambio={0}
+                                            customerProducts={productos} finalPrice={precioTotal} tipoCobro={TipoCobro.Efectivo}/>}
+                </AnimatePresence>
             
             </div>
             {/* end of noprint-area */}
@@ -171,12 +170,13 @@ const ProductDisplay = (props: { listFiltrados: [DBProduct[], Function], familia
 const GenerarFavoritos = (props: {familias: string[], allProductos: DBProduct[], SetProductosFiltrados: Function}) => {
     return(
         props.familias[0] != undefined ?
-        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 2xl:grid-cols-6 justify-items-start gap-2 m-4">
-            <button key={"Todos"} id={"Todos"} className="bg-blue-400 font-semibold hover:bg-yellow-500 text-white rounded-lg h-10 w-full"
+        /*grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 2xl:grid-cols-6 justify-items-start gap-2 m-4*/
+        <div className="grid grid-rows-1 gap-2 m-4 grid-flow-col overflow-y-hidden">
+            <button key={"Todos"} id={"Todos"} className="bg-blue-400 font-semibold hover:bg-yellow-500 text-white rounded-lg h-10 w-32 mb-6"
                         onClick={() => props.SetProductosFiltrados(props.allProductos)}>Todos</button>
             {
                 props.familias.map(f => {
-                    return <button key={f} id={f} className="bg-blue-400 font-semibold hover:bg-yellow-500 text-white rounded-lg h-10 w-full"
+                    return <button key={f} id={f} className="bg-blue-400 font-semibold hover:bg-yellow-500 text-white rounded-lg h-10 w-32 mb-6"
                             onClick={(e) => props.SetProductosFiltrados(props.allProductos.filter(p => p.familia == e.currentTarget.id))}>{f}</button>
                 })
             }
@@ -222,7 +222,7 @@ const GenerarProductsCards = (props: FilteredProds) => {
     const [, SetProductos] = useSelectedProducts();
 
     return(
-        <div className="grid gap-4 pb-3 grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 2xl:grid-cols-6
+        <div className="grid gap-4 pb-3 sm:grid-cols-1 sm:gap-2 md:grid-cols-2 lg:grid-cols-3 lg:gap-3 xl:grid-cols-4 2xl:grid-cols-5
                             text-xs">
             {props.filteredProds.map((prod: DBProduct) => {
                 return (
@@ -268,8 +268,8 @@ const CarritoConProductos = (props: {productos: SelectedProduct[], precioTotal: 
     const [allProducts, ] = useDBProducts();
 
     return (
-        <div className="grid grid-cols-1 h-screen">
-            <div className="text-center">
+        <div className="grid grid-cols-1 h-screen overflow-hidden">
+            <div className="row-span-1 text-center">
                 <div className="grid grid-cols-2">
                     <div className="pl-8 text-left text-lg py-4 relative">
                     {/* Icono carrito */}
@@ -289,7 +289,7 @@ const CarritoConProductos = (props: {productos: SelectedProduct[], precioTotal: 
                     </div>
                 </div>
             </div>
-            <div className="px-4 overflow-scroll overflow-x-hidden">
+            <div className="px-4 grid grid-cols-1 min-h-full bg-green-400 overflow-scroll overflow-x-hidden">
                 {/* Añadir producto al carrito (fila con información y cantidad)*/}
                 {productos.map(product => {
                     const foundProd = allProducts.find(dbProd => dbProd._id == product._id) as DBProduct;
@@ -301,7 +301,7 @@ const CarritoConProductos = (props: {productos: SelectedProduct[], precioTotal: 
                     }
                 })}
             </div>
-            <div className="select-none h-auto w-full text-center pt-3 pb-4 px-4">
+            <div className="h-auto w-full text-center pt-3 px-4">
                 <div className="flex mb-3 text-lg font-semibold text-blue-gray-700">
                     <div>TOTAL</div>
                     <div className="text-right w-full">
