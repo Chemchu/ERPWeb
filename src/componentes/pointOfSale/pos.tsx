@@ -88,15 +88,15 @@ const POSComponent = () => {
         <div>
             <div className="h-screen antialiased overflow-hidden text-gray-800">
                 {/* Página principal del POS */}
-                <div className="grid grid-cols-3 h-screen">
+                <div className="grid grid-cols-3 bg-gray-100">
                     {/* Menú tienda, donde se muestran los productos */}
                     <div className="col-span-2 h-screen">
                         <ProductDisplay listFiltrados={[productosFiltrados, SetProductosFiltrados]} familias={familias}/>
                     </div>
                     {/* Menú tienda */}
                     {/* Sidebar derecho */}
-                    <div className="bg-gray-50 pr-4 pl-2 py-4 ">
-                        <div className="bg-white rounded-3xl shadow">
+                    <div className="m-4">
+                        <div className="bg-white h-auto rounded-3xl shadow">
                             {/* En caso de carrito vacío o con productos */}
                             {productos.length <= 0 ? 
                             <div>
@@ -137,7 +137,7 @@ const ProductDisplay = (props: { listFiltrados: [DBProduct[], Function], familia
     }
 
     return (
-        <div className="flex flex-col bg-gray-50 h-full w-full py-4">
+        <div className="flex flex-col h-full w-full py-4">
             <div className="flex px-2 flex-row relative">
                 <div className="absolute left-5 top-3 px-2 py-2 rounded-full bg-blue-400 text-white">
                 <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -188,7 +188,7 @@ const GenerarFavoritos = (props: {familias: string[], allProductos: DBProduct[],
 
 const BBDDVacia = () => {
     return(
-        <div className="select-none bg-blue-gray-100 rounded-3xl flex flex-wrap content-center justify-center h-full opacity-25" x-show="products.length === 0">
+        <div className="bg-blue-gray-100 rounded-3xl flex flex-wrap content-center justify-center h-full opacity-25">
             <div className="w-full text-center">
             <svg xmlns="http://www.w3.org/2000/svg" className="h-24 w-24 inline-block" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 7v10c0 2.21 3.582 4 8 4s8-1.79 8-4V7M4 7c0 2.21 3.582 4 8 4s8-1.79 8-4M4 7c0-2.21 3.582-4 8-4s8 1.79 8 4m0 5c0 2.21-3.582 4-8 4s-8-1.79-8-4" />
@@ -268,8 +268,8 @@ const CarritoConProductos = (props: {productos: SelectedProduct[], precioTotal: 
     const [allProducts, ] = useDBProducts();
 
     return (
-        <div className="grid grid-cols-1 h-screen overflow-hidden">
-            <div className="row-span-1 text-center">
+        <div className="grid grid-cols-1 h- mb-4">
+            <div className="row-span-1 h-auto text-center">
                 <div className="grid grid-cols-2">
                     <div className="pl-8 text-left text-lg py-4 relative">
                     {/* Icono carrito */}
@@ -289,7 +289,7 @@ const CarritoConProductos = (props: {productos: SelectedProduct[], precioTotal: 
                     </div>
                 </div>
             </div>
-            <div className="px-4 grid grid-cols-1 min-h-full bg-green-400 overflow-scroll overflow-x-hidden">
+            <div className="px-4 grid grid-cols-1 h-70v bg-green-400 overflow-scroll overflow-x-hidden">
                 {/* Añadir producto al carrito (fila con información y cantidad)*/}
                 {productos.map(product => {
                     const foundProd = allProducts.find(dbProd => dbProd._id == product._id) as DBProduct;
@@ -301,7 +301,7 @@ const CarritoConProductos = (props: {productos: SelectedProduct[], precioTotal: 
                     }
                 })}
             </div>
-            <div className="h-auto w-full text-center pt-3 px-4">
+            <div className="h-auto w-full text-center p-4">
                 <div className="flex mb-3 text-lg font-semibold text-blue-gray-700">
                     <div>TOTAL</div>
                     <div className="text-right w-full">
@@ -312,7 +312,7 @@ const CarritoConProductos = (props: {productos: SelectedProduct[], precioTotal: 
 
                 {
                     productos.length > 0 && !isNaN(props.precioTotal) && props.allProductsHaveQuantity &&
-                    <div className="grid grid-cols-1 gap-2 mt-2">
+                    <div className="grid grid-cols-1 gap-2 h-auto">
                         <motion.button whileTap={{scale: 0.9}} className="bg-blue-500 h-12 shadow rounded-lg hover:shadow-lg hover:bg-blue-600 text-white focus:outline-none" onClick={ (e) => {props.abrirCobro(true)} }>PAGAR</motion.button>
                         <motion.button whileTap={{scale: 0.9}} className="bg-blue-500 h-12 shadow rounded-lg hover:shadow-lg hover:bg-blue-600 text-white focus:outline-none" onClick={ (e) => {props.abrirCobroRapido(true)} }>COBRO RAPIDO</motion.button>
                     </div>
