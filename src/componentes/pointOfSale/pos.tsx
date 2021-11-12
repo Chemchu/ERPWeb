@@ -96,10 +96,10 @@ const POSComponent = () => {
                     {/* Menú tienda */}
                     {/* Sidebar derecho */}
                     <div className="m-4">
-                        <div className="bg-white h-auto rounded-3xl shadow">
+                        <div className="bg-white rounded-3xl shadow">
                             {/* En caso de carrito vacío o con productos */}
                             {productos.length <= 0 ? 
-                            <div>
+                            <div className="">
                                 <CarritoVacio productos={productos} precioTotal={precioTotal} /> 
                             </div>
                             : 
@@ -170,13 +170,12 @@ const ProductDisplay = (props: { listFiltrados: [DBProduct[], Function], familia
 const GenerarFavoritos = (props: {familias: string[], allProductos: DBProduct[], SetProductosFiltrados: Function}) => {
     return(
         props.familias[0] != undefined ?
-        /*grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 2xl:grid-cols-6 justify-items-start gap-2 m-4*/
         <div className="grid grid-rows-1 gap-2 m-4 grid-flow-col overflow-y-hidden">
-            <button key={"Todos"} id={"Todos"} className="bg-blue-400 font-semibold hover:bg-yellow-500 text-white rounded-lg h-10 w-32 mb-6"
+            <button key={"Todos"} id={"Todos"} className="bg-blue-400 font-semibold hover:bg-yellow-500 text-white rounded-lg h-10 w-16 md:w-32 lg:w-48 mb-6"
                         onClick={() => props.SetProductosFiltrados(props.allProductos)}>Todos</button>
             {
                 props.familias.map(f => {
-                    return <button key={f} id={f} className="bg-blue-400 font-semibold hover:bg-yellow-500 text-white rounded-lg h-10 w-32 mb-6"
+                    return <button key={f} id={f} className="bg-blue-400 font-semibold hover:bg-yellow-500 text-white rounded-lg h-10 w-16 md:w-32 lg:w-48 mb-6"
                             onClick={(e) => props.SetProductosFiltrados(props.allProductos.filter(p => p.familia == e.currentTarget.id))}>{f}</button>
                 })
             }
@@ -205,7 +204,7 @@ const BBDDVacia = () => {
 
 const ProductoNoEncontrado = () => {
     return (
-        <div className="select-none bg-blue-gray-100 rounded-3xl flex flex-wrap content-center justify-center h-full opacity-25">
+        <div className="bg-blue-gray-100 rounded-3xl flex flex-wrap content-center justify-center h-full opacity-25">
             <div className="w-full text-center">
                 <svg xmlns="http://www.w3.org/2000/svg" className="h-24 w-24 inline-block" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
@@ -242,7 +241,7 @@ const GenerarProductsCards = (props: FilteredProds) => {
 
 const CarritoVacio = (props: {productos: SelectedProduct[], precioTotal: number} ) => {
     return(
-        <div className="w-full h-screen p-4 opacity-25 grid grid-cols-1 grid-rows-2">
+        <div className="grid grid-rows-2 grid-cols-1 h-screen p-4 opacity-25">
             <div className="grid grid-rows-2 grid-cols-1 justify-items-center justify-self-center self-end">
                 <svg xmlns="http://www.w3.org/2000/svg" className="h-16" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z" />
@@ -252,7 +251,7 @@ const CarritoVacio = (props: {productos: SelectedProduct[], precioTotal: number}
                 </p>
             </div>
 
-            <div className="flex mb-3 text-lg font-semibold text-blue-gray-700 self-end">
+            <div className="row-start-6 row-end-7 flex mb-3 text-lg font-semibold text-blue-gray-700 self-end">
                 <div>TOTAL</div>
                 <div className="text-right w-full">
                     {/*Cambiar en caso de que la cesta tenga productos y calcular el valor total*/}
@@ -268,18 +267,18 @@ const CarritoConProductos = (props: {productos: SelectedProduct[], precioTotal: 
     const [allProducts, ] = useDBProducts();
 
     return (
-        <div className="grid grid-cols-1 h- mb-4">
+        <div className="grid grid-cols-1 mb-4">
             <div className="row-span-1 h-auto text-center">
                 <div className="grid grid-cols-2">
                     <div className="pl-8 text-left text-lg py-4 relative">
-                    {/* Icono carrito */}
+                        {/* Icono carrito */}
                         <svg xmlns="http://www.w3.org/2000/svg" className="h-6 inline-block" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z" />
                         </svg>
                         <div className="text-center absolute text-white w-5 h-5 text-xs p-0 leading-5 rounded-full -right-2 top-3"/>
                         {` ${productos.length}`}
                     </div>
-                    <div className="flex-grow px-8 text-right text-lg py-4 relative">
+                    <div className="px-8 text-right text-lg py-4 relative">
                         {/* Boton basura */}
                         <button className="text-blue-gray-300 hover:text-pink-500 focus:outline-none" onClick={() => {AddProductos(null)}}> 
                             <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6 inline-block" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -289,15 +288,18 @@ const CarritoConProductos = (props: {productos: SelectedProduct[], precioTotal: 
                     </div>
                 </div>
             </div>
-            <div className="px-4 grid grid-cols-1 h-70v bg-green-400 overflow-scroll overflow-x-hidden">
+            <div className="grid grid-cols-1 h-70v bg-green-400 gap-2 px-2 overflow-scroll overflow-x-hidden">
                 {/* Añadir producto al carrito (fila con información y cantidad)*/}
                 {productos.map(product => {
                     const foundProd = allProducts.find(dbProd => dbProd._id == product._id) as DBProduct;
                     if(foundProd) 
                     {
-                        return <ProductSelectedCard key={foundProd._id} _id={foundProd._id} cantidad={product.cantidad}
+                        return (
+                        <div className="h-20">
+                            <ProductSelectedCard key={foundProd._id} _id={foundProd._id} cantidad={product.cantidad}
                                 dto={product.dto} precioVenta={foundProd.precioVenta} img={foundProd.img} nombre={foundProd.nombre} 
-                                familia={foundProd.familia} ean={foundProd.ean} operacionMod={OpModificacionProducto.Añadir}/> ;
+                                familia={foundProd.familia} ean={foundProd.ean} operacionMod={OpModificacionProducto.Añadir}/> 
+                        </div>);
                     }
                 })}
             </div>
