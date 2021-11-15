@@ -47,7 +47,7 @@ export const ProductSelectedCard: React.FC<SelectedProduct> = (props) => {
     {
         let prod = productos.filter((p: SelectedProduct) => p._id == props._id)[0];
         return (parseInt(prod.cantidad) > 0 || prod.cantidad == "") ?
-            <div className="grid grid-rows-1 grid-flow-col bg-gray-200 rounded-lg h-full w-full py-2 px-2 mb-3">
+            <div className="flex flex-none bg-gray-200 rounded-lg h-full w-full py-2 px-2 mb-3">
                 <img src={productImage} className="rounded-lg h-6 w-6 md:h-10 md:w-10 bg-white shadow mr-2" onError={SetDefaultImage}/>
                 <div className="grid grid-rows-2">
                     <p className="text-sm truncate">{props.nombre}</p>
