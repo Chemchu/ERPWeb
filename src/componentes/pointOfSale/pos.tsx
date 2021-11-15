@@ -103,9 +103,7 @@ const POSComponent = () => {
                                 <CarritoVacio productos={productos} precioTotal={precioTotal} /> 
                             </div>
                             : 
-                            <div className="">
-                                <CarritoConProductos productos={productos} precioTotal={precioTotal} allProductsHaveQuantity={allProductsHaveQuantity} abrirCobro={setPagarModal} abrirCobroRapido={setResumenModal}/>
-                            </div>}
+                            <CarritoConProductos productos={productos} precioTotal={precioTotal} allProductsHaveQuantity={allProductsHaveQuantity} abrirCobro={setPagarModal} abrirCobroRapido={setResumenModal}/> }
                         </div>
                     </div>
                 </div>
@@ -118,8 +116,6 @@ const POSComponent = () => {
                 </AnimatePresence>
             
             </div>
-            {/* end of noprint-area */}
-            <div id="print-area" className="print-area" />
         </div>
     );
 }
@@ -267,8 +263,8 @@ const CarritoConProductos = (props: {productos: SelectedProduct[], precioTotal: 
     const [allProducts, ] = useDBProducts();
 
     return (
-        <div className="grid grid-cols-1 mb-4">
-            <div className="row-span-1 h-auto text-center">
+        <div className="grid grid-cols-1 grid-rows-3 h-screen mb-4">
+            <div className="bg-yellow-400 text-center">
                 <div className="grid grid-cols-2">
                     <div className="pl-8 text-left text-lg py-4 relative">
                         {/* Icono carrito */}
@@ -288,14 +284,14 @@ const CarritoConProductos = (props: {productos: SelectedProduct[], precioTotal: 
                     </div>
                 </div>
             </div>
-            <div className="grid grid-cols-1 h-70v bg-green-400 gap-2 px-2 overflow-scroll overflow-x-hidden">
+            <div className="flex flex-col flex-grow flex-nowrap bg-red-400 gap-2 px-2 overflow-scroll overflow-x-hidden">
                 {/* Añadir producto al carrito (fila con información y cantidad)*/}
                 {productos.map(product => {
                     const foundProd = allProducts.find(dbProd => dbProd._id == product._id) as DBProduct;
                     if(foundProd) 
                     {
                         return (
-                        <div className="h-20">
+                        <div key={`prodCarrito${foundProd.nombre}`} className="h-20">
                             <ProductSelectedCard key={foundProd._id} _id={foundProd._id} cantidad={product.cantidad}
                                 dto={product.dto} precioVenta={foundProd.precioVenta} img={foundProd.img} nombre={foundProd.nombre} 
                                 familia={foundProd.familia} ean={foundProd.ean} operacionMod={OpModificacionProducto.Añadir}/> 
@@ -303,7 +299,7 @@ const CarritoConProductos = (props: {productos: SelectedProduct[], precioTotal: 
                     }
                 })}
             </div>
-            <div className="h-auto w-full text-center p-4">
+            <div className="text-center p-4">
                 <div className="flex mb-3 text-lg font-semibold text-blue-gray-700">
                     <div>TOTAL</div>
                     <div className="text-right w-full">
