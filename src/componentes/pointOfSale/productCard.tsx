@@ -24,13 +24,13 @@ export const ProductCard = (props: DBProduct) => {
     }
 
     return(
-        <motion.div whileHover={{scale: 1.1}} whileTap={{scale: 0.9}} className="bg-gray-200 border-2 border-gray-300 relative max-w-sm min-w-[340px] max-h-sm min-h-[100px] shadow-md rounded-3xl p-2 mx-1 my-3 cursor-pointer hover:shadow-2xl hover:bg-yellow-500 hover:border-yellow-600">
-            <div className="overflow-x-hidden rounded-2xl relative">
-                <img className="h-40 rounded-2xl w-full object-cover" src={productImage} onError={SetDefaultImage} />
+        <motion.div whileHover={{scale: 1.1}} whileTap={{scale: 0.9}} className="flex flex-col bg-gray-200 border-gray-300 h-full border-2 shadow-md rounded-3xl p-2 mx-1 my-3 cursor-pointer hover:shadow-2xl hover:bg-yellow-500 hover:border-yellow-600">
+            <div className="overflow-x-hidden rounded-2xl">
+                <img className="bg-white rounded-2xl w-full object-cover h-20 xl:h-44" src={productImage} onError={SetDefaultImage} />
             </div>
-            <div className="mt-4 pl-3 pr-3 mb-2">
-                <p className="lg:text-base sm:text-base xs:text-sm truncate text-left text-gray-800 mb-0">{props.nombre}</p>
-                <p className="lg:text-base sm:text-base xs:text-sm font-semibold text-left text-gray-800 mt-0">{props.precioVenta.toFixed(2)}€</p>
+            <div className="mt-4 pl-3 pr-3">
+                <div className="lg:text-base sm:text-base xs:text-sm truncate text-left text-gray-800">{props.nombre}</div>
+                <div className="lg:text-base sm:text-base xs:text-sm font-semibold text-left text-gray-800">{props.precioVenta.toFixed(2)}€</div>
             </div>
         </motion.div>
     );
@@ -44,57 +44,88 @@ export const ProductSelectedCard: React.FC<SelectedProduct> = (props) => {
         setProductImage("data:image/png;base64,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")    
     }
 
+    const DeleteSelectedProd = (e: React.MouseEvent<HTMLElement>) => {
+        e.stopPropagation();
+        AddProductos({_id: e.currentTarget.id, cantidad: "0", dto: 0, nombre: "", img: props.img,
+                                precioVenta: 0, ean: [""], familia: "", operacionMod: OpModificacionProducto.Resta} as SelectedProduct);
+    }
+
+    const SelectProdCardClicked = (e: React.MouseEvent<HTMLDivElement>) => {
+        console.log("Eyyyy abrir modal de modificar producto con descuento y cantidad");        
+    }
+
     {
         let prod = productos.filter((p: SelectedProduct) => p._id == props._id)[0];
         return (parseInt(prod.cantidad) > 0 || prod.cantidad == "") ?
-            <div className="flex flex-none bg-gray-200 rounded-lg h-full w-full py-2 px-2 mb-3">
-                <img src={productImage} className="rounded-lg h-6 w-6 md:h-10 md:w-10 bg-white shadow mr-2" onError={SetDefaultImage}/>
-                <div className="grid grid-rows-2">
-                    <p className="text-sm truncate">{props.nombre}</p>
-                    {
-                        isNaN(prod.dto) || prod.dto == 0 ? 
-                        <p className="text-xs block">{(props.precioVenta * parseInt(prod.cantidad)).toFixed(2)}€</p>
-                        :
-                        <div className="flex-grow-0">
-                            <p className="text-xs inline-block line-through">{(props.precioVenta * parseInt(prod.cantidad)).toFixed(2)}€</p>
-                            <span className="pl-2 text-sm font-semibold inline-block">{((props.precioVenta * parseInt(prod.cantidad)) * (1 - (prod.dto/100))).toFixed(2) }€</span>
+
+            <div className="flex h-full w-full cursor-pointer" onClick={SelectProdCardClicked}>
+                <div className="flex justify-start bg-gray-200 hover:bg-gray-300 rounded-lg h-full w-full gap-x-4 py-2 px-2 mb-3">
+                    {/* <div className="self-center font-semibold">{prod.cantidad}</div> */}
+
+                    <input className="bg-white w-8 h-8 rounded-lg text-center self-center font-semibold shadow focus:outline-none focus:shadow-lg text-sm" type="text" inputMode="numeric" value={productos.filter((p:SelectedProduct) => p._id ==props._id)[0].cantidad}
+                        onClick={(e) => {e.stopPropagation()}}
+                        onChange={(e) =>{ AddProductos({_id: prod._id, cantidad: e.target.value, dto: prod.dto, nombre: prod.nombre, 
+                        precioVenta: prod.precioVenta, ean: prod.ean, familia: prod.familia, img: prod.img, operacionMod: OpModificacionProducto.Escritura} as SelectedProduct);}} />
+
+                    <div className="flex flex-row">
+                        <img src={productImage} className="self-center rounded-lg h-6 w-6 md:h-10 md:w-10 bg-white shadow mr-2" onError={SetDefaultImage}/>
+                        <div className="flex self-center justify-start">
+                            <div className="grid grid-rows-2 text-left">
+                                <p className="text-sm truncate font-semibold">{props.nombre}</p>
+                                {
+                                    isNaN(prod.dto) || prod.dto == 0 ? 
+                                    <p className="text-xs block">{(props.precioVenta * parseInt(prod.cantidad)).toFixed(2)}€</p>
+                                    :
+                                    <div className="flex-grow-0">
+                                        <p className="text-xs inline-block line-through">{(props.precioVenta * parseInt(prod.cantidad)).toFixed(2)}€</p>
+                                        <span className="pl-2 text-sm font-semibold inline-block">{((props.precioVenta * parseInt(prod.cantidad)) * (1 - (prod.dto/100))).toFixed(2) }€</span>
+                                    </div>
+                                }
+                            </div>
                         </div>
-                    }
-                </div>
-
-                <div className="py-2 inline-block align-middle grid-rows-1">
-                    <input type="text" inputMode="numeric" className="text-xs text-center rounded-lg w-10 h-6 shadow" 
-                            value={prod.dto} onChange={(e) => AddProductos({_id: props._id, cantidad: prod.cantidad, dto: Number(Number(e.target.value).toFixed(2)), 
-                                                            ean: prod.ean, familia: prod.familia, img: prod.img, nombre: prod.nombre, operacionMod: OpModificacionProducto.Descuento, precioVenta: prod.precioVenta} as SelectedProduct)} />
-                    <> %</>
-                </div>
-                
-                <div className="py-1">
-                    <div className="w-28 grid grid-cols-3 gap-2 ml-2">
-                        
-                        <motion.button whileTap={{scale: 0.9}} className="rounded-lg text-center py-1 text-white bg-gray-500 hover:bg-gray-700 focus:outline-none" 
-                        onClick={() => {
-                            AddProductos({_id: prod._id, cantidad: "-1", dto: prod.dto, nombre: prod.nombre, 
-                            precioVenta: prod.precioVenta, ean: prod.ean, familia: prod.familia, img: prod.img, operacionMod: OpModificacionProducto.Resta} as SelectedProduct);
-                        }}>
-                            <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-3 inline-block" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M20 12H4" />
-                            </svg>
-                        </motion.button>
-                        <input type="text" inputMode="numeric" value={productos.filter((p:SelectedProduct) => p._id ==props._id)[0].cantidad} className="bg-white rounded-lg text-center shadow focus:outline-none focus:shadow-lg text-sm"  
-                            onChange={(e) =>{ AddProductos({_id: prod._id, cantidad: e.target.value, dto: prod.dto, nombre: prod.nombre, 
-                            precioVenta: prod.precioVenta, ean: prod.ean, familia: prod.familia, img: prod.img, operacionMod: OpModificacionProducto.Escritura} as SelectedProduct);}} />
-
-                        <motion.button whileTap={{scale: 0.9}} id={props._id} className="rounded-lg text-center py-1 text-white bg-gray-500 hover:bg-gray-700 focus:outline-none" 
-                        onClick={() => {
-                            AddProductos({_id: prod._id, cantidad: "1", dto: prod.dto, nombre: prod.nombre, 
-                                            precioVenta: prod.precioVenta, ean: prod.ean, familia: prod.familia, img: prod.img, operacionMod: OpModificacionProducto.Suma} as SelectedProduct);
-                        }}>
-                            <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-3 inline-block" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
-                            </svg>
-                        </motion.button>
                     </div>
+
+                    <button id={prod._id} className="ml-auto self-center hover:text-red-700" onClick={DeleteSelectedProd}>
+                        <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                        </svg>
+                    </button>
+
+                    {/* Logica de input con boton de añadir y quitar */}
+                    {/* <div className="py-2 inline-block align-middle grid-rows-1">
+                        <input type="text" inputMode="numeric" className="text-xs text-center rounded-lg w-10 h-6 shadow" 
+                                value={prod.dto} onChange={(e) => AddProductos({_id: props._id, cantidad: prod.cantidad, dto: Number(Number(e.target.value).toFixed(2)), 
+                                                                ean: prod.ean, familia: prod.familia, img: prod.img, nombre: prod.nombre, operacionMod: OpModificacionProducto.Descuento, precioVenta: prod.precioVenta} as SelectedProduct)} />
+                        <> %</>
+                    </div>
+                    
+                    <div className="py-1">
+                        <div className="w-28 grid grid-cols-3 gap-2 ml-2">
+                            
+                            <motion.button whileTap={{scale: 0.9}} className="rounded-lg text-center py-1 text-white bg-gray-500 hover:bg-gray-700 focus:outline-none" 
+                            onClick={() => {
+                                AddProductos({_id: prod._id, cantidad: "-1", dto: prod.dto, nombre: prod.nombre, 
+                                precioVenta: prod.precioVenta, ean: prod.ean, familia: prod.familia, img: prod.img, operacionMod: OpModificacionProducto.Resta} as SelectedProduct);
+                            }}>
+                                <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-3 inline-block" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M20 12H4" />
+                                </svg>
+                            </motion.button>
+                            <input type="text" inputMode="numeric" value={productos.filter((p:SelectedProduct) => p._id ==props._id)[0].cantidad} className="bg-white rounded-lg text-center shadow focus:outline-none focus:shadow-lg text-sm"  
+                                onChange={(e) =>{ AddProductos({_id: prod._id, cantidad: e.target.value, dto: prod.dto, nombre: prod.nombre, 
+                                precioVenta: prod.precioVenta, ean: prod.ean, familia: prod.familia, img: prod.img, operacionMod: OpModificacionProducto.Escritura} as SelectedProduct);}} />
+
+                            <motion.button whileTap={{scale: 0.9}} id={props._id} className="rounded-lg text-center py-1 text-white bg-gray-500 hover:bg-gray-700 focus:outline-none" 
+                            onClick={() => {
+                                AddProductos({_id: prod._id, cantidad: "1", dto: prod.dto, nombre: prod.nombre, 
+                                                precioVenta: prod.precioVenta, ean: prod.ean, familia: prod.familia, img: prod.img, operacionMod: OpModificacionProducto.Suma} as SelectedProduct);
+                            }}>
+                                <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-3 inline-block" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
+                                </svg>
+                            </motion.button>
+                        </div>
+                    </div> */}
                 </div>
             </div>
         :

@@ -1,4 +1,4 @@
-import {useState, useEffect, ReactChild, ReactFragment, ReactPortal} from 'react';
+import {useState, useEffect} from 'react';
 import {ProductCard, ProductSelectedCard} from './productCard';
 import {POSProvider, useDBProducts, usePrice, useConsumerMoney, useSelectedProducts} from './productsContext';
 import axios from 'axios';
@@ -25,7 +25,7 @@ export const POS = () => {
 
 const POSComponent = () => {
     const [showModalPagar, setPagarModal] = useState(false);
-    const [showModalResumen, setResumenModal] = useState(false);
+    const [showModalCobro, setCobroModal] = useState(false);
 
     const [productos, ] = useSelectedProducts();
     const [precioTotal, ] = usePrice();
@@ -79,7 +79,7 @@ const POSComponent = () => {
     }
 
     const cerrarModalResumen = () => {
-        setResumenModal(false);
+        setCobroModal(false);
     }
 
     const allProductsHaveQuantity = productos.filter(p => p.cantidad == "").length <= 0;
@@ -103,7 +103,7 @@ const POSComponent = () => {
                                 <CarritoVacio productos={productos} precioTotal={precioTotal} /> 
                             </div>
                             : 
-                            <CarritoConProductos productos={productos} precioTotal={precioTotal} allProductsHaveQuantity={allProductsHaveQuantity} abrirCobro={setPagarModal} abrirCobroRapido={setResumenModal}/> }
+                            <CarritoConProductos productos={productos} precioTotal={precioTotal} allProductsHaveQuantity={allProductsHaveQuantity} abrirCobro={setPagarModal} abrirCobroRapido={setCobroModal}/> }
                         </div>
                     </div>
                 </div>
@@ -111,7 +111,7 @@ const POSComponent = () => {
                 <AnimatePresence initial={false} exitBeforeEnter={true}>
                     {/* Modal aceptar compra */}
                     {showModalPagar && <ModalPagar handleClose={cerrarModal} cliente={clienteActual} customerProducts={productos} finalPrice={precioTotal} />}
-                    {showModalResumen && <ModalResumenCompra customerPayment={{tipo: "Cobro rápido", efectivo: precioTotal, tarjeta: 0} as CustomerPaymentInformation} handleClose={cerrarModalResumen} cliente={clienteActual} cambio={0}
+                    {showModalCobro && <ModalResumenCompra customerPayment={{tipo: "Cobro rápido", efectivo: precioTotal, tarjeta: 0} as CustomerPaymentInformation} handleClose={cerrarModalResumen} cliente={clienteActual} cambio={0}
                                             customerProducts={productos} finalPrice={precioTotal} tipoCobro={TipoCobro.Efectivo}/>}
                 </AnimatePresence>
             
@@ -276,7 +276,7 @@ const CarritoConProductos = (props: {productos: SelectedProduct[], precioTotal: 
                     </div>
                     <div className="px-8 text-right text-lg py-4 relative">
                         {/* Boton basura */}
-                        <button className="text-blue-gray-300 hover:text-pink-500 focus:outline-none" onClick={() => {AddProductos(null)}}> 
+                        <button className="text-blue-gray-300 hover:text-red-700 focus:outline-none" onClick={() => {AddProductos(null)}}> 
                             <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6 inline-block" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
                             </svg>
@@ -291,7 +291,7 @@ const CarritoConProductos = (props: {productos: SelectedProduct[], precioTotal: 
                     if(foundProd) 
                     {
                         return (
-                        <div key={`prodCarrito${foundProd.nombre}`} className="h-20">
+                        <div key={`prodCarrito${foundProd.nombre}`}>
                             <ProductSelectedCard key={foundProd._id} _id={foundProd._id} cantidad={product.cantidad}
                                 dto={product.dto} precioVenta={foundProd.precioVenta} img={foundProd.img} nombre={foundProd.nombre} 
                                 familia={foundProd.familia} ean={foundProd.ean} operacionMod={OpModificacionProducto.Añadir}/> 
@@ -300,6 +300,7 @@ const CarritoConProductos = (props: {productos: SelectedProduct[], precioTotal: 
                 })}
             </div>
             <div className="text-center p-4 mb-4">
+                <div className="text-left text-lg font-semibold text-blue-gray-700">Descuento</div>
                 <div className="flex mb-3 text-lg font-semibold text-blue-gray-700">
                     <div>TOTAL</div>
                     <div className="text-right w-full">

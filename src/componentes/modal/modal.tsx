@@ -279,7 +279,7 @@ export const ModalResumenCompra = (props: ModalResumenProps) => {
                                 <tbody className="h-full overflow-y-auto">
                                 {
                                     props.customerProducts.map((prod, index) => {
-                                        return <GenerarFilaProducto numFila={index + 1} nombreProducto={prod.nombre} cantidad={Number(prod.cantidad)} precio={Number(prod.precioVenta * (1 - prod.dto/100) )} />
+                                        return <GenerarFilaProducto key={"modalRes" + prod._id} numFila={index + 1} nombreProducto={prod.nombre} cantidad={Number(prod.cantidad)} precio={Number(prod.precioVenta * (1 - prod.dto/100) )} />
                                     })
                                 }
                                 </tbody>
@@ -287,11 +287,16 @@ export const ModalResumenCompra = (props: ModalResumenProps) => {
                             </div>
                             <hr className="my-2" />              
                             <div className="flex justify-between">
-                                <div>
-                                    Cambio: {props.cambio.toFixed(2)}€
+                                <div className="font-semibold self-center">
+                                    Pago en {props.tipoCobro.toLowerCase()}
                                 </div>
                                 <div>
-                                    Tipo de pago: {props.tipoCobro}
+                                    <div>
+                                        Total: {props.finalPrice.toFixed(2)}€
+                                    </div>
+                                    <div className="">
+                                        Cambio: {props.cambio.toFixed(2)}€
+                                    </div>
                                 </div>
                             </div>                  
                         </div>
