@@ -261,6 +261,10 @@ const CarritoVacio = (props: {productos: SelectedProduct[], precioTotal: number}
 const CarritoConProductos = (props: {productos: SelectedProduct[], precioTotal: number, allProductsHaveQuantity: boolean, abrirCobro: Function, abrirCobroRapido: Function} ) => {
     const [productos, AddProductos] = useSelectedProducts();
     const [allProducts, ] = useDBProducts();
+    const [descuentoOpen, setDescuentoPupup] = useState<boolean>(false);
+
+    const [dtoEfectivo, setDtoEfectivo] = useState<number>(0);
+    const [dtoPorcentaje, setDtoPorcentaje] = useState<number>(0);
 
     return (
         <div className="flex flex-col h-screen mb-4">
@@ -278,7 +282,7 @@ const CarritoConProductos = (props: {productos: SelectedProduct[], precioTotal: 
                         {/* Boton basura */}
                         <button className="text-blue-gray-300 hover:text-red-700 focus:outline-none" onClick={() => {AddProductos(null)}}> 
                             <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6 inline-block" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
                             </svg>
                         </button>
                     </div>
@@ -300,9 +304,39 @@ const CarritoConProductos = (props: {productos: SelectedProduct[], precioTotal: 
                 })}
             </div>
             <div className="text-center p-4 mb-4">
-                <div className="text-left text-lg font-semibold text-blue-gray-700">Descuento</div>
-                <div className="flex mb-3 text-lg font-semibold text-blue-gray-700">
-                    <div>TOTAL</div>
+                <div>
+                    {descuentoOpen &&                     
+                        <div className="h-auto">
+                            <div className="flex text-left text-sm">
+                                <div className="flex self-center gap-4">
+                                    <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 9V7a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2m2 4h10a2 2 0 002-2v-6a2 2 0 00-2-2H9a2 2 0 00-2 2v6a2 2 0 002 2zm7-5a2 2 0 11-4 0 2 2 0 014 0z" />
+                                    </svg>
+                                    <div>
+                                        <input type="text" inputMode="numeric" className="text-xs text-center rounded-lg w-1/2 h-6 shadow" name="DtoEfectivo" />
+                                        €
+                                    </div>
+                                </div>
+
+                                <div className="flex ml-auto gap-4">
+                                    <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z" />
+                                    </svg>
+                                    <div>
+                                        <input type="text" inputMode="numeric" className="text-xs text-center rounded-lg w-1/2 h-6 shadow" name="DtoPorcentaje" />
+                                        %
+                                    </div>
+                                </div>
+                            </div>
+                            <hr className="border-black w-full py-2 mt-4"/>
+                        </div>
+                    }
+                    <div className="flex flex-col text-left text-lg font-semibold hover:text-blue-500 hover:underline cursor-pointer" onClick={() => setDescuentoPupup(!descuentoOpen)}>
+                        Descuento
+                    </div>
+                </div>
+                <div className="flex mb-3 text-lg font-semibold">
+                    <div>Total</div>
                     <div className="text-right w-full">
                         {/*Cambiar en caso de que la cesta tenga productos y calcular el valor total*/}
                         {productos.length <= 0 ? 0 : props.precioTotal.toFixed(2)} €
