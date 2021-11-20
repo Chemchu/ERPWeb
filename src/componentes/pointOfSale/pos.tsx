@@ -12,6 +12,7 @@ import { CustomerPaymentInformation } from '../../tipos/CustomerPayment';
 import { OpModificacionProducto } from '../../tipos/Enums/OpModificaciones';
 import { SelectedProduct } from '../../tipos/SelectedProduct';
 import { TipoCobro } from '../../tipos/Enums/TipoCobro';
+import { ValidatePositiveFloatingNumber } from '../../RegexValidator';
 
 export const POS = () => {
     return(
@@ -263,8 +264,8 @@ const CarritoConProductos = (props: {productos: SelectedProduct[], precioTotal: 
     const [allProducts, ] = useDBProducts();
     const [descuentoOpen, setDescuentoPupup] = useState<boolean>(false);
 
-    const [dtoEfectivo, setDtoEfectivo] = useState<number>(0);
-    const [dtoPorcentaje, setDtoPorcentaje] = useState<number>(0);
+    const [dtoEfectivo, setDtoEfectivo] = useState<string>("0");
+    const [dtoPorcentaje, setDtoPorcentaje] = useState<string>("0");
 
     return (
         <div className="flex flex-col h-screen mb-4">
@@ -313,7 +314,11 @@ const CarritoConProductos = (props: {productos: SelectedProduct[], precioTotal: 
                                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 9V7a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2m2 4h10a2 2 0 002-2v-6a2 2 0 00-2-2H9a2 2 0 00-2 2v6a2 2 0 002 2zm7-5a2 2 0 11-4 0 2 2 0 014 0z" />
                                     </svg>
                                     <div>
-                                        <input type="text" inputMode="numeric" className="text-xs text-center rounded-lg w-1/2 h-6 shadow" name="DtoEfectivo" />
+                                        <input type="text" inputMode="numeric" className="text-xs text-center rounded-lg w-1/2 h-6 shadow" name="DtoEfectivo" value={dtoEfectivo}
+                                            onChange={(e) => { 
+                                                setDtoEfectivo(ValidatePositiveFloatingNumber(e.target.value));
+                                            }}
+                                        />
                                         €
                                     </div>
                                 </div>
@@ -323,7 +328,11 @@ const CarritoConProductos = (props: {productos: SelectedProduct[], precioTotal: 
                                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z" />
                                     </svg>
                                     <div>
-                                        <input type="text" inputMode="numeric" className="text-xs text-center rounded-lg w-1/2 h-6 shadow" name="DtoPorcentaje" />
+                                        <input type="text" inputMode="numeric" className="text-xs text-center rounded-lg w-1/2 h-6 shadow" name="DtoPorcentaje" value={dtoPorcentaje}
+                                            onChange={(e) => {
+                                                setDtoPorcentaje(ValidatePositiveFloatingNumber(e.target.value));
+                                            }}
+                                        />
                                         %
                                     </div>
                                 </div>
@@ -331,16 +340,31 @@ const CarritoConProductos = (props: {productos: SelectedProduct[], precioTotal: 
                             <hr className="border-black w-full py-2 mt-4"/>
                         </div>
                     }
-                    <div className="flex flex-col text-left text-lg font-semibold hover:text-blue-500 hover:underline cursor-pointer" onClick={() => setDescuentoPupup(!descuentoOpen)}>
+                    <div className="flex flex-col text-left text-lg font-semibold hover:text-blue-500 underline cursor-pointer" onClick={() => setDescuentoPupup(!descuentoOpen)}>
                         Descuento
                     </div>
                 </div>
                 <div className="flex mb-3 text-lg font-semibold">
                     <div>Total</div>
-                    <div className="text-right w-full">
-                        {/*Cambiar en caso de que la cesta tenga productos y calcular el valor total*/}
-                        {productos.length <= 0 ? 0 : props.precioTotal.toFixed(2)} €
-                    </div>
+                    {
+                        (dtoEfectivo != "" && dtoEfectivo != "0") || (dtoPorcentaje != "" && dtoPorcentaje != "0") ? 
+                        <div className="flex gap-2 justify-end ml-auto">
+                            <div className="text-right w-full text-red-500 line-through">
+                                {/*Cambiar en caso de que la cesta tenga productos y calcular el valor total*/}
+                                {productos.length <= 0 ? 0 : props.precioTotal.toFixed(2)} €
+                            </div>
+                            <div className="text-right w-full">
+                                {/*Cambiar en caso de que la cesta tenga productos y calcular el valor total*/}
+                                {productos.length <= 0 ? 0 : ((props.precioTotal - parseFloat(dtoEfectivo) <= 0 ? 0 : props.precioTotal - parseFloat(dtoEfectivo)) * (1 - (parseFloat(dtoPorcentaje)/100))).toFixed(2)} €
+                            </div>
+                        </div>                        
+                        :
+                        <div className="text-right w-full">
+                            {/*Cambiar en caso de que la cesta tenga productos y calcular el valor total*/}
+                            {productos.length <= 0 ? 0 : props.precioTotal.toFixed(2)} €
+                        </div>
+                    }
+                    
                 </div>
 
                 {
