@@ -1,8 +1,9 @@
-import { motion } from 'framer-motion';
-import { useState } from 'react';
-import {axios} from 'axios';
+import { useHistory } from 'react-router';
 
-function SideBar(props) {
+
+function SideBar(props: { puntoVentaNotif: any}) {
+    const history = useHistory();
+
     return(
         <div className="w-72 h-screen">
             <div className="flex items-center justify-start mx-6 mt-10">
@@ -12,30 +13,28 @@ function SideBar(props) {
                 </span>
             </div>
             <nav className="mt-10 px-6 ">
-                <a className="hover:text-gray-800 hover:bg-gray-100 flex items-center p-2 my-6 transition-colors dark:hover:text-white dark:hover:bg-gray-600 duration-200  text-gray-600 dark:text-gray-400 rounded-lg " href="#">
-                <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" />
-                </svg>
-                    <span className="mx-4 text-lg font-normal">
-                        Resumen
-                    </span>
-                    <span className="flex-grow text-right">
-                    </span>
+                <a className="hover:text-gray-800 hover:bg-gray-100 flex items-center p-2
+                    my-6 transition-colors dark:hover:text-white dark:hover:bg-gray-600 duration-200
+                    text-gray-600 dark:text-gray-400 rounded-lg " onClick={() => {history.push("/dashboard/")}}>
+                    <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" />
+                    </svg>
+                        <span className="mx-4 text-lg font-normal">
+                            Resumen
+                        </span>
+                        <span className="flex-grow text-right">
+                        </span>
                 </a>
-                <a className="hover:text-gray-800 hover:bg-gray-100 flex items-center p-2 my-6 transition-colors dark:hover:text-white dark:hover:bg-gray-600 duration-200  text-gray-600 dark:text-gray-400 rounded-lg " href="#">
-                <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M14.121 15.536c-1.171 1.952-3.07 1.952-4.242 0-1.172-1.953-1.172-5.119 0-7.072 1.171-1.952 3.07-1.952 4.242 0M8 10.5h4m-4 3h4m9-1.5a9 9 0 11-18 0 9 9 0 0118 0z" />
-                </svg>
-                    <span className="mx-4 text-lg font-normal">
-                        Punto de venta
-                    </span>
-                    <span className="flex-grow text-right">
-                        {props.puntoVentaNotif && <button type="button" className="w-6 h-6 text-xs  rounded-full text-white bg-red-500">
-                            <span className="p-1">
-                                {props.puntoVentaNotifCount}
-                            </span>
-                        </button>}
-                    </span>
+                <a className="hover:text-gray-800 hover:bg-gray-100 flex 
+                    items-center p-2 my-6 transition-colors dark:hover:text-white 
+                    dark:hover:bg-gray-600 duration-200  text-gray-600 dark:text-gray-400 rounded-lg"
+                    onClick={() => {history.push("/dashboard/pos")}}>
+                    <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M14.121 15.536c-1.171 1.952-3.07 1.952-4.242 0-1.172-1.953-1.172-5.119 0-7.072 1.171-1.952 3.07-1.952 4.242 0M8 10.5h4m-4 3h4m9-1.5a9 9 0 11-18 0 9 9 0 0118 0z" />
+                    </svg>
+                        <span className="mx-4 text-lg font-normal">
+                            Punto de venta
+                        </span>
                 </a>
                 <a className="hover:text-gray-800 hover:bg-gray-100 flex items-center p-2 my-6 transition-colors dark:hover:text-white dark:hover:bg-gray-600 duration-200  text-gray-800 dark:text-gray-100 rounded-lg dark:bg-gray-600" href="#">
                 <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">

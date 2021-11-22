@@ -36,7 +36,7 @@ export const ProductCard = (props: DBProduct) => {
     );
 }
 
-export const ProductSelectedCard: React.FC<SelectedProduct> = (props) => {
+export const ProductSelectedCard: React.FC<SelectedProduct> = React.memo((props) => {
     const [productos, AddProductos] = useSelectedProducts();
     const [productImage, setProductImage] = useState<string>(`data:image/(png|jpeg);base64,${ConvertBufferToBase64(props.img)}`);    
     const [isOpen, setOpen] = useState<boolean>(false)
@@ -136,4 +136,4 @@ export const ProductSelectedCard: React.FC<SelectedProduct> = (props) => {
         :
         null
     }
-}
+})

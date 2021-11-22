@@ -12,7 +12,7 @@ import { CustomerPaymentInformation } from '../../tipos/CustomerPayment';
 import { OpModificacionProducto } from '../../tipos/Enums/OpModificaciones';
 import { SelectedProduct } from '../../tipos/SelectedProduct';
 import { TipoCobro } from '../../tipos/Enums/TipoCobro';
-import { ValidatePositiveFloatingNumber } from '../../RegexValidator';
+import { ApplyDtoCash, ApplyDtoPercentage, ValidatePositiveFloatingNumber } from '../../Validators';
 
 export const POS = () => {
     return(
@@ -351,17 +351,17 @@ const CarritoConProductos = (props: {productos: SelectedProduct[], precioTotal: 
                         <div className="flex gap-2 justify-end ml-auto">
                             <div className="text-right w-full text-red-500 line-through">
                                 {/*Cambiar en caso de que la cesta tenga productos y calcular el valor total*/}
-                                {productos.length <= 0 ? 0 : props.precioTotal.toFixed(2)} €
+                                {productos.length <= 0 ? 0.00 : props.precioTotal.toFixed(2)} €
                             </div>
                             <div className="text-right w-full">
                                 {/*Cambiar en caso de que la cesta tenga productos y calcular el valor total*/}
-                                {productos.length <= 0 ? 0 : ((props.precioTotal - parseFloat(dtoEfectivo) <= 0 ? 0 : props.precioTotal - parseFloat(dtoEfectivo)) * (1 - (parseFloat(dtoPorcentaje)/100))).toFixed(2)} €
+                                {productos.length <= 0 ? 0.00 : ApplyDtoPercentage(ApplyDtoCash(props.precioTotal, Number(dtoEfectivo)), Number(dtoPorcentaje)).toFixed(2)} €
                             </div>
                         </div>                        
                         :
                         <div className="text-right w-full">
                             {/*Cambiar en caso de que la cesta tenga productos y calcular el valor total*/}
-                            {productos.length <= 0 ? 0 : props.precioTotal.toFixed(2)} €
+                            {productos.length <= 0 ? 0.00 : props.precioTotal.toFixed(2)} €
                         </div>
                     }
                     

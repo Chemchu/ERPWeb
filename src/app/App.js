@@ -1,6 +1,5 @@
 import { Route, Switch, useLocation } from 'react-router-dom';
 import Dashboard from '../componentes/dashboard/dashboard'; 
-import {Dashboard2} from '../componentes/dashboard/dashboard2'; 
 import LoginPage from '../componentes/login/loginPage';
 import NotFound from '../componentes/404/notFound';
 import HiddenSideBar from '../componentes/dashboard/sidebar/sideBarHidden';
@@ -22,7 +21,6 @@ function App() {
                     <Route exact path = "/" component={LandingPage}/>
                     <Route exact path = "/login" component={LoginPage}/>
                     <Route exact path = "/dashboard" component= {Dashboard}/> 
-                    <Route exact path = "/dashboard2" component= {Dashboard2}/> 
                     <Route exact path = "/notfound" component= {NotFound}/> 
                     <Route exact path = "/hidden" component= {HiddenSideBar}/> 
                     <Route exact path = "/prodList" component= {ProductList}/>         
