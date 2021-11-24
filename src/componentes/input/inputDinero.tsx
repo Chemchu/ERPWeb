@@ -1,11 +1,6 @@
 import { Teclado } from "../teclado/tecladoPago";
 
-type InputDinero = {
-    inputDinero: string,
-    setDinero: Function
-}
-
-export const InputDinero = (props: InputDinero) => {
+export const InputNumber = (props: {value: string, setValue: Function}) => {
     
     return(        
         <div>
@@ -16,9 +11,9 @@ export const InputDinero = (props: InputDinero) => {
                     </svg>
                 </span>
                 <input className="text-right text-xl rounded-r-lg flex-1 appearance-none border border-gray-300 w-full py-2 px-4 bg-white text-gray-700 placeholder-gray-400 shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-transparent"
-                        onChange={(e) => {props.setDinero(e.target.value)}} value={props.inputDinero} />
+                        onChange={(e) => {props.setValue(e.target.value)}} value={props.value} />
             </div>
-            <Teclado numInput={props.inputDinero} setNumInput={props.setDinero} showInput={false}/>
+            <Teclado numInput={props.value} setNumInput={props.setValue} showInput={false}/>
         </div>
 
     );

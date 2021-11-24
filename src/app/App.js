@@ -24,7 +24,7 @@ function App() {
                     <Route exact path = "/notfound" component= {NotFound}/> 
                     <Route exact path = "/hidden" component= {HiddenSideBar}/> 
                     <Route exact path = "/prodList" component= {ProductList}/>         
-                    <Route exact path = "/pos" component= {POS}/>    
+                    <Route exact path = "/postest" component= {POS}/>    
                     <Route exact path = "/pCard" component= {ProductCard}/>       
                     <Route exact path = "/rCard" component= {ReportCard}/>   
                     <Route exact path = "/productos" component= {ProductPage}/>     

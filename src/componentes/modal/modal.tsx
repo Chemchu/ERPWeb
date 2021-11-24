@@ -2,8 +2,8 @@ import { Backdrop } from "../backdrop.js/dropdown";
 import { AnimatePresence, motion } from "framer-motion";
 import { useState } from "react";
 import { useDBClients } from "../pointOfSale/clientContext";
-import { ModalProps, ModalResumenProps } from "../../tipos/ModalProps";
-import { InputDinero } from "../input/inputDinero";
+import { ModalPagarProps, ModalResumenProps } from "../../tipos/ModalProps";
+import { InputNumber } from "../input/inputDinero";
 import { CustomerPaymentInformation } from "../../tipos/CustomerPayment";
 import { TipoCobro } from "../../tipos/Enums/TipoCobro";
 import axios from "axios";
@@ -35,7 +35,7 @@ const In = {
     }
 }
 
-export const ModalPagar = (props: ModalProps) => {
+export const ModalPagar = (props: ModalPagarProps) => {
     const [customers, ] = useDBClients();
     
     const [dineroEntregado, setDineroEntregado] = useState<string>("0");
@@ -141,7 +141,7 @@ export const ModalPagar = (props: ModalProps) => {
                                                 Efectivo
                                             </div>
                                             <div className="text-xl">
-                                                <InputDinero inputDinero={dineroEntregado} setDinero={SetDineroClienteEfectivo}/>
+                                                <InputNumber value={dineroEntregado} setValue={SetDineroClienteEfectivo}/>
                                             </div>
                                         </div>
                                         <div>
@@ -149,7 +149,7 @@ export const ModalPagar = (props: ModalProps) => {
                                                 Tarjeta
                                             </div>
                                             <div className="text-xl">
-                                                <InputDinero inputDinero={dineroEntregadoTarjeta} setDinero={SetDineroClienteTarjeta}/>
+                                                <InputNumber value={dineroEntregadoTarjeta} setValue={SetDineroClienteTarjeta}/>
                                             </div>
                                         </div>
                                     </div>
@@ -320,15 +320,19 @@ export const ModalResumenCompra = (props: ModalResumenProps) => {
 
 }
 
-
-type ResumenFila = {
-    numFila: number,
-    nombreProducto: string,
-    cantidad: number,
-    precio: number
+export const ModalInput = (props: {handleClose: Function, value: string, setValue: Function }) => {
+    return(
+        <div>
+            <Backdrop onClick={() => props.handleClose()} >
+                <div className="">
+                    <InputNumber value={props.value} setValue={props.setValue} />
+                </div>
+            </Backdrop>
+        </div>
+    );
 }
 
-const GenerarFilaProducto = (props: ResumenFila) => {
+const GenerarFilaProducto = (props: {numFila: number, nombreProducto: string, cantidad: number, precio: number}) => {
     return(
         <tr>
             <td className="py-1 w-1/12 text-center">{props.numFila}</td>

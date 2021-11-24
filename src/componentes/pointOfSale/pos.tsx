@@ -296,7 +296,7 @@ const CarritoConProductos = (props: {productos: SelectedProduct[], precioTotal: 
                     if(foundProd) 
                     {
                         return (
-                        <div key={`prodCarrito${foundProd.nombre}`}>
+                        <div key={`prodCarrito${foundProd._id}`}>
                             <ProductSelectedCard key={foundProd._id} _id={foundProd._id} cantidad={product.cantidad}
                                 dto={product.dto} precioVenta={foundProd.precioVenta} img={foundProd.img} nombre={foundProd.nombre} 
                                 familia={foundProd.familia} ean={foundProd.ean} operacionMod={OpModificacionProducto.Añadir}/> 

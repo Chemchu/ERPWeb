@@ -2,7 +2,7 @@ import { MouseEventHandler, PropsWithChildren, ReactElement } from "react";
 
 type BackdropProps = {
     children: PropsWithChildren<ReactElement>,
-    onClick: MouseEventHandler<HTMLElement>
+    onClick: MouseEventHandler<HTMLElement> 
 }
 
 export const Backdrop = ({children, onClick} : BackdropProps) => {

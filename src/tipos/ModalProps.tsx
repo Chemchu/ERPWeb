@@ -1,10 +1,14 @@
-import { MouseEventHandler } from "react";
+import { EventHandler, MouseEventHandler, TouchEventHandler } from "react";
 import { Client } from "./Client";
 import { CustomerPaymentInformation } from "./CustomerPayment";
 import { TipoCobro } from "./Enums/TipoCobro";
 import { SelectedProduct } from "./SelectedProduct";
 
-export type ModalProps = {
+type ModalProps = {
+    handleClose: TouchEventHandler<HTMLButtonElement> | MouseEventHandler<HTMLButtonElement>,
+}
+
+export type ModalPagarProps = {
     handleClose: MouseEventHandler<HTMLButtonElement>,
     cliente: Client,
     finalPrice: number,
