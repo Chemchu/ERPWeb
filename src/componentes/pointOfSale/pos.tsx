@@ -15,12 +15,37 @@ import { TipoCobro } from '../../tipos/Enums/TipoCobro';
 import { ApplyDtoCash, ApplyDtoPercentage, ValidatePositiveFloatingNumber } from '../../Validators';
 
 export const POS = () => {
+    const animVariants= {
+        initial: {
+            opacity: 0       
+          },
+          animate: {
+            opacity: 1,
+            transition: {
+              duration: 1,
+              ease: "easeInOut",
+            },
+          },
+          exit: {
+            y: '-100vh',
+            opacity: 0,
+            transition:{ 
+                ease: [0.87, 0, 0.13, 1], 
+                duration: 1
+            }
+        },
+    }
+
     return(
-        <POSProvider key={"undefined"} type={"undefined"} props={undefined}>
-            <ClientProvider key={"undefined2"} type={"undefined2"} props={undefined}>
-                <POSComponent/>
-            </ClientProvider>
-        </POSProvider>
+        <AnimatePresence exitBeforeEnter>
+            <motion.div initial={animVariants.initial} animate={animVariants.animate} exit={animVariants.exit}>
+                <POSProvider key={"POSProvider"} type={""} props={undefined}>
+                    <ClientProvider key={"ClientProvider"} type={""} props={undefined}>
+                        <POSComponent/>
+                    </ClientProvider>
+                </POSProvider>
+            </motion.div>
+        </AnimatePresence>
     );
 }
 

@@ -15,12 +15,12 @@ function App() {
 
     const location = useLocation();
     return(
-        <div >
-            <AnimatePresence key={"AnimatePresenceApp"} initial={false} exitBeforeEnter={true} onExitComplete={() => null}>
+        <div>
+            <AnimatePresence key={"AnimatePresenceApp"} initial={false} exitBeforeEnter={true}>
                 <Switch location={location} key={location.key}>
                     <Route exact path = "/" component={LandingPage}/>
                     <Route exact path = "/login" component={LoginPage}/>
-                    <Route exact path = "/dashboard" component= {Dashboard}/> 
+                    <Route path = "/dashboard" component= {Dashboard}/> 
                     <Route exact path = "/notfound" component= {NotFound}/> 
                     <Route exact path = "/hidden" component= {HiddenSideBar}/> 
                     <Route exact path = "/prodList" component= {ProductList}/>         
