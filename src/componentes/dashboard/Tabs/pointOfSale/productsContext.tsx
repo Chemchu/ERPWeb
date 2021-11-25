@@ -1,8 +1,8 @@
 import { PropsWithChildren, ReactElement } from 'react';
 import { useState, createContext, useContext, useEffect } from 'react'
-import { DBProduct } from '../../tipos/DBProduct';
-import { OpModificacionProducto } from '../../tipos/Enums/OpModificaciones';
-import { SelectedProduct } from '../../tipos/SelectedProduct';
+import { DBProduct } from '../../../../tipos/DBProduct';
+import { OpModificacionProducto } from '../../../../tipos/Enums/OpModificaciones';
+import { SelectedProduct } from '../../../../tipos/SelectedProduct';
 
 const ProductsContext = createContext<[DBProduct[], Function]>({} as [DBProduct[], Function]);
 const SelectedProductsContext = createContext<[SelectedProduct[], Function]>({} as [SelectedProduct[], Function]);

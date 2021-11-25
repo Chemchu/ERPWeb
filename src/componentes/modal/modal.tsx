@@ -1,13 +1,13 @@
 import { Backdrop } from "../backdrop.js/dropdown";
 import { AnimatePresence, motion } from "framer-motion";
 import { useState } from "react";
-import { useDBClients } from "../pointOfSale/clientContext";
+import { useDBClients } from "../dashboard/Tabs/pointOfSale/clientContext";
 import { ModalPagarProps, ModalResumenProps } from "../../tipos/ModalProps";
 import { InputNumber } from "../input/inputDinero";
 import { CustomerPaymentInformation } from "../../tipos/CustomerPayment";
 import { TipoCobro } from "../../tipos/Enums/TipoCobro";
 import axios from "axios";
-import { useSelectedProducts } from "../pointOfSale/productsContext";
+import { useSelectedProducts } from "../dashboard/Tabs/pointOfSale/productsContext";
 import AutoComplete from "../autocomplete/autocomplete";
 import { Input } from "../input/input";
 

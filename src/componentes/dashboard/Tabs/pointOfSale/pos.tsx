@@ -3,49 +3,47 @@ import {ProductCard, ProductSelectedCard} from './productCard';
 import {POSProvider, useDBProducts, usePrice, useConsumerMoney, useSelectedProducts} from './productsContext';
 import axios from 'axios';
 import { AnimatePresence, motion } from 'framer-motion'; 
-import { ModalPagar, ModalResumenCompra } from '../modal/modal';
+import { ModalPagar, ModalResumenCompra } from '../../../modal/modal';
 import ClientProvider, { useDBClients } from './clientContext';
-import { DBProduct } from '../../tipos/DBProduct';
-import { FilteredProds } from '../../tipos/FilteredProducts';
-import { Client } from '../../tipos/Client';
-import { CustomerPaymentInformation } from '../../tipos/CustomerPayment';
-import { OpModificacionProducto } from '../../tipos/Enums/OpModificaciones';
-import { SelectedProduct } from '../../tipos/SelectedProduct';
-import { TipoCobro } from '../../tipos/Enums/TipoCobro';
-import { ApplyDtoCash, ApplyDtoPercentage, ValidatePositiveFloatingNumber } from '../../Validators';
+import { DBProduct } from '../../../../tipos/DBProduct';
+import { FilteredProds } from '../../../../tipos/FilteredProducts';
+import { Client } from '../../../../tipos/Client';
+import { CustomerPaymentInformation } from '../../../../tipos/CustomerPayment';
+import { OpModificacionProducto } from '../../../../tipos/Enums/OpModificaciones';
+import { SelectedProduct } from '../../../../tipos/SelectedProduct';
+import { TipoCobro } from '../../../../tipos/Enums/TipoCobro';
+import { ApplyDtoCash, ApplyDtoPercentage, ValidatePositiveFloatingNumber } from '../../../../Validators';
+
+const variants= {
+    initial: {
+        opacity: 0       
+      },
+      animate: {
+        opacity: 1,
+        transition: {
+          duration: 1,
+          ease: "easeInOut",
+        },
+      },
+      exit: {
+        y: '-100vh',
+        opacity: 0,
+        transition:{ 
+            ease: [0.87, 0, 0.13, 1], 
+            duration: 1
+        }
+    },
+  }
 
 export const POS = () => {
-    const animVariants= {
-        initial: {
-            opacity: 0       
-          },
-          animate: {
-            opacity: 1,
-            transition: {
-              duration: 1,
-              ease: "easeInOut",
-            },
-          },
-          exit: {
-            y: '-100vh',
-            opacity: 0,
-            transition:{ 
-                ease: [0.87, 0, 0.13, 1], 
-                duration: 1
-            }
-        },
-    }
-
     return(
-        <AnimatePresence exitBeforeEnter>
-            <motion.div initial={animVariants.initial} animate={animVariants.animate} exit={animVariants.exit}>
-                <POSProvider key={"POSProvider"} type={""} props={undefined}>
-                    <ClientProvider key={"ClientProvider"} type={""} props={undefined}>
-                        <POSComponent/>
-                    </ClientProvider>
-                </POSProvider>
-            </motion.div>
-        </AnimatePresence>
+        <POSProvider key={"POSProvider"} type={""} props={undefined}>
+            <ClientProvider key={"ClientProvider"} type={""} props={undefined}>
+                <motion.div initial={variants.initial} animate={variants.animate} exit={variants.exit}>
+                    <POSComponent/>
+                </motion.div>
+            </ClientProvider>
+        </POSProvider>
     );
 }
 
@@ -171,7 +169,7 @@ const ProductDisplay = (props: { listFiltrados: [DBProduct[], Function], familia
 
             {/* Genera los botones de favorito */}
             {
-                <GenerarFavoritos allProductos={allProductos} SetProductosFiltrados={SetProductosFiltrados} familias= {props.familias} />
+                <GenerarFavoritos allProductos={allProductos} SetProductosFiltrados={SetProductosFiltrados} familias={props.familias} />
             }
 
             <div className="h-full overflow-hidden pt-2">
@@ -253,7 +251,7 @@ const GenerarProductsCards = (props: FilteredProds) => {
                              nombre: prod.nombre, operacionMod: OpModificacionProducto.Añadir} as SelectedProduct);} }>
                         <ProductCard _id={prod._id} alta={prod.alta} descripción={prod.descripción} ean={prod.ean} familia={prod.familia}
                                         nombre={prod.nombre} precioVenta={prod.precioVenta} img={prod.img} 
-                                        iva={prod.iva} precioCompra={prod.precioCompra} tags={prod.tags} />
+                                        iva={prod.iva} precioCompra={prod.precioCompra} tags={prod.tags} cantidad={prod.cantidad} />
                     </button>
                 );
             })}

@@ -1,20 +1,10 @@
 import {useSelectedProducts} from './productsContext';
 import { motion } from 'framer-motion';
 import React, { useState } from 'react';
-import { DBProduct } from '../../tipos/DBProduct';
-import { SelectedProduct } from '../../tipos/SelectedProduct';
-import { JSONBuffer } from '../../tipos/JsonBuffer';
-import { OpModificacionProducto } from '../../tipos/Enums/OpModificaciones';
-import { ModalInput } from '../modal/modal';
-
-function ConvertBufferToBase64(buffer: JSONBuffer): string {
-    var res = ""
-    if(buffer) {
-        res = Buffer.from(buffer.data).toString('base64');
-    }
-
-    return res;
-}
+import { DBProduct } from '../../../../tipos/DBProduct';
+import { SelectedProduct } from '../../../../tipos/SelectedProduct';
+import { OpModificacionProducto } from '../../../../tipos/Enums/OpModificaciones';
+import { ConvertBufferToBase64 } from '../../../../Validators';
 
 
 export const ProductCard = (props: DBProduct) => {

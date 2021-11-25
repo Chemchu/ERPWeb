@@ -1,33 +1,27 @@
 import { Route, Switch, useLocation } from 'react-router-dom';
-import Dashboard from '../componentes/dashboard/dashboard'; 
+import {Dashboard} from '../componentes/dashboard/dashboard'; 
 import LoginPage from '../componentes/login/loginPage';
 import NotFound from '../componentes/404/notFound';
-import HiddenSideBar from '../componentes/dashboard/sidebar/sideBarHidden';
-import {ProductList} from '../componentes/pointOfSale/productList';
-import {ProductCard} from '../componentes/pointOfSale/productCard';
+import {ProductList} from '../componentes/dashboard/Tabs/pointOfSale/productList';
 import ReportCard from '../componentes/dashboard/reportCards';
-import ProductPage from '../componentes/productPage/productPage';
 import { AnimatePresence } from 'framer-motion';
 import LandingPage from '../componentes/landingPage/landingPage';
-import { POS } from '../componentes/pointOfSale/pos';
+import {useState} from 'react'
 
 function App() {
-
+    const [isSidebarCollapsed, setSidebarCollapsed] = useState(false);
     const location = useLocation();
+
     return(
         <div>
             <AnimatePresence key={"AnimatePresenceApp"} initial={false} exitBeforeEnter={true}>
                 <Switch location={location} key={location.key}>
                     <Route exact path = "/" component={LandingPage}/>
                     <Route exact path = "/login" component={LoginPage}/>
-                    <Route path = "/dashboard" component= {Dashboard}/> 
-                    <Route exact path = "/notfound" component= {NotFound}/> 
-                    <Route exact path = "/hidden" component= {HiddenSideBar}/> 
-                    <Route exact path = "/prodList" component= {ProductList}/>         
-                    <Route exact path = "/postest" component= {POS}/>    
-                    <Route exact path = "/pCard" component= {ProductCard}/>       
-                    <Route exact path = "/rCard" component= {ReportCard}/>   
-                    <Route exact path = "/productos" component= {ProductPage}/>     
+                    <Route path = "/dashboard" children={<Dashboard isSidebarCollapsed={isSidebarCollapsed} setSidebarCollapsed={setSidebarCollapsed}/>} />
+                    <Route exact path = "/notfound" component={NotFound}/> 
+                    <Route exact path = "/prodList" component={ProductList}/>       
+                    <Route exact path = "/rCard" component={ReportCard}/>   
                 </Switch>
             </AnimatePresence>
         </div>

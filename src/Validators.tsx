@@ -1,3 +1,5 @@
+import { JSONBuffer } from "./tipos/JsonBuffer";
+
 export const ValidatePositiveFloatingNumber = (inputNumber: string): string => {
     const valuePostRegex = inputNumber.match(new RegExp("[+]?([0-9]+([.][0-9]*)?|[.][0-9]+)"))?.[0];
     if(valuePostRegex == undefined) {return "";}
@@ -18,4 +20,13 @@ export const ApplyDtoPercentage = (totalValue: number, dto: number): number => {
 
     if(totalValue <= 0) return 0.00;
     else return totalValue; 
+}
+
+export const ConvertBufferToBase64 = (buffer: JSONBuffer): string => {
+    var res = ""
+    if(buffer) {
+        res = Buffer.from(buffer.data).toString('base64');
+    }
+
+    return res;
 }
