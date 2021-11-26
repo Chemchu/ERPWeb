@@ -109,37 +109,33 @@ const POSComponent = () => {
     const allProductsHaveQuantity = productos.filter(p => p.cantidad == "").length <= 0;
 
     return(
-        <div>
-            <div className="h-screen antialiased overflow-hidden text-gray-800">
-                {/* Página principal del POS */}
-                <div className="grid grid-cols-3 bg-gray-100">
-                    {/* Menú tienda, donde se muestran los productos */}
-                    <div className="col-span-2 h-screen">
-                        <ProductDisplay listFiltrados={[productosFiltrados, SetProductosFiltrados]} familias={familias}/>
-                    </div>
-                    {/* Menú tienda */}
-                    {/* Sidebar derecho */}
-                    <div className="m-4">
-                        <div className="bg-white rounded-3xl shadow">
-                            {/* En caso de carrito vacío o con productos */}
-                            {productos.length <= 0 ? 
-                            <div className="">
-                                <CarritoVacio productos={productos} precioTotal={precioTotal} /> 
-                            </div>
-                            : 
-                            <CarritoConProductos productos={productos} precioTotal={precioTotal} allProductsHaveQuantity={allProductsHaveQuantity} abrirCobro={setPagarModal} abrirCobroRapido={setCobroModal}/> }
-                        </div>
+        <div className="h-screen antialiased overflow-hidden text-gray-800">
+            {/* Página principal del POS */}
+            <div className="grid grid-cols-3 bg-gray-100">
+                {/* Menú tienda, donde se muestran los productos */}
+                <div className="col-span-2 h-screen">
+                    <ProductDisplay listFiltrados={[productosFiltrados, SetProductosFiltrados]} familias={familias}/>
+                </div>
+                {/* Menú tienda */}
+                {/* Sidebar derecho */}
+                <div className="m-4">
+                    <div className="bg-white rounded-3xl shadow">
+                        {/* En caso de carrito vacío o con productos */}
+                        {productos.length <= 0 ? 
+                        <CarritoVacio productos={productos} precioTotal={precioTotal} /> 
+                        : 
+                        <CarritoConProductos productos={productos} precioTotal={precioTotal} allProductsHaveQuantity={allProductsHaveQuantity} abrirCobro={setPagarModal} abrirCobroRapido={setCobroModal}/> }
                     </div>
                 </div>
-
-                <AnimatePresence initial={false} exitBeforeEnter={true}>
-                    {/* Modal aceptar compra */}
-                    {showModalPagar && <ModalPagar handleClose={cerrarModal} cliente={clienteActual} customerProducts={productos} finalPrice={precioTotal} />}
-                    {showModalCobro && <ModalResumenCompra customerPayment={{tipo: "Cobro rápido", efectivo: precioTotal, tarjeta: 0} as CustomerPaymentInformation} handleClose={cerrarModalResumen} cliente={clienteActual} cambio={0}
-                                            customerProducts={productos} finalPrice={precioTotal} tipoCobro={TipoCobro.Efectivo}/>}
-                </AnimatePresence>
-            
             </div>
+
+            <AnimatePresence initial={false} exitBeforeEnter={true}>
+                {/* Modal aceptar compra */}
+                {showModalPagar && <ModalPagar handleClose={cerrarModal} cliente={clienteActual} customerProducts={productos} finalPrice={precioTotal} />}
+                {showModalCobro && <ModalResumenCompra customerPayment={{tipo: "Cobro rápido", efectivo: precioTotal, tarjeta: 0} as CustomerPaymentInformation} handleClose={cerrarModalResumen} cliente={clienteActual} cambio={0}
+                                        customerProducts={productos} finalPrice={precioTotal} tipoCobro={TipoCobro.Efectivo}/>}
+            </AnimatePresence>
+        
         </div>
     );
 }
