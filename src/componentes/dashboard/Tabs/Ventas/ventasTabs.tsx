@@ -1,9 +1,9 @@
 import axios from "axios";
 import { motion } from "framer-motion";
 import { useEffect, useState } from "react";
-import { DBProduct } from "../../../tipos/DBProduct";
-import { JSONBuffer } from "../../../tipos/JsonBuffer";
-import { ConvertBufferToBase64 } from "../../../Validators";
+import { DBProduct } from "../../../../tipos/DBProduct";
+import { JSONBuffer } from "../../../../tipos/JsonBuffer";
+import { ConvertBufferToBase64 } from "../../../../Validators";
 
 const variants= {
     initial: {
@@ -26,7 +26,7 @@ const variants= {
     },
   }
 
-export const ProductPage = () => {
+export const SalesPage = () => {
     const [productos, setProductos] = useState<DBProduct[]>([{} as DBProduct]);
     const [selectedPage, setPage] = useState<number>(1);
 
@@ -57,7 +57,7 @@ export const ProductPage = () => {
             <div className="text-center">
                 <div className="flex mb-1 sm:mb-0 justify-between w-full">
                     <h2 className="text-2xl leading-tight">
-                        Productos
+                        Ventas
                     </h2>
                     <div className="text-end">
                         <form className="flex flex-col md:flex-row w-3/4 md:w-full max-w-sm md:space-x-3 space-y-3 md:space-y-0 justify-center">
@@ -74,23 +74,23 @@ export const ProductPage = () => {
             <div className="flex flex-col h-full mt-4 pb-10">
                 <div className="bg-white grid grid-cols-4 justify-evenly  border-b-2 rounded-t-xl ">
                     <div className="px-5 py-3 border-gray-200 text-gray-800 text-left text-sm font-semibold">
-                        Nombre
+                        ID
                     </div>
                     <div className="py-3 border-gray-200 text-gray-800 text-left text-sm font-semibold">
-                        Familia
+                        Cliente
                     </div>
                     <div className="py-3 border-gray-200 text-gray-800 text-left text-sm font-semibold">
-                        Precio
+                        Fecha de compra
                     </div>
                     <div className="py-3 border-gray-200 text-gray-800 text-left text-sm font-semibold">
-                        Cantidad
+                        Valor total
                     </div>
                 </div>
                 <div className="bg-white flex flex-col border-b-4 overflow-scroll overflow-x-hidden">
                     {productos.slice((elementsPerPage * (selectedPage - 1)), selectedPage * elementsPerPage).map((p) => {
                         return(
                             <div key={`FilaProdTable${p._id}`}>
-                                <FilaProducto img={p.img} nombre={p.nombre} familia={p.familia} precio={p.precioVenta} cantidad={p.cantidad} />
+                                <FilaVenta img={p.img} nombre={p.nombre} familia={p.familia} precio={p.precioVenta} cantidad={p.cantidad} />
 
                             </div>
                         );
@@ -135,7 +135,7 @@ const Paginador = (props: {numPages: number, paginaActual:number, cambiarPaginaA
     );
 }
 
-const FilaProducto = (props: {nombre: string, familia: string, precio: number, cantidad: number, img: JSONBuffer}) => {
+const FilaVenta = (props: {nombre: string, familia: string, precio: number, cantidad: number, img: JSONBuffer}) => {
     const imagen = `data:image/(png|jpeg);base64,${ConvertBufferToBase64(props.img)}`
 
     return(
