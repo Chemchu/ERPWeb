@@ -1,8 +1,9 @@
 import SideBar from './sidebar/sidebar';
 import { Route, Switch, Router, Link, useHistory, useRouteMatch, useLocation } from "react-router-dom";
 import { POS } from "./Tabs/pointOfSale/pos";
-import { ProductPage } from './Tabs/productosTab';
+import { ProductPage } from './Tabs/Productos/productosTab';
 import { SalesPage } from './Tabs/Ventas/ventasTabs';
+import { Inicio } from './Tabs/Inicio/inicio';
 
 export const Dashboard = (props: {isSidebarCollapsed: boolean, setSidebarCollapsed: Function}) => {
   let { path, url } = useRouteMatch();
@@ -16,7 +17,7 @@ export const Dashboard = (props: {isSidebarCollapsed: boolean, setSidebarCollaps
           </div>
           <div className="w-screen h-screen">
             <Switch location={location} key={location.key}>
-              <Route key={`${url}/`} path={`${url}/`} exact children={<div>Home</div>} />
+              <Route key={`${url}/`} path={`${url}/`} exact children={<Inicio/>} />
               <Route key={`${url}/pos`} path={`${url}/pos`} exact children={<POS/>} />
               <Route key={`${url}/productos`} path={`${url}/productos`} exact children={<ProductPage/>} />
               <Route key={`${url}/stats`} path={`${url}/stats`} exact children={<div>Estadísticas</div>} />

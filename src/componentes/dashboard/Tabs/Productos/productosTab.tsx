@@ -1,9 +1,9 @@
 import axios from "axios";
 import { motion } from "framer-motion";
 import { useEffect, useState } from "react";
-import { DBProduct } from "../../../tipos/DBProduct";
-import { JSONBuffer } from "../../../tipos/JsonBuffer";
-import { ConvertBufferToBase64 } from "../../../Validators";
+import { DBProduct } from "../../../../tipos/DBProduct";
+import { JSONBuffer } from "../../../../tipos/JsonBuffer";
+import { ConvertBufferToBase64 } from "../../../../Validators";
 
 const variants= {
     initial: {

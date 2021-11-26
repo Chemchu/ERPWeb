@@ -3,7 +3,6 @@ import {Dashboard} from '../componentes/dashboard/dashboard';
 import LoginPage from '../componentes/login/loginPage';
 import NotFound from '../componentes/404/notFound';
 import {ProductList} from '../componentes/dashboard/Tabs/pointOfSale/productList';
-import ReportCard from '../componentes/dashboard/reportCards';
 import { AnimatePresence } from 'framer-motion';
 import LandingPage from '../componentes/landingPage/landingPage';
 import {useState} from 'react'
@@ -20,8 +19,7 @@ function App() {
                     <Route exact path = "/login" component={LoginPage}/>
                     <Route path = "/dashboard" children={<Dashboard isSidebarCollapsed={isSidebarCollapsed} setSidebarCollapsed={setSidebarCollapsed}/>} />
                     <Route exact path = "/notfound" component={NotFound}/> 
-                    <Route exact path = "/prodList" component={ProductList}/>       
-                    <Route exact path = "/rCard" component={ReportCard}/>   
+                    <Route exact path = "/prodList" component={ProductList}/>      
                 </Switch>
             </AnimatePresence>
         </div>

@@ -72,7 +72,7 @@ export const SalesPage = () => {
                 </div>
             </div>
             <div className="flex flex-col h-full mt-4 pb-10">
-                <div className="bg-white grid grid-cols-4 justify-evenly  border-b-2 rounded-t-xl ">
+                <div className="bg-white grid grid-cols-5 justify-evenly  border-b-2 rounded-t-xl ">
                     <div className="px-5 py-3 border-gray-200 text-gray-800 text-left text-sm font-semibold">
                         ID
                     </div>
@@ -83,18 +83,21 @@ export const SalesPage = () => {
                         Fecha de compra
                     </div>
                     <div className="py-3 border-gray-200 text-gray-800 text-left text-sm font-semibold">
+                        Método de pago
+                    </div>
+                    <div className="py-3 border-gray-200 text-gray-800 text-left text-sm font-semibold">
                         Valor total
                     </div>
                 </div>
                 <div className="bg-white flex flex-col border-b-4 overflow-scroll overflow-x-hidden">
-                    {productos.slice((elementsPerPage * (selectedPage - 1)), selectedPage * elementsPerPage).map((p) => {
+                    {/* {productos.slice((elementsPerPage * (selectedPage - 1)), selectedPage * elementsPerPage).map((p) => {
                         return(
                             <div key={`FilaProdTable${p._id}`}>
                                 <FilaVenta img={p.img} nombre={p.nombre} familia={p.familia} precio={p.precioVenta} cantidad={p.cantidad} />
 
                             </div>
                         );
-                    })}                      
+                    })}                       */}
                 </div>
                 <div className="bg-white flex flex-row p-5 items-center justify-center rounded-b-xl shadow-lg">
                     <Paginador numPages={numPages} paginaActual={selectedPage} cambiarPaginaActual={setPaginaActual}/>
@@ -135,43 +138,37 @@ const Paginador = (props: {numPages: number, paginaActual:number, cambiarPaginaA
     );
 }
 
-const FilaVenta = (props: {nombre: string, familia: string, precio: number, cantidad: number, img: JSONBuffer}) => {
-    const imagen = `data:image/(png|jpeg);base64,${ConvertBufferToBase64(props.img)}`
-
+const FilaVenta = (props: {IDCompra: string, nombreCliente: string, fechaCompra: string, metodoPago: string, valorTotal: number}) => {
     return(
-        <div className="grid grid-cols-4 w-full justify-evenly gap-x-6">
+        <div className="grid grid-cols-5 w-full justify-evenly gap-x-6">
             <div className="px-5 py-5 border-t border-gray-200 text-sm">
                 <div className="flex items-center">
-                    <div className="flex-shrink-0">
-                        <a className="block relative">
-                            <img alt="profil" src={imagen} className="mx-auto object-cover rounded-full h-10 w-10 "/>
-                        </a>
-                    </div>
                     <div className="ml-3">
                         <p className="text-gray-900 whitespace-no-wrap inline-block">
-                            {props.nombre}
+                            {props.IDCompra}
                         </p>
                     </div>
                 </div>
             </div>
             <div className="py-5 border-t border-gray-200 text-sm">
                 <p className="text-gray-900 whitespace-no-wrap">
-                    {props.familia}
+                    {props.nombreCliente}
                 </p>
             </div>
             <div className="py-5 border-t border-gray-200 text-sm">
                 <p className="text-gray-900 whitespace-no-wrap">
-                    {props.precio}€
+                    {props.fechaCompra}
                 </p>
             </div>
             <div className="py-5 border-t border-gray-200 text-sm">
-                <span className="relative inline-block px-3 py-1 font-semibold text-green-900 leading-tight">
-                    <span aria-hidden="true" className="absolute inset-0 bg-green-200 opacity-50 rounded-full">
-                    </span>
-                    <span className="relative">
-                        {props.cantidad ? props.cantidad : 0}
-                    </span>
-                </span>
+                <p className="text-gray-900 whitespace-no-wrap">
+                    {props.metodoPago}
+                </p>
+            </div>
+            <div className="py-5 border-t border-gray-200 text-sm">
+                <p className="text-gray-900 whitespace-no-wrap">
+                    {props.valorTotal}€
+                </p>
             </div>
         </div>
     );
