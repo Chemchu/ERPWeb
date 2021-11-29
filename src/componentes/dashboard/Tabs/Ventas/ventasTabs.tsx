@@ -1,7 +1,9 @@
 import axios from "axios";
 import { motion } from "framer-motion";
 import { useEffect, useState } from "react";
+import { DBClient } from "../../../../tipos/DBClientes";
 import { DBProduct } from "../../../../tipos/DBProduct";
+import { DBSale } from "../../../../tipos/DBSale";
 import { JSONBuffer } from "../../../../tipos/JsonBuffer";
 import { ConvertBufferToBase64 } from "../../../../Validators";
 
@@ -27,23 +29,59 @@ const variants= {
   }
 
 export const SalesPage = () => {
-    const [productos, setProductos] = useState<DBProduct[]>([{} as DBProduct]);
+    const [ventas, setVentas] = useState<DBSale[]>([]);
+    const [clientes, setClientes] = useState<DBClient[]>([]);
     const [selectedPage, setPage] = useState<number>(1);
 
-    const elementsPerPage = 10;
-    const numPages = Math.ceil(productos.length / elementsPerPage);
+    const elementsPerPage = 1;
+    const numPages = ventas.length <= 0 ? 1 : Math.ceil(ventas.length / elementsPerPage);
 
     useEffect(() => {
-        const fetchProductos = () => {
+        const fetchClientes = async () => {
             const erpBackURL = process.env.REACT_APP_ERP_BACKURL;
-            axios.get(`${erpBackURL}api/productos`).then(
-                (res) => {
-                    setProductos([...res.data.message]);
-                }
-            );
+
+            const resClientes = await axios.get(`${erpBackURL}api/clientes`);
+            setClientes([...resClientes.data.message]);      
         };
-        fetchProductos();
+        fetchClientes();
     }, []);
+
+    useEffect(() => {
+        const fetchVentas = async () => {
+            const erpBackURL = process.env.REACT_APP_ERP_BACKURL;
+
+            const resVentas = await axios.get(`${erpBackURL}api/ventas`)
+            UpdateVentas([...resVentas.data.message], clientes);
+        };
+        fetchVentas();        
+    }, [clientes]);
+
+    
+
+    const UpdateVentas = (ventas: Array<any>, clientes: DBClient[]): void => {
+        let ventasFormatted: Array<DBSale> = [];
+        ventas.forEach((v: DBSale) => {
+            const nombreCliente = clientes.find(c => c._id == v.cliente)?.nombre;
+            const sale: DBSale = {
+                _id: v._id,
+                cliente: nombreCliente || "General",
+                productos: v.productos,
+                descuentoEfectivo: v.descuentoEfectivo,
+                descuentoTarjeta: v.descuentoTarjeta,
+                dineroEntregadoEfectivo: v.dineroEntregadoEfectivo,
+                dineroEntregadoTarjeta: v.dineroEntregadoTarjeta,
+                precioVentaTotal: v.precioVentaTotal,
+                cambio: v.cambio,
+                tipo: v.tipo,
+                vendidoPor: v.vendidoPor,
+                modificadoPor: v.modificadoPor,
+                createdAt: v.createdAt,
+                updatedAt: v.updatedAt
+            }            
+            ventasFormatted.push(sale);
+        });
+        setVentas(ventasFormatted);
+    }
 
     const setPaginaActual = (page: number) => {
         if(page < 1) { return; }
@@ -72,11 +110,8 @@ export const SalesPage = () => {
                 </div>
             </div>
             <div className="flex flex-col h-full mt-4 pb-10">
-                <div className="bg-white grid grid-cols-5 justify-evenly  border-b-2 rounded-t-xl ">
+                <div className="bg-white grid grid-cols-4 justify-evenly  border-b-2 rounded-t-xl ">
                     <div className="px-5 py-3 border-gray-200 text-gray-800 text-left text-sm font-semibold">
-                        ID
-                    </div>
-                    <div className="py-3 border-gray-200 text-gray-800 text-left text-sm font-semibold">
                         Cliente
                     </div>
                     <div className="py-3 border-gray-200 text-gray-800 text-left text-sm font-semibold">
@@ -90,14 +125,13 @@ export const SalesPage = () => {
                     </div>
                 </div>
                 <div className="bg-white flex flex-col border-b-4 overflow-scroll overflow-x-hidden">
-                    {/* {productos.slice((elementsPerPage * (selectedPage - 1)), selectedPage * elementsPerPage).map((p) => {
+                    {ventas.slice((elementsPerPage * (selectedPage - 1)), selectedPage * elementsPerPage).map((v) => {
                         return(
-                            <div key={`FilaProdTable${p._id}`}>
-                                <FilaVenta img={p.img} nombre={p.nombre} familia={p.familia} precio={p.precioVenta} cantidad={p.cantidad} />
-
+                            <div key={`FilaProdTable${v._id}`}>
+                                <FilaVenta key={`FilaVenta${v._id}`} IDCompra={v._id} nombreCliente={v.cliente} fechaCompra={v.createdAt} metodoPago={v.tipo} valorTotal={v.precioVentaTotal} />
                             </div>
                         );
-                    })}                       */}
+                    })}                      
                 </div>
                 <div className="bg-white flex flex-row p-5 items-center justify-center rounded-b-xl shadow-lg">
                     <Paginador numPages={numPages} paginaActual={selectedPage} cambiarPaginaActual={setPaginaActual}/>
@@ -108,6 +142,9 @@ export const SalesPage = () => {
 }
 
 const Paginador = (props: {numPages: number, paginaActual:number, cambiarPaginaActual: Function}) => {
+    const maxPages = 10;
+    const numBtns = [...Array(props.numPages).keys()];
+
     return(
         <div className="flex items-center">
             <button className="w-full p-4 border text-base rounded-l-xl text-gray-600 bg-white hover:bg-gray-100"
@@ -117,16 +154,25 @@ const Paginador = (props: {numPages: number, paginaActual:number, cambiarPaginaA
                     </path>
                 </svg>
             </button>
-            {
-                [...Array(props.numPages).keys()].map((n) => {
+            {numBtns.map((n, index) => {
+                if(index == maxPages - 2 && numBtns.length >= maxPages) {
+                    return(
+                        <button key={`paginador${n}`} className={`w-full px-4 py-2 border-t border-b text-base ${n + 1 == props.paginaActual ? "text-blue-700 font-semibold bg-gray-200" : "text-gray-600 hover:bg-gray-100 bg-white" }`}
+                            onClick={() => {props.cambiarPaginaActual(n+1);}}>
+                            ...
+                        </button>
+                    );
+                }
+                else {
                     return(
                         <button key={`paginador${n}`} className={`w-full px-4 py-2 border-t border-b text-base ${n + 1 == props.paginaActual ? "text-blue-700 font-semibold bg-gray-200" : "text-gray-600 hover:bg-gray-100 bg-white" }`}
                             onClick={() => {props.cambiarPaginaActual(n+1);}}>
                             {n + 1}
                         </button>
                     );
-                })
-            }
+                }
+                
+            })}
             <button className="w-full p-4 border-t border-b border-r text-base rounded-r-xl text-gray-600 bg-white hover:bg-gray-100"
                 onClick={() => {props.cambiarPaginaActual(props.paginaActual + 1);}}>
                 <svg width="9" fill="currentColor" height="8" className="" viewBox="0 0 1792 1792" xmlns="http://www.w3.org/2000/svg">
@@ -140,32 +186,23 @@ const Paginador = (props: {numPages: number, paginaActual:number, cambiarPaginaA
 
 const FilaVenta = (props: {IDCompra: string, nombreCliente: string, fechaCompra: string, metodoPago: string, valorTotal: number}) => {
     return(
-        <div className="grid grid-cols-5 w-full justify-evenly gap-x-6">
-            <div className="px-5 py-5 border-t border-gray-200 text-sm">
-                <div className="flex items-center">
-                    <div className="ml-3">
-                        <p className="text-gray-900 whitespace-no-wrap inline-block">
-                            {props.IDCompra}
-                        </p>
-                    </div>
-                </div>
-            </div>
-            <div className="py-5 border-t border-gray-200 text-sm">
-                <p className="text-gray-900 whitespace-no-wrap">
+        <div className="grid grid-cols-4 w-full justify-evenly gap-x-6 border-t">
+            <div className="px-5 py-5 border-gray-200 text-sm">
+                <p className="text-gray-900">
                     {props.nombreCliente}
                 </p>
             </div>
-            <div className="py-5 border-t border-gray-200 text-sm">
+            <div className="py-5 border-gray-200 text-sm">
                 <p className="text-gray-900 whitespace-no-wrap">
                     {props.fechaCompra}
                 </p>
             </div>
-            <div className="py-5 border-t border-gray-200 text-sm">
+            <div className="py-5 border-gray-200 text-sm">
                 <p className="text-gray-900 whitespace-no-wrap">
                     {props.metodoPago}
                 </p>
             </div>
-            <div className="py-5 border-t border-gray-200 text-sm">
+            <div className="py-5 border-gray-200 text-lg">
                 <p className="text-gray-900 whitespace-no-wrap">
                     {props.valorTotal}€
                 </p>

@@ -27,7 +27,7 @@ const variants= {
   }
 
 export const ProductPage = () => {
-    const [productos, setProductos] = useState<DBProduct[]>([{} as DBProduct]);
+    const [productos, setProductos] = useState<DBProduct[]>([]);
     const [selectedPage, setPage] = useState<number>(1);
 
     const elementsPerPage = 10;
@@ -38,6 +38,7 @@ export const ProductPage = () => {
             const erpBackURL = process.env.REACT_APP_ERP_BACKURL;
             axios.get(`${erpBackURL}api/productos`).then(
                 (res) => {
+                    console.log(res.data.message);                    
                     setProductos([...res.data.message]);
                 }
             );
@@ -72,17 +73,17 @@ export const ProductPage = () => {
                 </div>
             </div>
             <div className="flex flex-col h-full mt-4 pb-10">
-                <div className="bg-white grid grid-cols-4 justify-evenly  border-b-2 rounded-t-xl ">
-                    <div className="px-5 py-3 border-gray-200 text-gray-800 text-left text-sm font-semibold">
+                <div className="bg-white grid grid-cols-4 justify-evenly rounded-t-xl border-b-2">
+                    <div className="px-5 py-3  text-gray-800 text-left text-sm font-semibold">
                         Nombre
                     </div>
-                    <div className="py-3 border-gray-200 text-gray-800 text-left text-sm font-semibold">
+                    <div className="py-3  text-gray-800 text-left text-sm font-semibold">
                         Familia
                     </div>
-                    <div className="py-3 border-gray-200 text-gray-800 text-left text-sm font-semibold">
+                    <div className="py-3  text-gray-800 text-left text-sm font-semibold">
                         Precio
                     </div>
-                    <div className="py-3 border-gray-200 text-gray-800 text-left text-sm font-semibold">
+                    <div className="py-3  text-gray-800 text-left text-sm font-semibold">
                         Cantidad
                     </div>
                 </div>
@@ -139,8 +140,8 @@ const FilaProducto = (props: {nombre: string, familia: string, precio: number, c
     const imagen = `data:image/(png|jpeg);base64,${ConvertBufferToBase64(props.img)}`
 
     return(
-        <div className="grid grid-cols-4 w-full justify-evenly gap-x-6">
-            <div className="px-5 py-5 border-t border-gray-200 text-sm">
+        <div className="grid grid-cols-4 w-full justify-evenly gap-x-6 border-t">
+            <div className="px-5 py-5 border-gray-200 text-sm">
                 <div className="flex items-center">
                     <div className="flex-shrink-0">
                         <a className="block relative">
@@ -154,17 +155,17 @@ const FilaProducto = (props: {nombre: string, familia: string, precio: number, c
                     </div>
                 </div>
             </div>
-            <div className="py-5 border-t border-gray-200 text-sm">
+            <div className="py-5 border-gray-200 text-sm">
                 <p className="text-gray-900 whitespace-no-wrap">
                     {props.familia}
                 </p>
             </div>
-            <div className="py-5 border-t border-gray-200 text-sm">
+            <div className="py-5 border-gray-200 text-sm">
                 <p className="text-gray-900 whitespace-no-wrap">
                     {props.precio}€
                 </p>
             </div>
-            <div className="py-5 border-t border-gray-200 text-sm">
+            <div className="py-5 border-gray-200 text-sm">
                 <span className="relative inline-block px-3 py-1 font-semibold text-green-900 leading-tight">
                     <span aria-hidden="true" className="absolute inset-0 bg-green-200 opacity-50 rounded-full">
                     </span>

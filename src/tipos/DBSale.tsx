@@ -1,16 +1,22 @@
-import { JSONBuffer } from "./JsonBuffer";
-
 export type DBSale = {
     _id: string,
-    nombre: string,
-    descripción: string,
-    familia: string,
-    precioVenta: number,
-    precioCompra: number,
-    iva: number,
-    ean: string[],
-    alta: boolean,
-    tags: string[],
-    img: JSONBuffer,
-    cantidad: number
+    productos: SoldProduct[],
+    dineroEntregadoEfectivo: number,
+    dineroEntregadoTarjeta: number,
+    precioVentaTotal: number,
+    cambio: number,
+    cliente: string,
+    vendidoPor: string,
+    modificadoPor: string,
+    tipo: string,
+    descuentoEfectivo: number,
+    descuentoTarjeta: number,
+    createdAt: string,
+    updatedAt: string
+}
+
+type SoldProduct = {
+    _id: string,
+    cantidad: number,
+    dto: number
 }
