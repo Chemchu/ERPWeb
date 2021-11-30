@@ -37,8 +37,7 @@ export const ProductPage = () => {
         const fetchProductos = () => {
             const erpBackURL = process.env.REACT_APP_ERP_BACKURL;
             axios.get(`${erpBackURL}api/productos`).then(
-                (res) => {
-                    console.log(res.data.message);                    
+                (res) => {          
                     setProductos([...res.data.message]);
                 }
             );

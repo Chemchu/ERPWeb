@@ -12,5 +12,6 @@ export type DBProduct = {
     alta: boolean,
     tags: string[],
     img: JSONBuffer,
-    cantidad: number
+    cantidad: number,
+    promociones?: string[]
 }
