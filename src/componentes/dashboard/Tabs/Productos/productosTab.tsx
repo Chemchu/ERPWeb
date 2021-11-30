@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import { DBProduct } from "../../../../tipos/DBProduct";
 import { JSONBuffer } from "../../../../tipos/JsonBuffer";
 import { ConvertBufferToBase64 } from "../../../../Validators";
+import { Paginador } from "../../../paginador";
 
 const variants= {
     initial: {
@@ -97,41 +98,10 @@ export const ProductPage = () => {
                     })}                      
                 </div>
                 <div className="bg-white flex flex-row p-5 items-center justify-center rounded-b-xl shadow-lg">
-                    <Paginador numPages={numPages} paginaActual={selectedPage} cambiarPaginaActual={setPaginaActual}/>
+                    <Paginador numPages={numPages} paginaActual={selectedPage} maxPages={10} cambiarPaginaActual={setPaginaActual}/>
                 </div>
             </div>
         </motion.div>
-    );
-}
-
-const Paginador = (props: {numPages: number, paginaActual:number, cambiarPaginaActual: Function}) => {
-    return(
-        <div className="flex items-center">
-            <button className="w-full p-4 border text-base rounded-l-xl text-gray-600 bg-white hover:bg-gray-100"
-                onClick={() => {props.cambiarPaginaActual(props.paginaActual - 1);}}>
-                <svg width="9" fill="currentColor" height="8" className="" viewBox="0 0 1792 1792" xmlns="http://www.w3.org/2000/svg">
-                    <path d="M1427 301l-531 531 531 531q19 19 19 45t-19 45l-166 166q-19 19-45 19t-45-19l-742-742q-19-19-19-45t19-45l742-742q19-19 45-19t45 19l166 166q19 19 19 45t-19 45z">
-                    </path>
-                </svg>
-            </button>
-            {
-                [...Array(props.numPages).keys()].map((n) => {
-                    return(
-                        <button key={`paginador${n}`} className={`w-full px-4 py-2 border-t border-b text-base ${n + 1 == props.paginaActual ? "text-blue-700 font-semibold bg-gray-200" : "text-gray-600 hover:bg-gray-100 bg-white" }`}
-                            onClick={() => {props.cambiarPaginaActual(n+1);}}>
-                            {n + 1}
-                        </button>
-                    );
-                })
-            }
-            <button className="w-full p-4 border-t border-b border-r text-base rounded-r-xl text-gray-600 bg-white hover:bg-gray-100"
-                onClick={() => {props.cambiarPaginaActual(props.paginaActual + 1);}}>
-                <svg width="9" fill="currentColor" height="8" className="" viewBox="0 0 1792 1792" xmlns="http://www.w3.org/2000/svg">
-                    <path d="M1363 877l-742 742q-19 19-45 19t-45-19l-166-166q-19-19-19-45t19-45l531-531-531-531q-19-19-19-45t19-45l166-166q19-19 45-19t45 19l742 742q19 19 19 45t-19 45z">
-                    </path>
-                </svg>
-            </button>
-        </div>
     );
 }
 
