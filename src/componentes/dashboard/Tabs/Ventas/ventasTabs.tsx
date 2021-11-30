@@ -143,8 +143,19 @@ export const SalesPage = () => {
 
 const Paginador = (props: {numPages: number, paginaActual: number, cambiarPaginaActual: Function}) => {
     const maxPages = 10;
+    const offset = props.paginaActual > Math.ceil(maxPages / 2) + 1 ? props.paginaActual - (Math.ceil(maxPages/ 2) + 1 ) : 0;
     const numBtns = [...Array(props.numPages).keys()];
-    const offset = props.paginaActual > Math.ceil(maxPages / 2) + 1 ? props.paginaActual - (Math.ceil(maxPages/ 2) + 1 ): 0
+    const sliceLength = numBtns.slice(offset, offset + maxPages).length;
+
+    function slice2(array: number[], chunk: number, offset: number){
+        var end = offset + chunk,
+            out = array.slice(offset, end);  // Get the chunk
+        if(array.length < end){              // If the chunk should wrap
+            out = out.concat(array.slice(0, end - array.length)); // Concatenate a the rest of the chunk, from the start of the array, to the output.
+        }
+        return out;
+    }
+
 
     return(
         <div className="flex items-center">
@@ -155,22 +166,27 @@ const Paginador = (props: {numPages: number, paginaActual: number, cambiarPagina
                     </path>
                 </svg>
             </button>
-            { 
-                numBtns.map((n, index) => {
-                console.log(offset);
-                
-                if(index >= maxPages) {return;}
-                if(index + 1 + offset > props.numPages) {return;}
-
-                return(
-                    <button key={`paginador${n}`} className={`w-full px-4 py-2 border-t border-b text-base ${n + 1 + offset == props.paginaActual ? "text-blue-700 font-semibold bg-gray-200" : "text-gray-600 hover:bg-gray-100 bg-white" }`}
-                        onClick={() => {props.cambiarPaginaActual(n+1+offset);}}>
-                        {n + 1 + offset}
-                    </button>
-                );   
-            })
-                    
+            {
+                sliceLength < maxPages ? 
+                numBtns.slice(props.numPages - maxPages, props.numPages).map((n) => {
+                    return(
+                        <button key={`paginador${n}`} className={`w-full px-4 py-2 border-t border-b text-base ${n + 1 == props.paginaActual ? "text-blue-700 font-semibold bg-gray-200" : "text-gray-600 hover:bg-gray-100 bg-white" }`}
+                            onClick={() => {props.cambiarPaginaActual(n+1);}}>
+                            {n + 1}
+                        </button>
+                    );   
+                })
+                :
+                numBtns.slice(offset, offset + maxPages).map((n) => {
+                    return(
+                        <button key={`paginador${n}`} className={`w-full px-4 py-2 border-t border-b text-base ${n + 1 == props.paginaActual ? "text-blue-700 font-semibold bg-gray-200" : "text-gray-600 hover:bg-gray-100 bg-white" }`}
+                            onClick={() => {props.cambiarPaginaActual(n+1);}}>
+                            {n + 1}
+                        </button>
+                    );   
+                })
             }
+            
             <button className="w-full p-4 border text-base rounded-r-xl text-gray-600 bg-white hover:bg-gray-100"
                 onClick={() => {props.cambiarPaginaActual(props.paginaActual + 1);}}>
                 <svg width="9" fill="currentColor" height="8" className="" viewBox="0 0 1792 1792" xmlns="http://www.w3.org/2000/svg">
