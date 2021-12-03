@@ -326,7 +326,7 @@ const CarritoConProductos = (props: {productos: SelectedProduct[], precioTotal: 
             <div className="text-center p-4 mb-4">
                 <div>
                     {descuentoOpen &&                     
-                        <div className="h-auto">
+                        <div className="h-auto border-t-2 border-2 p-2 border-blue-400 rounded-xl">
                             <div className="flex text-left text-sm">
                                 <div className="flex self-center gap-4">
                                     <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -356,7 +356,6 @@ const CarritoConProductos = (props: {productos: SelectedProduct[], precioTotal: 
                                     </div>
                                 </div>
                             </div>
-                            <hr className="border-black w-full py-2 mt-4"/>
                         </div>
                     }
                     <div className="flex flex-col text-left text-lg font-semibold hover:text-blue-500 underline cursor-pointer" onClick={() => setDescuentoPupup(!descuentoOpen)}>

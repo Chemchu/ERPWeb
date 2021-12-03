@@ -65,7 +65,7 @@ export const ProductSelectedCard = React.memo((props: SelectedProduct) => {
                                     <p className="text-xs block">{(props.precioVenta * parseInt(prod.cantidad)).toFixed(2)}€</p>
                                     :
                                     <div className="flex-grow-0">
-                                        <p className="text-xs inline-block line-through">{(props.precioVenta * parseInt(prod.cantidad)).toFixed(2)}€</p>
+                                        <p className="text-xs inline-block line-through text-red-700">{(props.precioVenta * parseInt(prod.cantidad)).toFixed(2)}€</p>
                                         <span className="pl-2 text-sm font-semibold inline-block">{((props.precioVenta * parseInt(prod.cantidad)) * (1 - (prod.dto/100))).toFixed(2) }€</span>
                                     </div>
                                 }

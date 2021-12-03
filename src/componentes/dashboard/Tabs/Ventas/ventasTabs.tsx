@@ -2,10 +2,7 @@ import axios from "axios";
 import { motion } from "framer-motion";
 import { useEffect, useState } from "react";
 import { DBClient } from "../../../../tipos/DBClientes";
-import { DBProduct } from "../../../../tipos/DBProduct";
 import { DBSale } from "../../../../tipos/DBSale";
-import { JSONBuffer } from "../../../../tipos/JsonBuffer";
-import { ConvertBufferToBase64 } from "../../../../Validators";
 import { Paginador } from "../../../paginador";
 
 const variants= {
@@ -38,26 +35,20 @@ export const SalesPage = () => {
     const numPages = ventas.length <= 0 ? 1 : Math.ceil(ventas.length / elementsPerPage);
 
     useEffect(() => {
-        const fetchClientes = async () => {
-            const erpBackURL = process.env.REACT_APP_ERP_BACKURL;
+        const erpBackURL = process.env.REACT_APP_ERP_BACKURL;
 
+        const fetchClientes = async () => {
             const resClientes = await axios.get(`${erpBackURL}api/clientes`);
             setClientes([...resClientes.data.message]);      
         };
-        fetchClientes();
-    }, []);
 
-    useEffect(() => {
         const fetchVentas = async () => {
-            const erpBackURL = process.env.REACT_APP_ERP_BACKURL;
-
             const resVentas = await axios.get(`${erpBackURL}api/ventas`)
-            UpdateVentas([...resVentas.data.message], clientes);
+            UpdateVentas([...resVentas.data.message].reverse(), clientes);
         };
-        fetchVentas();        
-    }, [clientes]);
-
-    
+        fetchClientes();
+        fetchVentas();
+    }, []);    
 
     const UpdateVentas = (ventas: Array<any>, clientes: DBClient[]): void => {
         let ventasFormatted: Array<DBSale> = [];
