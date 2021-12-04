@@ -245,7 +245,7 @@ const GenerarProductsCards = (props: FilteredProds) => {
                         onClick={(e)=> {SetProductos(
                             {_id: e.currentTarget.id, cantidad: "1", dto: 0, ean: prod.ean, familia: prod.familia, img: prod.img, precioVenta: prod.precioVenta,
                              nombre: prod.nombre, operacionMod: OpModificacionProducto.Añadir} as SelectedProduct);} }>
-                        <ProductCard _id={prod._id} alta={prod.alta} descripción={prod.descripción} ean={prod.ean} familia={prod.familia}
+                        <ProductCard _id={prod._id} alta={prod.alta} descripcion={prod.descripcion} ean={prod.ean} familia={prod.familia}
                                         nombre={prod.nombre} precioVenta={prod.precioVenta} img={prod.img} 
                                         iva={prod.iva} precioCompra={prod.precioCompra} tags={prod.tags} cantidad={prod.cantidad} promociones={prod.promociones}/>
                     </button>

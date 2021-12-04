@@ -3,7 +3,7 @@ import { JSONBuffer } from "./JsonBuffer";
 export type DBProduct = {
     _id: string,
     nombre: string,
-    descripción: string,
+    descripcion: string,
     familia: string,
     precioVenta: number,
     precioCompra: number,

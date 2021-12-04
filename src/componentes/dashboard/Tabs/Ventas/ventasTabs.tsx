@@ -29,7 +29,7 @@ const variants= {
 export const SalesPage = () => {
     const [ventas, setVentas] = useState<DBSale[]>([]);
     const [clientes, setClientes] = useState<DBClient[]>([]);
-    const [selectedPage, setPage] = useState<number>(1);
+    const [currentPage, setCurrentPage] = useState<number>(1);
 
     const elementsPerPage = 10;
     const numPages = ventas.length <= 0 ? 1 : Math.ceil(ventas.length / elementsPerPage);
@@ -79,7 +79,7 @@ export const SalesPage = () => {
         if(page < 1) { return; }
         if(page > numPages) { return; }
 
-        setPage(page);
+        setCurrentPage(page);
     }
 
     return(
@@ -117,7 +117,7 @@ export const SalesPage = () => {
                     </div>
                 </div>
                 <div className="bg-white flex flex-col border-b-4 overflow-scroll overflow-x-hidden">
-                    {ventas.slice((elementsPerPage * (selectedPage - 1)), selectedPage * elementsPerPage).map((v) => {
+                    {ventas.slice((elementsPerPage * (currentPage - 1)), currentPage * elementsPerPage).map((v) => {
                         return(
                             <div key={`FilaProdTable${v._id}`}>
                                 <FilaVenta key={`FilaVenta${v._id}`} IDCompra={v._id} nombreCliente={v.cliente} fechaCompra={v.createdAt} metodoPago={v.tipo} valorTotal={v.precioVentaTotal} />
@@ -126,7 +126,7 @@ export const SalesPage = () => {
                     })}                      
                 </div>
                 <div className="bg-white flex flex-row p-5 items-center justify-center rounded-b-xl shadow-lg">
-                    <Paginador numPages={numPages} paginaActual={selectedPage} maxPages={10} cambiarPaginaActual={setPaginaActual}/>
+                    <Paginador numPages={numPages} paginaActual={currentPage} maxPages={10} cambiarPaginaActual={setPaginaActual}/>
                 </div>
             </div>
         </motion.div>

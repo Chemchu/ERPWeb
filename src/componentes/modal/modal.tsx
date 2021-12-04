@@ -10,6 +10,8 @@ import axios from "axios";
 import { useSelectedProducts } from "../dashboard/Tabs/pointOfSale/productsContext";
 import AutoComplete from "../autocomplete/autocomplete";
 import { Input } from "../input/input";
+import { DBProduct } from "../../tipos/DBProduct";
+import { ConvertBufferToBase64 } from "../../Validators";
 
 const In = {
     hidden: {
@@ -329,6 +331,36 @@ export const ModalInput = (props: {handleClose: Function, value: string, setValu
                 </div>
             </Backdrop>
         </div>
+    );
+}
+
+export const ModalEditarProducto = (props: {product: DBProduct, handleClose: Function}) => {
+    return(
+        <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity:0 }} >
+            <Backdrop onClick={(e) => { e.stopPropagation(); props.handleClose()}} >
+                <motion.div className="m-auto py-2 flex flex-col items-center bg-white rounded-2xl" 
+                    onClick={(e) => e.stopPropagation()} 
+                    variants={In} 
+                    initial="hidden"
+                    animate="visible"
+                    exit="exit"
+                >     
+                    <div className="grid grid-rows-3 h-full w-full">
+                        <div className="flex justify-around">
+                            <div className="text-lg">
+                                <img alt="profil" src={`data:image/(png|jpeg);base64,${ConvertBufferToBase64(props.product.img)}`} className="mx-auto object-cover rounded-full h-32 w-32 border-2 border-gray-400"/>
+                            </div>
+                        </div>
+                        <div className="">
+                            {props.product.nombre}
+                        </div>
+                        <div className="bg-red-500">
+                            
+                        </div>
+                    </div>
+                </motion.div>
+            </Backdrop>        
+        </motion.div>
     );
 }
 
