@@ -64,7 +64,7 @@ const POSComponent = () => {
 
     useEffect(() => {
         const fetchProductos = () => {
-            const erpBackURL = process.env.REACT_APP_ERP_BACKURL;
+            const erpBackURL = process.env.ERP_BACKURL;
             axios.get(`${erpBackURL}api/productos`).then(
                 (res) => {
                     SetAllProductos([...res.data.message]);
