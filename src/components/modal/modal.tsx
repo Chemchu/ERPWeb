@@ -1,17 +1,17 @@
 import { Backdrop } from "../backdrop.js/dropdown";
 import { AnimatePresence, motion } from "framer-motion";
 import { useState } from "react";
-import { useDBClients } from "../dashboard/Tabs/pointOfSale/clientContext";
 import { ModalPagarProps, ModalResumenProps } from "../../tipos/ModalProps";
 import { InputNumber } from "../input/inputDinero";
 import { CustomerPaymentInformation } from "../../tipos/CustomerPayment";
 import { TipoCobro } from "../../tipos/Enums/TipoCobro";
 import axios from "axios";
-import { useSelectedProducts } from "../dashboard/Tabs/pointOfSale/productsContext";
 import AutoComplete from "../autocomplete/autocomplete";
 import { Input } from "../input/input";
 import { DBProduct } from "../../tipos/DBProduct";
-import { ConvertBufferToBase64 } from "../../Validators";
+import { useDBClients } from "../Tabs/pointOfSale/clientContext";
+import { useSelectedProducts } from "../Tabs/pointOfSale/productsContext";
+import { ConvertBufferToBase64 } from "../../pages/api/validator";
 
 const In = {
     hidden: {

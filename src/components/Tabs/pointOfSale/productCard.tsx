@@ -4,7 +4,7 @@ import React, { useState } from 'react';
 import { DBProduct } from '../../../tipos/DBProduct';
 import { SelectedProduct } from '../../../tipos/SelectedProduct';
 import { OpModificacionProducto } from '../../../tipos/Enums/OpModificaciones';
-import { ConvertBufferToBase64 } from '../../../../Validators';
+import { ConvertBufferToBase64 } from '../../../pages/api/validator';
 
 
 export const ProductCard = (props: DBProduct) => {

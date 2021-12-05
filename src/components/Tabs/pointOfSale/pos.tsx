@@ -3,7 +3,6 @@ import {ProductCard, ProductSelectedCard} from './productCard';
 import {POSProvider, useDBProducts, usePrice, useConsumerMoney, useSelectedProducts} from './productsContext';
 import axios from 'axios';
 import { AnimatePresence, motion } from 'framer-motion'; 
-import { ModalPagar, ModalResumenCompra } from '../../../modal/modal';
 import ClientProvider, { useDBClients } from './clientContext';
 import { DBProduct } from '../../../tipos/DBProduct';
 import { FilteredProds } from '../../../tipos/FilteredProducts';
@@ -12,7 +11,8 @@ import { CustomerPaymentInformation } from '../../../tipos/CustomerPayment';
 import { OpModificacionProducto } from '../../../tipos/Enums/OpModificaciones';
 import { SelectedProduct } from '../../../tipos/SelectedProduct';
 import { TipoCobro } from '../../../tipos/Enums/TipoCobro';
-import { ApplyDtoCash, ApplyDtoPercentage, ValidatePositiveFloatingNumber } from '../../../../Validators';
+import { ModalPagar, ModalResumenCompra } from '../../modal/modal';
+import { ApplyDtoCash, ApplyDtoPercentage, ValidatePositiveFloatingNumber } from '../../../pages/api/validator';
 
 const variants= {
     initial: {
