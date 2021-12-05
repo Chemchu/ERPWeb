@@ -2,7 +2,36 @@ module.exports = {
   purge: ['./src/**/*.{js,jsx,ts,tsx}', './public/index.html'],
   darkMode: false, // or 'media' or 'class'
   theme: {
+    fontFamily: {
+    'sans': ["'Roboto Condensed'",'Lato', 'sans-serif', 'system-ui' ],
+    'serif': ['serif', 'Georgia'],
+    'mono': ['monospace', 'SFMono-Regular'],
+    'display': ['Oswald'],
+    'body': ['"Open Sans"'],
+   },
     extend: {
+      height: {
+      "10v": "10vh",
+      "15v": "15vh",
+      "20v": "20vh",
+      "25v": "25vh",      
+      "30v": "30vh",
+      "35v": "35vh",
+      "40v": "40vh",
+      "45v": "45vh",
+      "50v": "50vh",
+      "55v": "55vh",
+      "60v": "60vh",
+      "65v": "65vh",
+      "70v": "70vh",
+      "75v": "75vh",
+      "80v": "80vh",
+      "85v": "85vh",
+      "90v": "90vh",
+      "95v": "95vh",
+      "100v": "100vh",
+      
+    },
       backgroundImage: {
         'supermarket1': "url('/src/img/market-1.jpg')",
         'supermarket2': "url('/src/img/market-2.jpg')",
@@ -21,5 +50,5 @@ module.exports = {
   variants: {
     extend: {},
   },
-  plugins: [],
+  plugins: [require("@tailwindcss/line-clamp")],
 }

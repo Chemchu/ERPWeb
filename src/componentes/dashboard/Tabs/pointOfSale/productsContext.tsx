@@ -1,7 +1,8 @@
 import { PropsWithChildren, ReactElement } from 'react';
 import { useState, createContext, useContext, useEffect } from 'react'
-import { DBProduct } from '../../tipos/DBProduct';
-import { SelectedProduct } from '../../tipos/SelectedProduct';
+import { DBProduct } from '../../../../tipos/DBProduct';
+import { OpModificacionProducto } from '../../../../tipos/Enums/OpModificaciones';
+import { SelectedProduct } from '../../../../tipos/SelectedProduct';
 
 const ProductsContext = createContext<[DBProduct[], Function]>({} as [DBProduct[], Function]);
 const SelectedProductsContext = createContext<[SelectedProduct[], Function]>({} as [SelectedProduct[], Function]);
@@ -38,12 +39,12 @@ export const POSProvider= (props: PropsWithChildren<ReactElement>) => {
     useEffect(() => {
         if(productos.length <= 0) setDineroEntregado("0");        
 
-        let precioTotal = 0;
+        let precio = 0;
         productos.forEach(prodActual => {
-            precioTotal += (Number(prodActual.cantidad) * prodActual.precioVenta * (isNaN(prodActual.dto) ? 1 : 1 - (prodActual.dto/100)) ); 
+            precio += (Number(prodActual.cantidad) * prodActual.precioVenta * (isNaN(prodActual.dto) ? 1 : 1 - (prodActual.dto/100)) ); 
         });
 
-        setPrecioTotal(Number(precioTotal.toFixed(2)));
+        setPrecioTotal(Number(precio.toFixed(2)));
     },[productos]);
 
     const SetProductosSeleccionados = (productRawObject: SelectedProduct) => {
@@ -67,7 +68,7 @@ export const POSProvider= (props: PropsWithChildren<ReactElement>) => {
             if(!prodToAdd) prodToAdd = productRawObject;
             
             switch(productRawObject.operacionMod) {
-                case "suma":
+                case OpModificacionProducto.Suma:
                     if(!Number.isInteger(Number(productRawObject.cantidad))){
                         prodToAdd.cantidad = "1";
                     }
@@ -76,7 +77,7 @@ export const POSProvider= (props: PropsWithChildren<ReactElement>) => {
                     }
                     break;
                 
-                case "resta":
+                case OpModificacionProducto.Resta:
                     if(!Number.isInteger(Number(productRawObject.cantidad))){
                         prodToAdd.cantidad = "0";
                     }
@@ -85,11 +86,11 @@ export const POSProvider= (props: PropsWithChildren<ReactElement>) => {
                     }
                     break;
 
-                case "escritura": 
+                case OpModificacionProducto.Escritura: 
                     prodToAdd.cantidad = !Number.isInteger(Number(productRawObject.cantidad)) ? "" : productRawObject.cantidad;
                     break;
 
-                case "add": 
+                case OpModificacionProducto.Añadir: 
                     if(prodsRepes.length > 0) {
                         prodToAdd.cantidad = (Number(prodToAdd.cantidad) + 1).toString();
                     }
@@ -98,13 +99,14 @@ export const POSProvider= (props: PropsWithChildren<ReactElement>) => {
                     }
                     break;
 
-                case "descuento": 
+                case OpModificacionProducto.Descuento: 
                     if(prodsRepes.length > 0) {
                         prodToAdd.dto = productRawObject.dto >= 0 && productRawObject.dto <= 100 ? productRawObject.dto : prodToAdd.dto;
                     }
                     break;
 
                 default:
+                    console.log(productRawObject.operacionMod);
                     console.log("Default en switch, no debería de ir por aquí");
 
             }
@@ -134,8 +136,7 @@ export const POSProvider= (props: PropsWithChildren<ReactElement>) => {
     }
 
     const SetDineroCliente = (dineroDelCliente: string) => {
-        if(!dineroDelCliente.match("^[+-]?([0-9]+([.][0-9]*)?|[.][0-9]+)$")) dineroDelCliente = dineroDelCliente.substring(0, dineroDelCliente.length - 1);
-
+        if(!dineroDelCliente.match("^[+-]?([0-9]+([.][0-9]*)?|[.][0-9]+)$") && dineroDelCliente != "") return;
         setDineroEntregado(dineroDelCliente);
     }
 

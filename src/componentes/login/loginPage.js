@@ -49,7 +49,7 @@ const exitVariant= {
 // Se elige 6 como maximo y 1 como minimo porq hay 5 fotos diferentes de bg (6 exclusivo)
 const randomBg =  "bg-supermarket" + Math.floor(Math.random() * (6 - 1) + 1).toString();
 
-function LoginPage() {
+const LoginPage = () => {
     const [username, setUsername] = useState("");
     const [password, setPassword] = useState("");
     const [autheticationFailed, setAuthenticationFailed] = useState(false);
@@ -81,7 +81,6 @@ function LoginPage() {
     }   
 
     return(
-        // 
         <motion.div className="bg-black w-full h-full items-center " exit={exitVariant.exit} variants={exitVariant} >
             <motion.div className= {`inset-0 flex items-center min-h-screen bg-no-repeat bg-top justify-center sm:py-12 bg-cover ${randomBg}`} 
                 variants={exitVariant} initial={ exitVariant.initial } animate={exitVariant.animate} > 
