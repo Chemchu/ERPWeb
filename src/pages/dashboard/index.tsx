@@ -5,7 +5,7 @@ import { Inicio } from '../../components/Tabs/Inicio/inicio';
 import React, { useState } from "react";
 import SideBar from "../../components/sidebar/sidebar";
 
-const Dashboard = () => {
+const Dashboard = (props: any) => {
   // let { path, url } = useRouteMatch();
   // const location = useLocation();
   const [isSidebarCollapsed, setSidebarCollapsed] = useState(false);
@@ -25,6 +25,7 @@ const Dashboard = () => {
               <Route key={`${url}/sales`} path={`${url}/sales`} exact children={<SalesPage/>} />
               <Route key={`${url}/help`} path={`${url}/help`} exact children={<div>Ayuda</div>} />
             </Switch> */}
+            {props.children}
           </div>
         </div>
     </main>
