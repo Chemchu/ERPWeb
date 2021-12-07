@@ -1,10 +1,11 @@
 import { AppContext } from "next/app";
-import { POS } from "../../../components/Tabs/pointOfSale/pos";
+import React from "react";
+import TPV from "../../../components/Tabs/pointOfSale/tpv";
 import { config } from "../../api/config";
 
-const TPV = (props: { productos: any, clientes: any }) => {
+const PuntoDeVenta = (props: { productos: any, clientes: any }) => {
     return (
-        <POS productos={props.productos} clientes={props.clientes} />
+        <TPV clientes={props.clientes} productos={props.productos} />
     );
 }
 
@@ -22,4 +23,4 @@ export async function getServerSideProps(context: AppContext) {
     }
 }
 
-export default TPV;
+export default PuntoDeVenta;

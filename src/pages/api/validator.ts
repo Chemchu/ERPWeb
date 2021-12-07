@@ -1,12 +1,5 @@
 import { JSONBuffer } from "../../tipos/JsonBuffer";
 
-export const ValidatePositiveFloatingNumber = (inputNumber: string): string => {
-    const valuePostRegex = inputNumber.match(new RegExp("[+]?([0-9]+([.][0-9]*)?|[.][0-9]+)"))?.[0];
-    if (valuePostRegex == undefined) { return ""; }
-
-    return valuePostRegex;
-}
-
 // Aplica un descuento de efectivo (descontar 5€ de una compra por ejemplo)
 export const ApplyDtoCash = (totalValue: number, dto: number): number => {
     totalValue - dto <= 0 ? totalValue = 0 : totalValue = totalValue - dto;
@@ -38,4 +31,18 @@ export const ValidateString = (cadena: string): string | undefined => {
 
     if (res) return res[0];
     else return undefined;
+}
+
+export const ValidatePositiveFloatingNumber = (inputNumber: string): string => {
+    const valuePostRegex = inputNumber.match(new RegExp("[+]?([0-9]+([.][0-9]*)?|[.][0-9]+)"))?.[0];
+    if (valuePostRegex == undefined) { return ""; }
+
+    return valuePostRegex;
+}
+
+export const ValidatePositiveIntegerNumber = (inputNumber: string): string => {
+    const valuePostRegex = inputNumber.match(new RegExp("^[+]?\d+?$"))?.[0];
+    if (valuePostRegex == undefined) { return ""; }
+
+    return valuePostRegex;
 }

@@ -5,6 +5,7 @@ import { Producto } from '../../../tipos/DBProduct';
 import { SelectedProduct } from '../../../tipos/SelectedProduct';
 import { OpModificacionProducto } from '../../../tipos/Enums/OpModificaciones';
 import { ConvertBufferToBase64 } from '../../../pages/api/validator';
+import { ProductoEnCarrito } from '../../../tipos/ProductoEnCarrito';
 
 
 export const ProductCard = (props: Producto) => {
@@ -27,8 +28,7 @@ export const ProductCard = (props: Producto) => {
     );
 }
 
-export const ProductSelectedCard = React.memo((props: { producto: Producto, cantidad: number, dto: number }) => {
-    const [productos, AddProductos] = useSelectedProducts();
+export const ProductSelectedCard = React.memo((props: { producto: Producto, setPropiedadProd: Function, cantidad: number, dto: number }) => {
     const [productImage, setProductImage] = useState<string>(`data:image/(png|jpeg);base64,${ConvertBufferToBase64(props.producto.img)}`);
     const [isOpen, setOpen] = useState<boolean>(false);
 
@@ -38,27 +38,20 @@ export const ProductSelectedCard = React.memo((props: { producto: Producto, cant
 
     const DeleteSelectedProd = (e: React.MouseEvent<HTMLElement>) => {
         e.stopPropagation();
-        AddProductos({
-            _id: e.currentTarget.id, cantidad: "0", dto: 0, nombre: "", img: props.producto.img,
-            precioVenta: 0, ean: [""], familia: "", operacionMod: OpModificacionProducto.Resta
-        } as SelectedProduct);
+        props.setPropiedadProd(props.producto._id, 0, props.dto);
     }
 
     {
-        let prod = productos.filter((p: SelectedProduct) => p._id == props.producto._id)[0];
-        return (parseInt(prod.cantidad) > 0 || prod.cantidad == "") ?
-
+        let prod: ProductoEnCarrito = { producto: props.producto, cantidad: props.cantidad, dto: props.dto } as ProductoEnCarrito;
+        return (prod.cantidad > 0) ?
             <div className="flex flex-col flex-grow h-full w-full cursor-pointer" onClick={() => { setOpen(!isOpen) }}>
                 <div className={`flex justify-start ${isOpen ? "bg-blue-300 " : "bg-gray-200 hover:bg-gray-300 "} rounded-lg h-full w-full gap-x-4 p-2`}>
                     {/* <div className="self-center font-semibold">{prod.cantidad}</div> */}
 
-                    <input className="bg-white w-8 h-8 rounded-lg text-center self-center font-semibold shadow focus:outline-none focus:shadow-lg text-sm" type="text" inputMode="numeric" value={productos.filter((p: SelectedProduct) => p._id == props.producto._id)[0].cantidad}
+                    <input className="bg-white w-8 h-8 rounded-lg text-center self-center font-semibold shadow focus:outline-none focus:shadow-lg text-sm" type="text" inputMode="numeric" value={prod.cantidad}
                         onClick={(e) => { e.stopPropagation() }}
                         onChange={(e) => {
-                            AddProductos({
-                                _id: prod._id, cantidad: e.target.value, dto: prod.dto, nombre: prod.nombre,
-                                precioVenta: prod.precioVenta, ean: prod.ean, familia: prod.familia, img: prod.img, operacionMod: OpModificacionProducto.Escritura
-                            } as SelectedProduct);
+                            props.setPropiedadProd(props.producto._id, e.target.value, props.dto);
                         }} />
 
                     <div className="flex flex-row">
@@ -68,18 +61,18 @@ export const ProductSelectedCard = React.memo((props: { producto: Producto, cant
                                 <p className="text-sm truncate font-semibold">{props.producto.nombre}</p>
                                 {
                                     isNaN(prod.dto) || prod.dto == 0 ?
-                                        <p className="text-xs block">{(props.producto.precioVenta * parseInt(prod.cantidad)).toFixed(2)}€</p>
+                                        <p className="text-xs block">{(props.producto.precioVenta * prod.cantidad).toFixed(2)}€</p>
                                         :
                                         <div className="flex-grow-0">
-                                            <p className="text-xs inline-block line-through text-red-700">{(props.producto.precioVenta * parseInt(prod.cantidad)).toFixed(2)}€</p>
-                                            <span className="pl-2 text-sm font-semibold inline-block">{((props.producto.precioVenta * parseInt(prod.cantidad)) * (1 - (prod.dto / 100))).toFixed(2)}€</span>
+                                            <p className="text-xs inline-block line-through text-red-700">{(props.producto.precioVenta * prod.cantidad).toFixed(2)}€</p>
+                                            <span className="pl-2 text-sm font-semibold inline-block">{((props.producto.precioVenta * prod.cantidad) * (1 - (prod.dto / 100))).toFixed(2)}€</span>
                                         </div>
                                 }
                             </div>
                         </div>
                     </div>
 
-                    <button id={prod._id} className="ml-auto self-center hover:text-red-700" onClick={DeleteSelectedProd}>
+                    <button id={prod.producto._id} className="ml-auto self-center hover:text-red-700" onClick={DeleteSelectedProd}>
                         <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z" />
                         </svg>
@@ -96,10 +89,7 @@ export const ProductSelectedCard = React.memo((props: { producto: Producto, cant
                                 <motion.button whileTap={{ scale: 0.9 }} id={props.producto._id} className="rounded-lg text-center w-8 h-8 py-1 text-white bg-gray-500 hover:bg-gray-700 focus:outline-none"
                                     onClick={(e) => {
                                         e.stopPropagation();
-                                        AddProductos({
-                                            _id: prod._id, cantidad: "1", dto: prod.dto, nombre: prod.nombre,
-                                            precioVenta: prod.precioVenta, ean: prod.ean, familia: prod.familia, img: prod.img, operacionMod: OpModificacionProducto.Suma
-                                        } as SelectedProduct);
+                                        props.setPropiedadProd(props.producto._id, props.cantidad + 1, props.dto);
                                     }}>
                                     <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-3 inline-block" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
@@ -110,10 +100,7 @@ export const ProductSelectedCard = React.memo((props: { producto: Producto, cant
                                 <motion.button whileTap={{ scale: 0.9 }} className="rounded-lg text-center w-8 h-8 py-1 text-white bg-gray-500 hover:bg-gray-700 focus:outline-none"
                                     onClick={(e) => {
                                         e.stopPropagation();
-                                        AddProductos({
-                                            _id: prod._id, cantidad: "-1", dto: prod.dto, nombre: prod.nombre,
-                                            precioVenta: prod.precioVenta, ean: prod.ean, familia: prod.familia, img: prod.img, operacionMod: OpModificacionProducto.Resta
-                                        } as SelectedProduct);
+                                        props.setPropiedadProd(props.producto._id, props.cantidad - 1, props.dto);
                                     }}>
                                     <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-3 inline-block" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M20 12H4" />
@@ -128,10 +115,8 @@ export const ProductSelectedCard = React.memo((props: { producto: Producto, cant
                             <div className="inline-block align-middle grid-rows-1 self-end">
                                 <input type="text" inputMode="numeric" className="text-xs text-center rounded-lg w-10 h-6 shadow"
                                     value={prod.dto} onClick={(e) => { e.stopPropagation(); }} onChange={(e) => {
-                                        e.stopPropagation(); AddProductos({
-                                            _id: props.producto._id, cantidad: prod.cantidad, dto: Number(Number(e.target.value).toFixed(2)),
-                                            ean: prod.ean, familia: prod.familia, img: prod.img, nombre: prod.nombre, operacionMod: OpModificacionProducto.Descuento, precioVenta: prod.precioVenta
-                                        } as SelectedProduct)
+                                        e.stopPropagation();
+                                        props.setPropiedadProd(props.producto._id, props.cantidad, e.target.value);
                                     }} />
                                 <> %</>
                             </div>
