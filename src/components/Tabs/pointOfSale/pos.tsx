@@ -1,4 +1,4 @@
-import { useState, useEffect, memo } from 'react';
+import React, { useState, useEffect, memo } from 'react';
 import { ProductCard, ProductSelectedCard } from './productCard';
 import { POSProvider, useDBProducts, usePrice, useConsumerMoney, useSelectedProducts } from './productsContext';
 import { AnimatePresence, motion } from 'framer-motion';
@@ -12,6 +12,7 @@ import { SelectedProduct } from '../../../tipos/SelectedProduct';
 import { TipoCobro } from '../../../tipos/Enums/TipoCobro';
 import { ModalPagar, ModalResumenCompra } from '../../modal/modal';
 import { ApplyDtoCash, ApplyDtoPercentage, ValidatePositiveFloatingNumber } from '../../../pages/api/validator';
+import TPV from './tpv';
 
 const variants = {
     initial: {
@@ -34,12 +35,13 @@ const variants = {
     },
 }
 
-export const POS = (props: { productos: any, clientes: any }) => {
+export const POS = (props: { productos: Array<DBProduct>, clientes: any }) => {
     return (
         <ClientProvider key={"ClientProvider"} type={""} props={undefined}>
             <POSProvider key={"POSProvider"} type={""} props={undefined}>
                 <motion.div initial={variants.initial} animate={variants.animate} exit={variants.exit}>
                     <POSComponent productos={props.productos} clientes={props.clientes} />
+                    <TPV productos={props.productos} clientes={props.clientes} />
                 </motion.div>
             </POSProvider>
         </ClientProvider>
@@ -97,7 +99,6 @@ const POSComponent = memo((props: { productos: any, clientes: any }) => {
 
     return (
         <div className="h-screen antialiased overflow-hidden text-gray-800">
-            {console.log("eita")}
             {/* Página principal del POS */}
             <div className="grid grid-cols-3 bg-gray-100">
                 {/* Menú tienda, donde se muestran los productos */}
