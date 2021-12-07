@@ -30,55 +30,54 @@ export const useConsumerMoney = () => {
     return useContext(ConstumerMoneyContext);
 }
 
-export const POSProvider= (props: PropsWithChildren<ReactElement>) => {
-    const [allProductos, setDBProductos] = useState<DBProduct[]>([{} as DBProduct]);    
+export const POSProvider = (props: PropsWithChildren<ReactElement>) => {
+    const [allProductos, setDBProductos] = useState<DBProduct[]>([{} as DBProduct]);
     const [productos, setProductos] = useState<SelectedProduct[]>([]);
     const [precioTotal, setPrecioTotal] = useState(0);
     const [dineroEntregado, setDineroEntregado] = useState<string>("0");
 
     useEffect(() => {
-        if(productos.length <= 0) setDineroEntregado("0");        
+        if (productos.length <= 0) setDineroEntregado("0");
 
         let precio = 0;
         productos.forEach(prodActual => {
-            precio += (Number(prodActual.cantidad) * prodActual.precioVenta * (isNaN(prodActual.dto) ? 1 : 1 - (prodActual.dto/100)) ); 
+            precio += (Number(prodActual.cantidad) * prodActual.precioVenta * (isNaN(prodActual.dto) ? 1 : 1 - (prodActual.dto / 100)));
         });
 
         setPrecioTotal(Number(precio.toFixed(2)));
-    },[productos]);
+    }, [productos]);
 
     const SetProductosSeleccionados = (productRawObject: SelectedProduct) => {
-        try
-        {
+        try {
             // En caso de recibir un objeto nulo, vacía la lista
-            if(!productRawObject) { setProductos([] as SelectedProduct[]); return;}
+            if (!productRawObject) { setProductos([] as SelectedProduct[]); return; }
 
             // En caso de que se escriba un 0, se elimina dicho producto del carrito
-            if(productRawObject.cantidad == "0") { setProductos(productos.filter(p => p._id != productRawObject._id)); return; }
+            if (productRawObject.cantidad == "0") { setProductos(productos.filter(p => p._id != productRawObject._id)); return; }
 
             // Fija el descuento inicial o erroneo a 0
-            if(productRawObject.dto < 0 || isNaN(productRawObject.dto)) productRawObject.dto = 0;
-            
+            if (productRawObject.dto < 0 || isNaN(productRawObject.dto)) productRawObject.dto = 0;
+
             // Si la cantidad no es un entero y no es vacío, no hace nada (en el input de cantidad solo puede hacer entero o "")
-            if(!Number.isInteger(Number(productRawObject.cantidad)) && productRawObject.cantidad != "") { return; }
-            
+            if (!Number.isInteger(Number(productRawObject.cantidad)) && productRawObject.cantidad != "") { return; }
+
             let prodsRepes = productos.filter(p => p._id == productRawObject._id);
-            
+
             let prodToAdd = productos.filter(p => p._id == productRawObject._id)[0];
-            if(!prodToAdd) prodToAdd = productRawObject;
-            
-            switch(productRawObject.operacionMod) {
+            if (!prodToAdd) prodToAdd = productRawObject;
+
+            switch (productRawObject.operacionMod) {
                 case OpModificacionProducto.Suma:
-                    if(!Number.isInteger(Number(productRawObject.cantidad))){
+                    if (!Number.isInteger(Number(productRawObject.cantidad))) {
                         prodToAdd.cantidad = "1";
                     }
                     else {
                         prodToAdd.cantidad = (Number(prodToAdd.cantidad) + 1).toString();
                     }
                     break;
-                
+
                 case OpModificacionProducto.Resta:
-                    if(!Number.isInteger(Number(productRawObject.cantidad))){
+                    if (!Number.isInteger(Number(productRawObject.cantidad))) {
                         prodToAdd.cantidad = "0";
                     }
                     else {
@@ -86,12 +85,12 @@ export const POSProvider= (props: PropsWithChildren<ReactElement>) => {
                     }
                     break;
 
-                case OpModificacionProducto.Escritura: 
+                case OpModificacionProducto.Escritura:
                     prodToAdd.cantidad = !Number.isInteger(Number(productRawObject.cantidad)) ? "" : productRawObject.cantidad;
                     break;
 
-                case OpModificacionProducto.Añadir: 
-                    if(prodsRepes.length > 0) {
+                case OpModificacionProducto.Añadir:
+                    if (prodsRepes.length > 0) {
                         prodToAdd.cantidad = (Number(prodToAdd.cantidad) + 1).toString();
                     }
                     else {
@@ -99,8 +98,8 @@ export const POSProvider= (props: PropsWithChildren<ReactElement>) => {
                     }
                     break;
 
-                case OpModificacionProducto.Descuento: 
-                    if(prodsRepes.length > 0) {
+                case OpModificacionProducto.Descuento:
+                    if (prodsRepes.length > 0) {
                         prodToAdd.dto = productRawObject.dto >= 0 && productRawObject.dto <= 100 ? productRawObject.dto : prodToAdd.dto;
                     }
                     break;
@@ -112,7 +111,7 @@ export const POSProvider= (props: PropsWithChildren<ReactElement>) => {
             }
 
             //Pone el objeto en la fila que correcta, sin desbaratar el carrito
-            if(prodToAdd.cantidad == "0") {
+            if (prodToAdd.cantidad == "0") {
                 setProductos(productos.filter(p => p._id != productRawObject._id));
             }
             else {
@@ -120,8 +119,7 @@ export const POSProvider= (props: PropsWithChildren<ReactElement>) => {
                 productos[index] = prodToAdd;
                 setProductos([...productos]);
             }
-        }catch(err)
-        {
+        } catch (err) {
             setProductos(productos.filter(p => p._id != productRawObject._id));
         }
     }
@@ -131,12 +129,12 @@ export const POSProvider= (props: PropsWithChildren<ReactElement>) => {
     }
 
     const SetPrecioCompra = (precio: number) => {
-        if(isNaN(precio)) precio = 0;
+        if (isNaN(precio)) precio = 0;
         setPrecioTotal(precio);
     }
 
     const SetDineroCliente = (dineroDelCliente: string) => {
-        if(!dineroDelCliente.match("^[+-]?([0-9]+([.][0-9]*)?|[.][0-9]+)$") && dineroDelCliente != "") return;
+        if (!dineroDelCliente.match("^[+-]?([0-9]+([.][0-9]*)?|[.][0-9]+)$") && dineroDelCliente != "") return;
         setDineroEntregado(dineroDelCliente);
     }
 
@@ -151,7 +149,7 @@ export const POSProvider= (props: PropsWithChildren<ReactElement>) => {
                     </PriceContext.Provider>
                 </SelectedProductsContext.Provider>
             </ProductsContext.Provider>
-        </div>        
+        </div>
     )
 }
 

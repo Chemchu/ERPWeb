@@ -1,4 +1,4 @@
-import {createContext, PropsWithChildren, ReactElement, useContext, useState} from 'react'
+import { createContext, PropsWithChildren, ReactElement, useContext, useState } from 'react'
 import { Client } from '../../../tipos/Client';
 
 const ClientContext = createContext<[Client[], Function]>({} as [Client[], Function]);
@@ -12,7 +12,7 @@ export const useCurrentClient = () => {
     return useContext(CurrentClientContext);
 }
 
-function ClientProvider(props: PropsWithChildren<ReactElement>) {    
+function ClientProvider(props: PropsWithChildren<ReactElement>) {
     const [clientes, setClientes] = useState<Client[]>([] as Client[]);
     const [clienteSeleccionado, setCliente] = useState<Client>({} as Client);
 

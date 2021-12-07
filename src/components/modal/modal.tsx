@@ -21,7 +21,7 @@ const In = {
     visible: {
         scale: 1,
         opacity: 1,
-        transition:{
+        transition: {
             duration: 0.1,
             type: "spring",
             damping: 15,
@@ -31,47 +31,47 @@ const In = {
     exit: {
         y: "-100vh",
         opacity: 0,
-        transition:{
+        transition: {
             duration: 0.25,
         }
     }
 }
 
 export const ModalPagar = (props: ModalPagarProps) => {
-    const [customers, ] = useDBClients();
-    
+    const [customers,] = useDBClients();
+
     const [dineroEntregado, setDineroEntregado] = useState<string>("0");
     const [dineroEntregadoTarjeta, setDineroEntregadoTarjeta] = useState<string>("0");
     const [showModalResumen, setModalResumen] = useState<boolean>(false);
-    
-    const [customerPayment, setCustomerPaymentInfo] = useState<CustomerPaymentInformation>({tipo: "default", efectivo: 0, tarjeta: 0});
-    
+
+    const [customerPayment, setCustomerPaymentInfo] = useState<CustomerPaymentInformation>({ tipo: "default", efectivo: 0, tarjeta: 0 });
+
     let date = new Date();
-    let fechaActual = `${date.getDate().toLocaleString('es-ES', { minimumIntegerDigits: 2})}/${parseInt(date.getUTCMonth().toLocaleString('es-ES', { minimumIntegerDigits: 2})) + 1}/${date.getFullYear()} `;
-    let horaActual = `${date.getHours().toLocaleString('es-ES', { minimumIntegerDigits: 2})}:${date.getMinutes().toLocaleString('es-ES', { minimumIntegerDigits: 2})}:${date.getSeconds().toLocaleString('es-ES', { minimumIntegerDigits: 2})}`
+    let fechaActual = `${date.getDate().toLocaleString('es-ES', { minimumIntegerDigits: 2 })}/${parseInt(date.getUTCMonth().toLocaleString('es-ES', { minimumIntegerDigits: 2 })) + 1}/${date.getFullYear()} `;
+    let horaActual = `${date.getHours().toLocaleString('es-ES', { minimumIntegerDigits: 2 })}:${date.getMinutes().toLocaleString('es-ES', { minimumIntegerDigits: 2 })}:${date.getSeconds().toLocaleString('es-ES', { minimumIntegerDigits: 2 })}`
     let cambio: number = isNaN((Number(dineroEntregado) + Number(dineroEntregadoTarjeta) - props.finalPrice)) ? Number(dineroEntregado) + Number(dineroEntregadoTarjeta) : (Number(dineroEntregado) + Number(dineroEntregadoTarjeta) - props.finalPrice);
     let tipoCobro: TipoCobro = TipoCobro.Efectivo;
-    
+
     const SetDineroClienteEfectivo = (dineroDelCliente: string) => {
-        if(!dineroDelCliente.match("^[+-]?([0-9]+([.][0-9]*)?|[.][0-9]+)$") && dineroDelCliente != "") return;
+        if (!dineroDelCliente.match("^[+-]?([0-9]+([.][0-9]*)?|[.][0-9]+)$") && dineroDelCliente != "") return;
         setDineroEntregado(dineroDelCliente);
     }
 
     const SetDineroClienteTarjeta = (dineroDelCliente: string) => {
-        if(!dineroDelCliente.match("^[+-]?([0-9]+([.][0-9]*)?|[.][0-9]+)$") && dineroDelCliente != "") return;
+        if (!dineroDelCliente.match("^[+-]?([0-9]+([.][0-9]*)?|[.][0-9]+)$") && dineroDelCliente != "") return;
         setDineroEntregadoTarjeta(dineroDelCliente);
     }
 
     const OpenResumen = () => {
-        switch(tipoCobro) {
+        switch (tipoCobro) {
             case TipoCobro.Efectivo:
-                setCustomerPaymentInfo({tipo: "Efectivo", efectivo: Number(dineroEntregado), tarjeta: Number(dineroEntregadoTarjeta) });
+                setCustomerPaymentInfo({ tipo: "Efectivo", efectivo: Number(dineroEntregado), tarjeta: Number(dineroEntregadoTarjeta) });
                 break;
             case TipoCobro.Tarjeta:
-                setCustomerPaymentInfo({tipo: "Tarjeta", efectivo: Number(dineroEntregado), tarjeta: Number(dineroEntregadoTarjeta)});
+                setCustomerPaymentInfo({ tipo: "Tarjeta", efectivo: Number(dineroEntregado), tarjeta: Number(dineroEntregadoTarjeta) });
                 break;
             case TipoCobro.Fraccionado:
-                setCustomerPaymentInfo({tipo: "Fraccionado", efectivo: Number(dineroEntregado), tarjeta:Number(dineroEntregadoTarjeta)});
+                setCustomerPaymentInfo({ tipo: "Fraccionado", efectivo: Number(dineroEntregado), tarjeta: Number(dineroEntregadoTarjeta) });
                 break;
         }
         setModalResumen(true);
@@ -81,24 +81,24 @@ export const ModalPagar = (props: ModalPagarProps) => {
         setModalResumen(false);
     }
 
-    if(Number(dineroEntregado) > 0 && Number(dineroEntregadoTarjeta) <= 0) tipoCobro = TipoCobro.Efectivo;
-    if(Number(dineroEntregadoTarjeta) > 0) {
+    if (Number(dineroEntregado) > 0 && Number(dineroEntregadoTarjeta) <= 0) tipoCobro = TipoCobro.Efectivo;
+    if (Number(dineroEntregadoTarjeta) > 0) {
         tipoCobro = TipoCobro.Tarjeta;
-        if(Number(dineroEntregado) > 0) {
+        if (Number(dineroEntregado) > 0) {
             tipoCobro = TipoCobro.Fraccionado;
         }
     }
 
-    return(
-        <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity:0 }} >
+    return (
+        <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} >
             <Backdrop onClick={props.handleClose} >
-                <motion.div className="mx-20 my-20 flex flex-grow items-center bg-white rounded-2xl" 
-                    onClick={(e) => e.stopPropagation()} 
-                    variants={In} 
+                <motion.div className="mx-20 my-20 flex flex-grow items-center bg-white rounded-2xl"
+                    onClick={(e) => e.stopPropagation()}
+                    variants={In}
                     initial="hidden"
                     animate="visible"
                     exit="exit"
-                >     
+                >
 
                     <div id="receipt-content" className="text-left w-full text-sm p-6 overflow-auto">
                         <div className="grid grid-cols-2">
@@ -106,44 +106,44 @@ export const ModalPagar = (props: ModalPagarProps) => {
                             <div className="bg-white text-center justify-center py-6">
                                 <div>
                                     <div className="text-2xl font-semibold">Datos cliente</div>
-                                    <hr/>                                    
+                                    <hr />
                                     <div className="text-lg text-left px-2 pt-4">Fecha: {fechaActual} </div>
                                     <div className="text-lg text-left px-2">Hora: {horaActual} </div>
                                     <div className="flex justify-between mt-4 px-2  text-lg text-center">
-                                        <AutoComplete className="text-left text-lg w-80" sugerencias={["Luca Lee","Simone","Miguel"]} nombreInput="Cliente" placeholder="General"/>
+                                        <AutoComplete className="text-left text-lg w-80" sugerencias={["Luca Lee", "Simone", "Miguel"]} nombreInput="Cliente" placeholder="General" />
                                     </div>
                                 </div>
                                 <div className="grid grid-cols-2 py-6 px-2 gap-10 justify-items-start">
                                     <div className="text-left w-80">
                                         <h1 className="text-lg">Nombre completo</h1>
-                                        <Input placeholder="Nombre del cliente"/>
+                                        <Input placeholder="Nombre del cliente" />
                                     </div>
                                     <div className="text-left w-80">
                                         <h1 className="text-lg">Dirección completa</h1>
-                                        <Input placeholder="Ejem.: Calle Alcalá 14"/>
+                                        <Input placeholder="Ejem.: Calle Alcalá 14" />
                                     </div>
                                     <div className="text-left w-80">
                                         <h1 className="text-lg">NIF</h1>
-                                        <Input placeholder="Número de identificación fiscal"/>
+                                        <Input placeholder="Número de identificación fiscal" />
                                     </div>
                                     <div className="text-left w-80">
                                         <h1 className="text-lg">Código postal</h1>
-                                        <Input placeholder="Ejem.: 46006"/>
+                                        <Input placeholder="Ejem.: 46006" />
                                     </div>
-                                </div> 
+                                </div>
                             </div>
                             {/* Parte derecha, forma de pago */}
                             <div className="text-center justify-center py-6">
                                 <div>
                                     <div className="text-2xl font-semibold">Método de pago</div>
-                                    <hr/>
+                                    <hr />
                                     <div className="grid grid-cols-2 justify-items gap-6 p-10">
                                         <div>
                                             <div className="text-xl text-left">
                                                 Efectivo
                                             </div>
                                             <div className="text-xl">
-                                                <InputNumber value={dineroEntregado} setValue={SetDineroClienteEfectivo}/>
+                                                <InputNumber value={dineroEntregado} setValue={SetDineroClienteEfectivo} />
                                             </div>
                                         </div>
                                         <div>
@@ -151,7 +151,7 @@ export const ModalPagar = (props: ModalPagarProps) => {
                                                 Tarjeta
                                             </div>
                                             <div className="text-xl">
-                                                <InputNumber value={dineroEntregadoTarjeta} setValue={SetDineroClienteTarjeta}/>
+                                                <InputNumber value={dineroEntregadoTarjeta} setValue={SetDineroClienteTarjeta} />
                                             </div>
                                         </div>
                                     </div>
@@ -175,12 +175,12 @@ export const ModalPagar = (props: ModalPagarProps) => {
                             </div>
                         </div>
 
-                        <hr className="my-2"/>
+                        <hr className="my-2" />
                         <div className="grid grid-cols-2 justify-items-center">
                             <button className="bg-red-500 hover:bg-red-600 text-white w-full h-12 hover:shadow-lg rounded-lg flex items-center justify-center" onClick={props.handleClose}>
                                 <div className="text-lg">CANCELAR</div>
                             </button>
-                            {cambio < 0 ? 
+                            {cambio < 0 ?
                                 <button className="bg-blue-400 text-white w-full h-12 cursor-default rounded-lg flex items-center justify-center">
                                     <div className="text-lg">DINERO INSUFICIENTE</div>
                                 </button>
@@ -191,12 +191,12 @@ export const ModalPagar = (props: ModalPagarProps) => {
                             }
                         </div>
                         <AnimatePresence>
-                            {showModalResumen && <ModalResumenCompra customerPayment={customerPayment} cliente={props.cliente} customerProducts={props.customerProducts} finalPrice= {props.finalPrice} cambio={cambio} handleClose={CloseResumen} tipoCobro={tipoCobro} />}
-                        </AnimatePresence>  
+                            {showModalResumen && <ModalResumenCompra customerPayment={customerPayment} cliente={props.cliente} customerProducts={props.customerProducts} finalPrice={props.finalPrice} cambio={cambio} handleClose={CloseResumen} tipoCobro={tipoCobro} />}
+                        </AnimatePresence>
                     </div>
-                    
+
                 </motion.div>
-            </Backdrop>        
+            </Backdrop>
         </motion.div>
     );
 }
@@ -210,21 +210,20 @@ type ProductoComprado = {
 export const ModalResumenCompra = (props: ModalResumenProps) => {
     let date = new Date();
 
-    const [customers, ] = useDBClients();
+    const [customers,] = useDBClients();
     const [, SetProductos] = useSelectedProducts();
-    const fechaActual = `${date.getDate().toLocaleString('es-ES', { minimumIntegerDigits: 2})}/${parseInt(date.getUTCMonth().toLocaleString('es-ES', { minimumIntegerDigits: 2})) + 1}/${date.getFullYear()} - ${date.getHours().toLocaleString('es-ES', { minimumIntegerDigits: 2})}:${date.getMinutes().toLocaleString('es-ES', { minimumIntegerDigits: 2})}:${date.getSeconds().toLocaleString('es-ES', { minimumIntegerDigits: 2})}`;
+    const fechaActual = `${date.getDate().toLocaleString('es-ES', { minimumIntegerDigits: 2 })}/${parseInt(date.getUTCMonth().toLocaleString('es-ES', { minimumIntegerDigits: 2 })) + 1}/${date.getFullYear()} - ${date.getHours().toLocaleString('es-ES', { minimumIntegerDigits: 2 })}:${date.getMinutes().toLocaleString('es-ES', { minimumIntegerDigits: 2 })}:${date.getSeconds().toLocaleString('es-ES', { minimumIntegerDigits: 2 })}`;
 
-    const addSale = async() => {
+    const addSale = async () => {
         const clienteSeleccionado = customers.filter(c => c.nif == props.cliente.nif)[0];
         const erpBackURL = process.env.REACT_APP_ERP_BACKURL;
         const productosComprados: ProductoComprado[] = [];
-        props.customerProducts.forEach(p => 
-            {
-                const pComprado = { _id: p._id, precioUnidad: p.precioVenta, cantidad: p.cantidad, dto: p.dto } as unknown as ProductoComprado;
-                productosComprados.push(pComprado);
-            }
+        props.customerProducts.forEach(p => {
+            const pComprado = { _id: p._id, precioUnidad: p.precioVenta, cantidad: p.cantidad, dto: p.dto } as unknown as ProductoComprado;
+            productosComprados.push(pComprado);
+        }
         );
-        
+
         const data = {
             productos: productosComprados,
             precioVentaTotal: props.finalPrice,
@@ -237,7 +236,7 @@ export const ModalResumenCompra = (props: ModalResumenProps) => {
 
         const res = await axios.put(`${erpBackURL}api/ventas/add`, data);
 
-        if(res.status == 200) {
+        if (res.status == 200) {
             SetProductos(null);
             props.handleClose();
         }
@@ -246,16 +245,16 @@ export const ModalResumenCompra = (props: ModalResumenProps) => {
         }
     }
 
-    return(
-        <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity:0 }} >
+    return (
+        <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} >
             <Backdrop onClick={() => props.handleClose()} >
-                <motion.div className="m-auto py-2 flex flex-col items-center bg-white rounded-2xl" 
-                    onClick={(e) => e.stopPropagation()} 
-                    variants={In} 
+                <motion.div className="m-auto py-2 flex flex-col items-center bg-white rounded-2xl"
+                    onClick={(e) => e.stopPropagation()}
+                    variants={In}
                     initial="hidden"
                     animate="visible"
                     exit="exit"
-                >     
+                >
 
                     <div className="sm:w-96 w-96 rounded-3xl bg-white z-10">
                         <div id="receipt-content" className="text-left w-full text-sm p-6 overflow-auto">
@@ -267,27 +266,27 @@ export const ModalResumenCompra = (props: ModalResumenProps) => {
                                 <div className="text-left relative ">Cliente: {props.cliente.nombre} </div>
                                 <div className="text-right relative text-black"> {fechaActual} </div>
                             </div>
-                            <hr className="my-2"/>
+                            <hr className="my-2" />
                             <div>
-                            <table className="w-full text-xs">
-                                <thead>
-                                    <tr>
-                                        <th className="py-1 w-1/12 text-center">#</th>
-                                        <th className="py-1 text-left">Producto</th>
-                                        <th className="py-1 w-2/12 text-center">Cantidad</th>
-                                        <th className="py-1 w-3/12 text-right">Total</th>
-                                    </tr>
-                                </thead>
-                                <tbody className="h-full overflow-y-auto">
-                                {
-                                    props.customerProducts.map((prod, index) => {
-                                        return <GenerarFilaProducto key={"modalRes" + prod._id} numFila={index + 1} nombreProducto={prod.nombre} cantidad={Number(prod.cantidad)} precio={Number(prod.precioVenta * (1 - prod.dto/100) )} />
-                                    })
-                                }
-                                </tbody>
-                            </table>
+                                <table className="w-full text-xs">
+                                    <thead>
+                                        <tr>
+                                            <th className="py-1 w-1/12 text-center">#</th>
+                                            <th className="py-1 text-left">Producto</th>
+                                            <th className="py-1 w-2/12 text-center">Cantidad</th>
+                                            <th className="py-1 w-3/12 text-right">Total</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody className="h-full overflow-y-auto">
+                                        {
+                                            props.customerProducts.map((prod, index) => {
+                                                return <GenerarFilaProducto key={"modalRes" + prod._id} numFila={index + 1} nombreProducto={prod.nombre} cantidad={Number(prod.cantidad)} precio={Number(prod.precioVenta * (1 - prod.dto / 100))} />
+                                            })
+                                        }
+                                    </tbody>
+                                </table>
                             </div>
-                            <hr className="my-2" />              
+                            <hr className="my-2" />
                             <div className="flex justify-between">
                                 <div className="font-semibold self-center">
                                     Pago en {props.tipoCobro.toLowerCase()}
@@ -300,7 +299,7 @@ export const ModalResumenCompra = (props: ModalResumenProps) => {
                                         Cambio: {props.cambio.toFixed(2)}€
                                     </div>
                                 </div>
-                            </div>                  
+                            </div>
                         </div>
                     </div>
                     <div className="px-4 pb-2 w-full flex flex-grow text-center gap-2">
@@ -316,14 +315,14 @@ export const ModalResumenCompra = (props: ModalResumenProps) => {
                         </button>
                     </div>
                 </motion.div>
-            </Backdrop>        
+            </Backdrop>
         </motion.div>
     );
 
 }
 
-export const ModalInput = (props: {handleClose: Function, value: string, setValue: Function }) => {
-    return(
+export const ModalInput = (props: { handleClose: Function, value: string, setValue: Function }) => {
+    return (
         <div>
             <Backdrop onClick={() => props.handleClose()} >
                 <div className="">
@@ -334,38 +333,38 @@ export const ModalInput = (props: {handleClose: Function, value: string, setValu
     );
 }
 
-export const ModalEditarProducto = (props: {product: DBProduct, handleClose: Function}) => {
-    return(
-        <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity:0 }} >
-            <Backdrop onClick={(e) => { e.stopPropagation(); props.handleClose()}} >
-                <motion.div className="m-auto py-2 flex flex-col items-center bg-white rounded-2xl" 
-                    onClick={(e) => e.stopPropagation()} 
-                    variants={In} 
+export const ModalEditarProducto = (props: { product: DBProduct, handleClose: Function }) => {
+    return (
+        <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} >
+            <Backdrop onClick={(e) => { e.stopPropagation(); props.handleClose() }} >
+                <motion.div className="m-auto py-2 flex flex-col items-center bg-white rounded-2xl"
+                    onClick={(e) => e.stopPropagation()}
+                    variants={In}
                     initial="hidden"
                     animate="visible"
                     exit="exit"
-                >     
+                >
                     <div className="grid grid-rows-3 h-full w-full">
                         <div className="flex justify-around">
                             <div className="text-lg">
-                                <img alt="profil" src={`data:image/(png|jpeg);base64,${ConvertBufferToBase64(props.product.img)}`} className="mx-auto object-cover rounded-full h-32 w-32 border-2 border-gray-400"/>
+                                <img alt="profil" src={`data:image/(png|jpeg);base64,${ConvertBufferToBase64(props.product.img)}`} className="mx-auto object-cover rounded-full h-32 w-32 border-2 border-gray-400" />
                             </div>
                         </div>
                         <div className="">
                             {props.product.nombre}
                         </div>
                         <div className="bg-red-500">
-                            
+
                         </div>
                     </div>
                 </motion.div>
-            </Backdrop>        
+            </Backdrop>
         </motion.div>
     );
 }
 
-const GenerarFilaProducto = (props: {numFila: number, nombreProducto: string, cantidad: number, precio: number}) => {
-    return(
+const GenerarFilaProducto = (props: { numFila: number, nombreProducto: string, cantidad: number, precio: number }) => {
+    return (
         <tr>
             <td className="py-1 w-1/12 text-center">{props.numFila}</td>
             <td className="py-1 text-left">{props.nombreProducto}</td>
