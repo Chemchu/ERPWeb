@@ -1,13 +1,13 @@
 import { useSelectedProducts } from './productsContext';
 import { motion } from 'framer-motion';
 import React, { useState } from 'react';
-import { DBProduct } from '../../../tipos/DBProduct';
+import { Producto } from '../../../tipos/DBProduct';
 import { SelectedProduct } from '../../../tipos/SelectedProduct';
 import { OpModificacionProducto } from '../../../tipos/Enums/OpModificaciones';
 import { ConvertBufferToBase64 } from '../../../pages/api/validator';
 
 
-export const ProductCard = (props: DBProduct) => {
+export const ProductCard = (props: Producto) => {
     const [productImage, setProductImage] = useState<string>(`data:image/(png|jpeg);base64,${ConvertBufferToBase64(props.img)}`);
 
     const SetDefaultImage = () => {
@@ -27,9 +27,9 @@ export const ProductCard = (props: DBProduct) => {
     );
 }
 
-export const ProductSelectedCard = React.memo((props: SelectedProduct) => {
+export const ProductSelectedCard = React.memo((props: { producto: Producto, cantidad: number, dto: number }) => {
     const [productos, AddProductos] = useSelectedProducts();
-    const [productImage, setProductImage] = useState<string>(`data:image/(png|jpeg);base64,${ConvertBufferToBase64(props.img)}`);
+    const [productImage, setProductImage] = useState<string>(`data:image/(png|jpeg);base64,${ConvertBufferToBase64(props.producto.img)}`);
     const [isOpen, setOpen] = useState<boolean>(false);
 
     const SetDefaultImage = () => {
@@ -39,20 +39,20 @@ export const ProductSelectedCard = React.memo((props: SelectedProduct) => {
     const DeleteSelectedProd = (e: React.MouseEvent<HTMLElement>) => {
         e.stopPropagation();
         AddProductos({
-            _id: e.currentTarget.id, cantidad: "0", dto: 0, nombre: "", img: props.img,
+            _id: e.currentTarget.id, cantidad: "0", dto: 0, nombre: "", img: props.producto.img,
             precioVenta: 0, ean: [""], familia: "", operacionMod: OpModificacionProducto.Resta
         } as SelectedProduct);
     }
 
     {
-        let prod = productos.filter((p: SelectedProduct) => p._id == props._id)[0];
+        let prod = productos.filter((p: SelectedProduct) => p._id == props.producto._id)[0];
         return (parseInt(prod.cantidad) > 0 || prod.cantidad == "") ?
 
             <div className="flex flex-col flex-grow h-full w-full cursor-pointer" onClick={() => { setOpen(!isOpen) }}>
                 <div className={`flex justify-start ${isOpen ? "bg-blue-300 " : "bg-gray-200 hover:bg-gray-300 "} rounded-lg h-full w-full gap-x-4 p-2`}>
                     {/* <div className="self-center font-semibold">{prod.cantidad}</div> */}
 
-                    <input className="bg-white w-8 h-8 rounded-lg text-center self-center font-semibold shadow focus:outline-none focus:shadow-lg text-sm" type="text" inputMode="numeric" value={productos.filter((p: SelectedProduct) => p._id == props._id)[0].cantidad}
+                    <input className="bg-white w-8 h-8 rounded-lg text-center self-center font-semibold shadow focus:outline-none focus:shadow-lg text-sm" type="text" inputMode="numeric" value={productos.filter((p: SelectedProduct) => p._id == props.producto._id)[0].cantidad}
                         onClick={(e) => { e.stopPropagation() }}
                         onChange={(e) => {
                             AddProductos({
@@ -65,14 +65,14 @@ export const ProductSelectedCard = React.memo((props: SelectedProduct) => {
                         <img src={productImage} className="self-center rounded-lg h-6 w-6 md:h-10 md:w-10 bg-white shadow mr-2" onError={SetDefaultImage} />
                         <div className="flex self-center justify-start">
                             <div className="grid grid-rows-2 text-left">
-                                <p className="text-sm truncate font-semibold">{props.nombre}</p>
+                                <p className="text-sm truncate font-semibold">{props.producto.nombre}</p>
                                 {
                                     isNaN(prod.dto) || prod.dto == 0 ?
-                                        <p className="text-xs block">{(props.precioVenta * parseInt(prod.cantidad)).toFixed(2)}€</p>
+                                        <p className="text-xs block">{(props.producto.precioVenta * parseInt(prod.cantidad)).toFixed(2)}€</p>
                                         :
                                         <div className="flex-grow-0">
-                                            <p className="text-xs inline-block line-through text-red-700">{(props.precioVenta * parseInt(prod.cantidad)).toFixed(2)}€</p>
-                                            <span className="pl-2 text-sm font-semibold inline-block">{((props.precioVenta * parseInt(prod.cantidad)) * (1 - (prod.dto / 100))).toFixed(2)}€</span>
+                                            <p className="text-xs inline-block line-through text-red-700">{(props.producto.precioVenta * parseInt(prod.cantidad)).toFixed(2)}€</p>
+                                            <span className="pl-2 text-sm font-semibold inline-block">{((props.producto.precioVenta * parseInt(prod.cantidad)) * (1 - (prod.dto / 100))).toFixed(2)}€</span>
                                         </div>
                                 }
                             </div>
@@ -93,7 +93,7 @@ export const ProductSelectedCard = React.memo((props: SelectedProduct) => {
                             </div>
 
                             <div className="flex gap-2">
-                                <motion.button whileTap={{ scale: 0.9 }} id={props._id} className="rounded-lg text-center w-8 h-8 py-1 text-white bg-gray-500 hover:bg-gray-700 focus:outline-none"
+                                <motion.button whileTap={{ scale: 0.9 }} id={props.producto._id} className="rounded-lg text-center w-8 h-8 py-1 text-white bg-gray-500 hover:bg-gray-700 focus:outline-none"
                                     onClick={(e) => {
                                         e.stopPropagation();
                                         AddProductos({
@@ -129,7 +129,7 @@ export const ProductSelectedCard = React.memo((props: SelectedProduct) => {
                                 <input type="text" inputMode="numeric" className="text-xs text-center rounded-lg w-10 h-6 shadow"
                                     value={prod.dto} onClick={(e) => { e.stopPropagation(); }} onChange={(e) => {
                                         e.stopPropagation(); AddProductos({
-                                            _id: props._id, cantidad: prod.cantidad, dto: Number(Number(e.target.value).toFixed(2)),
+                                            _id: props.producto._id, cantidad: prod.cantidad, dto: Number(Number(e.target.value).toFixed(2)),
                                             ean: prod.ean, familia: prod.familia, img: prod.img, nombre: prod.nombre, operacionMod: OpModificacionProducto.Descuento, precioVenta: prod.precioVenta
                                         } as SelectedProduct)
                                     }} />

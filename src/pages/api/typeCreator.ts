@@ -1,6 +1,6 @@
-import { DBProduct } from "../../tipos/DBProduct";
+import { Producto } from "../../tipos/DBProduct";
 
-function CreateProduct(p: any): DBProduct | undefined {
+function CreateProduct(p: any): Producto | undefined {
     try {
         let producto = {
             _id: p._id,
@@ -16,7 +16,7 @@ function CreateProduct(p: any): DBProduct | undefined {
             precioVenta: p.precioVenta,
             tags: p.tags,
             promociones: p.promociones
-        } as DBProduct
+        } as Producto
 
         return producto;
     }
@@ -25,8 +25,8 @@ function CreateProduct(p: any): DBProduct | undefined {
     }
 }
 
-export function CreateProductList(pList: any[]): DBProduct[] {
-    let res: DBProduct[] = []
+export function CreateProductList(pList: any[]): Producto[] {
+    let res: Producto[] = []
     pList.forEach((p: any) => {
         const prod = CreateProduct(p);
 

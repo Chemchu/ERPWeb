@@ -3,7 +3,7 @@ import { ProductCard, ProductSelectedCard } from './productCard';
 import { POSProvider, useDBProducts, usePrice, useConsumerMoney, useSelectedProducts } from './productsContext';
 import { AnimatePresence, motion } from 'framer-motion';
 import ClientProvider, { useDBClients } from './clientContext';
-import { DBProduct } from '../../../tipos/DBProduct';
+import { Producto } from '../../../tipos/DBProduct';
 import { FilteredProds } from '../../../tipos/FilteredProducts';
 import { Client } from '../../../tipos/Client';
 import { CustomerPaymentInformation } from '../../../tipos/CustomerPayment';
@@ -35,7 +35,7 @@ const variants = {
     },
 }
 
-export const POS = (props: { productos: Array<DBProduct>, clientes: any }) => {
+export const POS = (props: { productos: Array<Producto>, clientes: any }) => {
     return (
         <ClientProvider key={"ClientProvider"} type={""} props={undefined}>
             <POSProvider key={"POSProvider"} type={""} props={undefined}>
@@ -57,7 +57,7 @@ const POSComponent = memo((props: { productos: any, clientes: any }) => {
     const [dineroEntregado,] = useConsumerMoney();
 
     const [allProducts, SetAllProductos] = useDBProducts();
-    const [productosFiltrados, SetProductosFiltrados] = useState<DBProduct[]>([]);
+    const [productosFiltrados, SetProductosFiltrados] = useState<Producto[]>([]);
     const [familias, setFamilias] = useState<string[]>([]);
 
     const [, setCustomers] = useDBClients();
@@ -70,7 +70,7 @@ const POSComponent = memo((props: { productos: any, clientes: any }) => {
     }, []);
 
     useEffect(() => {
-        function uniq_fast(a: DBProduct[]) {
+        function uniq_fast(a: Producto[]) {
             var seenMap: Map<string, number> = new Map();
             var out: string[] = [];
             var len = a.length;
@@ -118,25 +118,25 @@ const POSComponent = memo((props: { productos: any, clientes: any }) => {
                 </div>
             </div>
 
-            <AnimatePresence initial={false} exitBeforeEnter={true}>
-                {/* Modal aceptar compra */}
+            {/* Modal aceptar compra */}
+            {/* <AnimatePresence initial={false} exitBeforeEnter={true}>
                 {showModalPagar && <ModalPagar handleClose={cerrarModal} cliente={clienteActual} customerProducts={productos} finalPrice={precioTotal} />}
                 {showModalCobro && <ModalResumenCompra customerPayment={{ tipo: "Cobro rápido", efectivo: precioTotal, tarjeta: 0 } as CustomerPaymentInformation} handleClose={cerrarModalResumen} cliente={clienteActual} cambio={0}
                     customerProducts={productos} finalPrice={precioTotal} tipoCobro={TipoCobro.Efectivo} />}
-            </AnimatePresence>
+            </AnimatePresence> */}
 
         </div>
     );
 });
 
-const ProductDisplay = (props: { listFiltrados: [DBProduct[], Function], familias: string[] }) => {
+const ProductDisplay = (props: { listFiltrados: [Producto[], Function], familias: string[] }) => {
     const [productosFiltrados, SetProductosFiltrados] = props.listFiltrados;
     const [allProductos,] = useDBProducts();
 
     var filtrarProd = (cadena: string) => {
-        var prodFiltrados = allProductos.filter((prod: DBProduct) => prod.nombre.toLowerCase().includes(cadena.toLowerCase()));
+        var prodFiltrados = allProductos.filter((prod: Producto) => prod.nombre.toLowerCase().includes(cadena.toLowerCase()));
 
-        if (prodFiltrados.length <= 0) prodFiltrados = allProductos.filter((prod: DBProduct) => prod.ean.some(r => r == cadena));
+        if (prodFiltrados.length <= 0) prodFiltrados = allProductos.filter((prod: Producto) => prod.ean.some(r => r == cadena));
 
         SetProductosFiltrados(prodFiltrados);
     }
@@ -172,7 +172,7 @@ const ProductDisplay = (props: { listFiltrados: [DBProduct[], Function], familia
     )
 }
 
-const GenerarFavoritos = (props: { familias: string[], allProductos: DBProduct[], SetProductosFiltrados: Function }) => {
+const GenerarFavoritos = (props: { familias: string[], allProductos: Producto[], SetProductosFiltrados: Function }) => {
     return (
         props.familias[0] != undefined ?
             <div className="grid grid-rows-1 gap-2 m-4 grid-flow-col overflow-y-hidden">
@@ -228,7 +228,7 @@ const GenerarProductsCards = (props: FilteredProds) => {
     return (
         <div className="grid gap-4 pb-3 sm:grid-cols-1 sm:gap-2 md:grid-cols-2 lg:grid-cols-3 lg:gap-3 xl:grid-cols-4 2xl:grid-cols-5
                             text-xs">
-            {props.filteredProds.map((prod: DBProduct) => {
+            {props.filteredProds.map((prod: Producto) => {
                 return (
                     <button key={prod._id} id={prod._id}
                         onClick={(e) => {
@@ -274,8 +274,8 @@ const CarritoVacio = (props: { productos: SelectedProduct[], precioTotal: number
 const CarritoConProductos = (props: { productos: SelectedProduct[], precioTotal: number, allProductsHaveQuantity: boolean, abrirCobro: Function, abrirCobroRapido: Function }) => {
     const [productos, AddProductos] = useSelectedProducts();
     const [allProducts,] = useDBProducts();
-    const [descuentoOpen, setDescuentoPupup] = useState<boolean>(false);
 
+    const [descuentoOpen, setDescuentoPupup] = useState<boolean>(false);
     const [dtoEfectivo, setDtoEfectivo] = useState<string>("0");
     const [dtoPorcentaje, setDtoPorcentaje] = useState<string>("0");
 
@@ -304,13 +304,13 @@ const CarritoConProductos = (props: { productos: SelectedProduct[], precioTotal:
             <div className="flex flex-col flex-grow gap-2 px-2 overflow-scroll overflow-x-hidden">
                 {/* Añadir producto al carrito (fila con información y cantidad)*/}
                 {productos.map(product => {
-                    const foundProd = allProducts.find(dbProd => dbProd._id == product._id) as DBProduct;
+                    const foundProd = allProducts.find(dbProd => dbProd._id == product._id) as Producto;
                     if (foundProd) {
                         return (
                             <div key={`prodCarrito${foundProd._id}`}>
-                                <ProductSelectedCard key={foundProd._id} _id={foundProd._id} cantidad={product.cantidad}
+                                {/* <ProductSelectedCard key={foundProd._id} _id={foundProd._id} cantidad={product.cantidad}
                                     dto={product.dto} precioVenta={foundProd.precioVenta} img={foundProd.img} nombre={foundProd.nombre}
-                                    familia={foundProd.familia} ean={foundProd.ean} operacionMod={OpModificacionProducto.Añadir} />
+                                    familia={foundProd.familia} ean={foundProd.ean} operacionMod={OpModificacionProducto.Añadir} /> */}
                             </div>);
                     }
                 })}

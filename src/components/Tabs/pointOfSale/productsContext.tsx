@@ -1,10 +1,10 @@
 import { PropsWithChildren, ReactElement } from 'react';
 import { useState, createContext, useContext, useEffect } from 'react'
-import { DBProduct } from '../../../tipos/DBProduct';
+import { Producto } from '../../../tipos/DBProduct';
 import { OpModificacionProducto } from '../../../tipos/Enums/OpModificaciones';
 import { SelectedProduct } from '../../../tipos/SelectedProduct';
 
-const ProductsContext = createContext<[DBProduct[], Function]>({} as [DBProduct[], Function]);
+const ProductsContext = createContext<[Producto[], Function]>({} as [Producto[], Function]);
 const SelectedProductsContext = createContext<[SelectedProduct[], Function]>({} as [SelectedProduct[], Function]);
 const PriceContext = createContext<[number, Function]>({} as [number, Function]);
 const ConstumerMoneyContext = createContext<[string, Function]>({} as [string, Function]);
@@ -31,7 +31,7 @@ export const useConsumerMoney = () => {
 }
 
 export const POSProvider = (props: PropsWithChildren<ReactElement>) => {
-    const [allProductos, setDBProductos] = useState<DBProduct[]>([{} as DBProduct]);
+    const [allProductos, setDBProductos] = useState<Producto[]>([{} as Producto]);
     const [productos, setProductos] = useState<SelectedProduct[]>([]);
     const [precioTotal, setPrecioTotal] = useState(0);
     const [dineroEntregado, setDineroEntregado] = useState<string>("0");
@@ -124,7 +124,7 @@ export const POSProvider = (props: PropsWithChildren<ReactElement>) => {
         }
     }
 
-    const SetAllProducts = (dbProductos: DBProduct[]) => {
+    const SetAllProducts = (dbProductos: Producto[]) => {
         setDBProductos(dbProductos);
     }
 

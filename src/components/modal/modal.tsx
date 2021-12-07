@@ -1,17 +1,19 @@
 import { Backdrop } from "../backdrop.js/dropdown";
 import { AnimatePresence, motion } from "framer-motion";
-import { useState } from "react";
-import { ModalPagarProps, ModalResumenProps } from "../../tipos/ModalProps";
+import { MouseEventHandler, useState } from "react";
+import { ModalPagarProps, ModalPagarProps2, ModalResumenProps, ModalResumenProps2 } from "../../tipos/ModalProps";
 import { InputNumber } from "../input/inputDinero";
 import { CustomerPaymentInformation } from "../../tipos/CustomerPayment";
 import { TipoCobro } from "../../tipos/Enums/TipoCobro";
 import axios from "axios";
 import AutoComplete from "../autocomplete/autocomplete";
 import { Input } from "../input/input";
-import { DBProduct } from "../../tipos/DBProduct";
+import { Producto } from "../../tipos/DBProduct";
 import { useDBClients } from "../Tabs/pointOfSale/clientContext";
 import { useSelectedProducts } from "../Tabs/pointOfSale/productsContext";
 import { ConvertBufferToBase64 } from "../../pages/api/validator";
+import { Client as Cliente } from "../../tipos/Client";
+import { ProductoEnCarrito } from "../../tipos/ProductoEnCarrito";
 
 const In = {
     hidden: {
@@ -37,19 +39,19 @@ const In = {
     }
 }
 
-export const ModalPagar = (props: ModalPagarProps) => {
-    const [customers,] = useDBClients();
-
+export const ModalPagar = (props: { productosComprados: ProductoEnCarrito[], precioFinal: number, handleCerrarModal: MouseEventHandler<HTMLButtonElement> }) => {
     const [dineroEntregado, setDineroEntregado] = useState<string>("0");
     const [dineroEntregadoTarjeta, setDineroEntregadoTarjeta] = useState<string>("0");
     const [showModalResumen, setModalResumen] = useState<boolean>(false);
 
-    const [customerPayment, setCustomerPaymentInfo] = useState<CustomerPaymentInformation>({ tipo: "default", efectivo: 0, tarjeta: 0 });
+    const [customers,] = useDBClients();
+    const [Cliente, setCliente] = useState<Cliente>({ nif: "", nombre: "General" } as Cliente);
+    const [PagoCliente, setPagoCliente] = useState<CustomerPaymentInformation>({} as CustomerPaymentInformation);
 
     let date = new Date();
     let fechaActual = `${date.getDate().toLocaleString('es-ES', { minimumIntegerDigits: 2 })}/${parseInt(date.getUTCMonth().toLocaleString('es-ES', { minimumIntegerDigits: 2 })) + 1}/${date.getFullYear()} `;
     let horaActual = `${date.getHours().toLocaleString('es-ES', { minimumIntegerDigits: 2 })}:${date.getMinutes().toLocaleString('es-ES', { minimumIntegerDigits: 2 })}:${date.getSeconds().toLocaleString('es-ES', { minimumIntegerDigits: 2 })}`
-    let cambio: number = isNaN((Number(dineroEntregado) + Number(dineroEntregadoTarjeta) - props.finalPrice)) ? Number(dineroEntregado) + Number(dineroEntregadoTarjeta) : (Number(dineroEntregado) + Number(dineroEntregadoTarjeta) - props.finalPrice);
+    let cambio: number = isNaN((Number(dineroEntregado) + Number(dineroEntregadoTarjeta) - props.precioFinal)) ? Number(dineroEntregado) + Number(dineroEntregadoTarjeta) : (Number(dineroEntregado) + Number(dineroEntregadoTarjeta) - props.precioFinal);
     let tipoCobro: TipoCobro = TipoCobro.Efectivo;
 
     const SetDineroClienteEfectivo = (dineroDelCliente: string) => {
@@ -65,13 +67,13 @@ export const ModalPagar = (props: ModalPagarProps) => {
     const OpenResumen = () => {
         switch (tipoCobro) {
             case TipoCobro.Efectivo:
-                setCustomerPaymentInfo({ tipo: "Efectivo", efectivo: Number(dineroEntregado), tarjeta: Number(dineroEntregadoTarjeta) });
+                setPagoCliente({ tipo: "Efectivo", efectivo: Number(dineroEntregado), tarjeta: Number(dineroEntregadoTarjeta) } as CustomerPaymentInformation);
                 break;
             case TipoCobro.Tarjeta:
-                setCustomerPaymentInfo({ tipo: "Tarjeta", efectivo: Number(dineroEntregado), tarjeta: Number(dineroEntregadoTarjeta) });
+                setPagoCliente({ tipo: "Tarjeta", efectivo: Number(dineroEntregado), tarjeta: Number(dineroEntregadoTarjeta) } as CustomerPaymentInformation);
                 break;
             case TipoCobro.Fraccionado:
-                setCustomerPaymentInfo({ tipo: "Fraccionado", efectivo: Number(dineroEntregado), tarjeta: Number(dineroEntregadoTarjeta) });
+                setPagoCliente({ tipo: "Fraccionado", efectivo: Number(dineroEntregado), tarjeta: Number(dineroEntregadoTarjeta) } as CustomerPaymentInformation);
                 break;
         }
         setModalResumen(true);
@@ -91,7 +93,7 @@ export const ModalPagar = (props: ModalPagarProps) => {
 
     return (
         <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} >
-            <Backdrop onClick={props.handleClose} >
+            <Backdrop onClick={props.handleCerrarModal} >
                 <motion.div className="mx-20 my-20 flex flex-grow items-center bg-white rounded-2xl"
                     onClick={(e) => e.stopPropagation()}
                     variants={In}
@@ -160,7 +162,7 @@ export const ModalPagar = (props: ModalPagarProps) => {
                                 <div className="grid grid-cols-3 text-lg text-center justify-center">
                                     <div>
                                         <div>Total a pagar</div>
-                                        <div className="text-4xl font-semibold">{props.finalPrice.toFixed(2)}€</div>
+                                        <div className="text-4xl font-semibold">{props.precioFinal.toFixed(2)}€</div>
                                     </div>
                                     <div>
                                         <div>Dinero entregado</div>
@@ -177,7 +179,7 @@ export const ModalPagar = (props: ModalPagarProps) => {
 
                         <hr className="my-2" />
                         <div className="grid grid-cols-2 justify-items-center">
-                            <button className="bg-red-500 hover:bg-red-600 text-white w-full h-12 hover:shadow-lg rounded-lg flex items-center justify-center" onClick={props.handleClose}>
+                            <button className="bg-red-500 hover:bg-red-600 text-white w-full h-12 hover:shadow-lg rounded-lg flex items-center justify-center" onClick={props.handleCerrarModal}>
                                 <div className="text-lg">CANCELAR</div>
                             </button>
                             {cambio < 0 ?
@@ -191,7 +193,7 @@ export const ModalPagar = (props: ModalPagarProps) => {
                             }
                         </div>
                         <AnimatePresence>
-                            {showModalResumen && <ModalResumenCompra customerPayment={customerPayment} cliente={props.cliente} customerProducts={props.customerProducts} finalPrice={props.finalPrice} cambio={cambio} handleClose={CloseResumen} tipoCobro={tipoCobro} />}
+                            {showModalResumen && <ModalResumenCompra customerPayment={PagoCliente} cliente={Cliente} customerProducts={props.productosComprados} finalPrice={props.precioFinal} cambio={cambio} handleClose={CloseResumen} tipoCobro={tipoCobro} />}
                         </AnimatePresence>
                     </div>
 
@@ -207,7 +209,7 @@ type ProductoComprado = {
     dto: number
 }
 
-export const ModalResumenCompra = (props: ModalResumenProps) => {
+export const ModalResumenCompra = (props: ModalResumenProps2) => {
     let date = new Date();
 
     const [customers,] = useDBClients();
@@ -215,11 +217,18 @@ export const ModalResumenCompra = (props: ModalResumenProps) => {
     const fechaActual = `${date.getDate().toLocaleString('es-ES', { minimumIntegerDigits: 2 })}/${parseInt(date.getUTCMonth().toLocaleString('es-ES', { minimumIntegerDigits: 2 })) + 1}/${date.getFullYear()} - ${date.getHours().toLocaleString('es-ES', { minimumIntegerDigits: 2 })}:${date.getMinutes().toLocaleString('es-ES', { minimumIntegerDigits: 2 })}:${date.getSeconds().toLocaleString('es-ES', { minimumIntegerDigits: 2 })}`;
 
     const addSale = async () => {
-        const clienteSeleccionado = customers.filter(c => c.nif == props.cliente.nif)[0];
+        let clienteSeleccionado;
+        if (props.cliente === undefined) {
+            clienteSeleccionado = { nif: "General", nombre: "General" } as Cliente
+        }
+        else {
+            clienteSeleccionado = customers.filter(c => c.nif == props.cliente?.nif)[0];
+        }
+
         const erpBackURL = process.env.REACT_APP_ERP_BACKURL;
         const productosComprados: ProductoComprado[] = [];
-        props.customerProducts.forEach(p => {
-            const pComprado = { _id: p._id, precioUnidad: p.precioVenta, cantidad: p.cantidad, dto: p.dto } as unknown as ProductoComprado;
+        props.customerProducts.forEach((p) => {
+            const pComprado = { _id: p.producto._id, precioUnidad: p.producto.precioVenta, cantidad: p.cantidad, dto: p.dto } as ProductoComprado;
             productosComprados.push(pComprado);
         }
         );
@@ -263,7 +272,7 @@ export const ModalResumenCompra = (props: ModalResumenProps) => {
                                 <p> Resumen de la compra </p>
                             </div>
                             <div className="grid grid-cols-2 grid-rows-1 mt-4 text-xs text-center justify-center">
-                                <div className="text-left relative ">Cliente: {props.cliente.nombre} </div>
+                                <div className="text-left relative ">Cliente: {props.cliente ? props.cliente.nombre : "General"} </div>
                                 <div className="text-right relative text-black"> {fechaActual} </div>
                             </div>
                             <hr className="my-2" />
@@ -280,7 +289,12 @@ export const ModalResumenCompra = (props: ModalResumenProps) => {
                                     <tbody className="h-full overflow-y-auto">
                                         {
                                             props.customerProducts.map((prod, index) => {
-                                                return <GenerarFilaProducto key={"modalRes" + prod._id} numFila={index + 1} nombreProducto={prod.nombre} cantidad={Number(prod.cantidad)} precio={Number(prod.precioVenta * (1 - prod.dto / 100))} />
+                                                if (prod.dto) {
+                                                    return <GenerarFilaProducto key={"modalRes" + prod.producto._id} numFila={index + 1} nombreProducto={prod.producto.nombre} cantidad={prod.producto.cantidad} precio={Number(prod.producto.precioVenta * (1 - prod.dto / 100))} />
+                                                }
+                                                else {
+                                                    return <GenerarFilaProducto key={"modalRes" + prod.producto._id} numFila={index + 1} nombreProducto={prod.producto.nombre} cantidad={prod.cantidad} precio={prod.producto.precioVenta} />
+                                                }
                                             })
                                         }
                                     </tbody>
@@ -333,7 +347,7 @@ export const ModalInput = (props: { handleClose: Function, value: string, setVal
     );
 }
 
-export const ModalEditarProducto = (props: { product: DBProduct, handleClose: Function }) => {
+export const ModalEditarProducto = (props: { product: Producto, handleClose: Function }) => {
     return (
         <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} >
             <Backdrop onClick={(e) => { e.stopPropagation(); props.handleClose() }} >

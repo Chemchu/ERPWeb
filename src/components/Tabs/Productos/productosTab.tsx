@@ -1,17 +1,17 @@
 import axios from "axios";
 import { motion } from "framer-motion";
 import { useEffect, useState } from "react";
-import { DBProduct } from "../../../tipos/DBProduct";
+import { Producto } from "../../../tipos/DBProduct";
 import { JSONBuffer } from "../../../tipos/JsonBuffer";
 import { ConvertBufferToBase64 } from "../../../../Validators";
 import { CheckBox } from "../../../checkbox";
 import { ModalEditarProducto, ModalPagar } from "../../../modal/modal";
 import { Paginador } from "../../../paginador";
 
-const variants= {
+const variants = {
     initial: {
-        opacity: 0       
-      },
+        opacity: 0
+    },
     animate: {
         opacity: 1,
         transition: {
@@ -22,22 +22,22 @@ const variants= {
     exit: {
         y: '-100vh',
         opacity: 0,
-        transition:{ 
-            ease: [0.87, 0, 0.13, 1], 
+        transition: {
+            ease: [0.87, 0, 0.13, 1],
             duration: 1
         }
     },
     exitFadeOut: {
         opacity: 0,
-        transition:{ 
-            ease: "easeInOut", 
+        transition: {
+            ease: "easeInOut",
             duration: 1
         }
     },
-  }
+}
 
 export const ProductPage = () => {
-    const [productos, setProductos] = useState<DBProduct[]>([]);
+    const [productos, setProductos] = useState<Producto[]>([]);
     const [currentPage, setCurrentPage] = useState<number>(1);
     const [selectedProducts, setSelectedProducts] = useState<number[]>([]);
     const [allChecked, setAllChecked] = useState<boolean>(false);
@@ -49,7 +49,7 @@ export const ProductPage = () => {
         const fetchProductos = () => {
             const erpBackURL = process.env.REACT_APP_ERP_BACKURL;
             axios.get(`${erpBackURL}api/productos`).then(
-                (res) => {          
+                (res) => {
                     setProductos([...res.data.message]);
                 }
             );
@@ -58,18 +58,18 @@ export const ProductPage = () => {
     }, []);
 
     const setPaginaActual = (page: number) => {
-        if(page < 1) { return; }
-        if(page > numPages) { return; }
+        if (page < 1) { return; }
+        if (page > numPages) { return; }
 
         setCurrentPage(page);
         setAllBoxesChecked(false);
     }
 
     function range(start: number, end: number) {
-        if(start >= end) return [];
+        if (start >= end) return [];
 
         let res: number[] = [];
-        for(var i = start; i <= end; i++) {
+        for (var i = start; i <= end; i++) {
             res.push(i);
         }
         return res;
@@ -78,8 +78,8 @@ export const ProductPage = () => {
     const setAllBoxesChecked = (checked: boolean) => {
         setAllChecked(checked);
 
-        if(checked){
-            let indexes = range(0,  elementsPerPage - 1);
+        if (checked) {
+            let indexes = range(0, elementsPerPage - 1);
             setSelectedProducts(indexes);
         }
         else {
@@ -87,7 +87,7 @@ export const ProductPage = () => {
         }
     }
 
-    return(
+    return (
         <motion.div className="flex flex-col h-screen antialiased mx-8 py-8" initial={variants.initial} animate={variants.animate} exit={variants.exit}>
             <h2 className="text-2xl leading-tight">
                 Productos
@@ -107,7 +107,7 @@ export const ProductPage = () => {
                         </svg>
                     </motion.button>}
                     {selectedProducts.length > 0 && <motion.button initial={variants.initial} animate={variants.animate} exit={variants.exitFadeOut} className="flex flex-shrink-0 gap-2 px-4 py-2 text-base font-semibold text-white bg-yellow-500 rounded-lg shadow-md hover:bg-yellow-600 focus:outline-none focus:ring-2 focus:ring-yellow-600 focus:ring-offset-2 focus:ring-offset-yellow-200"
-                        onClick={() => {setAllBoxesChecked(false)}}>
+                        onClick={() => { setAllBoxesChecked(false) }}>
                         Cancelar
                         <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z" />
@@ -116,7 +116,7 @@ export const ProductPage = () => {
                 </div>
                 <div className="text-end">
                     <div className="flex flex-col md:flex-row w-3/4 md:w-full max-w-sm md:space-x-3 space-y-3 md:space-y-0 justify-center">
-                        <input type="text" id="form-subscribe-Filter" className="rounded-lg border-transparent flex-1 appearance-none border border-gray-300 w-full py-2 px-4 bg-white text-gray-700 placeholder-gray-400 shadow-sm text-base focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-transparent" placeholder="Producto a buscar..."/>
+                        <input type="text" id="form-subscribe-Filter" className="rounded-lg border-transparent flex-1 appearance-none border border-gray-300 w-full py-2 px-4 bg-white text-gray-700 placeholder-gray-400 shadow-sm text-base focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-transparent" placeholder="Producto a buscar..." />
                         <button className="flex-shrink-0 px-4 py-2 text-base font-semibold text-white bg-blue-500 rounded-lg shadow-md hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 focus:ring-offset-blue-200">
                             Filtrar
                         </button>
@@ -126,7 +126,7 @@ export const ProductPage = () => {
             <div className="flex flex-col h-full mt-4 pb-20">
                 <div className={`bg-white grid ${selectedProducts.length > 0 ? "grid-cols-6" : "grid-cols-5"} justify-evenly rounded-t-xl border-b-2`}>
                     {selectedProducts.length > 0 && <div className="px-5 py-3  text-gray-800 text-left text-sm font-semibold">
-                        <CheckBox isChecked={allChecked} setChecked={setAllBoxesChecked} />   
+                        <CheckBox isChecked={allChecked} setChecked={setAllBoxesChecked} />
                     </div>}
                     <div className={`${selectedProducts.length > 0 ? "" : "px-5"} py-3 text-gray-800 text-left text-sm font-semibold`}>
                         Nombre
@@ -143,22 +143,22 @@ export const ProductPage = () => {
                 </div>
                 <div className="bg-white flex flex-col border-b-4 overflow-scroll overflow-x-hidden">
                     {productos.slice((elementsPerPage * (currentPage - 1)), currentPage * elementsPerPage).map((p, index) => {
-                        return(
+                        return (
                             <div key={`FilaProdTable${p._id}`}>
                                 <FilaProducto listIndex={index} selectedProductos={selectedProducts} setAllChecks={setAllChecked} producto={p} setSelection={setSelectedProducts} />
                             </div>
                         );
-                    })}                      
+                    })}
                 </div>
                 <div className="bg-white flex flex-row p-5 items-center justify-center rounded-b-xl shadow-lg">
-                    <Paginador numPages={numPages} paginaActual={currentPage} maxPages={10} cambiarPaginaActual={setPaginaActual}/>
+                    <Paginador numPages={numPages} paginaActual={currentPage} maxPages={10} cambiarPaginaActual={setPaginaActual} />
                 </div>
             </div>
         </motion.div>
     );
 }
 
-const FilaProducto = (props: {listIndex: number, producto: DBProduct, selectedProductos: number[], setSelection: Function, setAllChecks: Function}) => {
+const FilaProducto = (props: { listIndex: number, producto: Producto, selectedProductos: number[], setSelection: Function, setAllChecks: Function }) => {
     const imagen = `data:image/(png|jpeg);base64,${ConvertBufferToBase64(props.producto.img)}`;
     const [showModal, setModal] = useState<boolean>(false);
 
@@ -167,7 +167,7 @@ const FilaProducto = (props: {listIndex: number, producto: DBProduct, selectedPr
     }
 
     const SetCheckBox = (isChecked: boolean) => {
-        if(isChecked) {
+        if (isChecked) {
             props.setSelection([...props.selectedProductos, props.listIndex]);
         }
         else {
@@ -176,25 +176,25 @@ const FilaProducto = (props: {listIndex: number, producto: DBProduct, selectedPr
         }
     }
 
-    return(
+    return (
         <div className="hover:bg-gray-200 cursor-pointer">
-            <div className="grid grid-cols-5 w-full justify-evenly gap-x-6 border-t" 
-                    onClick={() => {props.selectedProductos.includes(props.listIndex) ? props.setSelection(props.selectedProductos.filter(p => p != props.listIndex)) : props.setSelection([...props.selectedProductos, props.listIndex])  }} >            
+            <div className="grid grid-cols-5 w-full justify-evenly gap-x-6 border-t"
+                onClick={() => { props.selectedProductos.includes(props.listIndex) ? props.setSelection(props.selectedProductos.filter(p => p != props.listIndex)) : props.setSelection([...props.selectedProductos, props.listIndex]) }} >
                 <div className="flex px-5 py-5 border-gray-200 text-sm">
                     {
                         props.selectedProductos.length > 0 && <div className="flex pr-2">
                             {
-                                props.selectedProductos.includes(props.listIndex) ? 
-                                <CheckBox isChecked={true} setChecked={SetCheckBox} />
-                                :
-                                <CheckBox isChecked={false} setChecked={SetCheckBox} />    
-                            }    
+                                props.selectedProductos.includes(props.listIndex) ?
+                                    <CheckBox isChecked={true} setChecked={SetCheckBox} />
+                                    :
+                                    <CheckBox isChecked={false} setChecked={SetCheckBox} />
+                            }
                         </div>
                     }
                     <div className="flex items-center">
                         <div className="flex-shrink-0">
                             <a className="block relative">
-                                <img alt="profil" src={imagen} className="mx-auto object-cover rounded-full h-10 w-10 "/>
+                                <img alt="profil" src={imagen} className="mx-auto object-cover rounded-full h-10 w-10 " />
                             </a>
                         </div>
                         <div className="ml-3">
@@ -223,7 +223,7 @@ const FilaProducto = (props: {listIndex: number, producto: DBProduct, selectedPr
                         </span>
                     </span>
                 </div>
-                <button className="flex pr-6 justify-end self-center gap-2 border-gray-200 text-base" onClick={(e) => {e.stopPropagation(); setModal(true);}}>
+                <button className="flex pr-6 justify-end self-center gap-2 border-gray-200 text-base" onClick={(e) => { e.stopPropagation(); setModal(true); }}>
                     Editar
                     <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
@@ -232,6 +232,6 @@ const FilaProducto = (props: {listIndex: number, producto: DBProduct, selectedPr
             </div>
             {showModal && <ModalEditarProducto handleClose={CloseModalProducto} product={props.producto} />}
         </div>
-        
+
     );
 }

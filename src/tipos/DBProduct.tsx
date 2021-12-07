@@ -1,9 +1,9 @@
 import { JSONBuffer } from "./JsonBuffer";
 
-export type DBProduct = {
+export type Producto = {
     _id: string,
     nombre: string,
-    descripcion: string,
+    descripcion?: string,
     familia: string,
     precioVenta: number,
     precioCompra: number,
@@ -13,5 +13,5 @@ export type DBProduct = {
     tags: string[],
     img: JSONBuffer,
     cantidad: number,
-    promociones?: string[]
+    promociones?: string[],
 }

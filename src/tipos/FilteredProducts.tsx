@@ -1,5 +1,5 @@
-import { DBProduct } from "./DBProduct";
+import { Producto } from "./DBProduct";
 
 export type FilteredProds = {
-    filteredProds: DBProduct[]
+    filteredProds: Producto[]
 }
