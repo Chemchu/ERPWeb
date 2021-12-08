@@ -167,7 +167,7 @@ const TPV = (props: { productos: any, clientes: any }) => {
     );
 }
 
-const SidebarDerecho = React.memo((props: { todosProductos: Producto[], productosEnCarrito: ProductoEnCarrito[], setProductosCarrito: Function }) => {
+const SidebarDerecho = React.memo((props: { todosProductos: Producto[], productosEnCarrito: ProductoEnCarrito[], setProductosCarrito: React.Dispatch<React.SetStateAction<ProductoEnCarrito[]>> }) => {
     const [descuentoOpen, setDescuentoPupup] = useState<boolean>(false);
     const [dtoEfectivo, setDtoEfectivo] = useState<string>("0");
     const [dtoPorcentaje, setDtoPorcentaje] = useState<string>("0");
@@ -183,35 +183,39 @@ const SidebarDerecho = React.memo((props: { todosProductos: Producto[], producto
         setCobroModal(false);
     }
 
-    // Mirar como hacer q la lista de productos del carrito se actualice correctamente porque el useCallback mantiene en memoria el productoEnCarrito
+    // Se accede a la lista de productos actualizada usando "functional state update" de react
     const SetPropiedadProd = useCallback((idProd: string, cantidad: string, dto: string) => {
         if (!IsPositiveIntegerNumber(cantidad.toString())) { return; }
         if (!IsPositiveFloatingNumber(dto.toString())) { return; }
 
-        const prodEnCarrito = props.productosEnCarrito.find(p => p.producto._id == idProd);
+        props.setProductosCarrito((prevCarrito) => {
+            const prodEnCarrito = prevCarrito.find(p => p.producto._id == idProd);
 
-        if (prodEnCarrito) {
+            if (prodEnCarrito) {
 
-            if (Number(cantidad) === 0 && cantidad.toString() !== "") {
-                const nuevaLista = props.productosEnCarrito.filter(p => p.producto._id != idProd);
-                props.setProductosCarrito([...nuevaLista]);
+                if (Number(cantidad) === 0 && cantidad.toString() !== "") {
+                    return prevCarrito.filter(p => p.producto._id != idProd);
+                }
 
-                return;
+                props.setProductosCarrito((prevCarrito) => {
+                    const dtoAjustado = Number(dto) > 100 ? "100" : dto;
+                    const prodIndex = prevCarrito.indexOf(prodEnCarrito);
+                    const prodAlCarrito = {
+                        producto: prodEnCarrito.producto,
+                        cantidad: cantidad,
+                        dto: dtoAjustado.toString()
+                    } as ProductoEnCarrito;
+
+                    let ProductosEnCarritoUpdated = prevCarrito;
+                    ProductosEnCarritoUpdated[prodIndex] = prodAlCarrito;
+
+                    // Actualiza la lista de productos en carrito
+                    return [...ProductosEnCarritoUpdated];
+                });
             }
 
-            const dtoAjustado = Number(dto) > 100 ? "100" : dto;
-            const prodIndex = props.productosEnCarrito.indexOf(prodEnCarrito);
-            const prodAlCarrito = {
-                producto: prodEnCarrito.producto,
-                cantidad: cantidad,
-                dto: dtoAjustado.toString()
-            } as ProductoEnCarrito;
-
-            let ProductosEnCarritoUpdated = props.productosEnCarrito;
-            ProductosEnCarritoUpdated[prodIndex] = prodAlCarrito;
-
-            props.setProductosCarrito([...ProductosEnCarritoUpdated]);
-        }
+            return [...prevCarrito]
+        })
     }, []);
 
     const precioTotal: number = props.productosEnCarrito.reduce((total: number, p: ProductoEnCarrito) => {
@@ -369,10 +373,9 @@ const GenerarProductList = React.memo((props: { productosEnCarrito: ProductoEnCa
             {
                 props.productosEnCarrito.map((p: ProductoEnCarrito) => {
                     return (
-                        <div key={`${p.producto._id}`}>
-                            <ProductSelectedCard cantidad={p.cantidad} dto={p.dto}
-                                producto={p.producto} setPropiedadProd={props.setPropiedadProducto} />
-                        </div>);
+                        <ProductSelectedCard key={`${p.producto._id}`} cantidad={p.cantidad} dto={p.dto}
+                            producto={p.producto} setPropiedadProd={props.setPropiedadProducto} />
+                    );
                 })
             }
         </>
