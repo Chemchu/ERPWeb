@@ -1,7 +1,7 @@
 import { AnimatePresence, motion } from "framer-motion";
-import React, { useEffect, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import { CreateProductList } from "../../../pages/api/typeCreator";
-import { ApplyDtoCash, ApplyDtoPercentage, ValidatePositiveFloatingNumber, ValidatePositiveIntegerNumber, ValidateString } from "../../../pages/api/validator";
+import { ApplyDtoCash, ApplyDtoPercentage, IsPositiveFloatingNumber, IsPositiveIntegerNumber, ValidatePositiveFloatingNumber, ValidatePositiveIntegerNumber, ValidateString } from "../../../pages/api/validator";
 import { CustomerPaymentInformation } from "../../../tipos/CustomerPayment";
 import { Producto } from "../../../tipos/DBProduct";
 import { TipoCobro } from "../../../tipos/Enums/TipoCobro";
@@ -17,9 +17,6 @@ const TPV = (props: { productos: any, clientes: any }) => {
     const [Familias, setFamilias] = useState<string[]>([]);
 
     useEffect(() => {
-        // SetAllProductos([...props.productos]);
-        // SetProductosFiltrados([...props.productos]);
-        // setCustomers([...props.clientes]);
         const productosIniciales: Producto[] = CreateProductList(props.productos);
         setProductos(productosIniciales);
         setProductosFiltrados(productosIniciales);
@@ -128,7 +125,7 @@ const TPV = (props: { productos: any, clientes: any }) => {
                                                                         const prodIndex = ProductosEnCarrito.indexOf(prodEnCarrito);
                                                                         const prodAlCarrito = {
                                                                             producto: prodEnCarrito.producto,
-                                                                            cantidad: prodEnCarrito.cantidad + 1,
+                                                                            cantidad: (Number(prodEnCarrito.cantidad) + 1).toString(),
                                                                             dto: prodEnCarrito.dto
                                                                         } as ProductoEnCarrito;
 
@@ -140,8 +137,8 @@ const TPV = (props: { productos: any, clientes: any }) => {
                                                                     else {
                                                                         const prodAlCarrito = {
                                                                             producto: prod,
-                                                                            cantidad: 1,
-                                                                            dto: 0
+                                                                            cantidad: "1",
+                                                                            dto: "0"
                                                                         } as ProductoEnCarrito
 
                                                                         setProductosEnCarrito([...ProductosEnCarrito, prodAlCarrito]);
@@ -170,7 +167,7 @@ const TPV = (props: { productos: any, clientes: any }) => {
     );
 }
 
-const SidebarDerecho = (props: { todosProductos: Producto[], productosEnCarrito: ProductoEnCarrito[], setProductosCarrito: Function }) => {
+const SidebarDerecho = React.memo((props: { todosProductos: Producto[], productosEnCarrito: ProductoEnCarrito[], setProductosCarrito: Function }) => {
     const [descuentoOpen, setDescuentoPupup] = useState<boolean>(false);
     const [dtoEfectivo, setDtoEfectivo] = useState<string>("0");
     const [dtoPorcentaje, setDtoPorcentaje] = useState<string>("0");
@@ -186,25 +183,28 @@ const SidebarDerecho = (props: { todosProductos: Producto[], productosEnCarrito:
         setCobroModal(false);
     }
 
-    const SetPropiedadProd = (idProd: string, cantidad: number, dto: number) => {
-        if (!ValidatePositiveFloatingNumber(dto.toString())) return;
-        if (!ValidatePositiveIntegerNumber(cantidad.toString())) return;
+    // Mirar como hacer q la lista de productos del carrito se actualice correctamente porque el useCallback mantiene en memoria el productoEnCarrito
+    const SetPropiedadProd = useCallback((idProd: string, cantidad: string, dto: string) => {
+        if (!IsPositiveIntegerNumber(cantidad.toString())) { return; }
+        if (!IsPositiveFloatingNumber(dto.toString())) { return; }
 
         const prodEnCarrito = props.productosEnCarrito.find(p => p.producto._id == idProd);
 
         if (prodEnCarrito) {
-            if (cantidad == 0) {
+
+            if (Number(cantidad) === 0 && cantidad.toString() !== "") {
                 const nuevaLista = props.productosEnCarrito.filter(p => p.producto._id != idProd);
                 props.setProductosCarrito([...nuevaLista]);
 
                 return;
             }
 
+            const dtoAjustado = Number(dto) > 100 ? "100" : dto;
             const prodIndex = props.productosEnCarrito.indexOf(prodEnCarrito);
             const prodAlCarrito = {
                 producto: prodEnCarrito.producto,
                 cantidad: cantidad,
-                dto: dto
+                dto: dtoAjustado.toString()
             } as ProductoEnCarrito;
 
             let ProductosEnCarritoUpdated = props.productosEnCarrito;
@@ -212,14 +212,14 @@ const SidebarDerecho = (props: { todosProductos: Producto[], productosEnCarrito:
 
             props.setProductosCarrito([...ProductosEnCarritoUpdated]);
         }
-    }
+    }, []);
 
     const precioTotal: number = props.productosEnCarrito.reduce((total: number, p: ProductoEnCarrito) => {
         if (p.dto) {
-            return total += ((100 - p.dto) / 100) * (p.cantidad * p.producto.precioVenta);
+            return total += ((100 - Number(p.dto)) / 100) * (Number(p.cantidad) * p.producto.precioVenta);
         }
         else {
-            return total += (p.cantidad * p.producto.precioVenta);
+            return total += (Number(p.cantidad) * p.producto.precioVenta);
         }
     }, 0)
 
@@ -278,13 +278,9 @@ const SidebarDerecho = (props: { todosProductos: Producto[], productosEnCarrito:
                         </div>
                         <div className="flex flex-col flex-grow gap-2 px-2 overflow-scroll overflow-x-hidden">
                             {/* Añadir producto al carrito (fila con información y cantidad)*/}
-                            {props.productosEnCarrito.map((p: ProductoEnCarrito) => {
-                                return (
-                                    <div key={`prodCarrito${p.producto._id}`}>
-                                        <ProductSelectedCard key={p.producto._id} cantidad={p.cantidad} dto={p.dto}
-                                            producto={p.producto} setPropiedadProd={SetPropiedadProd} />
-                                    </div>);
-                            })}
+                            {
+                                <GenerarProductList productosEnCarrito={props.productosEnCarrito} setPropiedadProducto={SetPropiedadProd} />
+                            }
                         </div>
                         <div className="text-center p-4 mb-4">
                             <div>
@@ -365,7 +361,23 @@ const SidebarDerecho = (props: { todosProductos: Producto[], productosEnCarrito:
             </AnimatePresence>
         </div>
     );
-}
+});
+
+const GenerarProductList = React.memo((props: { productosEnCarrito: ProductoEnCarrito[], setPropiedadProducto: Function }) => {
+    return (
+        <>
+            {
+                props.productosEnCarrito.map((p: ProductoEnCarrito) => {
+                    return (
+                        <div key={`${p.producto._id}`}>
+                            <ProductSelectedCard cantidad={p.cantidad} dto={p.dto}
+                                producto={p.producto} setPropiedadProd={props.setPropiedadProducto} />
+                        </div>);
+                })
+            }
+        </>
+    );
+});
 
 function HayDescuento(DtoEfectivo: string, DtoPorcentaje: string): boolean {
     // Si el descuento efectivo o el descuento por porcentaje es diferente de cero 

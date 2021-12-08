@@ -4,6 +4,6 @@ import { JSONBuffer } from "./JsonBuffer";
 
 export type ProductoEnCarrito = {
     producto: Producto,
-    cantidad: number,
-    dto: number
+    cantidad: string,
+    dto: string
 }

@@ -42,7 +42,19 @@ export const ValidatePositiveFloatingNumber = (inputNumber: string): string => {
 
 export const ValidatePositiveIntegerNumber = (inputNumber: string): string => {
     const valuePostRegex = inputNumber.match(new RegExp("^[+]?\d+?$"))?.[0];
-    if (valuePostRegex == undefined) { return ""; }
+    if (valuePostRegex === undefined) { return ""; }
 
     return valuePostRegex;
+}
+
+export const IsPositiveFloatingNumber = (input: string): boolean => {
+    let res = new RegExp('^$|[+]?([0-9]+([.][0-9]*)?|[.][0-9]+)').test(input);
+
+    return res;
+}
+
+export const IsPositiveIntegerNumber = (input: string): boolean => {
+    let res = new RegExp('^$|^[0-9]+$').test(input);
+
+    return res;
 }
