@@ -360,7 +360,7 @@ const SidebarDerecho = React.memo((props: { todosProductos: Producto[], producto
             {/* Modal aceptar compra */}
             <AnimatePresence initial={false} exitBeforeEnter={true}>
                 {showModalPagar && <ModalPagar handleCerrarModal={cerrarModal} productosComprados={props.productosEnCarrito} precioFinal={precioTotal} />}
-                {showModalCobro && <ModalResumenCompra customerPayment={{ tipo: "Cobro rápido", efectivo: precioTotal, tarjeta: 0 } as CustomerPaymentInformation} handleClose={cerrarModalResumen} cliente={undefined} cambio={0}
+                {showModalCobro && <ModalResumenCompra customerPayment={{ tipo: "Cobro rápido", pagoEnEfectivo: precioTotal, pagoEnTarjeta: 0 } as CustomerPaymentInformation} handleClose={cerrarModalResumen} cliente={undefined} cambio={0}
                     customerProducts={props.productosEnCarrito} finalPrice={precioTotal} tipoCobro={TipoCobro.Efectivo} />}
             </AnimatePresence>
         </div>

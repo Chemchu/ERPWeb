@@ -5,7 +5,6 @@ import { ModalPagarProps, ModalPagarProps2, ModalResumenProps, ModalResumenProps
 import { InputNumber } from "../input/inputDinero";
 import { CustomerPaymentInformation } from "../../tipos/CustomerPayment";
 import { TipoCobro } from "../../tipos/Enums/TipoCobro";
-import axios from "axios";
 import AutoComplete from "../autocomplete/autocomplete";
 import { Input } from "../input/input";
 import { Producto } from "../../tipos/DBProduct";
@@ -14,6 +13,7 @@ import { useSelectedProducts } from "../Tabs/pointOfSale/productsContext";
 import { ConvertBufferToBase64 } from "../../pages/api/validator";
 import { Client as Cliente } from "../../tipos/Client";
 import { ProductoEnCarrito } from "../../tipos/ProductoEnCarrito";
+import { config } from "../../pages/api/config";
 
 const In = {
     hidden: {
@@ -67,13 +67,13 @@ export const ModalPagar = (props: { productosComprados: ProductoEnCarrito[], pre
     const OpenResumen = () => {
         switch (tipoCobro) {
             case TipoCobro.Efectivo:
-                setPagoCliente({ tipo: "Efectivo", efectivo: Number(dineroEntregado), tarjeta: Number(dineroEntregadoTarjeta) } as CustomerPaymentInformation);
+                setPagoCliente({ tipo: "Efectivo", pagoEnEfectivo: Number(dineroEntregado), pagoEnTarjeta: Number(dineroEntregadoTarjeta) } as CustomerPaymentInformation);
                 break;
             case TipoCobro.Tarjeta:
-                setPagoCliente({ tipo: "Tarjeta", efectivo: Number(dineroEntregado), tarjeta: Number(dineroEntregadoTarjeta) } as CustomerPaymentInformation);
+                setPagoCliente({ tipo: "Tarjeta", pagoEnEfectivo: Number(dineroEntregado), pagoEnTarjeta: Number(dineroEntregadoTarjeta) } as CustomerPaymentInformation);
                 break;
             case TipoCobro.Fraccionado:
-                setPagoCliente({ tipo: "Fraccionado", efectivo: Number(dineroEntregado), tarjeta: Number(dineroEntregadoTarjeta) } as CustomerPaymentInformation);
+                setPagoCliente({ tipo: "Fraccionado", pagoEnEfectivo: Number(dineroEntregado), pagoEnTarjeta: Number(dineroEntregadoTarjeta) } as CustomerPaymentInformation);
                 break;
         }
         setModalResumen(true);
@@ -209,7 +209,7 @@ type ProductoComprado = {
     dto: number
 }
 
-export const ModalResumenCompra = (props: ModalResumenProps2) => {
+export const ModalResumenCompra = (props: { productosComprados: ProductoEnCarrito[], pagoCliente: CustomerPaymentInformation }) => {
     let date = new Date();
 
     const [customers,] = useDBClients();
@@ -217,37 +217,24 @@ export const ModalResumenCompra = (props: ModalResumenProps2) => {
     const fechaActual = `${date.getDate().toLocaleString('es-ES', { minimumIntegerDigits: 2 })}/${parseInt(date.getUTCMonth().toLocaleString('es-ES', { minimumIntegerDigits: 2 })) + 1}/${date.getFullYear()} - ${date.getHours().toLocaleString('es-ES', { minimumIntegerDigits: 2 })}:${date.getMinutes().toLocaleString('es-ES', { minimumIntegerDigits: 2 })}:${date.getSeconds().toLocaleString('es-ES', { minimumIntegerDigits: 2 })}`;
 
     const addSale = async () => {
-        let clienteSeleccionado;
-        if (props.cliente === undefined) {
-            clienteSeleccionado = { nif: "General", nombre: "General" } as Cliente
-        }
-        else {
-            clienteSeleccionado = customers.filter(c => c.nif == props.cliente?.nif)[0];
-        }
-
-        const erpBackURL = process.env.REACT_APP_ERP_BACKURL;
-        const productosComprados: ProductoComprado[] = [];
-        props.customerProducts.forEach((p) => {
-            const pComprado = { _id: p.producto._id, precioUnidad: p.producto.precioVenta, cantidad: p.cantidad, dto: p.dto } as ProductoComprado;
-            productosComprados.push(pComprado);
-        }
-        );
-
         const data = {
-            productos: productosComprados,
-            precioVentaTotal: props.finalPrice,
-            precioVentaEfectivo: props.customerPayment.efectivo,
-            precioVentaTarjeta: props.customerPayment.tarjeta,
-            cambio: props.cambio,
-            cliente: clienteSeleccionado,
-            tipo: props.tipoCobro
+            productos: props.productosComprados,
+            precioVentaTotal: props.pagoCliente.precioTotal,
+            precioVentaEfectivo: props.pagoCliente.pagoEnEfectivo,
+            precioVentaTarjeta: props.pagoCliente.pagoEnTarjeta,
+            cambio: props.pagoCliente.cambio,
+            cliente: props.pagoCliente.cliente._id,
+            tipo: props.pagoCliente.tipo
         }
 
-        const res = await axios.put(`${erpBackURL}api/ventas/add`, data);
+        const res = await fetch(`${config.ERPBACK_URL}api/ventas/add`, {
+            method: 'PUT',
+            body: JSON.stringify(data)
+        });
 
         if (res.status == 200) {
             SetProductos(null);
-            props.handleClose();
+            //props.handleClose();
         }
         else {
             console.log("Error al realizar la venta");
@@ -256,7 +243,7 @@ export const ModalResumenCompra = (props: ModalResumenProps2) => {
 
     return (
         <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} >
-            <Backdrop onClick={() => props.handleClose()} >
+            <Backdrop onClick={() => {/*props.handleClose()*/ }} >
                 <motion.div className="m-auto py-2 flex flex-col items-center bg-white rounded-2xl"
                     onClick={(e) => e.stopPropagation()}
                     variants={In}
@@ -272,7 +259,7 @@ export const ModalResumenCompra = (props: ModalResumenProps2) => {
                                 <p> Resumen de la compra </p>
                             </div>
                             <div className="grid grid-cols-2 grid-rows-1 mt-4 text-xs text-center justify-center">
-                                <div className="text-left relative ">Cliente: {props.cliente ? props.cliente.nombre : "General"} </div>
+                                <div className="text-left relative ">Cliente: {props.pagoCliente.cliente.nombre} </div>
                                 <div className="text-right relative text-black"> {fechaActual} </div>
                             </div>
                             <hr className="my-2" />
@@ -303,14 +290,14 @@ export const ModalResumenCompra = (props: ModalResumenProps2) => {
                             <hr className="my-2" />
                             <div className="flex justify-between">
                                 <div className="font-semibold self-center">
-                                    Pago en {props.tipoCobro.toLowerCase()}
+                                    Pago en {props.pagoCliente.tipo.toLowerCase()}
                                 </div>
                                 <div>
                                     <div>
-                                        Total: {props.finalPrice.toFixed(2)}€
+                                        Total: {props.pagoCliente.precioTotal.toFixed(2)}€
                                     </div>
                                     <div className="">
-                                        Cambio: {props.cambio.toFixed(2)}€
+                                        Cambio: {props.pagoCliente.cambio.toFixed(2)}€
                                     </div>
                                 </div>
                             </div>
