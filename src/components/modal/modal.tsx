@@ -1,18 +1,15 @@
-import { Backdrop } from "../backdrop.js/dropdown";
+import { Backdrop } from "../backdrop.js";
 import { AnimatePresence, motion } from "framer-motion";
 import { MouseEventHandler, useState } from "react";
-import { ModalPagarProps, ModalPagarProps2, ModalResumenProps, ModalResumenProps2 } from "../../tipos/ModalProps";
 import { InputNumber } from "../input/inputDinero";
 import { CustomerPaymentInformation } from "../../tipos/CustomerPayment";
 import { TipoCobro } from "../../tipos/Enums/TipoCobro";
 import AutoComplete from "../autocomplete/autocomplete";
 import { Input } from "../input/input";
-import { Producto } from "../../tipos/DBProduct";
-import { useDBClients } from "../Tabs/pointOfSale/clientContext";
-import { useSelectedProducts } from "../Tabs/pointOfSale/productsContext";
+import { Producto } from "../../tipos/Producto";
 import { ConvertBufferToBase64 } from "../../pages/api/validator";
 import { Client as Cliente } from "../../tipos/Client";
-import { ProductoEnCarrito } from "../../tipos/ProductoEnCarrito";
+import { ProductoVendido } from "../../tipos/ProductoVendido";
 import { envInformation } from "../../pages/api/envInfo";
 
 const In = {
@@ -39,7 +36,7 @@ const In = {
     }
 }
 
-export const ModalPagar = (props: { productosComprados: ProductoEnCarrito[], precioFinal: number, clientes: Cliente[], handleCerrarModal: MouseEventHandler<HTMLButtonElement> }) => {
+export const ModalPagar = (props: { productosComprados: ProductoVendido[], precioFinal: number, clientes: Cliente[], handleCerrarModal: MouseEventHandler<HTMLButtonElement> }) => {
     const [dineroEntregado, setDineroEntregado] = useState<string>("0");
     const [dineroEntregadoTarjeta, setDineroEntregadoTarjeta] = useState<string>("0");
     const [showModalResumen, setModalResumen] = useState<boolean>(false);
@@ -194,10 +191,9 @@ export const ModalPagar = (props: { productosComprados: ProductoEnCarrito[], pre
     );
 }
 
-export const ModalResumenCompra = (props: { productosComprados: ProductoEnCarrito[], pagoCliente: CustomerPaymentInformation, handleClose: Function }) => {
+export const ModalResumenCompra = (props: { productosComprados: ProductoVendido[], pagoCliente: CustomerPaymentInformation, handleClose: Function }) => {
     let date = new Date();
 
-    const [, SetProductos] = useSelectedProducts();
     const fechaActual = `${date.getDate().toLocaleString('es-ES', { minimumIntegerDigits: 2 })}/${parseInt(date.getUTCMonth().toLocaleString('es-ES', { minimumIntegerDigits: 2 })) + 1}/${date.getFullYear()} - ${date.getHours().toLocaleString('es-ES', { minimumIntegerDigits: 2 })}:${date.getMinutes().toLocaleString('es-ES', { minimumIntegerDigits: 2 })}:${date.getSeconds().toLocaleString('es-ES', { minimumIntegerDigits: 2 })}`;
 
     const addSale = async () => {
@@ -217,7 +213,6 @@ export const ModalResumenCompra = (props: { productosComprados: ProductoEnCarrit
         });
 
         if (res.status == 200) {
-            SetProductos(null);
             props.handleClose();
         }
         else {

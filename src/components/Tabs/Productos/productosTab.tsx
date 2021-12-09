@@ -1,6 +1,6 @@
 import { motion } from "framer-motion";
 import React, { useState } from "react";
-import { Producto } from "../../../tipos/DBProduct";
+import { Producto } from "../../../tipos/Producto";
 import { CheckBox } from "../../checkbox";
 import { Paginador } from "../../paginador";
 import { ConvertBufferToBase64 } from "../../../pages/api/validator";

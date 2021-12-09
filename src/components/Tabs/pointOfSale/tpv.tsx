@@ -3,9 +3,9 @@ import React, { useCallback, useEffect, useState } from "react";
 import { ApplyDtoCash, ApplyDtoPercentage, IsPositiveFloatingNumber, IsPositiveIntegerNumber, ValidatePositiveFloatingNumber, ValidatePositiveIntegerNumber, ValidateString } from "../../../pages/api/validator";
 import { Client } from "../../../tipos/Client";
 import { CustomerPaymentInformation } from "../../../tipos/CustomerPayment";
-import { Producto } from "../../../tipos/DBProduct";
+import { Producto } from "../../../tipos/Producto";
 import { TipoCobro } from "../../../tipos/Enums/TipoCobro";
-import { ProductoEnCarrito } from "../../../tipos/ProductoEnCarrito";
+import { ProductoVendido } from "../../../tipos/ProductoVendido";
 import { ModalPagar, ModalResumenCompra } from "../../modal/modal";
 import { ProductCard, ProductSelectedCard } from "./productCard";
 
@@ -14,7 +14,7 @@ const TPV = (props: { productos: Producto[], clientes: Client[] }) => {
     const [Clientes,] = useState<Client[]>(props.clientes);
     const [Productos,] = useState<Producto[]>(props.productos);
     const [ProductosFiltrados, setProductosFiltrados] = useState<Producto[]>(props.productos);
-    const [ProductosEnCarrito, setProductosEnCarrito] = useState<ProductoEnCarrito[]>([]);
+    const [ProductosEnCarrito, setProductosEnCarrito] = useState<ProductoVendido[]>([]);
     const [Familias, setFamilias] = useState<string[]>([]);
 
     useEffect(() => {
@@ -122,7 +122,7 @@ const TPV = (props: { productos: Producto[], clientes: Client[] }) => {
                                                                             producto: prodEnCarrito.producto,
                                                                             cantidad: (Number(prodEnCarrito.cantidad) + 1).toString(),
                                                                             dto: prodEnCarrito.dto
-                                                                        } as ProductoEnCarrito;
+                                                                        } as ProductoVendido;
 
                                                                         let ProductosEnCarritoUpdated = ProductosEnCarrito;
                                                                         ProductosEnCarritoUpdated[prodIndex] = prodAlCarrito;
@@ -134,7 +134,7 @@ const TPV = (props: { productos: Producto[], clientes: Client[] }) => {
                                                                             producto: prod,
                                                                             cantidad: "1",
                                                                             dto: "0"
-                                                                        } as ProductoEnCarrito
+                                                                        } as ProductoVendido
 
                                                                         setProductosEnCarrito([...ProductosEnCarrito, prodAlCarrito]);
                                                                     }
@@ -162,7 +162,7 @@ const TPV = (props: { productos: Producto[], clientes: Client[] }) => {
     );
 }
 
-const SidebarDerecho = React.memo((props: { todosProductos: Producto[], productosEnCarrito: ProductoEnCarrito[], clientes: Client[], setProductosCarrito: React.Dispatch<React.SetStateAction<ProductoEnCarrito[]>> }) => {
+const SidebarDerecho = React.memo((props: { todosProductos: Producto[], productosEnCarrito: ProductoVendido[], clientes: Client[], setProductosCarrito: React.Dispatch<React.SetStateAction<ProductoVendido[]>> }) => {
     const [descuentoOpen, setDescuentoPupup] = useState<boolean>(false);
     const [dtoEfectivo, setDtoEfectivo] = useState<string>("0");
     const [dtoPorcentaje, setDtoPorcentaje] = useState<string>("0");
@@ -199,7 +199,7 @@ const SidebarDerecho = React.memo((props: { todosProductos: Producto[], producto
                         producto: prodEnCarrito.producto,
                         cantidad: cantidad,
                         dto: dtoAjustado.toString()
-                    } as ProductoEnCarrito;
+                    } as ProductoVendido;
 
                     let ProductosEnCarritoUpdated = prevCarrito;
                     ProductosEnCarritoUpdated[prodIndex] = prodAlCarrito;
@@ -213,7 +213,7 @@ const SidebarDerecho = React.memo((props: { todosProductos: Producto[], producto
         })
     }, []);
 
-    const precioTotal: number = props.productosEnCarrito.reduce((total: number, p: ProductoEnCarrito) => {
+    const precioTotal: number = props.productosEnCarrito.reduce((total: number, p: ProductoVendido) => {
         if (p.dto) {
             return total += ((100 - Number(p.dto)) / 100) * (Number(p.cantidad) * p.producto.precioVenta);
         }
@@ -364,11 +364,11 @@ const SidebarDerecho = React.memo((props: { todosProductos: Producto[], producto
     );
 });
 
-const GenerarProductList = React.memo((props: { productosEnCarrito: ProductoEnCarrito[], setPropiedadProducto: Function }) => {
+const GenerarProductList = React.memo((props: { productosEnCarrito: ProductoVendido[], setPropiedadProducto: Function }) => {
     return (
         <>
             {
-                props.productosEnCarrito.map((p: ProductoEnCarrito) => {
+                props.productosEnCarrito.map((p: ProductoVendido) => {
                     return (
                         <ProductSelectedCard key={`${p.producto._id}`} cantidad={p.cantidad} dto={p.dto}
                             producto={p.producto} setPropiedadProd={props.setPropiedadProducto} />

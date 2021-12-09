@@ -2,7 +2,7 @@ import { AppContext } from "next/app";
 import React from "react";
 import TPV from "../../../components/Tabs/pointOfSale/tpv";
 import { Client } from "../../../tipos/Client";
-import { Producto } from "../../../tipos/DBProduct";
+import { Producto } from "../../../tipos/Producto";
 import { envInformation } from "../../api/envInfo";
 import { CreateClientList, CreateProductList } from "../../api/typeCreator";
 

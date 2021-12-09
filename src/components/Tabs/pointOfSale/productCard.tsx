@@ -1,8 +1,8 @@
 import { motion } from 'framer-motion';
 import React, { useState } from 'react';
-import { Producto } from '../../../tipos/DBProduct';
+import { Producto } from '../../../tipos/Producto';
 import { ConvertBufferToBase64 } from '../../../pages/api/validator';
-import { ProductoEnCarrito } from '../../../tipos/ProductoEnCarrito';
+import { ProductoVendido } from '../../../tipos/ProductoVendido';
 
 
 export const ProductCard = React.memo((props: Producto) => {
@@ -37,7 +37,7 @@ export const ProductSelectedCard = React.memo((props: { producto: Producto, setP
         e.stopPropagation();
         props.setPropiedadProd(props.producto._id, 0, props.dto);
     }
-    const prod: ProductoEnCarrito = { producto: props.producto, cantidad: props.cantidad, dto: props.dto } as ProductoEnCarrito;
+    const prod: ProductoVendido = { producto: props.producto, cantidad: props.cantidad, dto: props.dto } as ProductoVendido;
 
     return (
         <div key={`${props.producto._id}`} >

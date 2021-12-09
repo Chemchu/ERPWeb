@@ -1,6 +1,8 @@
-export type DBSale = {
+import { ProductoVendido } from "./ProductoVendido";
+
+export type Venta = {
     _id: string,
-    productos: SoldProduct[],
+    productos: ProductoVendido[],
     dineroEntregadoEfectivo: number,
     dineroEntregadoTarjeta: number,
     precioVentaTotal: number,
@@ -13,10 +15,4 @@ export type DBSale = {
     descuentoTarjeta: number,
     createdAt: string,
     updatedAt: string
-}
-
-type SoldProduct = {
-    _id: string,
-    cantidad: number,
-    dto: number
 }

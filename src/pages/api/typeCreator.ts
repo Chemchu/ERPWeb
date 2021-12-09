@@ -1,5 +1,5 @@
 import { Client } from "../../tipos/Client";
-import { Producto } from "../../tipos/DBProduct";
+import { Producto } from "../../tipos/Producto";
 
 function CreateProduct(p: any): Producto | undefined {
     try {

@@ -1,7 +1,6 @@
-import { POS } from "../../components/Tabs/pointOfSale/pos";
 import { ProductPage } from '../../components/Tabs/Productos/productosTab';
 import { SalesPage } from '../../components/Tabs/Ventas/ventasTabs';
-import { Inicio } from '../../components/Tabs/Inicio/inicio';
+import { Inicio } from '../../components/Tabs/Inicio';
 import React, { useState } from "react";
 import SideBar from "../../components/sidebar/sidebar";
 

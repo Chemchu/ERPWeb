@@ -1,6 +1,6 @@
 import { AppContext } from "next/app";
 import { ProductPage } from "../../../components/Tabs/Productos/productosTab";
-import { Producto } from "../../../tipos/DBProduct";
+import { Producto } from "../../../tipos/Producto";
 import { envInformation } from "../../api/envInfo";
 import { CreateProductList } from "../../api/typeCreator";
 
