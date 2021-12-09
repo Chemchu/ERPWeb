@@ -1,4 +1,4 @@
-import { Client } from "../../tipos/Client";
+import { Cliente } from "../../tipos/Cliente";
 import { Producto } from "../../tipos/Producto";
 
 function CreateProduct(p: any): Producto | undefined {
@@ -26,7 +26,7 @@ function CreateProduct(p: any): Producto | undefined {
     }
 }
 
-function CreateClient(c: any): Client | undefined {
+function CreateClient(c: any): Cliente | undefined {
     try {
         let client = {
             _id: c._id,
@@ -35,7 +35,7 @@ function CreateClient(c: any): Client | undefined {
             calle: c.calle ? c.calle : "",
             cp: c.cp ? c.cp : "",
             telefono: c.telefono ? c.telefono : ""
-        } as Client
+        } as Cliente
 
         return client;
     }
@@ -55,8 +55,8 @@ export function CreateProductList(pList: any[]): Producto[] {
     return res;
 }
 
-export function CreateClientList(cList: any[]): Client[] {
-    let res: Client[] = [];
+export function CreateClientList(cList: any[]): Cliente[] {
+    let res: Cliente[] = [];
     cList.forEach((c: any) => {
         const client = CreateClient(c);
 

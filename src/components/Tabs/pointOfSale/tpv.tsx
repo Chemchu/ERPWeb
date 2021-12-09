@@ -1,7 +1,7 @@
 import { AnimatePresence, motion } from "framer-motion";
 import React, { useCallback, useEffect, useState } from "react";
 import { ApplyDtoCash, ApplyDtoPercentage, IsPositiveFloatingNumber, IsPositiveIntegerNumber, ValidatePositiveFloatingNumber, ValidatePositiveIntegerNumber, ValidateString } from "../../../pages/api/validator";
-import { Client } from "../../../tipos/Client";
+import { Cliente } from "../../../tipos/Cliente";
 import { CustomerPaymentInformation } from "../../../tipos/CustomerPayment";
 import { Producto } from "../../../tipos/Producto";
 import { TipoCobro } from "../../../tipos/Enums/TipoCobro";
@@ -9,9 +9,9 @@ import { ProductoVendido } from "../../../tipos/ProductoVendido";
 import { ModalPagar, ModalResumenCompra } from "../../modal/modal";
 import { ProductCard, ProductSelectedCard } from "./productCard";
 
-const TPV = (props: { productos: Producto[], clientes: Client[] }) => {
+const TPV = (props: { productos: Producto[], clientes: Cliente[] }) => {
     const [Busqueda, setBusqueda] = useState<string>("");
-    const [Clientes,] = useState<Client[]>(props.clientes);
+    const [Clientes,] = useState<Cliente[]>(props.clientes);
     const [Productos,] = useState<Producto[]>(props.productos);
     const [ProductosFiltrados, setProductosFiltrados] = useState<Producto[]>(props.productos);
     const [ProductosEnCarrito, setProductosEnCarrito] = useState<ProductoVendido[]>([]);
@@ -162,7 +162,7 @@ const TPV = (props: { productos: Producto[], clientes: Client[] }) => {
     );
 }
 
-const SidebarDerecho = React.memo((props: { todosProductos: Producto[], productosEnCarrito: ProductoVendido[], clientes: Client[], setProductosCarrito: React.Dispatch<React.SetStateAction<ProductoVendido[]>> }) => {
+const SidebarDerecho = React.memo((props: { todosProductos: Producto[], productosEnCarrito: ProductoVendido[], clientes: Cliente[], setProductosCarrito: React.Dispatch<React.SetStateAction<ProductoVendido[]>> }) => {
     const [descuentoOpen, setDescuentoPupup] = useState<boolean>(false);
     const [dtoEfectivo, setDtoEfectivo] = useState<string>("0");
     const [dtoPorcentaje, setDtoPorcentaje] = useState<string>("0");

@@ -8,7 +8,7 @@ import AutoComplete from "../autocomplete/autocomplete";
 import { Input } from "../input/input";
 import { Producto } from "../../tipos/Producto";
 import { ConvertBufferToBase64 } from "../../pages/api/validator";
-import { Client as Cliente } from "../../tipos/Client";
+import { Cliente as Cliente } from "../../tipos/Cliente";
 import { ProductoVendido } from "../../tipos/ProductoVendido";
 import { envInformation } from "../../pages/api/envInfo";
 
@@ -197,27 +197,27 @@ export const ModalResumenCompra = (props: { productosComprados: ProductoVendido[
     const fechaActual = `${date.getDate().toLocaleString('es-ES', { minimumIntegerDigits: 2 })}/${parseInt(date.getUTCMonth().toLocaleString('es-ES', { minimumIntegerDigits: 2 })) + 1}/${date.getFullYear()} - ${date.getHours().toLocaleString('es-ES', { minimumIntegerDigits: 2 })}:${date.getMinutes().toLocaleString('es-ES', { minimumIntegerDigits: 2 })}:${date.getSeconds().toLocaleString('es-ES', { minimumIntegerDigits: 2 })}`;
 
     const addSale = async () => {
-        const data = {
-            productos: props.productosComprados,
-            precioVentaTotal: props.pagoCliente.precioTotal,
-            precioVentaEfectivo: props.pagoCliente.pagoEnEfectivo,
-            precioVentaTarjeta: props.pagoCliente.pagoEnTarjeta,
-            cambio: props.pagoCliente.cambio,
-            cliente: props.pagoCliente.cliente._id,
-            tipo: props.pagoCliente.tipo
-        }
+        // const data = {
+        //     productos: props.productosComprados,
+        //     precioVentaTotal: props.pagoCliente.precioTotal,
+        //     precioVentaEfectivo: props.pagoCliente.pagoEnEfectivo,
+        //     precioVentaTarjeta: props.pagoCliente.pagoEnTarjeta,
+        //     cambio: props.pagoCliente.cambio,
+        //     cliente: props.pagoCliente.cliente._id,
+        //     tipo: props.pagoCliente.tipo
+        // }
 
-        const res = await fetch(`${envInformation.ERPBACK_URL}api/ventas/add`, {
-            method: 'PUT',
-            body: JSON.stringify(data)
-        });
+        // const res = await fetch(`${envInformation.ERPBACK_URL}api/ventas/add`, {
+        //     method: 'PUT',
+        //     body: JSON.stringify(data)
+        // });
 
-        if (res.status == 200) {
-            props.handleClose();
-        }
-        else {
-            console.log("Error al realizar la venta");
-        }
+        // if (res.status == 200) {
+        //     props.handleClose();
+        // }
+        // else {
+        //     console.log("Error al realizar la venta");
+        // }
     }
 
     return (

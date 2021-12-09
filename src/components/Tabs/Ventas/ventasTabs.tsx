@@ -1,6 +1,6 @@
 import { motion } from "framer-motion";
 import React, { useEffect, useState } from "react";
-import { Client } from "../../../tipos/Client";
+import { Cliente } from "../../../tipos/Cliente";
 import { Venta } from "../../../tipos/Venta";
 import { Paginador } from "../../paginador";
 
@@ -25,21 +25,21 @@ const variants = {
     },
 }
 
-export const SalesPage = (props: { ventas: Venta[], clientes: Client[] }) => {
+export const SalesPage = (props: { ventas: Venta[], clientes: Cliente[] }) => {
     const [Ventas, setVentas] = useState<Venta[]>(props.ventas);
-    const [Clientes, setClientes] = useState<Client[]>(props.clientes);
+    const [Clientes, setClientes] = useState<Cliente[]>(props.clientes);
     const [CurrentPage, setCurrentPage] = useState<number>(1);
 
     const elementsPerPage = 10;
     const numPages = Ventas.length <= 0 ? 1 : Math.ceil(Ventas.length / elementsPerPage);
 
-    const UpdateVentas = (ventas: Array<any>, clientes: Client[]): void => {
+    const UpdateVentas = (ventas: Array<any>, clientes: Cliente[]): void => {
         let ventasFormatted: Array<Venta> = [];
         ventas.forEach((v: Venta) => {
-            const nombreCliente = clientes.find(c => c._id == v.cliente)?.nombre;
+            const nombreCliente = clientes.find(c => c._id == v.nombreCliente)?.nombre;
             const sale: Venta = {
                 _id: v._id,
-                cliente: nombreCliente || "General",
+                nombreCliente: nombreCliente || "General",
                 productos: v.productos,
                 descuentoEfectivo: v.descuentoEfectivo,
                 descuentoTarjeta: v.descuentoTarjeta,
@@ -103,7 +103,7 @@ export const SalesPage = (props: { ventas: Venta[], clientes: Client[] }) => {
                     {Ventas.slice((elementsPerPage * (CurrentPage - 1)), CurrentPage * elementsPerPage).map((v) => {
                         return (
                             <div key={`FilaProdTable${v._id}`}>
-                                <FilaVenta key={`FilaVenta${v._id}`} IDCompra={v._id} nombreCliente={v.cliente} fechaCompra={v.createdAt} metodoPago={v.tipo} valorTotal={v.precioVentaTotal} />
+                                <FilaVenta key={`FilaVenta${v._id}`} IDCompra={v._id} nombreCliente={v.nombreCliente} fechaCompra={v.createdAt} metodoPago={v.tipo} valorTotal={v.precioVentaTotal} />
                             </div>
                         );
                     })}

@@ -1,7 +1,7 @@
-import { Client } from "./Client";
+import { Cliente } from "./Cliente";
 
 export type CustomerPaymentInformation = {
-    cliente: Client,
+    cliente: Cliente,
     tipo: string,
     precioTotal: number,
     pagoEnEfectivo: number,
