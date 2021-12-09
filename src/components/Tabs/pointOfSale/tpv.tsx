@@ -1,7 +1,7 @@
 import { AnimatePresence, motion } from "framer-motion";
 import React, { useCallback, useEffect, useState } from "react";
-import { CreateProductList } from "../../../pages/api/typeCreator";
 import { ApplyDtoCash, ApplyDtoPercentage, IsPositiveFloatingNumber, IsPositiveIntegerNumber, ValidatePositiveFloatingNumber, ValidatePositiveIntegerNumber, ValidateString } from "../../../pages/api/validator";
+import { Client } from "../../../tipos/Client";
 import { CustomerPaymentInformation } from "../../../tipos/CustomerPayment";
 import { Producto } from "../../../tipos/DBProduct";
 import { TipoCobro } from "../../../tipos/Enums/TipoCobro";
@@ -9,18 +9,13 @@ import { ProductoEnCarrito } from "../../../tipos/ProductoEnCarrito";
 import { ModalPagar, ModalResumenCompra } from "../../modal/modal";
 import { ProductCard, ProductSelectedCard } from "./productCard";
 
-const TPV = (props: { productos: any, clientes: any }) => {
+const TPV = (props: { productos: Producto[], clientes: Client[] }) => {
     const [Busqueda, setBusqueda] = useState<string>("");
-    const [Productos, setProductos] = useState<Producto[]>([]);
-    const [ProductosFiltrados, setProductosFiltrados] = useState<Producto[]>([]);
+    const [Clientes,] = useState<Client[]>(props.clientes);
+    const [Productos,] = useState<Producto[]>(props.productos);
+    const [ProductosFiltrados, setProductosFiltrados] = useState<Producto[]>(props.productos);
     const [ProductosEnCarrito, setProductosEnCarrito] = useState<ProductoEnCarrito[]>([]);
     const [Familias, setFamilias] = useState<string[]>([]);
-
-    useEffect(() => {
-        const productosIniciales: Producto[] = CreateProductList(props.productos);
-        setProductos(productosIniciales);
-        setProductosFiltrados(productosIniciales);
-    }, []);
 
     useEffect(() => {
         function uniq_fast(a: Producto[]) {
@@ -160,14 +155,14 @@ const TPV = (props: { productos: any, clientes: any }) => {
                 {/* Menú tienda */}
                 {/* Sidebar derecho */}
                 <div className="m-4">
-                    <SidebarDerecho todosProductos={Productos} productosEnCarrito={ProductosEnCarrito} setProductosCarrito={setProductosEnCarrito} />
+                    <SidebarDerecho todosProductos={Productos} productosEnCarrito={ProductosEnCarrito} setProductosCarrito={setProductosEnCarrito} clientes={Clientes} />
                 </div>
             </div>
         </div>
     );
 }
 
-const SidebarDerecho = React.memo((props: { todosProductos: Producto[], productosEnCarrito: ProductoEnCarrito[], setProductosCarrito: React.Dispatch<React.SetStateAction<ProductoEnCarrito[]>> }) => {
+const SidebarDerecho = React.memo((props: { todosProductos: Producto[], productosEnCarrito: ProductoEnCarrito[], clientes: Client[], setProductosCarrito: React.Dispatch<React.SetStateAction<ProductoEnCarrito[]>> }) => {
     const [descuentoOpen, setDescuentoPupup] = useState<boolean>(false);
     const [dtoEfectivo, setDtoEfectivo] = useState<string>("0");
     const [dtoPorcentaje, setDtoPorcentaje] = useState<string>("0");
@@ -226,6 +221,9 @@ const SidebarDerecho = React.memo((props: { todosProductos: Producto[], producto
             return total += (Number(p.cantidad) * p.producto.precioVenta);
         }
     }, 0)
+
+    const clienteGeneral = props.clientes.find(c => c.nif == "General");
+    const pagoRapido: CustomerPaymentInformation = { cliente: clienteGeneral, cambio: 0, pagoEnEfectivo: precioTotal, pagoEnTarjeta: 0, precioTotal: precioTotal, tipo: TipoCobro.Rapido } as CustomerPaymentInformation;
 
     return (
         <div className="bg-white rounded-3xl shadow">
@@ -359,9 +357,8 @@ const SidebarDerecho = React.memo((props: { todosProductos: Producto[], producto
             }
             {/* Modal aceptar compra */}
             <AnimatePresence initial={false} exitBeforeEnter={true}>
-                {showModalPagar && <ModalPagar handleCerrarModal={cerrarModal} productosComprados={props.productosEnCarrito} precioFinal={precioTotal} />}
-                {showModalCobro && <ModalResumenCompra customerPayment={{ tipo: "Cobro rápido", pagoEnEfectivo: precioTotal, pagoEnTarjeta: 0 } as CustomerPaymentInformation} handleClose={cerrarModalResumen} cliente={undefined} cambio={0}
-                    customerProducts={props.productosEnCarrito} finalPrice={precioTotal} tipoCobro={TipoCobro.Efectivo} />}
+                {showModalPagar && <ModalPagar handleCerrarModal={cerrarModal} productosComprados={props.productosEnCarrito} precioFinal={precioTotal} clientes={props.clientes} />}
+                {showModalCobro && <ModalResumenCompra pagoCliente={pagoRapido} handleClose={cerrarModalResumen} productosComprados={props.productosEnCarrito} />}
             </AnimatePresence>
         </div>
     );

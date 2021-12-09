@@ -61,7 +61,7 @@ const POSComponent = memo((props: { productos: any, clientes: any }) => {
     const [familias, setFamilias] = useState<string[]>([]);
 
     const [, setCustomers] = useDBClients();
-    let clienteActual: Client = { nombre: "Genérico", calle: "Genérico", cp: "Genérico", nif: "Genérico" }
+    //let clienteActual: Client = { nombre: "Genérico", calle: "Genérico", cp: "Genérico", nif: "Genérico"  }
 
     useEffect(() => {
         SetAllProductos([...props.productos]);

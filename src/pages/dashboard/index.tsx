@@ -6,18 +6,16 @@ import React, { useState } from "react";
 import SideBar from "../../components/sidebar/sidebar";
 
 const Dashboard = (props: any) => {
-  // let { path, url } = useRouteMatch();
-  // const location = useLocation();
   const [isSidebarCollapsed, setSidebarCollapsed] = useState(false);
-  
+
   return (
     <main className="bg-gray-100 dark:bg-gray-800 h-screen w-screen overflow-hidden relative">
-        <div className="flex items-start justify-start">
-          <div className="m-2">
-            <SideBar isCollapsed={isSidebarCollapsed} setCollapsed={setSidebarCollapsed} />
-          </div>
-          <div className="w-screen h-screen">
-            {/* <Switch location={location} key={location.key}>
+      <div className="flex items-start justify-start">
+        <div className="m-2">
+          <SideBar isCollapsed={isSidebarCollapsed} setCollapsed={setSidebarCollapsed} />
+        </div>
+        <div className="w-screen h-screen">
+          {/* <Switch location={location} key={location.key}>
               <Route key={`${url}/`} path={`${url}/`} exact children={<Inicio/>} />
               <Route key={`${url}/pos`} path={`${url}/pos`} exact children={<POS/>} />
               <Route key={`${url}/productos`} path={`${url}/productos`} exact children={<ProductPage/>} />
@@ -25,9 +23,9 @@ const Dashboard = (props: any) => {
               <Route key={`${url}/sales`} path={`${url}/sales`} exact children={<SalesPage/>} />
               <Route key={`${url}/help`} path={`${url}/help`} exact children={<div>Ayuda</div>} />
             </Switch> */}
-            {props.children}
-          </div>
+          {props.children}
         </div>
+      </div>
     </main>
   )
 }

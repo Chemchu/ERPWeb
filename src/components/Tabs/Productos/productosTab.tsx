@@ -1,12 +1,10 @@
-import axios from "axios";
 import { motion } from "framer-motion";
-import { useEffect, useState } from "react";
+import React, { useState } from "react";
 import { Producto } from "../../../tipos/DBProduct";
-import { JSONBuffer } from "../../../tipos/JsonBuffer";
-import { ConvertBufferToBase64 } from "../../../../Validators";
-import { CheckBox } from "../../../checkbox";
-import { ModalEditarProducto, ModalPagar } from "../../../modal/modal";
-import { Paginador } from "../../../paginador";
+import { CheckBox } from "../../checkbox";
+import { Paginador } from "../../paginador";
+import { ConvertBufferToBase64 } from "../../../pages/api/validator";
+import { ModalEditarProducto } from "../../modal/modal";
 
 const variants = {
     initial: {
@@ -36,26 +34,13 @@ const variants = {
     },
 }
 
-export const ProductPage = () => {
-    const [productos, setProductos] = useState<Producto[]>([]);
+export const ProductPage = (props: { productos: Producto[] }) => {
     const [currentPage, setCurrentPage] = useState<number>(1);
     const [selectedProducts, setSelectedProducts] = useState<number[]>([]);
     const [allChecked, setAllChecked] = useState<boolean>(false);
 
     const elementsPerPage = 10;
-    const numPages = Math.ceil(productos.length / elementsPerPage);
-
-    useEffect(() => {
-        const fetchProductos = () => {
-            const erpBackURL = process.env.REACT_APP_ERP_BACKURL;
-            axios.get(`${erpBackURL}api/productos`).then(
-                (res) => {
-                    setProductos([...res.data.message]);
-                }
-            );
-        };
-        fetchProductos();
-    }, []);
+    const numPages = Math.ceil(props.productos.length / elementsPerPage);
 
     const setPaginaActual = (page: number) => {
         if (page < 1) { return; }
@@ -142,7 +127,7 @@ export const ProductPage = () => {
                     </div>
                 </div>
                 <div className="bg-white flex flex-col border-b-4 overflow-scroll overflow-x-hidden">
-                    {productos.slice((elementsPerPage * (currentPage - 1)), currentPage * elementsPerPage).map((p, index) => {
+                    {props.productos.slice((elementsPerPage * (currentPage - 1)), currentPage * elementsPerPage).map((p, index) => {
                         return (
                             <div key={`FilaProdTable${p._id}`}>
                                 <FilaProducto listIndex={index} selectedProductos={selectedProducts} setAllChecks={setAllChecked} producto={p} setSelection={setSelectedProducts} />

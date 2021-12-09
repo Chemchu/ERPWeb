@@ -13,7 +13,7 @@ import { useSelectedProducts } from "../Tabs/pointOfSale/productsContext";
 import { ConvertBufferToBase64 } from "../../pages/api/validator";
 import { Client as Cliente } from "../../tipos/Client";
 import { ProductoEnCarrito } from "../../tipos/ProductoEnCarrito";
-import { config } from "../../pages/api/config";
+import { envInformation } from "../../pages/api/envInfo";
 
 const In = {
     hidden: {
@@ -39,20 +39,19 @@ const In = {
     }
 }
 
-export const ModalPagar = (props: { productosComprados: ProductoEnCarrito[], precioFinal: number, handleCerrarModal: MouseEventHandler<HTMLButtonElement> }) => {
+export const ModalPagar = (props: { productosComprados: ProductoEnCarrito[], precioFinal: number, clientes: Cliente[], handleCerrarModal: MouseEventHandler<HTMLButtonElement> }) => {
     const [dineroEntregado, setDineroEntregado] = useState<string>("0");
     const [dineroEntregadoTarjeta, setDineroEntregadoTarjeta] = useState<string>("0");
     const [showModalResumen, setModalResumen] = useState<boolean>(false);
 
-    const [customers,] = useDBClients();
-    const [Cliente, setCliente] = useState<Cliente>({ nif: "", nombre: "General" } as Cliente);
+    const [Cliente, setCliente] = useState<Cliente>();
     const [PagoCliente, setPagoCliente] = useState<CustomerPaymentInformation>({} as CustomerPaymentInformation);
+    const [FormaDePago, setFormaDePago] = useState<TipoCobro>(TipoCobro.Efectivo);
 
     let date = new Date();
     let fechaActual = `${date.getDate().toLocaleString('es-ES', { minimumIntegerDigits: 2 })}/${parseInt(date.getUTCMonth().toLocaleString('es-ES', { minimumIntegerDigits: 2 })) + 1}/${date.getFullYear()} `;
     let horaActual = `${date.getHours().toLocaleString('es-ES', { minimumIntegerDigits: 2 })}:${date.getMinutes().toLocaleString('es-ES', { minimumIntegerDigits: 2 })}:${date.getSeconds().toLocaleString('es-ES', { minimumIntegerDigits: 2 })}`
     let cambio: number = isNaN((Number(dineroEntregado) + Number(dineroEntregadoTarjeta) - props.precioFinal)) ? Number(dineroEntregado) + Number(dineroEntregadoTarjeta) : (Number(dineroEntregado) + Number(dineroEntregadoTarjeta) - props.precioFinal);
-    let tipoCobro: TipoCobro = TipoCobro.Efectivo;
 
     const SetDineroClienteEfectivo = (dineroDelCliente: string) => {
         if (!dineroDelCliente.match("^[+-]?([0-9]+([.][0-9]*)?|[.][0-9]+)$") && dineroDelCliente != "") return;
@@ -65,17 +64,7 @@ export const ModalPagar = (props: { productosComprados: ProductoEnCarrito[], pre
     }
 
     const OpenResumen = () => {
-        switch (tipoCobro) {
-            case TipoCobro.Efectivo:
-                setPagoCliente({ tipo: "Efectivo", pagoEnEfectivo: Number(dineroEntregado), pagoEnTarjeta: Number(dineroEntregadoTarjeta) } as CustomerPaymentInformation);
-                break;
-            case TipoCobro.Tarjeta:
-                setPagoCliente({ tipo: "Tarjeta", pagoEnEfectivo: Number(dineroEntregado), pagoEnTarjeta: Number(dineroEntregadoTarjeta) } as CustomerPaymentInformation);
-                break;
-            case TipoCobro.Fraccionado:
-                setPagoCliente({ tipo: "Fraccionado", pagoEnEfectivo: Number(dineroEntregado), pagoEnTarjeta: Number(dineroEntregadoTarjeta) } as CustomerPaymentInformation);
-                break;
-        }
+        setPagoCliente({ tipo: FormaDePago, pagoEnEfectivo: Number(dineroEntregado), pagoEnTarjeta: Number(dineroEntregadoTarjeta), cambio: cambio, cliente: Cliente, precioTotal: props.precioFinal } as CustomerPaymentInformation);
         setModalResumen(true);
     }
 
@@ -83,11 +72,13 @@ export const ModalPagar = (props: { productosComprados: ProductoEnCarrito[], pre
         setModalResumen(false);
     }
 
-    if (Number(dineroEntregado) > 0 && Number(dineroEntregadoTarjeta) <= 0) tipoCobro = TipoCobro.Efectivo;
-    if (Number(dineroEntregadoTarjeta) > 0) {
-        tipoCobro = TipoCobro.Tarjeta;
-        if (Number(dineroEntregado) > 0) {
-            tipoCobro = TipoCobro.Fraccionado;
+    const CheckFormaDePago = () => {
+        if (Number(dineroEntregado) > 0 && Number(dineroEntregadoTarjeta) <= 0) setFormaDePago(TipoCobro.Efectivo);
+        if (Number(dineroEntregadoTarjeta) > 0) {
+            setFormaDePago(TipoCobro.Tarjeta);
+            if (Number(dineroEntregado) > 0) {
+                setFormaDePago(TipoCobro.Fraccionado);
+            }
         }
     }
 
@@ -193,7 +184,7 @@ export const ModalPagar = (props: { productosComprados: ProductoEnCarrito[], pre
                             }
                         </div>
                         <AnimatePresence>
-                            {showModalResumen && <ModalResumenCompra customerPayment={PagoCliente} cliente={Cliente} customerProducts={props.productosComprados} finalPrice={props.precioFinal} cambio={cambio} handleClose={CloseResumen} tipoCobro={tipoCobro} />}
+                            {showModalResumen && <ModalResumenCompra pagoCliente={PagoCliente} productosComprados={props.productosComprados} handleClose={CloseResumen} />}
                         </AnimatePresence>
                     </div>
 
@@ -203,16 +194,9 @@ export const ModalPagar = (props: { productosComprados: ProductoEnCarrito[], pre
     );
 }
 
-type ProductoComprado = {
-    _id: string,
-    cantidad: number,
-    dto: number
-}
-
-export const ModalResumenCompra = (props: { productosComprados: ProductoEnCarrito[], pagoCliente: CustomerPaymentInformation }) => {
+export const ModalResumenCompra = (props: { productosComprados: ProductoEnCarrito[], pagoCliente: CustomerPaymentInformation, handleClose: Function }) => {
     let date = new Date();
 
-    const [customers,] = useDBClients();
     const [, SetProductos] = useSelectedProducts();
     const fechaActual = `${date.getDate().toLocaleString('es-ES', { minimumIntegerDigits: 2 })}/${parseInt(date.getUTCMonth().toLocaleString('es-ES', { minimumIntegerDigits: 2 })) + 1}/${date.getFullYear()} - ${date.getHours().toLocaleString('es-ES', { minimumIntegerDigits: 2 })}:${date.getMinutes().toLocaleString('es-ES', { minimumIntegerDigits: 2 })}:${date.getSeconds().toLocaleString('es-ES', { minimumIntegerDigits: 2 })}`;
 
@@ -227,14 +211,14 @@ export const ModalResumenCompra = (props: { productosComprados: ProductoEnCarrit
             tipo: props.pagoCliente.tipo
         }
 
-        const res = await fetch(`${config.ERPBACK_URL}api/ventas/add`, {
+        const res = await fetch(`${envInformation.ERPBACK_URL}api/ventas/add`, {
             method: 'PUT',
             body: JSON.stringify(data)
         });
 
         if (res.status == 200) {
             SetProductos(null);
-            //props.handleClose();
+            props.handleClose();
         }
         else {
             console.log("Error al realizar la venta");
@@ -243,7 +227,7 @@ export const ModalResumenCompra = (props: { productosComprados: ProductoEnCarrit
 
     return (
         <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} >
-            <Backdrop onClick={() => {/*props.handleClose()*/ }} >
+            <Backdrop onClick={() => { props.handleClose() }} >
                 <motion.div className="m-auto py-2 flex flex-col items-center bg-white rounded-2xl"
                     onClick={(e) => e.stopPropagation()}
                     variants={In}
@@ -275,12 +259,12 @@ export const ModalResumenCompra = (props: { productosComprados: ProductoEnCarrit
                                     </thead>
                                     <tbody className="h-full overflow-y-auto">
                                         {
-                                            props.customerProducts.map((prod, index) => {
+                                            props.productosComprados.map((prod, index) => {
                                                 if (prod.dto) {
-                                                    return <GenerarFilaProducto key={"modalRes" + prod.producto._id} numFila={index + 1} nombreProducto={prod.producto.nombre} cantidad={prod.producto.cantidad} precio={Number(prod.producto.precioVenta * (1 - prod.dto / 100))} />
+                                                    return <GenerarFilaProducto key={"modalRes" + prod.producto._id} numFila={index + 1} nombreProducto={prod.producto.nombre} cantidad={Number(prod.cantidad)} precio={Number(prod.producto.precioVenta * (1 - Number(prod.dto) / 100))} />
                                                 }
                                                 else {
-                                                    return <GenerarFilaProducto key={"modalRes" + prod.producto._id} numFila={index + 1} nombreProducto={prod.producto.nombre} cantidad={prod.cantidad} precio={prod.producto.precioVenta} />
+                                                    return <GenerarFilaProducto key={"modalRes" + prod.producto._id} numFila={index + 1} nombreProducto={prod.producto.nombre} cantidad={Number(prod.cantidad)} precio={prod.producto.precioVenta} />
                                                 }
                                             })
                                         }
