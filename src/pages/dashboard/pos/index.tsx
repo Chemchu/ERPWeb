@@ -1,3 +1,4 @@
+import { motion } from "framer-motion";
 import { AppContext } from "next/app";
 import React from "react";
 import TPV from "../../../components/Tabs/pointOfSale/tpv";

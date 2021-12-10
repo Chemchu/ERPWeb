@@ -73,16 +73,16 @@ export function Task(props) {
                     </div>
                     <div className="flex -space-x-2">
                         <a href="#" className="">
-                            <img className="inline-block h-10 w-10 rounded-full object-cover ring-2 ring-white" src="/images/person/1.jpg" alt="Guy"/>
+                            <img className="inline-block h-10 w-10 rounded-full object-cover ring-2 ring-white"  alt="Guy"/>
                         </a>
                         <a href="#" className="">
-                            <img className="inline-block h-10 w-10 rounded-full object-cover ring-2 ring-white" src="/images/person/2.jpeg" alt="Max"/>
+                            <img className="inline-block h-10 w-10 rounded-full object-cover ring-2 ring-white"  alt="Max"/>
                         </a>
                         <a href="#" className="">
-                            <img className="inline-block h-10 w-10 rounded-full object-cover ring-2 ring-white" src="/images/person/3.jpg" alt="Charles"/>
+                            <img className="inline-block h-10 w-10 rounded-full object-cover ring-2 ring-white" alt="Charles"/>
                         </a>
                         <a href="#" className="">
-                            <img className="inline-block h-10 w-10 rounded-full object-cover ring-2 ring-white" src="/images/person/4.jpg" alt="Jade"/>
+                            <img className="inline-block h-10 w-10 rounded-full object-cover ring-2 ring-white"  alt="Jade"/>
                         </a>
                     </div>
                     <span className="px-2 py-1 flex w-36 mt-4 items-center text-xs rounded-md font-semibold text-yellow-500 bg-yellow-100">

@@ -6,34 +6,6 @@ import { Paginador } from "../../paginador";
 import { ConvertBufferToBase64 } from "../../../pages/api/validator";
 import { ModalEditarProducto } from "../../modal/modal";
 
-const variants = {
-    initial: {
-        opacity: 0
-    },
-    animate: {
-        opacity: 1,
-        transition: {
-            duration: 1,
-            ease: "easeInOut",
-        },
-    },
-    exit: {
-        y: '-100vh',
-        opacity: 0,
-        transition: {
-            ease: [0.87, 0, 0.13, 1],
-            duration: 1
-        }
-    },
-    exitFadeOut: {
-        opacity: 0,
-        transition: {
-            ease: "easeInOut",
-            duration: 1
-        }
-    },
-}
-
 export const ProductPage = (props: { productos: Producto[] }) => {
     const [currentPage, setCurrentPage] = useState<number>(1);
     const [selectedProducts, setSelectedProducts] = useState<number[]>([]);
@@ -72,8 +44,36 @@ export const ProductPage = (props: { productos: Producto[] }) => {
         }
     }
 
+    const variants = {
+        initial: {
+            opacity: 0
+        },
+        animate: {
+            opacity: 1,
+            transition: {
+                duration: 1,
+                ease: "easeInOut",
+            },
+        },
+        exit: {
+            y: '-100vh',
+            opacity: 0,
+            transition: {
+                ease: [0.87, 0, 0.13, 1],
+                duration: 1
+            }
+        },
+        exitFadeOut: {
+            opacity: 0,
+            transition: {
+                ease: "easeInOut",
+                duration: 1
+            }
+        },
+    }
+
     return (
-        <motion.div className="flex flex-col h-screen antialiased mx-8 py-8" initial={variants.initial} animate={variants.animate} exit={variants.exit}>
+        <div className="flex flex-col h-screen antialiased mx-8 py-8" >
             <h2 className="text-2xl leading-tight">
                 Productos
             </h2>
@@ -139,7 +139,7 @@ export const ProductPage = (props: { productos: Producto[] }) => {
                     <Paginador numPages={numPages} paginaActual={currentPage} maxPages={10} cambiarPaginaActual={setPaginaActual} />
                 </div>
             </div>
-        </motion.div>
+        </div>
     );
 }
 

@@ -7,7 +7,7 @@ import Layout from '../components/layout'
 function MyApp({ Component, pageProps, router }: AppProps) {
   return (
     <AnimatePresence exitBeforeEnter>
-      <Layout>
+      <Layout key={router.route}>
         {/* router.route es lo que hace que funcione el exit del AnimatePresence */}
         <Component {...pageProps} key={router.route} />
       </Layout>

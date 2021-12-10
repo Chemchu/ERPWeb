@@ -56,29 +56,29 @@ const LoginPage = () => {
     const [autheticationFailed, setAuthenticationFailed] = useState(false);
 
     const Acceder = async () => {
-        try {
-            const loginPostConfig = {
-                email: username,
-                password: password
-            }
+        // try {
+        //     const loginPostConfig = {
+        //         email: username,
+        //         password: password
+        //     }
 
-            // Petición login
-            const resFromAPI = await (await fetch(`${envInformation.ERPBACK_URL}login/authenticate`, {
-                method: 'GET',
-                body: JSON.stringify(loginPostConfig)
-            }
-            )).json();
+        //     // Petición login
+        //     const resFromAPI = await (await fetch(`${envInformation.ERPBACK_URL}login/authenticate`, {
+        //         method: 'GET',
+        //         body: JSON.stringify(loginPostConfig)
+        //     }
+        //     )).json();
 
-            if (resFromAPI.data.success) {
-                Router.push('/dashboard');
-            }
-            else {
-                setAuthenticationFailed(true);
-            }
-        }
-        catch (err) {
-            console.log(err);
-        }
+        //     if (resFromAPI.data.success) {
+        //         Router.push('/dashboard');
+        //     }
+        //     else {
+        //         setAuthenticationFailed(true);
+        //     }
+        // }
+        // catch (err) {
+        //     console.log(err);
+        // }
     }
 
     function Volver() {
@@ -152,6 +152,19 @@ const LoginPage = () => {
         </motion.div>
 
     );
+}
+
+export async function getStaticProps() {
+    return {
+        props: {
+            lists: [
+                { dirId: '1', name: 'Directory 1' },
+                { dirId: '2', name: 'Directory 2' },
+                { dirId: '3', name: 'Directory 3' },
+                { dirId: '4', name: 'Directory 4' }
+            ],
+        }
+    }
 }
 
 export default LoginPage;

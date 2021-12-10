@@ -1,3 +1,4 @@
+import { motion } from "framer-motion";
 import { useRouter } from "next/router";
 import React, { useState } from "react";
 import SideBar from "../sidebar/sidebar";
@@ -6,6 +7,26 @@ type DashboardLayoutProps = {
     children: React.ReactNode,
 };
 
+const variants = {
+    initial: {
+        opacity: 0
+    },
+    animate: {
+        opacity: 1,
+        transition: {
+            duration: 1,
+            ease: "easeInOut",
+        },
+    },
+    exit: {
+        y: '-100vh',
+        opacity: 0,
+        transition: {
+            ease: [0.87, 0, 0.13, 1],
+            duration: 1
+        }
+    },
+}
 
 const Layout = ({ children }: DashboardLayoutProps) => {
     const [isSidebarCollapsed, setSidebarCollapsed] = useState<boolean>(false);
@@ -17,12 +38,11 @@ const Layout = ({ children }: DashboardLayoutProps) => {
                     <div className="m-2">
                         <SideBar isCollapsed={isSidebarCollapsed} setCollapsed={setSidebarCollapsed} />
                     </div>
-                    <div className="w-screen h-screen">
+                    <motion.div className="w-screen h-screen" initial={variants.initial} animate={variants.animate} exit={variants.exit}>
                         {children}
-                    </div>
+                    </motion.div>
                 </div>
             </main>
-
         );
     }
 
