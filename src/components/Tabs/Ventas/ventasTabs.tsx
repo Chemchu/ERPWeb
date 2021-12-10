@@ -1,5 +1,5 @@
 import { motion } from "framer-motion";
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import { Cliente } from "../../../tipos/Cliente";
 import { Venta } from "../../../tipos/Venta";
 import { Paginador } from "../../paginador";
@@ -25,7 +25,10 @@ const variants = {
     },
 }
 
-export const SalesPage = (props: { ventas: Venta[], clientes: Cliente[] }) => {
+const SalesPage = (props: { ventas: Venta[], clientes: Cliente[] }) => {
+    if (props.ventas == undefined) throw new Error("Props de ventas en ventasTabs.tsx es undefined");
+    if (props.clientes == undefined) throw new Error("Props de clientes en ventasTabs.tsx es undefined");
+
     const [Ventas, setVentas] = useState<Venta[]>(props.ventas);
     const [Clientes, setClientes] = useState<Cliente[]>(props.clientes);
     const [CurrentPage, setCurrentPage] = useState<number>(1);
@@ -142,3 +145,5 @@ const FilaVenta = (props: { IDCompra: string, nombreCliente: string, fechaCompra
         </div>
     );
 }
+
+export default SalesPage;

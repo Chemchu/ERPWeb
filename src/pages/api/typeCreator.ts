@@ -1,5 +1,7 @@
 import { Cliente } from "../../tipos/Cliente";
 import { Producto } from "../../tipos/Producto";
+import { ProductoVendido } from "../../tipos/ProductoVendido";
+import { Venta } from "../../tipos/Venta";
 
 function CreateProduct(p: any): Producto | undefined {
     try {
@@ -44,6 +46,47 @@ function CreateClient(c: any): Cliente | undefined {
     }
 }
 
+function CreateSale(s: any): Venta | undefined {
+    try {
+        let venta: Venta = {
+            _id: s._id,
+            productos: CreateProductoVendidoList(s.productos),
+            dineroEntregadoEfectivo: s.dineroEntregadoEfectivo,
+            dineroEntregadoTarjeta: s.dineroEntregadoTarjeta,
+            precioVentaTotal: s.precioVentaTotal,
+            cambio: s.cambio,
+            nombreCliente: s.nombreCliente,
+            vendidoPor: s.vendidoPor,
+            modificadoPor: s.modificadoPor,
+            tipo: s.tipo,
+            descuentoEfectivo: s.descuentoEfectivo,
+            descuentoTarjeta: s.descuentoTarjeta,
+            createdAt: s.createdAt,
+            updatedAt: s.updatedAt
+        }
+
+        return venta;
+    }
+    catch (e) {
+        return undefined;
+    }
+}
+
+function CreateProductoVendido(s: any): ProductoVendido | undefined {
+    try {
+        let prod: ProductoVendido = {
+            producto: s.producto,
+            cantidad: s.cantidad,
+            dto: s.dto
+        }
+
+        return prod;
+    }
+    catch (e) {
+        return undefined;
+    }
+}
+
 export function CreateProductList(pList: any[]): Producto[] {
     let res: Producto[] = [];
     pList.forEach((p: any) => {
@@ -61,6 +104,28 @@ export function CreateClientList(cList: any[]): Cliente[] {
         const client = CreateClient(c);
 
         if (client) res.push(client);
+    });
+
+    return res;
+}
+
+export function CreateSalesList(sList: any[]): Venta[] {
+    let res: Venta[] = [];
+    sList.forEach((c: any) => {
+        const venta = CreateSale(c);
+
+        if (venta) res.push(venta);
+    });
+
+    return res;
+}
+
+export function CreateProductoVendidoList(pList: any[]): ProductoVendido[] {
+    let res: ProductoVendido[] = [];
+    pList.forEach((p: any) => {
+        const prod = CreateProductoVendido(p);
+
+        if (prod) res.push(prod);
     });
 
     return res;
