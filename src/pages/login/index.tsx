@@ -55,7 +55,7 @@ const exitVariant = {
 const LoginPage = (props: { video: string }) => {
     return (
         <motion.div className="bg-white w-full h-full items-center " initial={exitVariant.initial} animate={exitVariant.animate} exit={exitVariant.exit} variants={exitVariant} >
-            <video autoPlay loop muted className='w-full h-full object-cover fixed -z-10' >
+            <video autoPlay loop muted className='w-full h-full object-cover fixed -z-10'>
                 <source src={props.video} type="video/mp4" />
             </video>
             <LoginForm />
@@ -139,12 +139,9 @@ export const LoginForm = () => {
 }
 
 export const getStaticProps: GetStaticProps = async () => {
-    //const bgVideo = fetch("..url");
-
     return {
         props: {
-            //video: bgVideo
-            video: "/video/marketVideo-1.mp4"
+            video: `/video/marketVideo-${Math.floor(Math.random() * 5)}.mp4`
         }
     }
 }
