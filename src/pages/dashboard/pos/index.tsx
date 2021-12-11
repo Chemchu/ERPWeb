@@ -14,21 +14,34 @@ const PuntoDeVenta = (props: { productos: Producto[], clientes: Cliente[] }) => 
     );
 }
 
-export const getServerSideProps: GetServerSideProps = async (context) => {
-    const p = await (await fetch(`${envInformation.ERPBACK_URL}api/productos`)).json();
-    const c = await (await fetch(`${envInformation.ERPBACK_URL}api/clientes`)).json();
+export const getServerSideProps: GetServerSideProps = async () => {
+    try {
+        const p = await (await fetch(`${envInformation.ERPBACK_URL}api/productos`)).json();
+        const c = await (await fetch(`${envInformation.ERPBACK_URL}api/clientes`)).json();
 
-    console.log("Request a DB hecho!");
+        console.log("Request a DB hecho!");
 
-    const prods = CreateProductList(p.message);
-    const clients = CreateClientList(c.message);
+        const prods: Producto[] = CreateProductList(p.message);
+        const clients: Cliente[] = CreateClientList(c.message);
 
-    return {
-        props: {
-            productos: prods,
-            clientes: clients
+        return {
+            props: {
+                productos: prods,
+                clientes: clients
+            }
         }
     }
+    catch (e) {
+        console.log(e);
+
+        return {
+            props: {
+                productos: [] as Producto[],
+                clientes: [] as Cliente[]
+            }
+        }
+    }
+
 }
 
 export default PuntoDeVenta;

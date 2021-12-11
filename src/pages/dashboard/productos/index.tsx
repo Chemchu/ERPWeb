@@ -11,16 +11,26 @@ const Productos = (props: { productos: Producto[] }) => {
 }
 
 export async function getServerSideProps(context: AppContext) {
-    const res = await fetch(`${envInformation.ERPBACK_URL}api/productos`);
-    const prodData = await res.json();
+    try {
+        const res = await fetch(`${envInformation.ERPBACK_URL}api/productos`);
+        const prodData = await res.json();
 
-    console.log("Request a DB hecho!");
+        console.log("Request a DB hecho!");
 
-    const p = CreateProductList(prodData.message);
+        const p: Producto[] = CreateProductList(prodData.message);
 
-    return {
-        props: {
-            productos: p,
+        return {
+            props: {
+                productos: p,
+            }
+        }
+    }
+    catch (e) {
+        console.log(e);
+        return {
+            props: {
+                productos: [] as Producto[],
+            }
         }
     }
 }
