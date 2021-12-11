@@ -39,10 +39,10 @@ const SalesPage = (props: { ventas: Venta[], clientes: Cliente[] }) => {
     const UpdateVentas = (ventas: Array<any>, clientes: Cliente[]): void => {
         let ventasFormatted: Array<Venta> = [];
         ventas.forEach((v: Venta) => {
-            const nombreCliente = clientes.find(c => c._id == v.nombreCliente)?.nombre;
+            const nombreCliente = clientes.find(c => c._id == v.clienteID)?.nombre;
             const sale: Venta = {
                 _id: v._id,
-                nombreCliente: nombreCliente || "General",
+                clienteID: nombreCliente || "General",
                 productos: v.productos,
                 descuentoEfectivo: v.descuentoEfectivo,
                 descuentoTarjeta: v.descuentoTarjeta,
@@ -106,7 +106,7 @@ const SalesPage = (props: { ventas: Venta[], clientes: Cliente[] }) => {
                     {Ventas.slice((elementsPerPage * (CurrentPage - 1)), CurrentPage * elementsPerPage).map((v) => {
                         return (
                             <div key={`FilaProdTable${v._id}`}>
-                                <FilaVenta key={`FilaVenta${v._id}`} IDCompra={v._id} nombreCliente={v.nombreCliente} fechaCompra={v.createdAt} metodoPago={v.tipo} valorTotal={v.precioVentaTotal} />
+                                <FilaVenta key={`FilaVenta${v._id}`} IDCompra={v._id} nombreCliente={v.clienteID} fechaCompra={v.createdAt} metodoPago={v.tipo} valorTotal={v.precioVentaTotal} />
                             </div>
                         );
                     })}

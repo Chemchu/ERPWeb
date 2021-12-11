@@ -55,7 +55,7 @@ function CreateSale(s: any): Venta | undefined {
             dineroEntregadoTarjeta: s.dineroEntregadoTarjeta,
             precioVentaTotal: s.precioVentaTotal,
             cambio: s.cambio,
-            nombreCliente: s.nombreCliente,
+            clienteID: s.cliente,
             vendidoPor: s.vendidoPor,
             modificadoPor: s.modificadoPor,
             tipo: s.tipo,

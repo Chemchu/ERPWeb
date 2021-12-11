@@ -1,4 +1,4 @@
-import { AppContext } from 'next/app';
+import { GetServerSideProps } from 'next'
 import SalesPage from '../../../components/Tabs/Ventas/ventasTabs'
 import { Cliente } from '../../../tipos/Cliente';
 import { Venta } from '../../../tipos/Venta';
@@ -12,24 +12,24 @@ const Ventas = (props: { ventas: Venta[], clientes: Cliente[] }) => {
 }
 
 // TODO: terminar de ajustarlo con el back
-// export async function getServerSideProps(context: AppContext) {
-//     const v = await (await fetch(`${envInformation.ERPBACK_URL}api/ventas`)).json();
-//     const c = await (await fetch(`${envInformation.ERPBACK_URL}api/clientes`)).json();
+export const getServerSideProps: GetServerSideProps = async (context) => {
+    const v = await (await fetch(`${envInformation.ERPBACK_URL}api/ventas`)).json();
+    const c = await (await fetch(`${envInformation.ERPBACK_URL}api/clientes`)).json();
 
-//     console.log("Request a DB hecho! - Ventas");
+    console.log("Request a DB hecho! - Ventas");
+    console.log(c);
 
-//     console.log(v.message[0].productos);
 
+    const ventas = CreateSalesList(v.message);
+    const clientes = CreateClientList(c.message);
 
-//     const ventas = CreateSalesList(v.message);
-//     const clientes = CreateClientList(c.message);
+    return {
+        props: {
+            ventas: ventas,
+            clientes: clientes
+        }
+    }
+}
 
-//     return {
-//         props: {
-//             ventas: ventas,
-//             clientes: clientes
-//         }
-//     }
-// }
 
 export default Ventas;

@@ -7,7 +7,7 @@ export type Venta = {
     dineroEntregadoTarjeta: number,
     precioVentaTotal: number,
     cambio: number,
-    nombreCliente: string,
+    clienteID: string,
     vendidoPor: string,
     modificadoPor: string,
     tipo: string,

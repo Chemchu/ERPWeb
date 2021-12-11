@@ -3,6 +3,7 @@ import type { AppProps } from 'next/app'
 import { AnimatePresence } from 'framer-motion'
 import React from 'react'
 import Layout from '../components/layout'
+import NextNProgress from 'nextjs-progressbar'
 
 function MyApp({ Component, pageProps, router }: AppProps) {
   return (

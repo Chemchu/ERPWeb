@@ -6,6 +6,7 @@ import { Cliente } from "../../../tipos/Cliente";
 import { Producto } from "../../../tipos/Producto";
 import { envInformation } from "../../api/envInfo";
 import { CreateClientList, CreateProductList } from "../../api/typeCreator";
+import { GetServerSideProps } from 'next'
 
 const PuntoDeVenta = (props: { productos: Producto[], clientes: Cliente[] }) => {
     return (
@@ -13,7 +14,7 @@ const PuntoDeVenta = (props: { productos: Producto[], clientes: Cliente[] }) => 
     );
 }
 
-export async function getServerSideProps(context: AppContext) {
+export const getServerSideProps: GetServerSideProps = async (context) => {
     const p = await (await fetch(`${envInformation.ERPBACK_URL}api/productos`)).json();
     const c = await (await fetch(`${envInformation.ERPBACK_URL}api/clientes`)).json();
 
