@@ -1,12 +1,9 @@
 import { motion } from "framer-motion";
 import { useRouter } from "next/router";
 import React, { useState } from "react";
-import SideBar from "../sidebar";
+import SideBar from "../components/sidebar";
 import NextNProgress from "nextjs-progressbar";
-
-type DashboardLayoutProps = {
-    children: React.ReactNode,
-};
+import NodeProps from "../tipos/NodeProps";
 
 const variants = {
     initial: {
@@ -29,7 +26,7 @@ const variants = {
     },
 }
 
-const Layout = React.memo(({ children }: DashboardLayoutProps) => {
+const Layout = React.memo(({ children }: NodeProps) => {
     const [isSidebarCollapsed, setSidebarCollapsed] = useState<boolean>(false);
 
     if (useRouter().pathname.includes("/dashboard")) {

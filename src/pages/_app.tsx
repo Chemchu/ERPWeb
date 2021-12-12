@@ -2,8 +2,7 @@ import '../styles/globals.css'
 import type { AppProps } from 'next/app'
 import { AnimatePresence } from 'framer-motion'
 import React from 'react'
-import Layout from '../components/layout'
-import NextNProgress from 'nextjs-progressbar'
+import Layout from '../layout'
 
 function MyApp({ Component, pageProps, router }: AppProps) {
   return (

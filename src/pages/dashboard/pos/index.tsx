@@ -7,6 +7,8 @@ import { Producto } from "../../../tipos/Producto";
 import { envInformation } from "../../api/envInfo";
 import { CreateClientList, CreateProductList } from "../../api/typeCreator";
 import { GetServerSideProps } from 'next'
+import useProductContext from "../../../context/productContext";
+import useClientContext from "../../../context/clientContext";
 
 const PuntoDeVenta = (props: { productos: Producto[], clientes: Cliente[] }) => {
     return (
@@ -16,18 +18,34 @@ const PuntoDeVenta = (props: { productos: Producto[], clientes: Cliente[] }) => 
 
 export const getServerSideProps: GetServerSideProps = async () => {
     try {
-        const p = await (await fetch(`${envInformation.ERPBACK_URL}api/productos`)).json();
-        const c = await (await fetch(`${envInformation.ERPBACK_URL}api/clientes`)).json();
+        const { Productos, SetProductos, StateIdentifierProduct, SetStateIdentifierProduct } = useProductContext();
+        const { Clientes, SetClientes, StateIdentifierClientes, SetStateIdentifierClientes } = useClientContext();
 
-        console.log("Request a DB hecho!");
+        const productStateJson = await (await fetch(`${envInformation.ERPBACK_URL}api/productos/estado`)).json();
+        const clientStateJson = await (await fetch(`${envInformation.ERPBACK_URL}api/clientes/estado`)).json();
 
-        const prods: Producto[] = CreateProductList(p.message);
-        const clients: Cliente[] = CreateClientList(c.message);
+        // Comprueba si la base de datos ha cambiado para actualizar su información
+        if (productStateJson.message.databaseState !== StateIdentifierProduct) {
+            const prodJson = await (await fetch(`${envInformation.ERPBACK_URL}api/productos`)).json();
+            const prods: Producto[] = CreateProductList(prodJson.message);
+
+            SetProductos(prods);
+            SetStateIdentifierProduct(productStateJson.message.databaseState)
+        }
+
+        // Comprueba si la base de datos ha cambiado para actualizar su información
+        if (clientStateJson.message.databaseState !== StateIdentifierClientes) {
+            const clientJson = await (await fetch(`${envInformation.ERPBACK_URL}api/clientes`)).json();
+            const clients: Cliente[] = CreateClientList(clientJson.message);
+
+            SetClientes(clients);
+            SetStateIdentifierClientes(clientStateJson.message.databaseState)
+        }
 
         return {
             props: {
-                productos: prods,
-                clientes: clients
+                productos: Productos,
+                clientes: Clientes
             }
         }
     }
