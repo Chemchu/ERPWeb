@@ -13,7 +13,7 @@ type ProductContextualizado = {
 const AppContext = createContext<ProductContextualizado>({} as ProductContextualizado);
 
 //Provider
-const AppContextProvider = ({ children }: NodeProps) => {
+export const AppContextProvider = ({ children }: NodeProps) => {
     const [allProductos, setAllProductos] = React.useState<Producto[]>([]);
     const [state, setStateID] = React.useState<string>("");
 
