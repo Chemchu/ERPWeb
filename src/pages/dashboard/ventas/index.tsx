@@ -2,7 +2,6 @@ import { GetServerSideProps } from 'next'
 import SalesPage from '../../../components/Tabs/Ventas/ventasTabs'
 import { Cliente } from '../../../tipos/Cliente';
 import { Venta } from '../../../tipos/Venta';
-import { envInformation } from '../../../utils/envInfo';
 import { CreateClientList, CreateSalesList } from '../../../utils/typeCreator';
 
 const Ventas = (props: { ventas: Venta[], clientes: Cliente[] }) => {
@@ -11,18 +10,13 @@ const Ventas = (props: { ventas: Venta[], clientes: Cliente[] }) => {
     );
 }
 
-// TODO: terminar de ajustarlo con el back
 export const getServerSideProps: GetServerSideProps = async (context) => {
     try {
-        const v = await (await fetch(`${envInformation.ERPBACK_URL}api/ventas`)).json();
-        const c = await (await fetch(`${envInformation.ERPBACK_URL}api/clientes`)).json();
+        const v = await fetch(`http://localhost:3000/api/ventas`);
+        const c = await fetch(`http://localhost:3000/api/clientes`);
 
-        console.log("Request a DB hecho! - Ventas");
-        console.log(c);
-
-
-        const ventas: Venta[] = CreateSalesList(v.message);
-        const clientes: Cliente[] = CreateClientList(c.message);
+        const ventas: Venta[] = CreateSalesList(await v.json());
+        const clientes: Cliente[] = CreateClientList(await c.json());
 
         return {
             props: {
@@ -30,10 +24,9 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
                 clientes: clientes
             }
         }
+
     }
     catch (e) {
-        console.log(e);
-
         return {
             props: {
                 ventas: [] as Venta[],

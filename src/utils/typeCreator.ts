@@ -55,12 +55,12 @@ function CreateSale(s: any): Venta | undefined {
             dineroEntregadoTarjeta: s.dineroEntregadoTarjeta,
             precioVentaTotal: s.precioVentaTotal,
             cambio: s.cambio,
-            clienteID: s.cliente,
-            vendidoPor: s.vendidoPor,
-            modificadoPor: s.modificadoPor,
+            clienteID: s.cliente || "Cliente Tester",
+            vendidoPor: s.vendidoPor || "Tester",
+            modificadoPor: s.modificadoPor || "Tester",
             tipo: s.tipo,
-            descuentoEfectivo: s.descuentoEfectivo,
-            descuentoTarjeta: s.descuentoTarjeta,
+            descuentoEfectivo: s.descuentoEfectivo || 0,
+            descuentoTarjeta: s.descuentoTarjeta || 0,
             createdAt: s.createdAt,
             updatedAt: s.updatedAt
         }
@@ -75,7 +75,7 @@ function CreateSale(s: any): Venta | undefined {
 function CreateProductoVendido(s: any): ProductoVendido | undefined {
     try {
         let prod: ProductoVendido = {
-            producto: s.producto,
+            producto: s._id,
             cantidad: s.cantidad,
             dto: s.dto
         }

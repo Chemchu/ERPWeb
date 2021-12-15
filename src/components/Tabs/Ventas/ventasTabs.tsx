@@ -36,30 +36,31 @@ const SalesPage = (props: { ventas: Venta[], clientes: Cliente[] }) => {
     const elementsPerPage = 10;
     const numPages = Ventas.length <= 0 ? 1 : Math.ceil(Ventas.length / elementsPerPage);
 
-    const UpdateVentas = (ventas: Array<any>, clientes: Cliente[]): void => {
-        let ventasFormatted: Array<Venta> = [];
-        ventas.forEach((v: Venta) => {
-            const nombreCliente = clientes.find(c => c._id == v.clienteID)?.nombre;
-            const sale: Venta = {
-                _id: v._id,
-                clienteID: nombreCliente || "General",
-                productos: v.productos,
-                descuentoEfectivo: v.descuentoEfectivo,
-                descuentoTarjeta: v.descuentoTarjeta,
-                dineroEntregadoEfectivo: v.dineroEntregadoEfectivo,
-                dineroEntregadoTarjeta: v.dineroEntregadoTarjeta,
-                precioVentaTotal: v.precioVentaTotal,
-                cambio: v.cambio,
-                tipo: v.tipo,
-                vendidoPor: v.vendidoPor,
-                modificadoPor: v.modificadoPor,
-                createdAt: v.createdAt,
-                updatedAt: v.updatedAt
-            }
-            ventasFormatted.push(sale);
-        });
-        setVentas(ventasFormatted);
-    }
+    // const UpdateVentas = (ventas: Array<any>, clientes: Cliente[]): void => {
+    //     let ventasFormatted: Array<Venta> = [];
+    //     ventas.forEach((v: Venta) => {
+    //         const nombreCliente = clientes.find(c => c._id == v.clienteID)?.nombre;
+    //         const sale: Venta = {
+    //             _id: v._id,
+    //             clienteID: nombreCliente || "General",
+    //             productos: v.productos,
+    //             descuentoEfectivo: v.descuentoEfectivo,
+    //             descuentoTarjeta: v.descuentoTarjeta,
+    //             dineroEntregadoEfectivo: v.dineroEntregadoEfectivo,
+    //             dineroEntregadoTarjeta: v.dineroEntregadoTarjeta,
+    //             precioVentaTotal: v.precioVentaTotal,
+    //             cambio: v.cambio,
+    //             tipo: v.tipo,
+    //             vendidoPor: v.vendidoPor,
+    //             modificadoPor: v.modificadoPor,
+    //             createdAt: v.createdAt,
+    //             updatedAt: v.updatedAt
+    //         }
+    //         ventasFormatted.push(sale);
+    //     });
+    //     setVentas(ventasFormatted);
+    // }
+
 
     const setPaginaActual = (page: number) => {
         if (page < 1) { return; }

@@ -31,7 +31,8 @@ const Layout = React.memo(({ children }: NodeProps) => {
 
     if (useRouter().pathname.includes("/dashboard")) {
         return (
-            <main className="bg-gray-100 dark:bg-gray-800 h-screen w-screen overflow-hidden relative">
+
+            < main className="bg-gray-100 dark:bg-gray-800 h-screen w-screen overflow-hidden relative" >
                 <NextNProgress />
                 <div className="flex items-start justify-start">
                     <div className="m-2">
@@ -41,7 +42,7 @@ const Layout = React.memo(({ children }: NodeProps) => {
                         {children}
                     </motion.div>
                 </div>
-            </main>
+            </main >
         );
     }
 

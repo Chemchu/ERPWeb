@@ -13,7 +13,7 @@ type ClienteContextualizado = {
 const AppContext = createContext<ClienteContextualizado>({} as ClienteContextualizado);
 
 //Provider
-const AppContextProvider = ({ children }: NodeProps) => {
+export const ClienteContextProvider = ({ children }: NodeProps) => {
     const [allClientes, setAllClientes] = React.useState<Cliente[]>([]);
     const [state, setStateID] = React.useState<string>("");
 

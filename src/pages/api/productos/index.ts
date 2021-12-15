@@ -1,8 +1,45 @@
 import { NextApiRequest, NextApiResponse } from "next";
+import { envInformation } from "../../../utils/envInfo";
+import cookie from 'cookie';
 
-const handler = (req: NextApiRequest, res: NextApiResponse) => {
-    res.status(200).json({ "productos": "arrocitooo" });
+const handler = async (req: NextApiRequest, res: NextApiResponse) => {
 
+    const StateIdentifierProduct = await (await fetch(`${envInformation.ERPBACK_URL}api/productos/estado`)).json();
+
+    res.setHeader("Set-Cookie", cookie.serialize('StateIdentifierProduct', StateIdentifierProduct.databaseState, {
+        httpOnly: true,
+        secure: process.env.NODE_ENV !== "development",
+        sameSite: 'strict',
+        maxAge: 4 * 60 * 60,
+        path: '/'
+    }));
+
+    const {
+        query: { id, name },
+        method,
+    } = req;
+
+    switch (method) {
+        case 'GET':
+            // Get data from your database 
+            const response = await (await fetch(`${envInformation.ERPBACK_URL}api/productos`)).json();
+            res.status(200).json(response.message);
+
+            break;
+        case 'PUT':
+            // Update or create data in your database
+            res.status(200).json({ id, name: name || `User ${id}` })
+            break;
+
+        case 'DELETE':
+            // Borrar todos productos
+            break;
+
+        default:
+            res.setHeader('Allow', ['GET', 'PUT', 'DELETE'])
+            res.status(405).end(`Method ${method} Not Allowed`)
+    }
 }
+
 
 export default handler;
