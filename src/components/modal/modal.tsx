@@ -7,10 +7,10 @@ import { TipoCobro } from "../../tipos/Enums/TipoCobro";
 import AutoComplete from "../autocomplete/autocomplete";
 import { Input } from "../input/input";
 import { Producto } from "../../tipos/Producto";
-import { ConvertBufferToBase64 } from "../../pages/api/validator";
+import { ConvertBufferToBase64 } from "../../utils/validator";
 import { Cliente as Cliente } from "../../tipos/Cliente";
 import { ProductoVendido } from "../../tipos/ProductoVendido";
-import { envInformation } from "../../pages/api/envInfo";
+import { envInformation } from "../../utils/envInfo";
 
 const In = {
     hidden: {

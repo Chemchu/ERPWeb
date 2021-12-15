@@ -1,4 +1,4 @@
-import { JSONBuffer } from "../../tipos/JsonBuffer";
+import { JSONBuffer } from "../tipos/JsonBuffer";
 
 // Aplica un descuento de efectivo (descontar 5€ de una compra por ejemplo)
 export const ApplyDtoCash = (totalValue: number, dto: number): number => {

@@ -1,7 +1,7 @@
-import { Cliente } from "../../tipos/Cliente";
-import { Producto } from "../../tipos/Producto";
-import { ProductoVendido } from "../../tipos/ProductoVendido";
-import { Venta } from "../../tipos/Venta";
+import { Cliente } from "../tipos/Cliente";
+import { Producto } from "../tipos/Producto";
+import { ProductoVendido } from "../tipos/ProductoVendido";
+import { Venta } from "../tipos/Venta";
 
 function CreateProduct(p: any): Producto | undefined {
     try {

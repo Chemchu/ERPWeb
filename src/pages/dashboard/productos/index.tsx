@@ -1,8 +1,8 @@
 import { AppContext } from "next/app";
 import { ProductPage } from "../../../components/Tabs/Productos/productosTab";
 import { Producto } from "../../../tipos/Producto";
-import { envInformation } from "../../api/envInfo";
-import { CreateProductList } from "../../api/typeCreator";
+import { envInformation } from "../../../utils/envInfo";
+import { CreateProductList } from "../../../utils/typeCreator";
 
 const Productos = (props: { productos: Producto[] }) => {
     return (

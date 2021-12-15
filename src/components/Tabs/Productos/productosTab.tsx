@@ -3,7 +3,7 @@ import React, { useState } from "react";
 import { Producto } from "../../../tipos/Producto";
 import { CheckBox } from "../../checkbox";
 import { Paginador } from "../../paginador";
-import { ConvertBufferToBase64 } from "../../../pages/api/validator";
+import { ConvertBufferToBase64 } from "../../../utils/validator";
 import { ModalEditarProducto } from "../../modal/modal";
 
 export const ProductPage = (props: { productos: Producto[] }) => {

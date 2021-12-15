@@ -2,8 +2,8 @@ import { GetServerSideProps } from 'next'
 import SalesPage from '../../../components/Tabs/Ventas/ventasTabs'
 import { Cliente } from '../../../tipos/Cliente';
 import { Venta } from '../../../tipos/Venta';
-import { envInformation } from '../../api/envInfo';
-import { CreateClientList, CreateSalesList } from '../../api/typeCreator';
+import { envInformation } from '../../../utils/envInfo';
+import { CreateClientList, CreateSalesList } from '../../../utils/typeCreator';
 
 const Ventas = (props: { ventas: Venta[], clientes: Cliente[] }) => {
     return (

@@ -1,7 +1,7 @@
 import { motion } from 'framer-motion';
 import React, { useState } from 'react';
 import { Producto } from '../../../tipos/Producto';
-import { ConvertBufferToBase64 } from '../../../pages/api/validator';
+import { ConvertBufferToBase64 } from '../../../utils/validator';
 import { ProductoVendido } from '../../../tipos/ProductoVendido';
 
 
