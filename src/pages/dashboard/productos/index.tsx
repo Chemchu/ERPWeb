@@ -1,5 +1,6 @@
 import { AppContext } from "next/app";
 import { ProductPage } from "../../../components/Tabs/Productos/productosTab";
+import Layout from "../../../layout";
 import { Producto } from "../../../tipos/Producto";
 import { envInformation } from "../../../utils/envInfo";
 import { CreateProductList } from "../../../utils/typeCreator";
@@ -34,5 +35,7 @@ export async function getServerSideProps(context: AppContext) {
         }
     }
 }
+
+Productos.PageLayout = Layout;
 
 export default Productos;

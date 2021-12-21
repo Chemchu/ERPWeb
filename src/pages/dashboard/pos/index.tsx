@@ -6,13 +6,17 @@ import { CreateClientList, CreateProductList } from "../../../utils/typeCreator"
 import { GetServerSideProps } from 'next'
 import useProductContext from "../../../context/productContext";
 import useClientContext from "../../../context/clientContext";
+import Layout from "../../../layout";
+import { motion } from "framer-motion";
 
 
 const PuntoDeVenta = (props: { productos: Producto[], clientes: Cliente[] }) => {
     // const { Productos, SetProductos, StateIdentifierProduct, SetStateIdentifierProduct } = useProductContext();
     // const { Clientes, SetClientes, StateIdentifierClientes, SetStateIdentifierClientes } = useClientContext();
     return (
-        <TPV clientes={props.clientes} productos={props.productos} />
+        <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}>
+            <TPV clientes={props.clientes} productos={props.productos} />
+        </motion.div>
     );
 }
 
@@ -39,8 +43,6 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
         const prodRes = await fetch('http://localhost:3000/api/productos');
         const cliRes = await fetch('http://localhost:3000/api/clientes');
 
-        console.log(prodRes.headers);
-
         return {
             props: {
                 productos: CreateProductList(await prodRes.json()),
@@ -63,5 +65,7 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
     }
 
 }
+
+PuntoDeVenta.PageLayout = Layout;
 
 export default PuntoDeVenta;

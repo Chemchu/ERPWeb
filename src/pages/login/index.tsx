@@ -2,7 +2,6 @@ import { motion } from 'framer-motion';
 import React, { useState } from 'react';
 import { SplitLetters } from '../../components/compAnimados/SplitText';
 import Router from 'next/router'
-import { envInformation } from '../../utils/envInfo';
 import { GetStaticProps } from 'next';
 
 

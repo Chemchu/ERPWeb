@@ -2,22 +2,33 @@ import '../styles/globals.css'
 import type { AppProps } from 'next/app'
 import { AnimatePresence } from 'framer-motion'
 import React from 'react'
-import Layout from '../layout'
 import { ProductContextProvider } from "../context/productContext";
 import { ClienteContextProvider } from "../context/clientContext";
 
-function MyApp({ Component, pageProps, router }: AppProps) {
+type AppPropsConPageLayout = AppProps & {
+  Component: AppProps['Component'] & {
+    PageLayout?: React.ComponentType
+  }
+}
+
+function MyApp({ Component, pageProps, router }: AppPropsConPageLayout) {
+
   return (
-    <AnimatePresence exitBeforeEnter>
-      <ProductContextProvider>
-        <ClienteContextProvider>
-          <Layout key={router.route}>
-            {/* router.route es lo que hace que funcione el exit del AnimatePresence */}
-            <Component {...pageProps} key={router.route} />
-          </Layout>
-        </ClienteContextProvider>
-      </ProductContextProvider>
-    </AnimatePresence>)
+    <ProductContextProvider>
+      <ClienteContextProvider>
+        {
+          Component.PageLayout ?
+            <Component.PageLayout >
+              <Component {...pageProps} key={router.route} />
+            </Component.PageLayout>
+            :
+            <AnimatePresence exitBeforeEnter>
+              <Component {...pageProps} key={router.route} />
+            </AnimatePresence>
+        }
+      </ClienteContextProvider>
+    </ProductContextProvider>
+  );
 }
 
 export default MyApp

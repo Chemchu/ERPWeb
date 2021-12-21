@@ -1,9 +1,8 @@
-import { motion } from "framer-motion";
+import { AnimatePresence, motion } from "framer-motion";
 import { useRouter } from "next/router";
-import React, { useState } from "react";
+import React, { Component, useState } from "react";
 import SideBar from "../components/sidebar";
 import NextNProgress from "nextjs-progressbar";
-import NodeProps from "../tipos/NodeProps";
 
 const variants = {
     initial: {
@@ -26,30 +25,26 @@ const variants = {
     },
 }
 
-const Layout = React.memo(({ children }: NodeProps) => {
+const Layout = React.memo(({ children }: { children: React.ReactNode }) => {
     const [isSidebarCollapsed, setSidebarCollapsed] = useState<boolean>(false);
 
-    if (useRouter().pathname.includes("/dashboard")) {
-        return (
-
-            < main className="bg-gray-100 dark:bg-gray-800 h-screen w-screen overflow-hidden relative" >
-                <NextNProgress />
-                <div className="flex items-start justify-start">
-                    <div className="m-2">
-                        <SideBar isCollapsed={isSidebarCollapsed} setCollapsed={setSidebarCollapsed} />
-                    </div>
-                    <motion.div className="w-screen h-screen" initial={variants.initial} animate={variants.animate} exit={variants.exit}>
-                        {children}
-                    </motion.div>
-                </div>
-            </main >
-        );
-    }
+    {/* router.route es lo que hace que funcione el exit del AnimatePresence */ }
+    const route = useRouter().route;
 
     return (
-        <>
-            {children}
-        </>
+        <main className="bg-gray-100 dark:bg-gray-800 h-screen w-screen overflow-hidden relative" >
+            <NextNProgress />
+            <div className="flex items-start justify-start">
+                <div className="m-2">
+                    <SideBar isCollapsed={isSidebarCollapsed} setCollapsed={setSidebarCollapsed} />
+                </div>
+                <AnimatePresence exitBeforeEnter>
+                    <motion.div key={route} className="w-screen h-screen" initial={variants.initial} animate={variants.animate} exit={variants.exit}>
+                        {children}
+                    </motion.div>
+                </AnimatePresence>
+            </div>
+        </main >
     );
 });
 

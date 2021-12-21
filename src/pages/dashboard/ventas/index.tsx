@@ -1,5 +1,6 @@
 import { GetServerSideProps } from 'next'
 import SalesPage from '../../../components/Tabs/Ventas/ventasTabs'
+import Layout from '../../../layout';
 import { Cliente } from '../../../tipos/Cliente';
 import { Venta } from '../../../tipos/Venta';
 import { CreateClientList, CreateSalesList } from '../../../utils/typeCreator';
@@ -37,5 +38,6 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
     }
 }
 
+Ventas.PageLayout = Layout;
 
 export default Ventas;

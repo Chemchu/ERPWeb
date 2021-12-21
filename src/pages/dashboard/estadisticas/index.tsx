@@ -1,3 +1,5 @@
+import Layout from "../../../layout";
+
 const Stats = () => {
     return (
         <div>
@@ -5,5 +7,7 @@ const Stats = () => {
         </div>
     );
 }
+
+Stats.PageLayout = Layout;
 
 export default Stats;

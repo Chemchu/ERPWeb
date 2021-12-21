@@ -1,10 +1,13 @@
 import React from "react";
 import { Inicio } from "../../components/Tabs/Inicio";
+import Layout from "../../layout";
 
-const Dashboard = () => {
+const Home = () => {
   return (
     <Inicio />
   )
 }
 
-export default Dashboard;
+Home.PageLayout = Layout;
+
+export default Home;
