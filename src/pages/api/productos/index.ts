@@ -1,19 +1,7 @@
 import { NextApiRequest, NextApiResponse } from "next";
 import { envInformation } from "../../../utils/envInfo";
-import cookie from 'cookie';
 
 const handler = async (req: NextApiRequest, res: NextApiResponse) => {
-
-    const StateIdentifierProduct = await (await fetch(`${envInformation.ERPBACK_URL}api/productos/estado`)).json();
-
-    res.setHeader("Set-Cookie", cookie.serialize('StateIdentifierProduct', StateIdentifierProduct.databaseState, {
-        httpOnly: true,
-        secure: process.env.NODE_ENV !== "development",
-        sameSite: 'strict',
-        maxAge: 4 * 60 * 60,
-        path: '/'
-    }));
-
     const {
         query: { id, name },
         method,

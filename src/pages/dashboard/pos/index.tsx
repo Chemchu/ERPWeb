@@ -8,11 +8,11 @@ import useProductContext from "../../../context/productContext";
 import useClientContext from "../../../context/clientContext";
 import Layout from "../../../layout";
 import { motion } from "framer-motion";
+import { envInformation } from "../../../utils/envInfo";
+import cookie from "cookie";
 
 
 const PuntoDeVenta = (props: { productos: Producto[], clientes: Cliente[] }) => {
-    // const { Productos, SetProductos, StateIdentifierProduct, SetStateIdentifierProduct } = useProductContext();
-    // const { Clientes, SetClientes, StateIdentifierClientes, SetStateIdentifierClientes } = useClientContext();
     return (
         <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}>
             <TPV clientes={props.clientes} productos={props.productos} />
@@ -23,32 +23,47 @@ const PuntoDeVenta = (props: { productos: Producto[], clientes: Cliente[] }) => 
 export const getServerSideProps: GetServerSideProps = async (context) => {
 
     try {
+        console.log(context.req.cookies);
 
-        // // Comprueba si la base de datos ha cambiado para actualizar su información
-        // if (productStateJson.message.databaseState !== StateIdentifierProduct) {
-        //     const prodJson = await (await fetch(`${envInformation.ERPBACK_URL}api/productos`)).json();
-        //     SetProductos(prods);
-        //     SetStateIdentifierProduct(productStateJson.message.databaseState)
-        // }
+        let prodRes = [] as Producto[];
+        let cliRes = [] as Cliente[];
 
-        // // Comprueba si la base de datos ha cambiado para actualizar su información
-        // if (clientStateJson.message.databaseState !== StateIdentifierClientes) {
-        //     const clientJson = await (await fetch(`${envInformation.ERPBACK_URL}api/clientes`)).json();
+        const productStateResponse = await (await fetch('http://localhost:3000/api/productos/estado')).json();
+        const clientStateResponse = await (await fetch('http://localhost:3000/api/clientes/estado')).json();
+
+        console.log(productStateResponse);
 
 
-        //     SetClientes(clients);
-        //     SetStateIdentifierClientes(clientStateJson.message.databaseState)
-        // }
+        if (context.req.cookies.StateIdentifierProduct !== productStateResponse.databaseState) {
+            const pRes = await fetch('http://localhost:3000/api/productos');
+            prodRes = CreateProductList(await pRes.json());
 
-        const prodRes = await fetch('http://localhost:3000/api/productos');
-        const cliRes = await fetch('http://localhost:3000/api/clientes');
+            context.res.setHeader("Set-Cookie", cookie.serialize('StateIdentifierProduct', productStateResponse.databaseState, {
+                httpOnly: true,
+                secure: process.env.NODE_ENV !== "development",
+                sameSite: 'strict',
+                maxAge: 4 * 60 * 60,
+                path: '/'
+            }));
+        }
+
+        if (context.req.cookies.StateIdentifierClientes !== clientStateResponse.databaseState) {
+            const cRes = await fetch('http://localhost:3000/api/clientes');
+            cliRes = CreateClientList(await cRes.json());
+
+            context.res.setHeader("Set-Cookie", cookie.serialize('StateIdentifierClient', clientStateResponse.databaseState, {
+                httpOnly: true,
+                secure: process.env.NODE_ENV !== "development",
+                sameSite: 'strict',
+                maxAge: 4 * 60 * 60,
+                path: '/'
+            }));
+        }
 
         return {
             props: {
-                productos: CreateProductList(await prodRes.json()),
-                //productoStateIdentifier: ,
-                clientes: CreateClientList(await cliRes.json()),
-                //clienteStateIdentifier: ,
+                productos: prodRes,
+                clientes: cliRes
             }
         }
 
