@@ -1,69 +1,62 @@
-import React from "react";
+import React, { useEffect } from "react";
 import TPV from "../../../components/Tabs/pointOfSale/tpv";
 import { Cliente } from "../../../tipos/Cliente";
 import { Producto } from "../../../tipos/Producto";
 import { CreateClientList, CreateProductList } from "../../../utils/typeCreator";
-import { GetServerSideProps } from 'next'
+import { GetServerSideProps } from 'next/types'
 import useProductContext from "../../../context/productContext";
 import useClientContext from "../../../context/clientContext";
 import Layout from "../../../layout";
 import { motion } from "framer-motion";
-import { envInformation } from "../../../utils/envInfo";
-import cookie from "cookie";
+import Cookies from "js-cookie";
+import useSWR from 'swr'
 
+const PuntoDeVenta = (props: { productos: Producto[], clientes: Cliente[], prodStateCookie: string, clientStateCookie: string }) => {
+    const { Productos, SetProductos } = useProductContext();
+    const { Clientes, SetClientes } = useClientContext();
 
-const PuntoDeVenta = (props: { productos: Producto[], clientes: Cliente[] }) => {
+    useEffect(() => {
+        Cookies.set('StateIdentifierProduct', props.prodStateCookie);
+        Cookies.set('StateIdentifierClientes', props.clientStateCookie);
+
+        if (props.productos.length > 0) SetProductos(props.productos);
+        if (props.clientes.length > 0) SetClientes(props.clientes);
+    }, []);
+
     return (
         <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}>
-            <TPV clientes={props.clientes} productos={props.productos} />
+            <TPV clientes={props.clientes.length > 0 ? props.clientes : Clientes} productos={props.productos.length > 0 ? props.productos : Productos} />
         </motion.div>
     );
 }
 
 export const getServerSideProps: GetServerSideProps = async (context) => {
-
     try {
-        console.log(context.req.cookies);
-
         let prodRes = [] as Producto[];
         let cliRes = [] as Cliente[];
 
-        const productStateResponse = await (await fetch('http://localhost:3000/api/productos/estado')).json();
-        const clientStateResponse = await (await fetch('http://localhost:3000/api/clientes/estado')).json();
+        const pResponse = await (await fetch('http://localhost:3000/api/productos/estado')).json();
+        const cResponse = await (await fetch('http://localhost:3000/api/clientes/estado')).json();
 
-        console.log(productStateResponse);
+        const pState = pResponse.message.databaseState || 'NoStateSavedInServer';
+        const cState = cResponse.message.databaseState || 'NoStateSavedInServer';
 
-
-        if (context.req.cookies.StateIdentifierProduct !== productStateResponse.databaseState) {
-            const pRes = await fetch('http://localhost:3000/api/productos');
-            prodRes = CreateProductList(await pRes.json());
-
-            context.res.setHeader("Set-Cookie", cookie.serialize('StateIdentifierProduct', productStateResponse.databaseState, {
-                httpOnly: true,
-                secure: process.env.NODE_ENV !== "development",
-                sameSite: 'strict',
-                maxAge: 4 * 60 * 60,
-                path: '/'
-            }));
+        if (context.req.cookies.StateIdentifierProduct !== pState || pState === 'NoStateSavedInServer') {
+            const pRes = await (await fetch('http://localhost:3000/api/productos')).json();
+            prodRes = CreateProductList(pRes);
         }
 
-        if (context.req.cookies.StateIdentifierClientes !== clientStateResponse.databaseState) {
-            const cRes = await fetch('http://localhost:3000/api/clientes');
-            cliRes = CreateClientList(await cRes.json());
-
-            context.res.setHeader("Set-Cookie", cookie.serialize('StateIdentifierClient', clientStateResponse.databaseState, {
-                httpOnly: true,
-                secure: process.env.NODE_ENV !== "development",
-                sameSite: 'strict',
-                maxAge: 4 * 60 * 60,
-                path: '/'
-            }));
+        if (context.req.cookies.StateIdentifierClientes !== cState || cState === 'NoStateSavedInServer') {
+            const cRes = await (await fetch('http://localhost:3000/api/clientes')).json();
+            cliRes = CreateClientList(cRes);
         }
 
         return {
             props: {
                 productos: prodRes,
-                clientes: cliRes
+                clientes: cliRes,
+                prodStateCookie: pState,
+                clientStateCookie: cState
             }
         }
 
@@ -74,7 +67,7 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
         return {
             props: {
                 productos: [] as Producto[],
-                clientes: [] as Cliente[]
+                clientes: [] as Cliente[],
             }
         }
     }

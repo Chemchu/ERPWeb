@@ -5,6 +5,8 @@ import { Venta } from "../tipos/Venta";
 
 function CreateProduct(p: any): Producto | undefined {
     try {
+        if (p.nombre === undefined) return undefined;
+
         let producto = {
             _id: p._id,
             alta: p.alta,
@@ -30,6 +32,8 @@ function CreateProduct(p: any): Producto | undefined {
 
 function CreateClient(c: any): Cliente | undefined {
     try {
+        if (c.nif === undefined) return undefined;
+
         let client = {
             _id: c._id,
             nombre: c.nombre,

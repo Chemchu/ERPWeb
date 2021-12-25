@@ -1,28 +1,40 @@
-import { AppContext } from "next/app";
+import Cookies from "js-cookie";
+import { GetServerSideProps } from "next/types";
 import { ProductPage } from "../../../components/Tabs/Productos/productosTab";
+import useProductContext from "../../../context/productContext";
 import Layout from "../../../layout";
 import { Producto } from "../../../tipos/Producto";
-import { envInformation } from "../../../utils/envInfo";
 import { CreateProductList } from "../../../utils/typeCreator";
 
-const Productos = (props: { productos: Producto[] }) => {
+const Productos = (props: { productos: Producto[], prodStateCookie: string }) => {
+    const { Productos, SetProductos } = useProductContext();
+
+    Cookies.set('StateIdentifierProduct', props.prodStateCookie);
+
+    if (props.productos.length > 0) SetProductos(props.productos);
+
     return (
-        <ProductPage productos={props.productos} />
+        <ProductPage productos={props.productos.length > 0 ? props.productos : Productos} />
     );
 }
 
-export async function getServerSideProps(context: AppContext) {
+export const getServerSideProps: GetServerSideProps = async (context) => {
     try {
-        const res = await fetch(`${envInformation.ERPBACK_URL}api/productos`);
-        const prodData = await res.json();
+        let prodRes = [] as Producto[];
 
-        console.log("Request a DB hecho!");
+        const pResponse = await (await fetch('http://localhost:3000/api/productos/estado')).json();
 
-        const p: Producto[] = CreateProductList(prodData.message);
+        const pState = pResponse.message.databaseState || 'NoStateSavedInServer';
+
+        if (context.req.cookies.StateIdentifierProduct !== pState || pState === 'NoStateSavedInServer') {
+            const pRes = await (await fetch('http://localhost:3000/api/productos')).json();
+            prodRes = CreateProductList(pRes);
+        }
 
         return {
             props: {
-                productos: p,
+                productos: prodRes,
+                prodStateCookie: pState
             }
         }
     }
