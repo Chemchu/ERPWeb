@@ -1,15 +1,12 @@
 module.exports = {
-  purge: ['./src/**/*.{js,jsx,ts,tsx}', './public/index.html'],
+  content: ['./src/pages/**/*.{js,ts,jsx,tsx}', './src/components/**/*.{js,ts,jsx,tsx}'],
   darkMode: false, // or 'media' or 'class'
   theme: {
-    fontFamily: {
-    'sans': ["'Roboto Condensed'",'Lato', 'sans-serif', 'system-ui' ],
-    'serif': ['serif', 'Georgia'],
-    'mono': ['monospace', 'SFMono-Regular'],
-    'display': ['Oswald'],
-    'body': ['"Open Sans"'],
-   },
     extend: {
+      fontFamily: {
+        sans: ['"Open Sans"', '"Public Sans"', 'sans-serif', 'system-ui'],
+        mono: ['monospace', 'SFMono-Regular'],
+      },
       height: {
       "10v": "10vh",
       "15v": "15vh",
@@ -33,17 +30,16 @@ module.exports = {
       
     },
       backgroundImage: {
-        'supermarket1': "url('/src/img/market-1.jpg')",
-        'supermarket2': "url('/src/img/market-2.jpg')",
-        'supermarket3': "url('/src/img/market-3.jpg')",        
-        'supermarket4': "url('/src/img/market-4.jpg')",
-        'supermarket5': "url('/src/img/market-5.jpg')",
-        'supermarket1V': "url('/src/img/marketv-1.jpeg')",
-        'supermarket2V': "url('/src/img/marketv-2.jpeg')",
-        'supermarket3V': "url('/src/img/marketv-3.jpeg')",
-        'supermarket4V': "url('/src/img/marketv-4.jpeg')",
-        'supermarketVideo': "url('/src/video/marketVideo-1.mp4')",
-        'landing1': "url('/src/img/landing-1.jpg')",
+        'supermarket1': "url('/img/market-1.jpg')",
+        'supermarket2': "url('/img/market-2.jpg')",
+        'supermarket3': "url('/img/market-3.jpg')",        
+        'supermarket4': "url('/img/market-4.jpg')",
+        'supermarket5': "url('/img/market-5.jpg')",
+        'supermarket1V': "url('/img/marketv-1.jpeg')",
+        'supermarket2V': "url('/img/marketv-2.jpeg')",
+        'supermarket3V': "url('/img/marketv-3.jpeg')",
+        'supermarket4V': "url('/img/marketv-4.jpeg')",
+        'landing1': "url('/img/landing-1.jpg')"
       }
     },
   },

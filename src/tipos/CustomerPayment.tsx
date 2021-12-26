@@ -1,5 +1,10 @@
+import { Cliente } from "./Cliente";
+
 export type CustomerPaymentInformation = {
+    cliente: Cliente,
     tipo: string,
-    efectivo: number,
-    tarjeta: number
+    precioTotal: number,
+    pagoEnEfectivo: number,
+    pagoEnTarjeta: number,
+    cambio: number
 }
