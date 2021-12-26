@@ -1,15 +1,12 @@
 module.exports = {
-  purge: ['./pages/**/*.{js,ts,jsx,tsx}', './components/**/*.{js,ts,jsx,tsx}'],
+  content: ['./src/pages/**/*.{js,ts,jsx,tsx}', './src/components/**/*.{js,ts,jsx,tsx}'],
   darkMode: false, // or 'media' or 'class'
   theme: {
-    fontFamily: {
-    'sans': ["'Roboto Condensed'",'Lato', 'sans-serif', 'system-ui' ],
-    'serif': ['serif', 'Georgia'],
-    'mono': ['monospace', 'SFMono-Regular'],
-    'display': ['Oswald'],
-    'body': ['"Open Sans"'],
-   },
     extend: {
+      fontFamily: {
+        sans: ['"Open Sans"', '"Public Sans"', 'sans-serif', 'system-ui'],
+        mono: ['monospace', 'SFMono-Regular'],
+      },
       height: {
       "10v": "10vh",
       "15v": "15vh",

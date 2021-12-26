@@ -53,7 +53,7 @@ const exitVariant = {
 
 const LoginPage = (props: { video: string }) => {
     return (
-        <motion.div className="bg-white w-full h-full items-center " initial={exitVariant.initial} animate={exitVariant.animate} exit={exitVariant.exit} variants={exitVariant} >
+        <motion.div className="bg-white w-full h-full items-center font-sans" initial={exitVariant.initial} animate={exitVariant.animate} exit={exitVariant.exit} variants={exitVariant} >
             <video autoPlay loop muted className='w-full h-full object-cover fixed -z-10'>
                 <source src={props.video} type="video/mp4" />
             </video>
