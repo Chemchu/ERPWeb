@@ -1,27 +1,21 @@
 import React, { useContext, createContext } from 'react';
 import { Cliente } from '../../tipos/Cliente';
-import NodeProps from '../../tipos/NodeProps';
 
 type ClienteContextualizado = {
     Clientes: Cliente[],
-    SetClientes: React.Dispatch<React.SetStateAction<Cliente[]>>,
-    StateIdentifierClientes: string,
-    SetStateIdentifierClientes: React.Dispatch<React.SetStateAction<string>>
+    SetClientes: React.Dispatch<React.SetStateAction<Cliente[]>>
 }
 
 //Context
 const AppContext = createContext<ClienteContextualizado>({} as ClienteContextualizado);
 
 //Provider
-export const ClienteContextProvider = ({ children }: NodeProps) => {
+export const ClienteContextProvider = ({ children }: { children: React.ReactNode }) => {
     const [allClientes, setAllClientes] = React.useState<Cliente[]>([]);
-    const [state, setStateID] = React.useState<string>("");
 
     const values: ClienteContextualizado = {
         Clientes: allClientes,
-        SetClientes: setAllClientes,
-        StateIdentifierClientes: state,
-        SetStateIdentifierClientes: setStateID
+        SetClientes: setAllClientes
     }
 
     // Interface donde será expuesto como proveedor y envolverá la App.

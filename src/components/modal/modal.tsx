@@ -8,9 +8,9 @@ import AutoComplete from "../autocomplete/autocomplete";
 import { Input } from "../input/input";
 import { Producto } from "../../tipos/Producto";
 import { ConvertBufferToBase64 } from "../../utils/validator";
-import { Cliente as Cliente } from "../../tipos/Cliente";
+import { Cliente } from "../../tipos/Cliente";
 import { ProductoVendido } from "../../tipos/ProductoVendido";
-import { envInformation } from "../../utils/envInfo";
+import { Venta } from "../../tipos/Venta";
 
 const In = {
     hidden: {
@@ -36,12 +36,13 @@ const In = {
     }
 }
 
-export const ModalPagar = (props: { productosComprados: ProductoVendido[], precioFinal: number, clientes: Cliente[], handleCerrarModal: MouseEventHandler<HTMLButtonElement> }) => {
+export const ModalPagar = (props: { productosComprados: ProductoVendido[], setProductosCarrito: Function, precioFinal: number, handleCerrarModal: MouseEventHandler<HTMLButtonElement> }) => {
     const [dineroEntregado, setDineroEntregado] = useState<string>("0");
     const [dineroEntregadoTarjeta, setDineroEntregadoTarjeta] = useState<string>("0");
     const [showModalResumen, setModalResumen] = useState<boolean>(false);
 
-    const [Cliente, setCliente] = useState<Cliente>();
+    const [ClienteActual, SetClienteActual] = useState<Cliente>({ nombre: "General" } as Cliente);
+
     const [PagoCliente, setPagoCliente] = useState<CustomerPaymentInformation>({} as CustomerPaymentInformation);
     const [FormaDePago, setFormaDePago] = useState<TipoCobro>(TipoCobro.Efectivo);
 
@@ -61,7 +62,16 @@ export const ModalPagar = (props: { productosComprados: ProductoVendido[], preci
     }
 
     const OpenResumen = () => {
-        setPagoCliente({ tipo: FormaDePago, pagoEnEfectivo: Number(dineroEntregado), pagoEnTarjeta: Number(dineroEntregadoTarjeta), cambio: cambio, cliente: Cliente, precioTotal: props.precioFinal } as CustomerPaymentInformation);
+        const pago: CustomerPaymentInformation = {
+            tipo: FormaDePago,
+            pagoEnEfectivo: Number(dineroEntregado),
+            pagoEnTarjeta: Number(dineroEntregadoTarjeta),
+            cambio: cambio,
+            cliente: ClienteActual,
+            precioTotal: props.precioFinal
+        };
+
+        setPagoCliente(pago);
         setModalResumen(true);
     }
 
@@ -99,24 +109,24 @@ export const ModalPagar = (props: { productosComprados: ProductoVendido[], preci
                                     <hr />
                                     <div className="text-lg text-left px-2 pt-4">Fecha: {fechaActual} </div>
                                     <div className="text-lg text-left px-2">Hora: {horaActual} </div>
-                                    <div className="flex justify-between mt-4 px-2  text-lg text-center">
-                                        <AutoComplete className="text-left text-lg w-80" sugerencias={["Luca Lee", "Simone", "Miguel"]} nombreInput="Cliente" placeholder="General" />
+                                    <div className="flex justify-between mt-4 px-2 text-lg text-center">
+                                        <AutoComplete className="text-left text-lg" sugerencias={["Luca Lee", "Simone", "Miguel"]} nombreInput="Cliente" placeholder="General" />
                                     </div>
                                 </div>
-                                <div className="grid grid-cols-2 py-6 px-2 gap-10 justify-items-start">
-                                    <div className="text-left w-80">
+                                <div className="grid grid-cols-2 py-6 px-2 gap-10 justify-items-start w-full">
+                                    <div className="text-left">
                                         <h1 className="text-lg">Nombre completo</h1>
                                         <Input placeholder="Nombre del cliente" />
                                     </div>
-                                    <div className="text-left w-80">
-                                        <h1 className="text-lg">Dirección completa</h1>
+                                    <div className="text-left">
+                                        <h1 className="text-lg">Dirección</h1>
                                         <Input placeholder="Ejem.: Calle Alcalá 14" />
                                     </div>
-                                    <div className="text-left w-80">
+                                    <div className="text-left">
                                         <h1 className="text-lg">NIF</h1>
                                         <Input placeholder="Número de identificación fiscal" />
                                     </div>
-                                    <div className="text-left w-80">
+                                    <div className="text-left">
                                         <h1 className="text-lg">Código postal</h1>
                                         <Input placeholder="Ejem.: 46006" />
                                     </div>
@@ -153,7 +163,7 @@ export const ModalPagar = (props: { productosComprados: ProductoVendido[], preci
                                         <div className="text-4xl font-semibold">{props.precioFinal.toFixed(2)}€</div>
                                     </div>
                                     <div>
-                                        <div>Dinero entregado</div>
+                                        <div>Entregado</div>
                                         <div className="text-4xl font-semibold">{isNaN(Number(dineroEntregado) + Number(dineroEntregadoTarjeta)) ? "0.00" : (Number(dineroEntregado) + Number(dineroEntregadoTarjeta)).toFixed(2)}€</div>
                                     </div>
                                     <div>
@@ -166,7 +176,7 @@ export const ModalPagar = (props: { productosComprados: ProductoVendido[], preci
                         </div>
 
                         <hr className="my-2" />
-                        <div className="grid grid-cols-2 justify-items-center">
+                        <div className="grid grid-cols-2 justify-items-center gap-4">
                             <button className="bg-red-500 hover:bg-red-600 text-white w-full h-12 hover:shadow-lg rounded-lg flex items-center justify-center" onClick={props.handleCerrarModal}>
                                 <div className="text-lg">CANCELAR</div>
                             </button>
@@ -181,7 +191,7 @@ export const ModalPagar = (props: { productosComprados: ProductoVendido[], preci
                             }
                         </div>
                         <AnimatePresence>
-                            {showModalResumen && <ModalResumenCompra pagoCliente={PagoCliente} productosComprados={props.productosComprados} handleClose={CloseResumen} />}
+                            {showModalResumen && <ModalResumenCompra pagoCliente={PagoCliente} productosComprados={props.productosComprados} handleCloseResumen={CloseResumen} handleCloseAll={props.handleCerrarModal} setProductosCarrito={props.setProductosCarrito} />}
                         </AnimatePresence>
                     </div>
 
@@ -191,38 +201,42 @@ export const ModalPagar = (props: { productosComprados: ProductoVendido[], preci
     );
 }
 
-export const ModalResumenCompra = (props: { productosComprados: ProductoVendido[], pagoCliente: CustomerPaymentInformation, handleClose: Function }) => {
+export const ModalResumenCompra = (props: { productosComprados: ProductoVendido[], setProductosCarrito: Function, pagoCliente: CustomerPaymentInformation, handleCloseResumen: Function, handleCloseAll: Function }) => {
     let date = new Date();
-
     const fechaActual = `${date.getDate().toLocaleString('es-ES', { minimumIntegerDigits: 2 })}/${parseInt(date.getUTCMonth().toLocaleString('es-ES', { minimumIntegerDigits: 2 })) + 1}/${date.getFullYear()} - ${date.getHours().toLocaleString('es-ES', { minimumIntegerDigits: 2 })}:${date.getMinutes().toLocaleString('es-ES', { minimumIntegerDigits: 2 })}:${date.getSeconds().toLocaleString('es-ES', { minimumIntegerDigits: 2 })}`;
 
     const addSale = async () => {
-        // const data = {
-        //     productos: props.productosComprados,
-        //     precioVentaTotal: props.pagoCliente.precioTotal,
-        //     precioVentaEfectivo: props.pagoCliente.pagoEnEfectivo,
-        //     precioVentaTarjeta: props.pagoCliente.pagoEnTarjeta,
-        //     cambio: props.pagoCliente.cambio,
-        //     cliente: props.pagoCliente.cliente._id,
-        //     tipo: props.pagoCliente.tipo
-        // }
+        const venta = {
+            cambio: props.pagoCliente.cambio,
+            dineroEntregadoEfectivo: props.pagoCliente.pagoEnEfectivo,
+            dineroEntregadoTarjeta: props.pagoCliente.pagoEnTarjeta,
+            precioVentaTotal: props.pagoCliente.precioTotal,
+            tipo: props.pagoCliente.tipo,
+            productos: props.productosComprados,
+            modificadoPor: '',
+            //clienteID: props.clienteID
+            //descuentoEfectivo: props.descuentoEfectivo,
+            //descuentoTarjeta: props.pagoCliente.descuentoTarjeta,
+            //vendidoPor: props.trabajadorID
+        } as Venta;
 
-        // const res = await fetch(`${envInformation.ERPBACK_URL}api/ventas/add`, {
-        //     method: 'PUT',
-        //     body: JSON.stringify(data)
-        // });
+        const res = await fetch(`/api/ventas`, {
+            method: 'PUT',
+            body: JSON.stringify(venta)
+        });
 
-        // if (res.status == 200) {
-        //     props.handleClose();
-        // }
-        // else {
-        //     console.log("Error al realizar la venta");
-        // }
+        if (res.status == 200) {
+            props.handleCloseAll();
+            props.setProductosCarrito([]);
+        }
+        else {
+            console.log("Error al realizar la venta");
+        }
     }
 
     return (
         <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} >
-            <Backdrop onClick={() => { props.handleClose() }} >
+            <Backdrop onClick={() => { props.handleCloseResumen() }} >
                 <motion.div className="m-auto py-2 flex flex-col items-center bg-white rounded-2xl"
                     onClick={(e) => e.stopPropagation()}
                     variants={In}
@@ -283,7 +297,7 @@ export const ModalResumenCompra = (props: { productosComprados: ProductoVendido[
                         </div>
                     </div>
                     <div className="px-4 pb-2 w-full flex flex-grow text-center gap-2">
-                        <button className="bg-red-500 hover:bg-red-600 text-white w-1/2 h-8 hover:shadow-lg rounded-lg ml-auto flex items-center justify-center" onClick={() => props.handleClose()}>
+                        <button className="bg-red-500 hover:bg-red-600 text-white w-1/2 h-8 hover:shadow-lg rounded-lg ml-auto flex items-center justify-center" onClick={() => props.handleCloseResumen()}>
                             <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
                             </svg>

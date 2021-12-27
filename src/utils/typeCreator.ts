@@ -64,7 +64,7 @@ function CreateSale(s: any): Venta | undefined {
             modificadoPor: s.modificadoPor || "Tester",
             tipo: s.tipo,
             descuentoEfectivo: s.descuentoEfectivo || 0,
-            descuentoTarjeta: s.descuentoTarjeta || 0,
+            descuentoPorcentaje: s.descuentoPorcentaje || 0,
             createdAt: s.createdAt,
             updatedAt: s.updatedAt
         }

@@ -12,7 +12,6 @@ const AppContext = createContext<ProductContextualizado>({} as ProductContextual
 //Provider
 export const ProductContextProvider = ({ children }: { children: React.ReactNode }) => {
     const [allProductos, setAllProductos] = React.useState<Producto[]>([]);
-    const [state, setStateID] = React.useState<string>("");
 
     const values: ProductContextualizado = {
         Productos: allProductos,
