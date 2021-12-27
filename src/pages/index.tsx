@@ -1,9 +1,10 @@
 import type { NextPage } from 'next'
 import { motion } from 'framer-motion';
-import React from 'react';
+import React, { useEffect } from 'react';
 import Link from 'next/link';
 import { SplitLetters, SplitWords } from '../components/compAnimados/SplitText';
 import Head from 'next/head';
+import Cookies from 'js-cookie';
 
 const Home: NextPage = () => {
 

@@ -1,6 +1,6 @@
 import { AnimatePresence, motion } from "framer-motion";
 import React, { useCallback, useEffect, useState } from "react";
-import { ApplyDtoCash, ApplyDtoPercentage, IsPositiveFloatingNumber, IsPositiveIntegerNumber, ValidatePositiveFloatingNumber, ValidatePositiveIntegerNumber, ValidateString } from "../../../utils/validator";
+import { ApplyDtoCash, ApplyDtoPercentage, IsPositiveFloatingNumber, IsPositiveIntegerNumber, ValidatePositiveFloatingNumber, ValidatePositiveIntegerNumber, ValidateSearchString, ValidateString } from "../../../utils/validator";
 import { Cliente } from "../../../tipos/Cliente";
 import { CustomerPaymentInformation } from "../../../tipos/CustomerPayment";
 import { Producto } from "../../../tipos/Producto";
@@ -12,9 +12,7 @@ import useProductEnCarritoContext from "../../../context/productosEnCarritoConte
 
 const TPV = (props: { productos: Producto[], clientes: Cliente[] }) => {
     const [Busqueda, setBusqueda] = useState<string>("");
-    const [Clientes,] = useState<Cliente[]>(props.clientes);
-    const [Productos,] = useState<Producto[]>(props.productos);
-    const [ProductosFiltrados, setProductosFiltrados] = useState<Producto[]>(props.productos);
+    const [ProductosFiltrados, setProductosFiltrados] = useState<Producto[]>([]);
     const { ProductosEnCarrito, SetProductosEnCarrito } = useProductEnCarritoContext();
     const [Familias, setFamilias] = useState<string[]>([]);
 
@@ -33,19 +31,23 @@ const TPV = (props: { productos: Producto[], clientes: Cliente[] }) => {
             }
             return out;
         }
-        setFamilias(uniq_fast(Productos));
-    }, [Productos]);
+        setFamilias(uniq_fast(props.productos));
+        setProductosFiltrados(props.productos);
+    }, [props.productos]);
+
 
     var Filtrar = (cadena: string) => {
-        const stringValidated = ValidateString(cadena);
+        const stringValidated = ValidateSearchString(cadena);
+        setBusqueda(stringValidated);
 
-        if (stringValidated) {
-            setBusqueda(stringValidated);
-
-            const pFiltrados = Productos.filter((p: Producto) => { p.nombre.toUpperCase().includes(stringValidated.toUpperCase()) || p.ean.includes(stringValidated) });
-            setProductosFiltrados(pFiltrados);
+        let productosFiltrados: Producto[];
+        if (stringValidated === "") productosFiltrados = props.productos;
+        else {
+            productosFiltrados = props.productos.filter((p: Producto) => {
+                return p.nombre.toUpperCase().includes(stringValidated.toUpperCase()) || p.ean.includes(stringValidated.toUpperCase())
+            });
         }
-        else { return; }
+        setProductosFiltrados(productosFiltrados);
     }
 
     return (
@@ -69,11 +71,11 @@ const TPV = (props: { productos: Producto[], clientes: Cliente[] }) => {
                             Familias[0] !== undefined &&
                             <div className="grid grid-rows-1 gap-2 m-4 grid-flow-col overflow-y-hidden">
                                 <button key={"Todos"} id={"Todos"} className="bg-blue-400 font-semibold hover:bg-yellow-500 text-white rounded-lg h-10 w-16 md:w-32 lg:w-48 mb-6"
-                                    onClick={() => setProductosFiltrados(Productos)}>Todos</button>
+                                    onClick={() => setProductosFiltrados(props.productos)}>Todos</button>
                                 {
                                     Familias.map(f => {
                                         return <button key={f} id={f} className="bg-blue-400 font-semibold hover:bg-yellow-500 text-white rounded-lg h-10 w-16 md:w-32 lg:w-48 mb-6"
-                                            onClick={(e) => setProductosFiltrados(Productos.filter(p => p.familia === e.currentTarget.id))}>{f}</button>
+                                            onClick={(e) => setProductosFiltrados(props.productos.filter(p => p.familia === e.currentTarget.id))}>{f}</button>
                                     })
                                 }
                             </div>
@@ -83,7 +85,7 @@ const TPV = (props: { productos: Producto[], clientes: Cliente[] }) => {
                             <div className="h-full overflow-y-auto overflow-x-hidden px-2">
                                 {/* Base de datos vacía o con productos*/}
                                 {
-                                    Productos.length === 0 ?
+                                    props.productos.length === 0 ?
                                         <div className="bg-blue-gray-100 rounded-3xl flex flex-wrap content-center justify-center h-full opacity-25">
                                             <div className="w-full text-center">
                                                 <svg xmlns="http://www.w3.org/2000/svg" className="h-24 w-24 inline-block" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -156,7 +158,7 @@ const TPV = (props: { productos: Producto[], clientes: Cliente[] }) => {
                 {/* Menú tienda */}
                 {/* Sidebar derecho */}
                 <div className="m-4">
-                    <SidebarDerecho todosProductos={Productos} productosEnCarrito={ProductosEnCarrito} setProductosCarrito={SetProductosEnCarrito} clientes={Clientes} />
+                    <SidebarDerecho todosProductos={props.productos} productosEnCarrito={ProductosEnCarrito} setProductosCarrito={SetProductosEnCarrito} clientes={props.clientes} />
                 </div>
             </div>
         </div>
