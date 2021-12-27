@@ -7,6 +7,7 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
         method,
     } = req;
 
+
     switch (method) {
         case 'GET':
             // Get data from your database 

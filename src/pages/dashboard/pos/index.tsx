@@ -9,7 +9,6 @@ import useClientContext from "../../../context/clientContext";
 import Layout from "../../../layout";
 import { motion } from "framer-motion";
 import Cookies from "js-cookie";
-import useSWR from 'swr'
 
 const PuntoDeVenta = (props: { productos: Producto[], clientes: Cliente[], prodStateCookie: string, clientStateCookie: string }) => {
     const { Productos, SetProductos } = useProductContext();

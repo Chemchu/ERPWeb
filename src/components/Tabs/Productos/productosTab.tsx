@@ -108,7 +108,7 @@ export const ProductPage = (props: { productos: Producto[] }) => {
                     </div>
                 </div>
             </div>
-            <div className="flex flex-col h-full mt-4 pb-20">
+            <div className="flex flex-col h-full w-full mt-4 pb-20">
                 <div className={`bg-white grid ${selectedProducts.length > 0 ? "grid-cols-6" : "grid-cols-5"} justify-evenly rounded-t-xl border-b-2`}>
                     {selectedProducts.length > 0 && <div className="px-5 py-3  text-gray-800 text-left text-sm font-semibold">
                         <CheckBox isChecked={allChecked} setChecked={setAllBoxesChecked} />

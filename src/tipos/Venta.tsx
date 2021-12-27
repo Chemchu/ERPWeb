@@ -12,7 +12,7 @@ export type Venta = {
     modificadoPor: string,
     tipo: string,
     descuentoEfectivo: number,
-    descuentoTarjeta: number,
+    descuentoPorcentaje: number,
     createdAt: string,
     updatedAt: string
 }

@@ -8,13 +8,14 @@ import { TipoCobro } from "../../../tipos/Enums/TipoCobro";
 import { ProductoVendido } from "../../../tipos/ProductoVendido";
 import { ModalPagar, ModalResumenCompra } from "../../modal/modal";
 import { ProductCard, ProductSelectedCard } from "./productCard";
+import useProductEnCarritoContext from "../../../context/productosEnCarritoContext";
 
 const TPV = (props: { productos: Producto[], clientes: Cliente[] }) => {
     const [Busqueda, setBusqueda] = useState<string>("");
     const [Clientes,] = useState<Cliente[]>(props.clientes);
     const [Productos,] = useState<Producto[]>(props.productos);
     const [ProductosFiltrados, setProductosFiltrados] = useState<Producto[]>(props.productos);
-    const [ProductosEnCarrito, setProductosEnCarrito] = useState<ProductoVendido[]>([]);
+    const { ProductosEnCarrito, SetProductosEnCarrito } = useProductEnCarritoContext();
     const [Familias, setFamilias] = useState<string[]>([]);
 
     useEffect(() => {
@@ -127,7 +128,7 @@ const TPV = (props: { productos: Producto[], clientes: Cliente[] }) => {
                                                                         let ProductosEnCarritoUpdated = ProductosEnCarrito;
                                                                         ProductosEnCarritoUpdated[prodIndex] = prodAlCarrito;
 
-                                                                        setProductosEnCarrito([...ProductosEnCarritoUpdated]);
+                                                                        SetProductosEnCarrito([...ProductosEnCarritoUpdated]);
                                                                     }
                                                                     else {
                                                                         const prodAlCarrito = {
@@ -136,7 +137,7 @@ const TPV = (props: { productos: Producto[], clientes: Cliente[] }) => {
                                                                             dto: "0"
                                                                         } as ProductoVendido
 
-                                                                        setProductosEnCarrito([...ProductosEnCarrito, prodAlCarrito]);
+                                                                        SetProductosEnCarrito([...ProductosEnCarrito, prodAlCarrito]);
                                                                     }
                                                                 }}>
                                                                 <ProductCard _id={prod._id} alta={prod.alta} descripcion={prod.descripcion} ean={prod.ean} familia={prod.familia}
@@ -155,7 +156,7 @@ const TPV = (props: { productos: Producto[], clientes: Cliente[] }) => {
                 {/* Menú tienda */}
                 {/* Sidebar derecho */}
                 <div className="m-4">
-                    <SidebarDerecho todosProductos={Productos} productosEnCarrito={ProductosEnCarrito} setProductosCarrito={setProductosEnCarrito} clientes={Clientes} />
+                    <SidebarDerecho todosProductos={Productos} productosEnCarrito={ProductosEnCarrito} setProductosCarrito={SetProductosEnCarrito} clientes={Clientes} />
                 </div>
             </div>
         </div>
@@ -222,8 +223,15 @@ const SidebarDerecho = React.memo((props: { todosProductos: Producto[], producto
         }
     }, 0)
 
-    const clienteGeneral = props.clientes.find(c => c.nif == "General");
-    const pagoRapido: CustomerPaymentInformation = { cliente: clienteGeneral, cambio: 0, pagoEnEfectivo: precioTotal, pagoEnTarjeta: 0, precioTotal: precioTotal, tipo: TipoCobro.Rapido } as CustomerPaymentInformation;
+    const pagoRapido = {
+        cliente: { nombre: "General" } as Cliente,
+        cambio: 0,
+        pagoEnEfectivo: precioTotal,
+        pagoEnTarjeta: 0,
+        precioTotal: precioTotal,
+        tipo: TipoCobro.Rapido
+    } as CustomerPaymentInformation;
+
 
     return (
         <div className="bg-white rounded-3xl shadow">
@@ -357,8 +365,8 @@ const SidebarDerecho = React.memo((props: { todosProductos: Producto[], producto
             }
             {/* Modal aceptar compra */}
             <AnimatePresence initial={false} exitBeforeEnter={true}>
-                {showModalPagar && <ModalPagar handleCerrarModal={cerrarModal} productosComprados={props.productosEnCarrito} precioFinal={precioTotal} clientes={props.clientes} />}
-                {showModalCobro && <ModalResumenCompra pagoCliente={pagoRapido} handleClose={cerrarModalResumen} productosComprados={props.productosEnCarrito} />}
+                {showModalPagar && <ModalPagar handleCerrarModal={cerrarModal} productosComprados={props.productosEnCarrito} precioFinal={precioTotal} setProductosCarrito={props.setProductosCarrito} />}
+                {showModalCobro && <ModalResumenCompra pagoCliente={pagoRapido} handleCloseResumen={cerrarModalResumen} handleCloseAll={cerrarModalResumen} productosComprados={props.productosEnCarrito} setProductosCarrito={props.setProductosCarrito} />}
             </AnimatePresence>
         </div>
     );
