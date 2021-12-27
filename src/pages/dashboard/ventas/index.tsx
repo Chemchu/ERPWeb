@@ -23,7 +23,7 @@ const Ventas = () => {
                 const vState = vResponse.message.databaseState;
                 const cState = cResponse.message.databaseState;
 
-                if (!vState || VentasState !== vState || Ventas.length <= 0) {
+                if (VentasState !== vState || Ventas.length <= 0) {
                     SetVentasState(vState);
 
                     const vRes = await (await fetch(`/api/ventas`)).json();
@@ -32,7 +32,7 @@ const Ventas = () => {
                     if (ventasRes.length > 0) SetVentas(ventasRes);
                 }
 
-                if (!cState || ClientesState !== cState || Clientes.length <= 0) {
+                if (ClientesState !== cState || Clientes.length <= 0) {
                     SetClientesState(cState);
 
                     const cRes = await (await fetch('/api/clientes')).json();
@@ -54,33 +54,6 @@ const Ventas = () => {
         <SalesPage ventas={Ventas} clientes={Clientes} />
     );
 }
-
-// export const getServerSideProps: GetServerSideProps = async (context) => {
-//     try {
-//         const v = await fetch(`http://localhost:3000/api/ventas`);
-//         const c = await fetch(`http://localhost:3000/api/clientes`);
-
-//         const ventas: Venta[] = CreateSalesList(await v.json());
-//         const clientes: Cliente[] = CreateClientList(await c.json());
-
-//         return {
-//             props: {
-//                 ventas: ventas,
-//                 clientes: clientes
-//             }
-//         }
-
-//     }
-//     catch (e) {
-//         return {
-//             props: {
-//                 ventas: [] as Venta[],
-//                 clientes: [] as Cliente[]
-//             }
-//         }
-
-//     }
-// }
 
 Ventas.PageLayout = Layout;
 

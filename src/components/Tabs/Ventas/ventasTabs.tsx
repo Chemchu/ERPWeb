@@ -1,5 +1,5 @@
 import { motion } from "framer-motion";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Cliente } from "../../../tipos/Cliente";
 import { Venta } from "../../../tipos/Venta";
 import { Paginador } from "../../paginador";
@@ -29,9 +29,14 @@ const SalesPage = (props: { ventas: Venta[], clientes: Cliente[] }) => {
     if (props.ventas == undefined) throw new Error("Props de ventas en ventasTabs.tsx es undefined");
     if (props.clientes == undefined) throw new Error("Props de clientes en ventasTabs.tsx es undefined");
 
-    const [Ventas, setVentas] = useState<Venta[]>(props.ventas);
-    const [Clientes, setClientes] = useState<Cliente[]>(props.clientes);
+    const [Ventas, setVentas] = useState<Venta[]>([]);
+    const [Clientes, setClientes] = useState<Cliente[]>([]);
     const [CurrentPage, setCurrentPage] = useState<number>(1);
+
+    useEffect(() => {
+        setVentas(props.ventas);
+        setClientes(props.clientes)
+    }, [props.clientes, props.ventas])
 
     const elementsPerPage = 10;
     const numPages = Ventas.length <= 0 ? 1 : Math.ceil(Ventas.length / elementsPerPage);
