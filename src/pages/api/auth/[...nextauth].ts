@@ -6,7 +6,7 @@ export default NextAuth({
     providers: [
         CredentialsProvider({
             // The name to display on the sign in form (e.g. "Sign in with...")
-            name: "Credentials",
+            name: "Credenciales",
             // The credentials is used to generate a suitable form on the sign in page.
             // You can specify whatever fields you are expecting to be submitted.
             // e.g. domain, username, password, 2FA token, etc.
@@ -33,7 +33,8 @@ export default NextAuth({
         })
     ],
 
-    secret: process.env.SECRET,
+    //secret: process.env.SECRET,
+    secret: 'SECRET',
 
     session: {
         // Use JSON Web Tokens for session instead of database sessions.
@@ -66,11 +67,11 @@ export default NextAuth({
     // pages is not specified for that route.
     // https://next-auth.js.org/configuration/pages
     pages: {
-        // signIn: '/auth/signin',  // Displays signin buttons
-        // signOut: '/auth/signout', // Displays form with sign out button
-        // error: '/auth/error', // Error code passed in query string as ?error=
-        // verifyRequest: '/auth/verify-request', // Used for check email page
-        // newUser: null // If set, new users will be directed here on first sign in
+        signIn: '/login',  // Displays signin buttons
+        signOut: '/auth/signout', // Displays form with sign out button
+        error: '/auth/error', // Error code passed in query string as ?error=
+        verifyRequest: '/auth/verify-request', // Used for check email page
+        //newUser: null // If set, new users will be directed here on first sign in
     },
 
     // Callbacks are asynchronous functions you can use to control what happens

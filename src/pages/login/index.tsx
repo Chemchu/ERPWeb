@@ -4,7 +4,6 @@ import { SplitLetters } from '../../components/compAnimados/SplitText';
 import Router from 'next/router'
 import { GetStaticProps } from 'next';
 
-
 const container = {
     hidden: { opacity: 0, scale: 0 },
     visible: {
@@ -67,8 +66,12 @@ export const LoginForm = () => {
     const [password, setPassword] = useState("");
     const [autheticationFailed, setAuthenticationFailed] = useState(false);
 
-    function Volver() {
+    const Volver = () => {
         Router.push('/');
+    }
+
+    const Acceder = async (email: string, password: string) => {
+
     }
 
     return (
