@@ -1,5 +1,3 @@
-import Cookies from "js-cookie";
-import { GetServerSideProps } from "next/types";
 import { useEffect } from "react";
 import { ProductPage } from "../../../components/Tabs/Productos/productosTab";
 import useProductContext from "../../../context/productContext";
@@ -39,36 +37,6 @@ const Productos = () => {
         <ProductPage productos={Productos} />
     );
 }
-
-// export const getServerSideProps: GetServerSideProps = async (context) => {
-//     try {
-//         let prodRes = [] as Producto[];
-
-//         const pResponse = await (await fetch('http://localhost:3000/api/productos/estado')).json();
-
-//         const pState = pResponse.message.databaseState || 'NoStateSavedInServer';
-
-//         if (context.req.cookies.StateIdentifierProduct !== pState || pState === 'NoStateSavedInServer') {
-//             const pRes = await (await fetch('http://localhost:3000/api/productos')).json();
-//             prodRes = CreateProductList(pRes);
-//         }
-
-//         return {
-//             props: {
-//                 productos: prodRes,
-//                 prodStateCookie: pState
-//             }
-//         }
-//     }
-//     catch (e) {
-//         console.log(e);
-//         return {
-//             props: {
-//                 productos: [] as Producto[],
-//             }
-//         }
-//     }
-// }
 
 Productos.PageLayout = DashboardLayout;
 

@@ -1,6 +1,7 @@
 import '../styles/globals.css'
 import type { AppProps } from 'next/app'
 import { AnimatePresence } from 'framer-motion'
+import { SessionProvider } from "next-auth/react"
 import React from 'react'
 
 type AppPropsConPageLayout = AppProps & {
@@ -11,19 +12,20 @@ type AppPropsConPageLayout = AppProps & {
 
 function MyApp({ Component, pageProps, router }: AppPropsConPageLayout) {
 
-  if (Component.PageLayout) {
-    return (
-      <Component.PageLayout >
-        <Component {...pageProps} key={router.route} />
-      </Component.PageLayout>);
-  }
-  else {
-    return (
-      <AnimatePresence exitBeforeEnter>
-        <Component {...pageProps} key={router.route} />
-      </AnimatePresence>
-    );
-  }
+  return (
+    <SessionProvider session={pageProps.session}>
+      {
+        Component.PageLayout ?
+          <Component.PageLayout >
+            <Component {...pageProps} key={router.route} />
+          </Component.PageLayout>
+          :
+          <AnimatePresence exitBeforeEnter>
+            <Component {...pageProps} key={router.route} />
+          </AnimatePresence>
+      }
+    </SessionProvider>
+  );
 }
 
 export default MyApp
