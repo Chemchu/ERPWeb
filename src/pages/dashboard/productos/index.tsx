@@ -3,7 +3,7 @@ import { GetServerSideProps } from "next/types";
 import { useEffect } from "react";
 import { ProductPage } from "../../../components/Tabs/Productos/productosTab";
 import useProductContext from "../../../context/productContext";
-import Layout from "../../../layout";
+import DashboardLayout from "../../../layout";
 import { Producto } from "../../../tipos/Producto";
 import { CreateProductList } from "../../../utils/typeCreator";
 
@@ -70,6 +70,6 @@ const Productos = () => {
 //     }
 // }
 
-Productos.PageLayout = Layout;
+Productos.PageLayout = DashboardLayout;
 
 export default Productos;

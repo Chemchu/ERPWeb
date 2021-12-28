@@ -2,7 +2,7 @@ import { useEffect } from 'react';
 import SalesPage from '../../../components/Tabs/Ventas/ventasTabs'
 import useClientContext from '../../../context/clientContext';
 import useVentaContext from '../../../context/ventasContext';
-import Layout from '../../../layout';
+import DashboardLayout from '../../../layout';
 import { Cliente } from '../../../tipos/Cliente';
 import { Venta } from '../../../tipos/Venta';
 import { CreateClientList, CreateSalesList } from '../../../utils/typeCreator';
@@ -55,6 +55,6 @@ const Ventas = () => {
     );
 }
 
-Ventas.PageLayout = Layout;
+Ventas.PageLayout = DashboardLayout;
 
 export default Ventas;

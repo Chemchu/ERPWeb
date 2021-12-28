@@ -1,4 +1,4 @@
-import Layout from "../../../layout";
+import DashboardLayout from "../../../layout";
 
 const Stats = () => {
     return (
@@ -8,6 +8,6 @@ const Stats = () => {
     );
 }
 
-Stats.PageLayout = Layout;
+Stats.PageLayout = DashboardLayout;
 
 export default Stats;

@@ -2,7 +2,7 @@ import React, { useEffect } from "react";
 import TPV from "../../../components/Tabs/pointOfSale/tpv";
 import useProductContext from "../../../context/productContext";
 import useClientContext from "../../../context/clientContext";
-import Layout from "../../../layout";
+import DashboardLayout from "../../../layout";
 import { motion } from "framer-motion";
 import { Producto } from "../../../tipos/Producto";
 import { Cliente } from "../../../tipos/Cliente";
@@ -61,6 +61,6 @@ const PuntoDeVenta = () => {
 }
 
 
-PuntoDeVenta.PageLayout = Layout;
+PuntoDeVenta.PageLayout = DashboardLayout;
 
 export default PuntoDeVenta;
