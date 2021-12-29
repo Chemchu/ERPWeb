@@ -3,6 +3,8 @@ import React, { useState } from 'react';
 import { SplitLetters } from '../../components/compAnimados/SplitText';
 import Router from 'next/router'
 import { GetStaticProps } from 'next';
+import { getCsrfToken } from "next-auth/react"
+import { CtxOrReq } from 'next-auth/client/_utils';
 
 const container = {
     hidden: { opacity: 0, scale: 0 },
@@ -50,18 +52,18 @@ const exitVariant = {
 }
 
 
-const LoginPage = (props: { video: string }) => {
+const LoginPage = (props: { video: string, csrfToken: string }) => {
     return (
         <motion.div className="bg-white w-full h-full items-center font-sans" initial={exitVariant.initial} animate={exitVariant.animate} exit={exitVariant.exit} variants={exitVariant} >
             <video autoPlay loop muted className='w-full h-full object-cover fixed -z-10'>
                 <source src={props.video} type="video/mp4" />
             </video>
-            <LoginForm />
+            <LoginForm csrfToken={props.csrfToken} />
         </motion.div >
     );
 }
 
-export const LoginForm = () => {
+export const LoginForm = (props: { csrfToken: string }) => {
     const [username, setUsername] = useState("");
     const [password, setPassword] = useState("");
     const [autheticationFailed, setAuthenticationFailed] = useState(false);
@@ -86,24 +88,28 @@ export const LoginForm = () => {
                             </SplitLetters>
                         </motion.h1>
 
-                        <motion.div variants={item}>
-                            <motion.label animate={{ color: autheticationFailed ? '#f22' : '#111' }} className="font-semibold text-sm text-gray-600 pb-1 block">Dirección de correo</motion.label>
-                            <motion.input animate={{ borderColor: autheticationFailed ? '#f22' : '#ddd', color: autheticationFailed ? '#f22' : '#111' }} type="text" className="border rounded-lg px-3 py-2 mt-1 mb-5 text-sm w-full" onChange={(e) => { setUsername(e.target.value); setAuthenticationFailed(false); }} />
-                        </motion.div>
+                        <form method="post" action="/api/auth/callback/credentials">
+                            <input name="csrfToken" type="hidden" defaultValue={props.csrfToken} />
 
-                        <motion.div variants={item}>
-                            <motion.label animate={{ color: autheticationFailed ? '#f22' : '#111' }} className="font-semibold text-sm text-gray-600 pb-1 block">Contraseña</motion.label>
-                            <motion.input animate={{ borderColor: autheticationFailed ? '#f22' : '#ddd', color: autheticationFailed ? '#f22' : '#111' }} type="password" className="border rounded-lg px-3 py-2 mt-1 mb-5 text-sm w-full" onChange={(e) => { setPassword(e.target.value); setAuthenticationFailed(false); }} />
-                        </motion.div>
+                            <motion.div variants={item}>
+                                <motion.label animate={{ color: autheticationFailed ? '#f22' : '#111' }} className="font-semibold text-sm text-gray-600 pb-1 block">Dirección de correo</motion.label>
+                                <motion.input animate={{ borderColor: autheticationFailed ? '#f22' : '#ddd', color: autheticationFailed ? '#f22' : '#111' }} name="email" type="text" className="border rounded-lg px-3 py-2 mt-1 mb-5 text-sm w-full" onChange={(e) => { setUsername(e.target.value); setAuthenticationFailed(false); }} />
+                            </motion.div>
 
-                        <motion.div variants={item}>
-                            <button type="button" onClick={() => { }} className="mb-1 transition duration-200 bg-blue-500 hover:bg-blue-600 focus:bg-blue-700 focus:shadow-sm focus:ring-4 focus:ring-blue-500 focus:ring-opacity-50 text-white w-full py-2.5 rounded-lg text-sm shadow-sm hover:shadow-md font-semibold text-center inline-block">
-                                <span className="inline-block mr-2">Acceder</span>
-                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" className="w-4 h-4 inline-block">
-                                    <path strokeLinecap="round" strokeWidth="2" d="M17 8l4 4m0 0l-4 4m4-4H3" />
-                                </svg>
-                            </button>
-                        </motion.div>
+                            <motion.div variants={item}>
+                                <motion.label animate={{ color: autheticationFailed ? '#f22' : '#111' }} className="font-semibold text-sm text-gray-600 pb-1 block">Contraseña</motion.label>
+                                <motion.input animate={{ borderColor: autheticationFailed ? '#f22' : '#ddd', color: autheticationFailed ? '#f22' : '#111' }} name="password" type="password" className="border rounded-lg px-3 py-2 mt-1 mb-5 text-sm w-full" onChange={(e) => { setPassword(e.target.value); setAuthenticationFailed(false); }} />
+                            </motion.div>
+
+                            <motion.div variants={item}>
+                                <button type="submit" className="mb-1 transition duration-200 bg-blue-500 hover:bg-blue-600 focus:bg-blue-700 focus:shadow-sm focus:ring-4 focus:ring-blue-500 focus:ring-opacity-50 text-white w-full py-2.5 rounded-lg text-sm shadow-sm hover:shadow-md font-semibold text-center inline-block">
+                                    <span className="inline-block mr-2">Acceder</span>
+                                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" className="w-4 h-4 inline-block">
+                                        <path strokeLinecap="round" strokeWidth="2" d="M17 8l4 4m0 0l-4 4m4-4H3" />
+                                    </svg>
+                                </button>
+                            </motion.div>
+                        </form>
 
                         <motion.div variants={item}>
                             <button onClick={Volver} className="transition duration-200 py-2.5 cursor-pointer font-normal text-sm rounded-lg text-white bg-red-500 hover:bg-red-600 focus:outline-none focus:bg-red-700 focus:ring-2 focus:ring-gray-400 focus:ring-opacity-50 w-full ring-inset">
@@ -140,11 +146,20 @@ export const LoginForm = () => {
     );
 }
 
-export const getStaticProps: GetStaticProps = async () => {
+// export const getStaticProps: GetStaticProps = async () => {
+//     return {
+//         props: {
+//             video: `/video/marketVideo-${Math.floor(Math.random() * 5)}.mp4`
+//         }
+//     }
+// }
+
+export async function getServerSideProps(context: CtxOrReq) {
     return {
         props: {
-            video: `/video/marketVideo-${Math.floor(Math.random() * 5)}.mp4`
-        }
+            video: `/video/marketVideo-${Math.floor(Math.random() * 5)}.mp4`,
+            csrfToken: await getCsrfToken(context),
+        },
     }
 }
 

@@ -1,7 +1,8 @@
-import NextAuth from "next-auth";
+import { NextApiRequest, NextApiResponse } from "next";
+import NextAuth, { NextAuthOptions } from "next-auth";
 import CredentialsProvider from "next-auth/providers/credentials";
 
-export default NextAuth({
+const options: NextAuthOptions = {
     // Configure one or more authentication providers
     providers: [
         CredentialsProvider({
@@ -12,10 +13,24 @@ export default NextAuth({
             // e.g. domain, username, password, 2FA token, etc.
             // You can pass any HTML attribute to the <input> tag through the object.
             credentials: {
-                username: { label: "Username", type: "text", placeholder: "jsmith" },
+                email: { label: "Email", type: "text", placeholder: "email@ejemplo.com" },
                 password: { label: "Password", type: "password" }
             },
             async authorize(credentials, req) {
+                // hacer la peticion a la bbdd aquí
+
+                console.log("lol");
+
+
+                const resLogin = await fetch(`/api/login`, {
+                    method: 'POST',
+                    body: JSON.stringify(credentials),
+                    headers: { 'Content-Type': 'application/json' },
+                });
+
+                console.log(resLogin);
+
+
                 // Add logic here to look up the user from the credentials supplied
                 const user = { id: 1, name: "J Smith", email: "jsmith@example.com" }
 
@@ -32,9 +47,6 @@ export default NextAuth({
             }
         })
     ],
-
-    //secret: process.env.SECRET,
-    secret: 'SECRET',
 
     session: {
         // Use JSON Web Tokens for session instead of database sessions.
@@ -59,6 +71,7 @@ export default NextAuth({
         // if you want to override the default behaviour.
         // encode: async ({ secret, token, maxAge }) => {},
         // decode: async ({ secret, token, maxAge }) => {},
+        secret: "kawabunga",
     },
 
     // You can define custom pages to override the built-in ones. These will be regular Next.js pages
@@ -74,26 +87,28 @@ export default NextAuth({
         //newUser: null // If set, new users will be directed here on first sign in
     },
 
-    // Callbacks are asynchronous functions you can use to control what happens
-    // when an action is performed.
-    // https://next-auth.js.org/configuration/callbacks
-    callbacks: {
-        // async signIn({ user, account, profile, email, credentials }) { return true },
-        // async redirect({ url, baseUrl }) { return baseUrl },
-        // async session({ session, token, user }) { return session },
-        // async jwt({ token, user, account, profile, isNewUser }) { return token }
-    },
+    // // Callbacks are asynchronous functions you can use to control what happens
+    // // when an action is performed.
+    // // https://next-auth.js.org/configuration/callbacks
+    // callbacks: {
+    //     // async signIn({ user, account, profile, email, credentials }) { return true },
+    //     // async redirect({ url, baseUrl }) { return baseUrl },
+    //     // async session({ session, token, user }) { return session },
+    //     // async jwt({ token, user, account, profile, isNewUser }) { return token }
+    // },
 
-    // Events are useful for logging
-    // https://next-auth.js.org/configuration/events
-    events: {},
+    // // Events are useful for logging
+    // // https://next-auth.js.org/configuration/events
+    // events: {},
 
-    // You can set the theme to 'light', 'dark' or use 'auto' to default to the
-    // whatever prefers-color-scheme is set to in the browser. Default is 'auto'
-    theme: {
-        colorScheme: "light",
-    },
+    // // You can set the theme to 'light', 'dark' or use 'auto' to default to the
+    // // whatever prefers-color-scheme is set to in the browser. Default is 'auto'
+    // theme: {
+    //     colorScheme: "light",
+    // },
 
     // Enable debug messages in the console if you are having problems
-    debug: false,
-})
+    debug: true,
+}
+
+export default (req: NextApiRequest, res: NextApiResponse) => NextAuth(req, res, options);

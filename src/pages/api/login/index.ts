@@ -3,15 +3,16 @@ import { envInformation } from "../../../utils/envInfo";
 
 const handler = async (req: NextApiRequest, res: NextApiResponse) => {
     try {
-        const loginPostConfig = {
-            email: req.body.email,
-            password: req.body.password
+
+        if (req.method !== 'POST') {
+            res.setHeader('Allow', ['POST'])
+            res.status(405).end(`Method ${req.method} Not Allowed`)
         }
 
         // Petición login
         const resFromAPI = await (await fetch(`${envInformation.ERPBACK_URL}login/authenticate`, {
             method: 'GET',
-            body: JSON.stringify(loginPostConfig)
+            body: JSON.stringify({ email: req.body.email, password: req.body.password })
         })).json();
 
         console.log(resFromAPI);

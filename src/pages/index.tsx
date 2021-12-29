@@ -1,12 +1,14 @@
 import type { NextPage } from 'next'
 import { motion } from 'framer-motion';
 import React, { useEffect } from 'react';
-import Link from 'next/link';
+import button from 'next/link';
 import { SplitLetters, SplitWords } from '../components/compAnimados/SplitText';
 import Head from 'next/head';
 import Cookies from 'js-cookie';
+import { useSession, signIn } from 'next-auth/react';
 
 const Home: NextPage = () => {
+    const { data: session, status } = useSession();
 
     const animaciones = {
         initial: {
@@ -42,15 +44,36 @@ const Home: NextPage = () => {
                             </div>
                         </div>
                         <div className="hidden md:flex items-center">
-                            <Link href="/login">
+                            {/* <Link href="/login">
                                 <motion.a initial={{ opacity: 1 }} animate={{ opacity: 1 }}
                                     whileHover={{ scale: 1.2 }} whileTap={{ scale: 0.8 }} className="text-lg uppercase mx-3 text-white cursor-pointer hover:text-gray-300">
-                                    <SplitWords initial={{ y: '100%', rotate: 90, }} animate="visible" variants={{ visible: (i: number) => ({ rotate: 0, y: 0, transition: { delay: 0.95 + (i * 0.1) } }) }} >
-                                        Iniciar sesión
-                                    </SplitWords>
+                                    {
+                                        status === "authenticated" ?
+                                            <SplitWords initial={{ y: '100%', rotate: 90, }} animate="visible" variants={{ visible: (i: number) => ({ rotate: 0, y: 0, transition: { delay: 0.95 + (i * 0.1) } }) }} >
+                                                Iniciar sesión
+                                            </SplitWords>
+                                            :
+                                            <SplitWords initial={{ y: '100%', rotate: 90, }} animate="visible" variants={{ visible: (i: number) => ({ rotate: 0, y: 0, transition: { delay: 0.95 + (i * 0.1) } }) }} >
+                                                Cerrar sesión
+                                            </SplitWords>
+                                    }
                                 </motion.a>
-                            </Link>
-
+                            </Link> */}
+                            <button onClick={() => signIn()}>
+                                <motion.a initial={{ opacity: 1 }} animate={{ opacity: 1 }}
+                                    whileHover={{ scale: 1.2 }} whileTap={{ scale: 0.8 }} className="text-lg uppercase mx-3 text-white cursor-pointer hover:text-gray-300">
+                                    {
+                                        status === "authenticated" ?
+                                            <SplitWords initial={{ y: '100%', rotate: 90, }} animate="visible" variants={{ visible: (i: number) => ({ rotate: 0, y: 0, transition: { delay: 0.95 + (i * 0.1) } }) }} >
+                                                Iniciar sesión
+                                            </SplitWords>
+                                            :
+                                            <SplitWords initial={{ y: '100%', rotate: 90, }} animate="visible" variants={{ visible: (i: number) => ({ rotate: 0, y: 0, transition: { delay: 0.95 + (i * 0.1) } }) }} >
+                                                Cerrar sesión
+                                            </SplitWords>
+                                    }
+                                </motion.a>
+                            </button>
                         </div>
                     </div>
                 </nav>
