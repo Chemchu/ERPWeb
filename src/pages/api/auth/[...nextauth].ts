@@ -79,23 +79,34 @@ const options: NextAuthOptions = {
     // The routes shown here are the default URLs that will be used when a custom
     // pages is not specified for that route.
     // https://next-auth.js.org/configuration/pages
-    pages: {
-        signIn: '/login',  // Displays signin buttons
-        signOut: '/auth/signout', // Displays form with sign out button
-        error: '/auth/error', // Error code passed in query string as ?error=
-        verifyRequest: '/auth/verify-request', // Used for check email page
-        //newUser: null // If set, new users will be directed here on first sign in
-    },
-
-    // // Callbacks are asynchronous functions you can use to control what happens
-    // // when an action is performed.
-    // // https://next-auth.js.org/configuration/callbacks
-    // callbacks: {
-    //     // async signIn({ user, account, profile, email, credentials }) { return true },
-    //     // async redirect({ url, baseUrl }) { return baseUrl },
-    //     // async session({ session, token, user }) { return session },
-    //     // async jwt({ token, user, account, profile, isNewUser }) { return token }
+    // pages: {
+    //     signIn: '/login',  // Displays signin buttons
+    //     signOut: '/auth/signout', // Displays form with sign out button
+    //     error: '/auth/error', // Error code passed in query string as ?error=
+    //     verifyRequest: '/auth/verify-request', // Used for check email page
+    //     //newUser: null // If set, new users will be directed here on first sign in
     // },
+
+    // Callbacks are asynchronous functions you can use to control what happens
+    // when an action is performed.
+    // https://next-auth.js.org/configuration/callbacks
+    callbacks: {
+        async signIn({ user, account, profile, email, credentials }) {
+            const isAllowedToSignIn = true
+            if (isAllowedToSignIn) {
+                return true
+            } else {
+                // Return false to display a default error message
+                return false
+                // Or you can return a URL to redirect to:
+                // return '/unauthorized'
+            }
+        }
+        // async signIn({ user, account, profile, email, credentials }) { return true },
+        // async redirect({ url, baseUrl }) { return baseUrl },
+        // async session({ session, token, user }) { return session },
+        // async jwt({ token, user, account, profile, isNewUser }) { return token }
+    },
 
     // // Events are useful for logging
     // // https://next-auth.js.org/configuration/events

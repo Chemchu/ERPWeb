@@ -65,11 +65,11 @@ const Home: NextPage = () => {
                                     {
                                         status === "authenticated" ?
                                             <SplitWords initial={{ y: '100%', rotate: 90, }} animate="visible" variants={{ visible: (i: number) => ({ rotate: 0, y: 0, transition: { delay: 0.95 + (i * 0.1) } }) }} >
-                                                Iniciar sesión
+                                                Cerrar sesión
                                             </SplitWords>
                                             :
                                             <SplitWords initial={{ y: '100%', rotate: 90, }} animate="visible" variants={{ visible: (i: number) => ({ rotate: 0, y: 0, transition: { delay: 0.95 + (i * 0.1) } }) }} >
-                                                Cerrar sesión
+                                                Iniciar sesión
                                             </SplitWords>
                                     }
                                 </motion.a>
