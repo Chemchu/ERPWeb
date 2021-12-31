@@ -1,9 +1,8 @@
 import { motion } from 'framer-motion';
-import React, { useState } from 'react';
+import React from 'react';
 import { SplitLetters } from '../../components/compAnimados/SplitText';
-import Router from 'next/router'
-import { GetStaticProps } from 'next';
-import { getCsrfToken } from "next-auth/react"
+import Router, { useRouter } from 'next/router';
+import { getCsrfToken, useSession } from "next-auth/react"
 import { CtxOrReq } from 'next-auth/client/_utils';
 
 const container = {
@@ -51,8 +50,18 @@ const exitVariant = {
     },
 }
 
-
 const LoginPage = (props: { video: string, csrfToken: string }) => {
+    const { status } = useSession();
+    const router = useRouter();
+
+    if (status === "authenticated") {
+        router.push('/dashboard');
+    }
+
+    if (!props.csrfToken) {
+        router.push('/');
+    }
+
     return (
         <motion.div className="bg-white w-full h-full items-center font-sans" initial={exitVariant.initial} animate={exitVariant.animate} exit={exitVariant.exit} variants={exitVariant} >
             <video autoPlay loop muted className='w-full h-full object-cover fixed -z-10'>
@@ -64,16 +73,8 @@ const LoginPage = (props: { video: string, csrfToken: string }) => {
 }
 
 export const LoginForm = (props: { csrfToken: string }) => {
-    const [username, setUsername] = useState("");
-    const [password, setPassword] = useState("");
-    const [autheticationFailed, setAuthenticationFailed] = useState(false);
-
     const Volver = () => {
         Router.push('/');
-    }
-
-    const Acceder = async (email: string, password: string) => {
-
     }
 
     return (
@@ -92,13 +93,15 @@ export const LoginForm = (props: { csrfToken: string }) => {
                             <input name="csrfToken" type="hidden" defaultValue={props.csrfToken} />
 
                             <motion.div variants={item}>
-                                <motion.label animate={{ color: autheticationFailed ? '#f22' : '#111' }} className="font-semibold text-sm text-gray-600 pb-1 block">Dirección de correo</motion.label>
-                                <motion.input animate={{ borderColor: autheticationFailed ? '#f22' : '#ddd', color: autheticationFailed ? '#f22' : '#111' }} name="email" type="text" className="border rounded-lg px-3 py-2 mt-1 mb-5 text-sm w-full" onChange={(e) => { setUsername(e.target.value); setAuthenticationFailed(false); }} />
+                                <motion.label animate={{ color: '#111' }} className="font-semibold text-sm text-gray-600 pb-1 block">Dirección de correo</motion.label>
+                                <motion.input animate={{ borderColor: '#ddd', color: '#111' }} name="email" type="text"
+                                    className="border rounded-lg px-3 py-2 mt-1 mb-5 text-sm w-full" />
                             </motion.div>
 
                             <motion.div variants={item}>
-                                <motion.label animate={{ color: autheticationFailed ? '#f22' : '#111' }} className="font-semibold text-sm text-gray-600 pb-1 block">Contraseña</motion.label>
-                                <motion.input animate={{ borderColor: autheticationFailed ? '#f22' : '#ddd', color: autheticationFailed ? '#f22' : '#111' }} name="password" type="password" className="border rounded-lg px-3 py-2 mt-1 mb-5 text-sm w-full" onChange={(e) => { setPassword(e.target.value); setAuthenticationFailed(false); }} />
+                                <motion.label animate={{ color: '#111' }} className="font-semibold text-sm text-gray-600 pb-1 block">Contraseña</motion.label>
+                                <motion.input animate={{ borderColor: '#ddd', color: '#111' }} name="password" type="password"
+                                    className="border rounded-lg px-3 py-2 mt-1 mb-5 text-sm w-full" />
                             </motion.div>
 
                             <motion.div variants={item}>
@@ -146,19 +149,13 @@ export const LoginForm = (props: { csrfToken: string }) => {
     );
 }
 
-// export const getStaticProps: GetStaticProps = async () => {
-//     return {
-//         props: {
-//             video: `/video/marketVideo-${Math.floor(Math.random() * 5)}.mp4`
-//         }
-//     }
-// }
-
 export async function getServerSideProps(context: CtxOrReq) {
+    const csrf = await getCsrfToken(context);
+
     return {
         props: {
             video: `/video/marketVideo-${Math.floor(Math.random() * 5)}.mp4`,
-            csrfToken: await getCsrfToken(context),
+            csrfToken: csrf,
         },
     }
 }

@@ -1,15 +1,21 @@
 import { NextFetchEvent, NextRequest, NextResponse } from 'next/server'
+import { getToken } from 'next-auth/jwt';
 
-export function middleware(req: NextRequest, ev: NextFetchEvent) {
-    const { pathname } = req.nextUrl
+export async function middleware(req: NextRequest, ev: NextFetchEvent) {
+    // if (req.url === ("/")) {
+    //     return NextResponse.next()
+    // }
 
-    //console.log(req);
+    // const { data: session, status } = useSession();
 
+    // // const session = await getToken({ req, secret: process.env.SECRET })
+    // // // You could also check for any property on the session object,
+    // // // like role === "admin" or name === "John Doe", etc.
+    // if (!session) return NextResponse.redirect("/api/auth/signin");
 
     // if (pathname == undefined) {
     //     return null;
     // }
 
-    // return new Response('Hello, world!')
-    return NextResponse.next()
+    return NextResponse.next();
 }

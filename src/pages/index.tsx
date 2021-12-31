@@ -3,9 +3,8 @@ import { motion } from 'framer-motion';
 import React, { useEffect } from 'react';
 import button from 'next/link';
 import { SplitLetters, SplitWords } from '../components/compAnimados/SplitText';
-import Head from 'next/head';
-import Cookies from 'js-cookie';
-import { useSession, signIn } from 'next-auth/react';
+import { useSession, signIn, signOut } from 'next-auth/react';
+import { useRouter } from 'next/router';
 
 const Home: NextPage = () => {
     const { data: session, status } = useSession();
@@ -28,6 +27,12 @@ const Home: NextPage = () => {
         }
     }
 
+    const router = useRouter();
+
+    if (status === "authenticated") {
+        router.push('/dashboard');
+    }
+
     return (
         <motion.div initial={animaciones.initial} animate={animaciones.animate} exit={animaciones.exit} className="min-h-screen bg-no-repeat flex flex-col justify-center sm:py-12 relative overflow-hidden h-screen bg-landing1 bg-cover bg-center">
             <header className="absolute top-0 left-0 right-0 z-20">
@@ -44,34 +49,12 @@ const Home: NextPage = () => {
                             </div>
                         </div>
                         <div className="hidden md:flex items-center">
-                            {/* <Link href="/login">
+                            <button onClick={() => status === "authenticated" ? signOut() : signIn('credentials', { callbackUrl: '/dashboard' })}>
                                 <motion.a initial={{ opacity: 1 }} animate={{ opacity: 1 }}
                                     whileHover={{ scale: 1.2 }} whileTap={{ scale: 0.8 }} className="text-lg uppercase mx-3 text-white cursor-pointer hover:text-gray-300">
-                                    {
-                                        status === "authenticated" ?
-                                            <SplitWords initial={{ y: '100%', rotate: 90, }} animate="visible" variants={{ visible: (i: number) => ({ rotate: 0, y: 0, transition: { delay: 0.95 + (i * 0.1) } }) }} >
-                                                Iniciar sesión
-                                            </SplitWords>
-                                            :
-                                            <SplitWords initial={{ y: '100%', rotate: 90, }} animate="visible" variants={{ visible: (i: number) => ({ rotate: 0, y: 0, transition: { delay: 0.95 + (i * 0.1) } }) }} >
-                                                Cerrar sesión
-                                            </SplitWords>
-                                    }
-                                </motion.a>
-                            </Link> */}
-                            <button onClick={() => signIn()}>
-                                <motion.a initial={{ opacity: 1 }} animate={{ opacity: 1 }}
-                                    whileHover={{ scale: 1.2 }} whileTap={{ scale: 0.8 }} className="text-lg uppercase mx-3 text-white cursor-pointer hover:text-gray-300">
-                                    {
-                                        status === "authenticated" ?
-                                            <SplitWords initial={{ y: '100%', rotate: 90, }} animate="visible" variants={{ visible: (i: number) => ({ rotate: 0, y: 0, transition: { delay: 0.95 + (i * 0.1) } }) }} >
-                                                Cerrar sesión
-                                            </SplitWords>
-                                            :
-                                            <SplitWords initial={{ y: '100%', rotate: 90, }} animate="visible" variants={{ visible: (i: number) => ({ rotate: 0, y: 0, transition: { delay: 0.95 + (i * 0.1) } }) }} >
-                                                Iniciar sesión
-                                            </SplitWords>
-                                    }
+                                    <SplitWords initial={{ y: '100%', rotate: 90, }} animate="visible" variants={{ visible: (i: number) => ({ rotate: 0, y: 0, transition: { delay: 0.95 + (i * 0.1) } }) }} >
+                                        {status === "authenticated" ? `Cerrar sesión` : `Iniciar sesión`}
+                                    </SplitWords>
                                 </motion.a>
                             </button>
                         </div>

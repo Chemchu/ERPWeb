@@ -1,6 +1,7 @@
 import { NextApiRequest, NextApiResponse } from "next";
 import NextAuth, { NextAuthOptions } from "next-auth";
 import CredentialsProvider from "next-auth/providers/credentials";
+import { envInformation } from "../../../utils/envInfo";
 
 const options: NextAuthOptions = {
     // Configure one or more authentication providers
@@ -13,40 +14,37 @@ const options: NextAuthOptions = {
             // e.g. domain, username, password, 2FA token, etc.
             // You can pass any HTML attribute to the <input> tag through the object.
             credentials: {
-                email: { label: "Email", type: "text", placeholder: "email@ejemplo.com" },
+                email: { label: "Email", type: "email", placeholder: "email@ejemplo.com" },
                 password: { label: "Password", type: "password" }
             },
             async authorize(credentials, req) {
                 // hacer la peticion a la bbdd aquí
+                if (!credentials?.email) { return null; }
+                if (!credentials?.password) { return null; }
 
-                console.log("lol");
-
-
-                const resLogin = await fetch(`/api/login`, {
-                    method: 'POST',
-                    body: JSON.stringify(credentials),
+                // Petición login
+                const rawResponse = await fetch(`${envInformation.ERPBACK_URL}api/session/authenticate`, {
                     headers: { 'Content-Type': 'application/json' },
+                    method: 'POST',
+                    body: JSON.stringify({ email: credentials.email, password: credentials.password })
                 });
 
-                console.log(resLogin);
+                const resFromServer = await rawResponse.json();
+                console.log(resFromServer);
 
+                // Any object returned will be saved in `user` property of the JWT
+                if (!resFromServer.success) return null;
 
-                // Add logic here to look up the user from the credentials supplied
-                const user = { id: 1, name: "J Smith", email: "jsmith@example.com" }
-
-                if (user) {
-                    // Any object returned will be saved in `user` property of the JWT
-                    return user
-                } else {
-                    // If you return null or false then the credentials will be rejected
-                    return null
-                    // You can also Reject this callback with an Error or with a URL:
-                    // throw new Error("error message") // Redirect to error page
-                    // throw "/path/to/redirect"        // Redirect to a URL
-                }
+                // If you return null or false then the credentials will be rejected
+                return { nombre: resFromServer.message.nombre, apellidos: resFromServer.message.apellidos, email: resFromServer.message.email }
+                // You can also Reject this callback with an Error or with a URL:
+                // throw new Error("error message") // Redirect to error page
+                // throw "/path/to/redirect"        // Redirect to a URL
             }
         })
     ],
+
+    secret: "ayyorugitas",
 
     session: {
         // Use JSON Web Tokens for session instead of database sessions.
@@ -67,11 +65,13 @@ const options: NextAuthOptions = {
     // option is set - or by default if no database is specified.
     // https://next-auth.js.org/configuration/options#jwt
     jwt: {
+        secret: "ayyorugitas",
+
+        maxAge: 60 * 60 * 24,
         // You can define your own encode/decode functions for signing and encryption
         // if you want to override the default behaviour.
-        // encode: async ({ secret, token, maxAge }) => {},
-        // decode: async ({ secret, token, maxAge }) => {},
-        secret: "kawabunga",
+        // async encode({ secret, token, maxAge }) { },
+        // async decode({ secret, token }) { },
     },
 
     // You can define custom pages to override the built-in ones. These will be regular Next.js pages
@@ -79,33 +79,35 @@ const options: NextAuthOptions = {
     // The routes shown here are the default URLs that will be used when a custom
     // pages is not specified for that route.
     // https://next-auth.js.org/configuration/pages
-    // pages: {
-    //     signIn: '/login',  // Displays signin buttons
-    //     signOut: '/auth/signout', // Displays form with sign out button
-    //     error: '/auth/error', // Error code passed in query string as ?error=
-    //     verifyRequest: '/auth/verify-request', // Used for check email page
-    //     //newUser: null // If set, new users will be directed here on first sign in
-    // },
+    pages: {
+        signIn: '/login',  // Displays signin buttons
+        //signOut: '/auth/signout', // Displays form with sign out button
+        //error: '/auth/error', // Error code passed in query string as ?error=
+        //verifyRequest: '/auth/verify-request', // Used for check email page
+        //newUser: null // If set, new users will be directed here on first sign in
+    },
 
     // Callbacks are asynchronous functions you can use to control what happens
     // when an action is performed.
     // https://next-auth.js.org/configuration/callbacks
     callbacks: {
-        async signIn({ user, account, profile, email, credentials }) {
-            const isAllowedToSignIn = true
-            if (isAllowedToSignIn) {
-                return true
-            } else {
-                // Return false to display a default error message
-                return false
-                // Or you can return a URL to redirect to:
-                // return '/unauthorized'
-            }
-        }
+        // async signIn({ user, account, profile, email, credentials }) {
+        //     const isAllowedToSignIn = true
+        //     if (isAllowedToSignIn) {
+        //         return true
+        //     } else {
+        //         // Return false to display a default error message
+        //         return false
+        //         // Or you can return a URL to redirect to:
+        //         // return '/unauthorized'
+        //     }
+        // },
         // async signIn({ user, account, profile, email, credentials }) { return true },
         // async redirect({ url, baseUrl }) { return baseUrl },
-        // async session({ session, token, user }) { return session },
-        // async jwt({ token, user, account, profile, isNewUser }) { return token }
+        //async session({ session, token, user }) { return session },
+        // async jwt({ token, user, account, profile, isNewUser }) {
+        //     return token
+        // }
     },
 
     // // Events are useful for logging

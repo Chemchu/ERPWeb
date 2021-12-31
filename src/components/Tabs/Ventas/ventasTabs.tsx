@@ -3,6 +3,7 @@ import React, { useEffect, useState } from "react";
 import { Cliente } from "../../../tipos/Cliente";
 import { Venta } from "../../../tipos/Venta";
 import { Paginador } from "../../paginador";
+import SkeletonCard from "../../skeletonCard";
 
 const variants = {
     initial: {
@@ -66,6 +67,7 @@ const SalesPage = (props: { ventas: Venta[], clientes: Cliente[] }) => {
     //     setVentas(ventasFormatted);
     // }
 
+    const arrayNum = [...Array(8)];
 
     const setPaginaActual = (page: number) => {
         if (page < 1) { return; }
@@ -109,13 +111,19 @@ const SalesPage = (props: { ventas: Venta[], clientes: Cliente[] }) => {
                     </div>
                 </div>
                 <div className="bg-white flex flex-col border-b-4 overflow-scroll overflow-x-hidden">
-                    {Ventas.slice((elementsPerPage * (CurrentPage - 1)), CurrentPage * elementsPerPage).map((v) => {
-                        return (
-                            <div key={`FilaProdTable${v._id}`}>
-                                <FilaVenta key={`FilaVenta${v._id}`} IDCompra={v._id} nombreCliente={v.clienteID} fechaCompra={v.createdAt} metodoPago={v.tipo} valorTotal={v.precioVentaTotal} />
-                            </div>
-                        );
-                    })}
+                    {
+                        Ventas.length <= 0 ?
+                            arrayNum.map((e, i) => <SkeletonCard key={`skeletonVentas-${i}`} />)
+
+                            :
+                            Ventas.slice((elementsPerPage * (CurrentPage - 1)), CurrentPage * elementsPerPage).map((v) => {
+                                return (
+                                    <div key={`FilaProdTable${v._id}`}>
+                                        <FilaVenta key={`FilaVenta${v._id}`} IDCompra={v._id} nombreCliente={v.clienteID} fechaCompra={v.createdAt} metodoPago={v.tipo} valorTotal={v.precioVentaTotal} />
+                                    </div>
+                                );
+                            })
+                    }
                 </div>
                 <div className="bg-white flex flex-row p-5 items-center justify-center rounded-b-xl shadow-lg">
                     <Paginador numPages={numPages} paginaActual={CurrentPage} maxPages={10} cambiarPaginaActual={setPaginaActual} />

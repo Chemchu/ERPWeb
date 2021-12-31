@@ -14,16 +14,16 @@ function MyApp({ Component, pageProps, router }: AppPropsConPageLayout) {
 
   return (
     <SessionProvider session={pageProps.session}>
-      {
-        Component.PageLayout ?
-          <Component.PageLayout >
+      <AnimatePresence exitBeforeEnter>
+        {
+          Component.PageLayout ?
+            <Component.PageLayout >
+              <Component {...pageProps} key={router.route} />
+            </Component.PageLayout>
+            :
             <Component {...pageProps} key={router.route} />
-          </Component.PageLayout>
-          :
-          <AnimatePresence exitBeforeEnter>
-            <Component {...pageProps} key={router.route} />
-          </AnimatePresence>
-      }
+        }
+      </AnimatePresence>
     </SessionProvider>
   );
 }
