@@ -1,9 +1,10 @@
 import { motion } from 'framer-motion';
-import React from 'react';
+import React, { useEffect } from 'react';
 import { SplitLetters } from '../../components/compAnimados/SplitText';
 import Router, { useRouter } from 'next/router';
 import { getCsrfToken, useSession } from "next-auth/react"
 import { CtxOrReq } from 'next-auth/client/_utils';
+import { SpinnerCircular } from 'spinners-react';
 
 const container = {
     hidden: { opacity: 0, scale: 0 },
@@ -51,15 +52,30 @@ const exitVariant = {
 }
 
 const LoginPage = (props: { video: string, csrfToken: string }) => {
-    const { status } = useSession();
+    const { data: session, status } = useSession();
     const router = useRouter();
 
-    if (status === "authenticated") {
-        router.push('/dashboard');
-    }
+    useEffect(() => {
+        if (status === "authenticated") {
+            router.push('/dashboard');
+        }
+    }, [status]);
 
-    if (!props.csrfToken) {
-        router.push('/');
+    useEffect(() => {
+        if (!props.csrfToken) {
+            router.push('/');
+        }
+    }, [props.csrfToken]);
+
+    if (session) {
+        return (
+            <div className="flex flex-col w-screen h-screen justify-center items-center gap-6">
+                <SpinnerCircular size={90} thickness={180} speed={100} color="rgba(57, 150, 172, 1)" secondaryColor="rgba(0, 0, 0, 0)" />
+                <h1 className="text-xl">
+                    Redirigiendo..
+                </h1>
+            </div>
+        );
     }
 
     return (

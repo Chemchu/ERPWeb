@@ -1,10 +1,10 @@
 import type { NextPage } from 'next'
 import { motion } from 'framer-motion';
 import React, { useEffect } from 'react';
-import button from 'next/link';
 import { SplitLetters, SplitWords } from '../components/compAnimados/SplitText';
 import { useSession, signIn, signOut } from 'next-auth/react';
 import { useRouter } from 'next/router';
+import { SpinnerCircular } from 'spinners-react';
 
 const Home: NextPage = () => {
     const { data: session, status } = useSession();
@@ -28,9 +28,21 @@ const Home: NextPage = () => {
     }
 
     const router = useRouter();
+    useEffect(() => {
+        if (status === "authenticated") {
+            router.push('/dashboard');
+        }
+    }, [status]);
 
-    if (status === "authenticated") {
-        router.push('/dashboard');
+    if (session) {
+        return (
+            <div className="flex flex-col w-screen h-screen justify-center items-center gap-6">
+                <SpinnerCircular size={90} thickness={180} speed={100} color="rgba(57, 150, 172, 1)" secondaryColor="rgba(0, 0, 0, 0)" />
+                <h1 className="text-xl">
+                    Redirigiendo..
+                </h1>
+            </div>
+        );
     }
 
     return (
@@ -74,7 +86,6 @@ const Home: NextPage = () => {
                 </div>
             </div>
         </motion.div>
-
     );
 }
 

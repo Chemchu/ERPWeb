@@ -30,7 +30,6 @@ const options: NextAuthOptions = {
                 });
 
                 const resFromServer = await rawResponse.json();
-                console.log(resFromServer);
 
                 // Any object returned will be saved in `user` property of the JWT
                 if (!resFromServer.success) return null;
@@ -66,8 +65,6 @@ const options: NextAuthOptions = {
     // https://next-auth.js.org/configuration/options#jwt
     jwt: {
         secret: "ayyorugitas",
-
-        maxAge: 60 * 60 * 24,
         // You can define your own encode/decode functions for signing and encryption
         // if you want to override the default behaviour.
         // async encode({ secret, token, maxAge }) { },
