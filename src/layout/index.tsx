@@ -8,7 +8,7 @@ import { ProductContextProvider } from "../context/productContext";
 import { ClienteContextProvider } from "../context/clientContext";
 import { ProductCarritoContextProvider } from "../context/productosEnCarritoContext";
 import { useSession } from "next-auth/react";
-import { SpinnerCircular } from "spinners-react";
+import { SpinnerCircular, SpinnerDotted } from "spinners-react";
 
 const variants = {
     initial: {
@@ -47,10 +47,11 @@ const DashboardLayout = React.memo(({ children }: { children: React.ReactNode })
     if (status === "loading") {
         return (
             <div className="flex flex-col w-screen h-screen justify-center items-center gap-6">
-                <SpinnerCircular size={90} thickness={180} speed={100} color="rgba(57, 150, 172, 1)" secondaryColor="rgba(0, 0, 0, 0)" />
-                <h1 className="text-xl">
+                {/* <SpinnerCircular size={90} thickness={180} speed={100} color="rgba(57, 150, 172, 1)" secondaryColor="rgba(0, 0, 0, 0)" /> */}
+                <SpinnerDotted size={90} thickness={180} speed={100} color="rgba(57, 141, 172, 1)" />
+                {/* <h1 className="text-xl">
                     Cargando..
-                </h1>
+                </h1> */}
             </div>
         );
     }
@@ -79,41 +80,6 @@ const DashboardLayout = React.memo(({ children }: { children: React.ReactNode })
                 </ProductCarritoContextProvider>
             </ProductContextProvider>
         </VentasContextProvider>
-        // <>
-        //     {
-        //         status === "authenticated" ?
-        //             <VentasContextProvider>
-        //                 <ProductContextProvider>
-        //                     <ProductCarritoContextProvider>
-        //                         <ClienteContextProvider>
-        //                             {
-        //                                 <main className="bg-gray-100 dark:bg-gray-800 h-screen w-screen overflow-hidden relative" >
-        //                                     <NextNProgress />
-        //                                     <div className="flex items-start justify-start">
-        //                                         <div className="px-1">
-        //                                             <SideBar isCollapsed={isSidebarCollapsed} setCollapsed={setSidebarCollapsed} />
-        //                                         </div>
-        //                                         <AnimatePresence exitBeforeEnter>
-        //                                             <motion.div key={router.route} className="w-full h-full" initial={variants.initial} animate={variants.animate} exit={variants.exit}>
-        //                                                 {children}
-        //                                             </motion.div>
-        //                                         </AnimatePresence>
-        //                                     </div>
-        //                                 </main >
-        //                             }
-        //                         </ClienteContextProvider>
-        //                     </ProductCarritoContextProvider>
-        //                 </ProductContextProvider>
-        //             </VentasContextProvider>
-        //             :
-        //             <div className="flex flex-col w-screen h-screen justify-center items-center gap-6">
-        //                 <SpinnerCircular size={90} thickness={180} speed={100} color="rgba(57, 150, 172, 1)" secondaryColor="rgba(0, 0, 0, 0)" />
-        //                 <h1 className="text-xl">
-        //                     Cargando..
-        //                 </h1>
-        //             </div>
-        //     }
-        // </>
     );
 });
 

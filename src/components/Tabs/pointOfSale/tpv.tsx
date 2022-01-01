@@ -9,8 +9,9 @@ import { ProductoVendido } from "../../../tipos/ProductoVendido";
 import { ModalPagar, ModalResumenCompra } from "../../modal/modal";
 import { ProductCard, ProductSelectedCard } from "./productCard";
 import useProductEnCarritoContext from "../../../context/productosEnCarritoContext";
+import SkeletonProductCard from "../../skeletonProductCard";
 
-const TPV = (props: { productos: Producto[], clientes: Cliente[] }) => {
+const TPV = (props: { productos: Producto[], clientes: Cliente[], serverOperativo: boolean }) => {
     const [Busqueda, setBusqueda] = useState<string>("");
     const [ProductosFiltrados, setProductosFiltrados] = useState<Producto[]>([]);
     const { ProductosEnCarrito, SetProductosEnCarrito } = useProductEnCarritoContext();
@@ -82,76 +83,7 @@ const TPV = (props: { productos: Producto[], clientes: Cliente[] }) => {
                         }
 
                         <div className="h-full overflow-hidden pt-2">
-                            <div className="h-full overflow-y-auto overflow-x-hidden px-2">
-                                {/* Base de datos vacía o con productos*/}
-                                {
-                                    props.productos.length === 0 ?
-                                        <div className="bg-blue-gray-100 rounded-3xl flex flex-wrap content-center justify-center h-full opacity-25">
-                                            <div className="w-full text-center">
-                                                <svg xmlns="http://www.w3.org/2000/svg" className="h-24 w-24 inline-block" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 7v10c0 2.21 3.582 4 8 4s8-1.79 8-4V7M4 7c0 2.21 3.582 4 8 4s8-1.79 8-4M4 7c0-2.21 3.582-4 8-4s8 1.79 8 4m0 5c0 2.21-3.582 4-8 4s-8-1.79-8-4" />
-                                                </svg>
-                                                <p className="text-xl">
-                                                    FALLO DE CONEXIÓN
-                                                    <br />
-                                                    CON LA BBDD
-                                                </p>
-                                            </div>
-                                        </div>
-                                        :
-                                        ProductosFiltrados.length <= 0 ?
-                                            <div className="bg-blue-gray-100 rounded-3xl flex flex-wrap content-center justify-center h-full opacity-25">
-                                                <div className="w-full text-center">
-                                                    <svg xmlns="http://www.w3.org/2000/svg" className="h-24 w-24 inline-block" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
-                                                    </svg>
-                                                    <p className="text-xl">
-                                                        PRODUCTO NO ENCONTRADO
-                                                    </p>
-                                                </div>
-                                            </div>
-                                            :
-                                            <div>
-                                                <div className="grid gap-4 pb-3 sm:grid-cols-1 sm:gap-2 md:grid-cols-2 lg:grid-cols-3 lg:gap-3 xl:grid-cols-4 2xl:grid-cols-5 text-xs">
-                                                    {ProductosFiltrados.map((prod: Producto) => {
-                                                        return (
-                                                            <button key={prod._id} id={prod._id}
-                                                                onClick={() => {
-                                                                    const prodEnCarrito = ProductosEnCarrito.find(p => p.producto._id == prod._id);
-
-                                                                    if (prodEnCarrito) {
-                                                                        const prodIndex = ProductosEnCarrito.indexOf(prodEnCarrito);
-                                                                        const prodAlCarrito = {
-                                                                            producto: prodEnCarrito.producto,
-                                                                            cantidad: (Number(prodEnCarrito.cantidad) + 1).toString(),
-                                                                            dto: prodEnCarrito.dto
-                                                                        } as ProductoVendido;
-
-                                                                        let ProductosEnCarritoUpdated = ProductosEnCarrito;
-                                                                        ProductosEnCarritoUpdated[prodIndex] = prodAlCarrito;
-
-                                                                        SetProductosEnCarrito([...ProductosEnCarritoUpdated]);
-                                                                    }
-                                                                    else {
-                                                                        const prodAlCarrito = {
-                                                                            producto: prod,
-                                                                            cantidad: "1",
-                                                                            dto: "0"
-                                                                        } as ProductoVendido
-
-                                                                        SetProductosEnCarrito([...ProductosEnCarrito, prodAlCarrito]);
-                                                                    }
-                                                                }}>
-                                                                <ProductCard _id={prod._id} alta={prod.alta} descripcion={prod.descripcion} ean={prod.ean} familia={prod.familia}
-                                                                    nombre={prod.nombre} precioVenta={prod.precioVenta} img={prod.img}
-                                                                    iva={prod.iva} precioCompra={prod.precioCompra} tags={prod.tags} cantidad={prod.cantidad} promociones={prod.promociones} />
-                                                            </button>
-                                                        );
-                                                    })}
-                                                </div>
-                                            </div>
-                                }
-                            </div>
+                            <ListaProductos productos={props.productos} productosFiltrados={ProductosFiltrados} ServerUp={props.serverOperativo} />
                         </div>
                     </div>
                 </div>
@@ -159,6 +91,111 @@ const TPV = (props: { productos: Producto[], clientes: Cliente[] }) => {
                 {/* Sidebar derecho */}
                 <div className="m-4">
                     <SidebarDerecho todosProductos={props.productos} productosEnCarrito={ProductosEnCarrito} setProductosCarrito={SetProductosEnCarrito} clientes={props.clientes} />
+                </div>
+            </div>
+        </div>
+    );
+}
+
+const ListaProductos = (props: { productos: Producto[], productosFiltrados: Producto[], ServerUp: boolean }) => {
+    const { ProductosEnCarrito, SetProductosEnCarrito } = useProductEnCarritoContext();
+
+    if (props.ServerUp) {
+        if (props.productos.length <= 0) {
+            const arrayNum = [...Array(30)];
+
+            return (
+                <div className="h-full overflow-y-auto overflow-x-hidden px-2">
+                    <div className="grid gap-4 pb-3 sm:grid-cols-1 sm:gap-2 md:grid-cols-2 lg:grid-cols-3 lg:gap-3 xl:grid-cols-4 2xl:grid-cols-5 text-xs">
+                        {arrayNum.map((n, i) => {
+                            return (
+                                <SkeletonProductCard key={"SkeletonTPVCard-" + i} />
+                            );
+                        })}
+                    </div>
+                </div>
+            );
+        }
+
+        else {
+            if (props.productosFiltrados.length > 0) {
+                return (
+                    <div className="h-full overflow-y-auto overflow-x-hidden px-2">
+                        <div className="grid gap-4 pb-3 sm:grid-cols-1 sm:gap-2 md:grid-cols-2 lg:grid-cols-3 lg:gap-3 xl:grid-cols-4 2xl:grid-cols-5 text-xs">
+                            {
+                                props.productosFiltrados.map((prod: Producto) => {
+                                    return (
+                                        <button key={prod._id} id={prod._id}
+                                            onClick={() => {
+                                                const prodEnCarrito = ProductosEnCarrito.find(p => p.producto._id == prod._id);
+
+                                                if (prodEnCarrito) {
+                                                    const prodIndex = ProductosEnCarrito.indexOf(prodEnCarrito);
+                                                    const prodAlCarrito = {
+                                                        producto: prodEnCarrito.producto,
+                                                        cantidad: (Number(prodEnCarrito.cantidad) + 1).toString(),
+                                                        dto: prodEnCarrito.dto
+                                                    } as ProductoVendido;
+
+                                                    let ProductosEnCarritoUpdated = ProductosEnCarrito;
+                                                    ProductosEnCarritoUpdated[prodIndex] = prodAlCarrito;
+
+                                                    SetProductosEnCarrito([...ProductosEnCarritoUpdated]);
+                                                }
+                                                else {
+                                                    const prodAlCarrito = {
+                                                        producto: prod,
+                                                        cantidad: "1",
+                                                        dto: "0"
+                                                    } as ProductoVendido
+
+                                                    SetProductosEnCarrito([...ProductosEnCarrito, prodAlCarrito]);
+                                                }
+                                            }}>
+                                            <ProductCard _id={prod._id} alta={prod.alta} descripcion={prod.descripcion} ean={prod.ean} familia={prod.familia}
+                                                nombre={prod.nombre} precioVenta={prod.precioVenta} img={prod.img}
+                                                iva={prod.iva} precioCompra={prod.precioCompra} tags={prod.tags} cantidad={prod.cantidad} promociones={prod.promociones} />
+                                        </button>
+                                    );
+                                })
+                            }
+                        </div>
+                    </div>
+                );
+            }
+            else {
+                return (<ProductosNoEncontrados />)
+            }
+        }
+    }
+
+    return (
+        <div className="bg-blue-gray-100 rounded-3xl flex flex-wrap content-center justify-center h-full opacity-25">
+            <div className="w-full text-center">
+                <svg xmlns="http://www.w3.org/2000/svg" className="h-24 w-24 inline-block" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 7v10c0 2.21 3.582 4 8 4s8-1.79 8-4V7M4 7c0 2.21 3.582 4 8 4s8-1.79 8-4M4 7c0-2.21 3.582-4 8-4s8 1.79 8 4m0 5c0 2.21-3.582 4-8 4s-8-1.79-8-4" />
+                </svg>
+                <p className="text-xl">
+                    FALLO DE CONEXIÓN
+                    <br />
+                    CON LA BBDD
+                </p>
+            </div>
+        </div>
+    );
+}
+
+const ProductosNoEncontrados = () => {
+    return (
+        <div className="h-full overflow-y-auto overflow-x-hidden px-2">
+            <div className="bg-blue-gray-100 rounded-3xl flex flex-wrap content-center justify-center h-full opacity-25">
+                <div className="w-full text-center">
+                    <svg xmlns="http://www.w3.org/2000/svg" className="h-24 w-24 inline-block" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                    </svg>
+                    <p className="text-xl">
+                        PRODUCTO NO ENCONTRADO
+                    </p>
                 </div>
             </div>
         </div>

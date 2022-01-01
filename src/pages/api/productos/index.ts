@@ -11,8 +11,10 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
     switch (req.method) {
         case 'GET':
             // Get data from your database 
-            const response = await (await fetch(`${envInformation.ERPBACK_URL}api/productos`)).json();
-            res.status(200).json(response.message);
+            const response = await fetch(`${envInformation.ERPBACK_URL}api/productos`);
+            const resJson = await response.json();
+
+            res.status(response.status).json(resJson.message);
 
             break;
         case 'PUT':

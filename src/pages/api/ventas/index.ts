@@ -10,16 +10,16 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
 
     switch (req.method) {
         case 'GET':
-            // Get data from your database 
-            const response = await (await fetch(`${envInformation.ERPBACK_URL}api/ventas`)).json();
+            const response = await fetch(`${envInformation.ERPBACK_URL}api/ventas`);
+            const resJson = await response.json();
 
-            let rParsed = response.message;
-            for (var i = 0; i < response.message.length; i++) {
-                rParsed[i].createdAt = new Date(response.message[i].createdAt).toLocaleString();
-                rParsed[i].updatedAt = new Date(response.message[i].updatedAt).toLocaleString();
+            let rParsed = resJson.message;
+            for (var i = 0; i < resJson.message.length; i++) {
+                rParsed[i].createdAt = new Date(resJson.message[i].createdAt).toLocaleString();
+                rParsed[i].updatedAt = new Date(resJson.message[i].updatedAt).toLocaleString();
             }
 
-            res.status(200).json(rParsed);
+            res.status(response.status).json(resJson.message);
             break;
         case 'PUT':
             // Update or create data in your database

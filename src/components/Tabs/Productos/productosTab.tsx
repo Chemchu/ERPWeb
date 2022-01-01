@@ -6,7 +6,7 @@ import { Paginador } from "../../paginador";
 import { ConvertBufferToBase64 } from "../../../utils/validator";
 import { ModalEditarProducto } from "../../modal/modal";
 
-export const ProductPage = (props: { productos: Producto[] }) => {
+export const ProductPage = (props: { productos: Producto[], serverUp: boolean }) => {
     const [currentPage, setCurrentPage] = useState<number>(1);
     const [selectedProducts, setSelectedProducts] = useState<number[]>([]);
     const [allChecked, setAllChecked] = useState<boolean>(false);
