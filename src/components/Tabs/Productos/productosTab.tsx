@@ -5,6 +5,7 @@ import { CheckBox } from "../../checkbox";
 import { Paginador } from "../../paginador";
 import { ConvertBufferToBase64 } from "../../../utils/validator";
 import { ModalEditarProducto } from "../../modal/modal";
+import SkeletonCard from "../../skeletonCard";
 
 export const ProductPage = (props: { productos: Producto[], serverUp: boolean }) => {
     const [currentPage, setCurrentPage] = useState<number>(1);
@@ -72,6 +73,8 @@ export const ProductPage = (props: { productos: Producto[], serverUp: boolean })
         },
     }
 
+    const arrayNum = [...Array(8)];
+
     return (
         <div className="flex flex-col h-screen antialiased mx-8 py-8" >
             <h2 className="text-2xl leading-tight">
@@ -127,13 +130,22 @@ export const ProductPage = (props: { productos: Producto[], serverUp: boolean })
                     </div>
                 </div>
                 <div className="bg-white flex flex-col border-b-4 overflow-scroll overflow-x-hidden">
-                    {props.productos.slice((elementsPerPage * (currentPage - 1)), currentPage * elementsPerPage).map((p, index) => {
-                        return (
-                            <div key={`FilaProdTable${p._id}`}>
-                                <FilaProducto listIndex={index} selectedProductos={selectedProducts} setAllChecks={setAllChecked} producto={p} setSelection={setSelectedProducts} />
-                            </div>
-                        );
-                    })}
+                    {
+                        props.productos.length <= 0 ?
+                            arrayNum.map((n, i) => {
+                                return (
+                                    <SkeletonCard key={`SkeletonProdList-${i}`} />
+                                );
+                            })
+                            :
+                            props.productos.slice((elementsPerPage * (currentPage - 1)), currentPage * elementsPerPage).map((p, index) => {
+                                return (
+                                    <div key={`FilaProdTable${p._id}`}>
+                                        <FilaProducto listIndex={index} selectedProductos={selectedProducts} setAllChecks={setAllChecked} producto={p} setSelection={setSelectedProducts} />
+                                    </div>
+                                );
+                            })
+                    }
                 </div>
                 <div className="bg-white flex flex-row p-5 items-center justify-center rounded-b-xl shadow-lg">
                     <Paginador numPages={numPages} paginaActual={currentPage} maxPages={10} cambiarPaginaActual={setPaginaActual} />

@@ -20,8 +20,8 @@ const Ventas = () => {
                 const vResponse = await (await fetch('/api/ventas/estado')).json();
                 const cResponse = await (await fetch('/api/clientes/estado')).json();
 
-                const vState = vResponse.message.databaseState;
-                const cState = cResponse.message.databaseState;
+                const vState = vResponse.message?.databaseState;
+                const cState = cResponse.message?.databaseState;
 
                 if (VentasState !== vState || Ventas.length <= 0) {
                     SetVentasState(vState);
