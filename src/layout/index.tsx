@@ -62,12 +62,10 @@ const DashboardLayout = React.memo(({ children }: { children: React.ReactNode })
                 <ProductCarritoContextProvider>
                     <ClienteContextProvider>
                         {
-                            <main className="bg-gray-100 dark:bg-gray-800 h-screen w-screen overflow-hidden relative" >
+                            <main className="bg-gray-100 dark:bg-gray-800 h-full w-full overflow-hidden" >
                                 <NextNProgress />
                                 <div className="flex items-start justify-start">
-                                    <div className="px-1">
-                                        <SideBar isCollapsed={isSidebarCollapsed} setCollapsed={setSidebarCollapsed} />
-                                    </div>
+                                    <SideBar isCollapsed={isSidebarCollapsed} setCollapsed={setSidebarCollapsed} />
                                     <AnimatePresence exitBeforeEnter>
                                         <motion.div key={router.route} className="w-full h-full" initial={variants.initial} animate={variants.animate} exit={variants.exit}>
                                             {children}

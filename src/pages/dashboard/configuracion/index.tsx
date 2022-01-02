@@ -3,7 +3,7 @@ import DashboardLayout from "../../../layout";
 const ConfiguracionPage = () => {
     return (
         <div>
-            Ayuda
+            Configuracion
         </div>
     );
 }
