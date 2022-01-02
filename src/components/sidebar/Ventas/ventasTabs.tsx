@@ -2,8 +2,8 @@ import { motion } from "framer-motion";
 import React, { useEffect, useState } from "react";
 import { Cliente } from "../../../tipos/Cliente";
 import { Venta } from "../../../tipos/Venta";
-import { Paginador } from "../../paginador";
-import SkeletonCard from "../../skeletonCard";
+import { Paginador } from "../../Forms/paginador";
+import SkeletonCard from "../../Skeletons/skeletonCard";
 
 const variants = {
     initial: {

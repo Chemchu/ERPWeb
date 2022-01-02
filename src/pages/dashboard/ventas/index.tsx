@@ -1,5 +1,5 @@
-import { useEffect } from 'react';
-import SalesPage from '../../../components/Tabs/Ventas/ventasTabs'
+import { useEffect, useState } from 'react';
+import SalesPage from '../../../components/sidebar/Ventas/ventasTabs'
 import useClientContext from '../../../context/clientContext';
 import useVentaContext from '../../../context/ventasContext';
 import DashboardLayout from '../../../layout';
@@ -17,14 +17,20 @@ const Ventas = () => {
                 let cliRes: Cliente[];
                 let ventasRes: Venta[];
 
-                const vResponse = await (await fetch('/api/ventas/estado')).json();
-                const cResponse = await (await fetch('/api/clientes/estado')).json();
+                const vResponse = await fetch('/api/ventas/estado');
+                const cResponse = await fetch('/api/clientes/estado');
 
-                const vState = vResponse.message?.databaseState;
-                const cState = cResponse.message?.databaseState;
+                if (vResponse.status > 200 || cResponse.status > 200) {
+                    SetVentas([]);
+                    SetClientes([]);
 
-                if (VentasState !== vState || Ventas.length <= 0) {
-                    SetVentasState(vState);
+                    return;
+                }
+                const vState = await vResponse.json();
+                const cState = await cResponse.json();
+
+                if (VentasState !== vState.message?.databaseState || Ventas.length <= 0) {
+                    SetVentasState(vState.message?.databaseState);
 
                     const vRes = await (await fetch(`/api/ventas`)).json();
                     ventasRes = CreateSalesList(vRes);
@@ -32,8 +38,8 @@ const Ventas = () => {
                     if (ventasRes.length > 0) SetVentas(ventasRes);
                 }
 
-                if (ClientesState !== cState || Clientes.length <= 0) {
-                    SetClientesState(cState);
+                if (ClientesState !== cState.message?.databaseState || Clientes.length <= 0) {
+                    SetClientesState(cState.message?.databaseState);
 
                     const cRes = await (await fetch('/api/clientes')).json();
                     cliRes = CreateClientList(cRes);

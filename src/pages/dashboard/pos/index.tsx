@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import TPV from "../../../components/Tabs/pointOfSale/tpv";
+import TPV from "../../../components/sidebar/pointOfSale/tpv";
 import useProductContext from "../../../context/productContext";
 import useClientContext from "../../../context/clientContext";
 import DashboardLayout from "../../../layout";

@@ -6,10 +6,10 @@ import { CustomerPaymentInformation } from "../../../tipos/CustomerPayment";
 import { Producto } from "../../../tipos/Producto";
 import { TipoCobro } from "../../../tipos/Enums/TipoCobro";
 import { ProductoVendido } from "../../../tipos/ProductoVendido";
-import { ModalPagar, ModalResumenCompra } from "../../modal/modal";
+import { ModalPagar, ModalResumenCompra } from "../../modal";
 import { ProductCard, ProductSelectedCard } from "./productCard";
 import useProductEnCarritoContext from "../../../context/productosEnCarritoContext";
-import SkeletonProductCard from "../../skeletonProductCard";
+import SkeletonProductCard from "../../Skeletons/skeletonProductCard";
 
 const TPV = (props: { productos: Producto[], clientes: Cliente[], serverOperativo: boolean }) => {
     const [Busqueda, setBusqueda] = useState<string>("");

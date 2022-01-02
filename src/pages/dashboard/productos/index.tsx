@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { ProductPage } from "../../../components/Tabs/Productos/productosTab";
+import { ProductPage } from "../../../components/sidebar/Productos/productosTab";
 import useProductContext from "../../../context/productContext";
 import DashboardLayout from "../../../layout";
 import { Producto } from "../../../tipos/Producto";

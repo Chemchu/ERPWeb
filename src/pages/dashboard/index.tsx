@@ -1,5 +1,5 @@
 import React, { useEffect } from "react";
-import { Inicio } from "../../components/Tabs/Inicio";
+import { Inicio } from "../../components/sidebar/Inicio";
 import DashboardLayout from "../../layout";
 
 const Home = () => {

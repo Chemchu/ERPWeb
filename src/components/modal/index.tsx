@@ -1,16 +1,16 @@
-import { Backdrop } from "../backdrop.js";
 import { AnimatePresence, motion } from "framer-motion";
 import { MouseEventHandler, useState } from "react";
-import { InputNumber } from "../input/inputDinero";
+import { InputNumber } from "../Forms/input/inputDinero";
 import { CustomerPaymentInformation } from "../../tipos/CustomerPayment";
 import { TipoCobro } from "../../tipos/Enums/TipoCobro";
-import AutoComplete from "../autocomplete/autocomplete";
-import { Input } from "../input/input";
+import AutoComplete from "../Forms/autocomplete/autocomplete";
+import { Input } from "../Forms/input/input";
 import { Producto } from "../../tipos/Producto";
 import { ConvertBufferToBase64 } from "../../utils/validator";
 import { Cliente } from "../../tipos/Cliente";
 import { ProductoVendido } from "../../tipos/ProductoVendido";
 import { Venta } from "../../tipos/Venta";
+import { Backdrop } from "./backdrop";
 
 const In = {
     hidden: {
