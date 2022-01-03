@@ -54,7 +54,7 @@ const TPV = (props: { productos: Producto[], clientes: Cliente[], serverOperativ
     const arrayNum = [...Array(5)];
 
     return (
-        <div className="h-screen antialiased overflow-hidden text-gray-800">
+        <div className="antialiased overflow-hidden text-gray-800">
             {/* Página principal del POS */}
             <div className="grid grid-cols-3 bg-gray-100">
                 {/* Menú tienda, donde se muestran los productos */}
@@ -287,11 +287,11 @@ const SidebarDerecho = React.memo((props: { todosProductos: Producto[], producto
 
 
     return (
-        <div className="bg-white rounded-3xl shadow">
+        <div className="bg-white rounded-3xl shadow h-full">
             {/* En caso de carrito vacío o con productos */}
             {
                 props.productosEnCarrito.length <= 0 ?
-                    <div className="grid grid-rows-2 grid-cols-1 h-screen p-4">
+                    <div className="grid grid-rows-2 grid-cols-1 p-4 h-full">
                         <div className="grid grid-rows-2 grid-cols-1 justify-items-center justify-self-center opacity-25 self-end">
                             <svg xmlns="http://www.w3.org/2000/svg" className="h-16" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z" />
@@ -301,18 +301,18 @@ const SidebarDerecho = React.memo((props: { todosProductos: Producto[], producto
                             </p>
                         </div>
 
-                        <div className="row-start-6 row-end-7 flex mb-3 text-lg font-semibold self-end">
-                            <button className="flex gap-2">
-                                Cerrar caja
-                                <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
-                                </svg>
-                            </button>
-
+                        <div className="row-start-6 row-end-7 flex justify-between mb-3 text-lg font-semibold ">
                             <button className="flex gap-2">
                                 Imprimir recibo
                                 <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z" />
+                                </svg>
+                            </button>
+
+                            <button className="flex gap-2">
+                                Cerrar caja
+                                <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
                                 </svg>
                             </button>
                         </div>

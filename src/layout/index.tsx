@@ -34,6 +34,7 @@ const variants = {
 
 const DashboardLayout = React.memo(({ children }: { children: React.ReactNode }) => {
     const [isSidebarCollapsed, setSidebarCollapsed] = useState<boolean>(false);
+    const [IndexSidebar, setSidebarIndex] = useState<number>(0);
     const { status, data: session } = useSession();
 
     {/* router.route es lo que hace que funcione el exit del AnimatePresence */ }
@@ -65,9 +66,9 @@ const DashboardLayout = React.memo(({ children }: { children: React.ReactNode })
                             <main className="bg-gray-100 dark:bg-gray-800 h-full w-full overflow-hidden" >
                                 <NextNProgress />
                                 <div className="flex items-start justify-start">
-                                    <SideBar isCollapsed={isSidebarCollapsed} setCollapsed={setSidebarCollapsed} />
+                                    <SideBar isCollapsed={isSidebarCollapsed} setCollapsed={setSidebarCollapsed} IndexSeleccionado={IndexSidebar} />
                                     <AnimatePresence exitBeforeEnter>
-                                        <motion.div key={router.route} className="w-full h-full" initial={variants.initial} animate={variants.animate} exit={variants.exit}>
+                                        <motion.div key={router.route} className="w-screen h-screen" initial={variants.initial} animate={variants.animate} exit={variants.exit}>
                                             {children}
                                         </motion.div>
                                     </AnimatePresence>

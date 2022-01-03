@@ -2,7 +2,7 @@ import { motion } from 'framer-motion';
 import Link from 'next/link';
 import React from 'react';
 
-const SideBar = React.memo((props: { isCollapsed: boolean, setCollapsed: Function }) => {
+const SideBar = React.memo((props: { isCollapsed: boolean, setCollapsed: Function, IndexSeleccionado: number }) => {
     return (
         props.isCollapsed ? <CollapsedSidebar setCollapsed={props.setCollapsed} /> : <OpenedSidebar setCollapsed={props.setCollapsed} />
     );
@@ -11,7 +11,7 @@ const SideBar = React.memo((props: { isCollapsed: boolean, setCollapsed: Functio
 const OpenedSidebar = (props: { setCollapsed: Function }) => {
     return (
         <motion.div initial={{ x: "-10vh", opacity: 0 }} animate={{ x: 0, opacity: 1 }} exit={{ x: "-10vh", opacity: 0 }}
-            className="grid grid-rows-6 w-auto bg-white border-2 rounded-xl m-1" onClick={() => { props.setCollapsed(true); }}>
+            className="grid grid-rows-6 w-auto bg-white border-2 rounded-3xl m-4" onClick={() => { props.setCollapsed(true); }}>
 
             <div className="flex cursor-default">
                 <span className="text-gray-600 self-center dark:text-gray-300 pl-10 text-2xl font-bold">
@@ -122,7 +122,7 @@ const OpenedSidebar = (props: { setCollapsed: Function }) => {
 const CollapsedSidebar = (props: { setCollapsed: Function }) => {
     return (
         <motion.div initial={{ x: "-10vh", opacity: 0 }} animate={{ x: 0, opacity: 1 }} exit={{ x: "-10vh", opacity: 0 }}
-            className="grid grid-rows-6 w-auto bg-white border-2 rounded-xl m-1" onClick={() => { props.setCollapsed(false); }}>
+            className="grid grid-rows-6 w-auto bg-white border-2 rounded-3xl m-4" onClick={() => { props.setCollapsed(false); }}>
 
             <div className="flex items-center justify-start mx-6">
                 <svg xmlns="http://www.w3.org/2000/svg" className="h-8 w-8" fill="none" viewBox="0 0 24 24" stroke="currentColor">
