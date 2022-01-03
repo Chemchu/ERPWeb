@@ -51,6 +51,8 @@ const TPV = (props: { productos: Producto[], clientes: Cliente[], serverOperativ
         setProductosFiltrados(productosFiltrados);
     }
 
+    const arrayNum = [...Array(5)];
+
     return (
         <div className="h-screen antialiased overflow-hidden text-gray-800">
             {/* Página principal del POS */}
@@ -69,17 +71,29 @@ const TPV = (props: { productos: Producto[], clientes: Cliente[], serverOperativ
 
                         {/* Genera los botones de favorito */}
                         {
-                            Familias[0] !== undefined &&
-                            <div className="grid grid-rows-1 gap-2 m-4 grid-flow-col overflow-y-hidden">
-                                <button key={"Todos"} id={"Todos"} className="bg-blue-400 font-semibold hover:bg-yellow-500 text-white rounded-lg h-10 w-16 md:w-32 lg:w-48 mb-6"
-                                    onClick={() => setProductosFiltrados(props.productos)}>Todos</button>
-                                {
-                                    Familias.map(f => {
-                                        return <button key={f} id={f} className="bg-blue-400 font-semibold hover:bg-yellow-500 text-white rounded-lg h-10 w-16 md:w-32 lg:w-48 mb-6"
-                                            onClick={(e) => setProductosFiltrados(props.productos.filter(p => p.familia === e.currentTarget.id))}>{f}</button>
-                                    })
-                                }
-                            </div>
+                            props.serverOperativo &&
+                                props.productos.length <= 0 ?
+                                <div className="grid grid-rows-1 gap-2 m-4 grid-flow-col overflow-y-hidden">
+                                    {
+                                        arrayNum.map((n, i) => {
+                                            return (
+                                                <div key={`SkeletonFav-${i}`} className="animate-pulse h-10 w-16 md:w-32 lg:w-48 mb-6 border-2 rounded-md mx-auto bg-gray-300" />
+                                            );
+                                        })
+                                    }
+                                </div>
+                                :
+                                Familias[0] !== undefined &&
+                                <div className="grid grid-rows-1 gap-2 m-4 grid-flow-col overflow-y-hidden">
+                                    <button key={"Todos"} id={"Todos"} className="bg-blue-400 font-semibold hover:bg-yellow-500 text-white rounded-lg h-10 w-16 md:w-32 lg:w-48 mb-6"
+                                        onClick={() => setProductosFiltrados(props.productos)}>Todos</button>
+                                    {
+                                        Familias.map(f => {
+                                            return <button key={f} id={f} className="bg-blue-400 font-semibold hover:bg-yellow-500 text-white rounded-lg h-10 w-16 md:w-32 lg:w-48 mb-6"
+                                                onClick={(e) => setProductosFiltrados(props.productos.filter(p => p.familia === e.currentTarget.id))}>{f}</button>
+                                        })
+                                    }
+                                </div>
                         }
 
                         <div className="h-full overflow-hidden pt-2">

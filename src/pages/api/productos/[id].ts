@@ -15,8 +15,10 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
             res.status(response.status).json(resJson.message);
             break;
 
-        case 'PUT':
+        case 'POST':
             // Update or create data in your database
+            console.log(req.body);
+
             res.status(200).json({ id, name: name || `Producto ${id}` });
             break;
 
@@ -25,7 +27,7 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
             break;
 
         default:
-            res.setHeader('Allow', ['GET', 'DELETE', 'PUT']);
+            res.setHeader('Allow', ['GET', 'DELETE', 'POST']);
             res.status(405).end(`Method ${method} Not Allowed`);
     }
 }
