@@ -5,8 +5,8 @@ import { ConvertBufferToBase64 } from '../../../utils/validator';
 import { ProductoVendido } from '../../../tipos/ProductoVendido';
 
 
-export const ProductCard = React.memo((props: Producto) => {
-    const [productImage, setProductImage] = useState<string>(`data:image/(png|jpeg);base64,${ConvertBufferToBase64(props.img)}`);
+export const ProductCard = React.memo((props: { Prod: Producto }) => {
+    const [productImage, setProductImage] = useState<string>(`data:image/(png|jpeg);base64,${ConvertBufferToBase64(props.Prod.img)}`);
 
     const SetDefaultImage = () => {
         setProductImage("data:image/png;base64,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")
@@ -18,8 +18,8 @@ export const ProductCard = React.memo((props: Producto) => {
                 <img className="bg-white rounded-2xl w-full object-cover h-20 xl:h-44" src={productImage} onError={SetDefaultImage} />
             </div>
             <div className="mt-4 pl-3 pr-3">
-                <div className="lg:text-base sm:text-base xs:text-sm truncate text-left text-gray-800">{props.nombre}</div>
-                <div className="lg:text-base sm:text-base xs:text-sm font-semibold text-left text-gray-800">{props.precioVenta.toFixed(2)}€</div>
+                <div className="lg:text-base sm:text-base xs:text-sm truncate text-left text-gray-800">{props.Prod.nombre}</div>
+                <div className="lg:text-base sm:text-base xs:text-sm font-semibold text-left text-gray-800">{props.Prod.precioVenta.toFixed(2)}€</div>
             </div>
         </motion.div>
     );

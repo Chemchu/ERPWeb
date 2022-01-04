@@ -166,9 +166,7 @@ const ListaProductos = (props: { productos: Producto[], productosFiltrados: Prod
                                                     SetProductosEnCarrito([...ProductosEnCarrito, prodAlCarrito]);
                                                 }
                                             }}>
-                                            <ProductCard _id={prod._id} alta={prod.alta} descripcion={prod.descripcion} ean={prod.ean} familia={prod.familia}
-                                                nombre={prod.nombre} precioVenta={prod.precioVenta} img={prod.img}
-                                                iva={prod.iva} precioCompra={prod.precioCompra} tags={prod.tags} cantidad={prod.cantidad} promociones={prod.promociones} />
+                                            <ProductCard Prod={prod} />
                                         </button>
                                     );
                                 })

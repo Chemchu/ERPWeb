@@ -15,24 +15,18 @@ const UploadFile = (props: { tipoDocumento: TipoDocumento }) => {
             if (!f.type) { console.log("File no tiene tipo"); return; }
             if (!TIPOS_PERMITIDOS.includes(`${f.type.substring(5)}`)) { console.log(`File is not an ${f.type}`); return; }
 
-            const body = new FormData();
-            body.append("text", f);
+            const text = await f.text();
 
             await fetch(`/api/${props.tipoDocumento}/${f.name}`, {
-                headers: { 'Content-Type': 'multipart/form-data' },
+                headers: { 'Content-Type': 'application/json' },
                 method: 'POST',
-                body: body
+                body: JSON.stringify(text)
             })
         }
         catch (e) {
             console.log(e);
         }
     };
-
-    useEffect(() => {
-        console.log(File);
-
-    }, [File])
 
     // const handleClick = () => {
     //     console.log(hiddenFileInput);
