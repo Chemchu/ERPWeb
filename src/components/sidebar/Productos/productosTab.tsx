@@ -1,12 +1,13 @@
 import { motion } from "framer-motion";
 import React, { useState } from "react";
 import { Producto } from "../../../tipos/Producto";
-import { CheckBox } from "../../checkbox";
-import { Paginador } from "../../paginador";
+import { CheckBox } from "../../Forms/checkbox";
+import { Paginador } from "../../Forms/paginador";
 import { ConvertBufferToBase64 } from "../../../utils/validator";
-import { ModalEditarProducto } from "../../modal/modal";
+import { ModalEditarProducto } from "../../modal";
+import SkeletonCard from "../../Skeletons/skeletonCard";
 
-export const ProductPage = (props: { productos: Producto[] }) => {
+export const ProductPage = (props: { productos: Producto[], serverUp: boolean }) => {
     const [currentPage, setCurrentPage] = useState<number>(1);
     const [selectedProducts, setSelectedProducts] = useState<number[]>([]);
     const [allChecked, setAllChecked] = useState<boolean>(false);
@@ -72,6 +73,8 @@ export const ProductPage = (props: { productos: Producto[] }) => {
         },
     }
 
+    const arrayNum = [...Array(8)];
+
     return (
         <div className="flex flex-col h-screen antialiased mx-8 py-8" >
             <h2 className="text-2xl leading-tight">
@@ -85,19 +88,23 @@ export const ProductPage = (props: { productos: Producto[] }) => {
                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v3m0 0v3m0-3h3m-3 0H9m12 0a9 9 0 11-18 0 9 9 0 0118 0z" />
                         </svg>
                     </button>
-                    {selectedProducts.length > 0 && <motion.button initial={variants.initial} animate={variants.animate} exit={variants.exitFadeOut} className="flex flex-shrink-0 gap-2 px-4 py-2 text-base font-semibold text-white bg-red-500 rounded-lg shadow-md hover:bg-red-600 focus:outline-none focus:ring-2 focus:ring-red-600 focus:ring-offset-2 focus:ring-offset-red-200">
-                        Borrar
-                        <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
-                        </svg>
-                    </motion.button>}
-                    {selectedProducts.length > 0 && <motion.button initial={variants.initial} animate={variants.animate} exit={variants.exitFadeOut} className="flex flex-shrink-0 gap-2 px-4 py-2 text-base font-semibold text-white bg-yellow-500 rounded-lg shadow-md hover:bg-yellow-600 focus:outline-none focus:ring-2 focus:ring-yellow-600 focus:ring-offset-2 focus:ring-offset-yellow-200"
-                        onClick={() => { setAllBoxesChecked(false) }}>
-                        Cancelar
-                        <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z" />
-                        </svg>
-                    </motion.button>}
+                    {
+                        selectedProducts.length > 0 && <motion.button initial={variants.initial} animate={variants.animate} exit={variants.exitFadeOut} className="flex flex-shrink-0 gap-2 px-4 py-2 text-base font-semibold text-white bg-red-500 rounded-lg shadow-md hover:bg-red-600 focus:outline-none focus:ring-2 focus:ring-red-600 focus:ring-offset-2 focus:ring-offset-red-200">
+                            Borrar
+                            <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                            </svg>
+                        </motion.button>
+                    }
+                    {
+                        selectedProducts.length > 0 && <motion.button initial={variants.initial} animate={variants.animate} exit={variants.exitFadeOut} className="flex flex-shrink-0 gap-2 px-4 py-2 text-base font-semibold text-white bg-yellow-500 rounded-lg shadow-md hover:bg-yellow-600 focus:outline-none focus:ring-2 focus:ring-yellow-600 focus:ring-offset-2 focus:ring-offset-yellow-200"
+                            onClick={() => { setAllBoxesChecked(false) }}>
+                            Cancelar
+                            <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                            </svg>
+                        </motion.button>
+                    }
                 </div>
                 <div className="text-end">
                     <div className="flex flex-col md:flex-row w-3/4 md:w-full max-w-sm md:space-x-3 space-y-3 md:space-y-0 justify-center">
@@ -127,13 +134,22 @@ export const ProductPage = (props: { productos: Producto[] }) => {
                     </div>
                 </div>
                 <div className="bg-white flex flex-col border-b-4 overflow-scroll overflow-x-hidden">
-                    {props.productos.slice((elementsPerPage * (currentPage - 1)), currentPage * elementsPerPage).map((p, index) => {
-                        return (
-                            <div key={`FilaProdTable${p._id}`}>
-                                <FilaProducto listIndex={index} selectedProductos={selectedProducts} setAllChecks={setAllChecked} producto={p} setSelection={setSelectedProducts} />
-                            </div>
-                        );
-                    })}
+                    {
+                        props.productos.length <= 0 ?
+                            arrayNum.map((n, i) => {
+                                return (
+                                    <SkeletonCard key={`SkeletonProdList-${i}`} />
+                                );
+                            })
+                            :
+                            props.productos.slice((elementsPerPage * (currentPage - 1)), currentPage * elementsPerPage).map((p, index) => {
+                                return (
+                                    <div key={`FilaProdTable${p._id}`}>
+                                        <FilaProducto listIndex={index} selectedProductos={selectedProducts} setAllChecks={setAllChecked} producto={p} setSelection={setSelectedProducts} />
+                                    </div>
+                                );
+                            })
+                    }
                 </div>
                 <div className="bg-white flex flex-row p-5 items-center justify-center rounded-b-xl shadow-lg">
                     <Paginador numPages={numPages} paginaActual={currentPage} maxPages={10} cambiarPaginaActual={setPaginaActual} />

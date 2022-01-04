@@ -33,6 +33,17 @@ export const ValidateString = (cadena: string): string | undefined => {
     else return undefined;
 }
 
+export const ValidateSearchString = (cadena: string): string => {
+    if (cadena === "") return "";
+
+    const regex = new RegExp("^[A-Za-z0-9 ._-]*[A-Za-z0-9][A-Za-z0-9 ._-]*$");
+
+    const res = cadena.match(regex);
+
+    if (res) return res[0];
+    else return "";
+}
+
 export const ValidatePositiveFloatingNumber = (inputNumber: string): string => {
     const valuePostRegex = inputNumber.match(new RegExp("[+]?([0-9]+([.][0-9]*)?|[.][0-9]+)"))?.[0];
     if (valuePostRegex == undefined) { return ""; }

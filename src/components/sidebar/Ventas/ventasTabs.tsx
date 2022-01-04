@@ -1,8 +1,9 @@
 import { motion } from "framer-motion";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Cliente } from "../../../tipos/Cliente";
 import { Venta } from "../../../tipos/Venta";
-import { Paginador } from "../../paginador";
+import { Paginador } from "../../Forms/paginador";
+import SkeletonCard from "../../Skeletons/skeletonCard";
 
 const variants = {
     initial: {
@@ -29,9 +30,14 @@ const SalesPage = (props: { ventas: Venta[], clientes: Cliente[] }) => {
     if (props.ventas == undefined) throw new Error("Props de ventas en ventasTabs.tsx es undefined");
     if (props.clientes == undefined) throw new Error("Props de clientes en ventasTabs.tsx es undefined");
 
-    const [Ventas, setVentas] = useState<Venta[]>(props.ventas);
-    const [Clientes, setClientes] = useState<Cliente[]>(props.clientes);
+    const [Ventas, setVentas] = useState<Venta[]>([]);
+    const [Clientes, setClientes] = useState<Cliente[]>([]);
     const [CurrentPage, setCurrentPage] = useState<number>(1);
+
+    useEffect(() => {
+        setVentas(props.ventas);
+        setClientes(props.clientes)
+    }, [props.clientes, props.ventas])
 
     const elementsPerPage = 10;
     const numPages = Ventas.length <= 0 ? 1 : Math.ceil(Ventas.length / elementsPerPage);
@@ -61,6 +67,7 @@ const SalesPage = (props: { ventas: Venta[], clientes: Cliente[] }) => {
     //     setVentas(ventasFormatted);
     // }
 
+    const arrayNum = [...Array(8)];
 
     const setPaginaActual = (page: number) => {
         if (page < 1) { return; }
@@ -104,13 +111,19 @@ const SalesPage = (props: { ventas: Venta[], clientes: Cliente[] }) => {
                     </div>
                 </div>
                 <div className="bg-white flex flex-col border-b-4 overflow-scroll overflow-x-hidden">
-                    {Ventas.slice((elementsPerPage * (CurrentPage - 1)), CurrentPage * elementsPerPage).map((v) => {
-                        return (
-                            <div key={`FilaProdTable${v._id}`}>
-                                <FilaVenta key={`FilaVenta${v._id}`} IDCompra={v._id} nombreCliente={v.clienteID} fechaCompra={v.createdAt} metodoPago={v.tipo} valorTotal={v.precioVentaTotal} />
-                            </div>
-                        );
-                    })}
+                    {
+                        Ventas.length <= 0 ?
+                            arrayNum.map((e, i) => <SkeletonCard key={`skeletonVentas-${i}`} />)
+
+                            :
+                            Ventas.slice((elementsPerPage * (CurrentPage - 1)), CurrentPage * elementsPerPage).map((v) => {
+                                return (
+                                    <div key={`FilaProdTable${v._id}`}>
+                                        <FilaVenta key={`FilaVenta${v._id}`} IDCompra={v._id} nombreCliente={v.clienteID} fechaCompra={v.createdAt} metodoPago={v.tipo} valorTotal={v.precioVentaTotal} />
+                                    </div>
+                                );
+                            })
+                    }
                 </div>
                 <div className="bg-white flex flex-row p-5 items-center justify-center rounded-b-xl shadow-lg">
                     <Paginador numPages={numPages} paginaActual={CurrentPage} maxPages={10} cambiarPaginaActual={setPaginaActual} />

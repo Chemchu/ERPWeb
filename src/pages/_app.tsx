@@ -1,10 +1,8 @@
 import '../styles/globals.css'
 import type { AppProps } from 'next/app'
 import { AnimatePresence } from 'framer-motion'
+import { SessionProvider } from "next-auth/react"
 import React from 'react'
-import { ProductContextProvider } from "../context/productContext";
-import { ClienteContextProvider } from "../context/clientContext";
-import { ProductCarritoContextProvider } from '../context/productosEnCarritoContext';
 
 type AppPropsConPageLayout = AppProps & {
   Component: AppProps['Component'] & {
@@ -15,22 +13,18 @@ type AppPropsConPageLayout = AppProps & {
 function MyApp({ Component, pageProps, router }: AppPropsConPageLayout) {
 
   return (
-    <ProductContextProvider>
-      <ProductCarritoContextProvider>
-        <ClienteContextProvider>
-          {
-            Component.PageLayout ?
-              <Component.PageLayout >
-                <Component {...pageProps} key={router.route} />
-              </Component.PageLayout>
-              :
-              <AnimatePresence exitBeforeEnter>
-                <Component {...pageProps} key={router.route} />
-              </AnimatePresence>
-          }
-        </ClienteContextProvider>
-      </ProductCarritoContextProvider>
-    </ProductContextProvider>
+    <SessionProvider session={pageProps.session}>
+      <AnimatePresence exitBeforeEnter>
+        {
+          Component.PageLayout ?
+            <Component.PageLayout >
+              <Component {...pageProps} key={router.route} />
+            </Component.PageLayout>
+            :
+            <Component {...pageProps} key={router.route} />
+        }
+      </AnimatePresence>
+    </SessionProvider>
   );
 }
 

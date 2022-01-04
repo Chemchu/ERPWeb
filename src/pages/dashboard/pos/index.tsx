@@ -1,78 +1,81 @@
-import React, { useEffect } from "react";
-import TPV from "../../../components/Tabs/pointOfSale/tpv";
-import { Cliente } from "../../../tipos/Cliente";
-import { Producto } from "../../../tipos/Producto";
-import { CreateClientList, CreateProductList } from "../../../utils/typeCreator";
-import { GetServerSideProps } from 'next/types'
+import React, { useEffect, useState } from "react";
+import TPV from "../../../components/sidebar/pointOfSale/tpv";
 import useProductContext from "../../../context/productContext";
 import useClientContext from "../../../context/clientContext";
-import Layout from "../../../layout";
+import DashboardLayout from "../../../layout";
 import { motion } from "framer-motion";
-import Cookies from "js-cookie";
+import { Producto } from "../../../tipos/Producto";
+import { Cliente } from "../../../tipos/Cliente";
+import { CreateClientList, CreateProductList } from "../../../utils/typeCreator";
 
-const PuntoDeVenta = (props: { productos: Producto[], clientes: Cliente[], prodStateCookie: string, clientStateCookie: string }) => {
-    const { Productos, SetProductos } = useProductContext();
-    const { Clientes, SetClientes } = useClientContext();
+const PuntoDeVenta = () => {
+    const { Productos, SetProductos, ProductState, SetProductState } = useProductContext();
+    const { Clientes, SetClientes, ClientesState, SetClientesState } = useClientContext();
+    const [ServerUp, setServerUp] = useState<boolean>(true);
 
     useEffect(() => {
-        Cookies.set('StateIdentifierProduct', props.prodStateCookie);
-        Cookies.set('StateIdentifierClientes', props.clientStateCookie);
+        async function GetAllData() {
+            let prodRes = [] as Producto[];
+            let cliRes = [] as Cliente[];
 
-        if (props.productos.length > 0) SetProductos(props.productos);
-        if (props.clientes.length > 0) SetClientes(props.clientes);
+            const pResponse = await fetch('/api/productos/estado');
+            const cResponse = await fetch('/api/clientes/estado');
+
+            if (pResponse.status > 200 || cResponse.status > 200) {
+                SetProductos([]);
+                SetClientes([]);
+                setServerUp(false);
+
+                return;
+            }
+
+            const pState = await pResponse.json();
+            const cState = await cResponse.json();
+
+            if (ProductState !== pState.message?.databaseState || Productos.length <= 0) {
+                SetProductState(pState.message?.databaseState);
+
+                const pRes = await fetch('/api/productos');
+
+                if (pRes.status > 200) {
+                    SetProductos([]);
+                    SetClientes([]);
+                    setServerUp(false);
+
+                    return;
+                }
+                prodRes = CreateProductList(await pRes.json());
+
+                if (prodRes.length > 0) SetProductos(prodRes);
+            }
+
+            if (ClientesState !== cState.message?.databaseState || Clientes.length <= 0) {
+                SetClientesState(cState.message?.databaseState);
+
+                const cRes = await fetch('/api/clientes');
+
+                if (cRes.status > 200) {
+                    SetProductos([]);
+                    SetClientes([]);
+                    setServerUp(false);
+                }
+
+                cliRes = CreateClientList(await cRes.json());
+
+                if (cliRes.length > 0) SetClientes(cliRes);
+            }
+        }
+
+        GetAllData();
     }, []);
 
     return (
         <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}>
-            <TPV clientes={props.clientes.length > 0 ? props.clientes : Clientes} productos={props.productos.length > 0 ? props.productos : Productos} />
+            <TPV clientes={Clientes} productos={Productos} serverOperativo={ServerUp} />
         </motion.div>
     );
 }
 
-export const getServerSideProps: GetServerSideProps = async (context) => {
-    try {
-        let prodRes = [] as Producto[];
-        let cliRes = [] as Cliente[];
-
-        const pResponse = await (await fetch('http://localhost:3000/api/productos/estado')).json();
-        const cResponse = await (await fetch('http://localhost:3000/api/clientes/estado')).json();
-
-        const pState = pResponse.message.databaseState || 'NoStateSavedInServer';
-        const cState = cResponse.message.databaseState || 'NoStateSavedInServer';
-
-        if (context.req.cookies.StateIdentifierProduct !== pState || pState === 'NoStateSavedInServer') {
-            const pRes = await (await fetch('http://localhost:3000/api/productos')).json();
-            prodRes = CreateProductList(pRes);
-        }
-
-        if (context.req.cookies.StateIdentifierClientes !== cState || cState === 'NoStateSavedInServer') {
-            const cRes = await (await fetch('http://localhost:3000/api/clientes')).json();
-            cliRes = CreateClientList(cRes);
-        }
-
-        return {
-            props: {
-                productos: prodRes,
-                clientes: cliRes,
-                prodStateCookie: pState,
-                clientStateCookie: cState
-            }
-        }
-
-    }
-    catch (e) {
-        console.log(e);
-
-        return {
-            props: {
-                productos: [] as Producto[],
-                clientes: [] as Cliente[],
-            }
-        }
-    }
-
-}
-
-PuntoDeVenta.PageLayout = Layout;
+PuntoDeVenta.PageLayout = DashboardLayout;
 
 export default PuntoDeVenta;

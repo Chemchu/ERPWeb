@@ -1,30 +1,33 @@
 import { NextApiRequest, NextApiResponse } from "next";
+import { envInformation } from "../../../utils/envInfo";
 
-const handler = (req: NextApiRequest, res: NextApiResponse) => {
-    // try {
-    //     const loginPostConfig = {
-    //         email: username,
-    //         password: password
-    //     }
+const handler = async (req: NextApiRequest, res: NextApiResponse) => {
+    try {
 
-    //     // Petición login
-    //     const resFromAPI = await (await fetch(`${envInformation.ERPBACK_URL}login/authenticate`, {
-    //         method: 'GET',
-    //         body: JSON.stringify(loginPostConfig)
-    //     }
-    //     )).json();
+        if (req.method !== 'POST') {
+            res.setHeader('Allow', ['POST'])
+            res.status(405).end(`Method ${req.method} Not Allowed`)
+        }
 
-    //     let response = false;
-    //     resFromAPI.data.success ? response = true : response = false;
+        // Petición login
+        const resFromAPI = await (await fetch(`${envInformation.ERPBACK_URL}login/authenticate`, {
+            method: 'GET',
+            body: JSON.stringify({ email: req.body.email, password: req.body.password })
+        })).json();
 
-    //     return response;
-    // }
-    // catch (err) {
-    //     console.log(err);
-    //     return false;
-    // }
+        console.log(resFromAPI);
 
-    res.status(200).json({ "resautenticar": "exito o fallo" });
+        if (resFromAPI.data.success) {
+            return res.status(200).json({ message: `Éxito al iniciar sesión` });
+        }
+        else {
+            return res.status(300).json({ message: `Error al iniciar sesión: ${resFromAPI.message}` });
+        }
+    }
+    catch (err) {
+        console.log(err);
+        return res.status(500).json({ message: `Fallo al iniciar sesión: ${err}` });
+    }
 }
 
 export default handler;

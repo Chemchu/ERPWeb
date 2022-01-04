@@ -1,20 +1,19 @@
 import { AnimatePresence, motion } from "framer-motion";
 import React, { useCallback, useEffect, useState } from "react";
-import { ApplyDtoCash, ApplyDtoPercentage, IsPositiveFloatingNumber, IsPositiveIntegerNumber, ValidatePositiveFloatingNumber, ValidatePositiveIntegerNumber, ValidateString } from "../../../utils/validator";
+import { ApplyDtoCash, ApplyDtoPercentage, IsPositiveFloatingNumber, IsPositiveIntegerNumber, ValidatePositiveFloatingNumber, ValidatePositiveIntegerNumber, ValidateSearchString, ValidateString } from "../../../utils/validator";
 import { Cliente } from "../../../tipos/Cliente";
 import { CustomerPaymentInformation } from "../../../tipos/CustomerPayment";
 import { Producto } from "../../../tipos/Producto";
 import { TipoCobro } from "../../../tipos/Enums/TipoCobro";
 import { ProductoVendido } from "../../../tipos/ProductoVendido";
-import { ModalPagar, ModalResumenCompra } from "../../modal/modal";
+import { ModalPagar, ModalResumenCompra } from "../../modal";
 import { ProductCard, ProductSelectedCard } from "./productCard";
 import useProductEnCarritoContext from "../../../context/productosEnCarritoContext";
+import SkeletonProductCard from "../../Skeletons/skeletonProductCard";
 
-const TPV = (props: { productos: Producto[], clientes: Cliente[] }) => {
+const TPV = (props: { productos: Producto[], clientes: Cliente[], serverOperativo: boolean }) => {
     const [Busqueda, setBusqueda] = useState<string>("");
-    const [Clientes,] = useState<Cliente[]>(props.clientes);
-    const [Productos,] = useState<Producto[]>(props.productos);
-    const [ProductosFiltrados, setProductosFiltrados] = useState<Producto[]>(props.productos);
+    const [ProductosFiltrados, setProductosFiltrados] = useState<Producto[]>([]);
     const { ProductosEnCarrito, SetProductosEnCarrito } = useProductEnCarritoContext();
     const [Familias, setFamilias] = useState<string[]>([]);
 
@@ -33,23 +32,29 @@ const TPV = (props: { productos: Producto[], clientes: Cliente[] }) => {
             }
             return out;
         }
-        setFamilias(uniq_fast(Productos));
-    }, [Productos]);
+        setFamilias(uniq_fast(props.productos));
+        setProductosFiltrados(props.productos);
+    }, [props.productos]);
+
 
     var Filtrar = (cadena: string) => {
-        const stringValidated = ValidateString(cadena);
+        const stringValidated = ValidateSearchString(cadena);
+        setBusqueda(stringValidated);
 
-        if (stringValidated) {
-            setBusqueda(stringValidated);
-
-            const pFiltrados = Productos.filter((p: Producto) => { p.nombre.toUpperCase().includes(stringValidated.toUpperCase()) || p.ean.includes(stringValidated) });
-            setProductosFiltrados(pFiltrados);
+        let productosFiltrados: Producto[];
+        if (stringValidated === "") productosFiltrados = props.productos;
+        else {
+            productosFiltrados = props.productos.filter((p: Producto) => {
+                return p.nombre.toUpperCase().includes(stringValidated.toUpperCase()) || p.ean.includes(stringValidated.toUpperCase())
+            });
         }
-        else { return; }
+        setProductosFiltrados(productosFiltrados);
     }
 
+    const arrayNum = [...Array(5)];
+
     return (
-        <div className="h-screen antialiased overflow-hidden text-gray-800">
+        <div className="antialiased overflow-hidden text-gray-800">
             {/* Página principal del POS */}
             <div className="grid grid-cols-3 bg-gray-100">
                 {/* Menú tienda, donde se muestran los productos */}
@@ -66,97 +71,143 @@ const TPV = (props: { productos: Producto[], clientes: Cliente[] }) => {
 
                         {/* Genera los botones de favorito */}
                         {
-                            Familias[0] !== undefined &&
-                            <div className="grid grid-rows-1 gap-2 m-4 grid-flow-col overflow-y-hidden">
-                                <button key={"Todos"} id={"Todos"} className="bg-blue-400 font-semibold hover:bg-yellow-500 text-white rounded-lg h-10 w-16 md:w-32 lg:w-48 mb-6"
-                                    onClick={() => setProductosFiltrados(Productos)}>Todos</button>
-                                {
-                                    Familias.map(f => {
-                                        return <button key={f} id={f} className="bg-blue-400 font-semibold hover:bg-yellow-500 text-white rounded-lg h-10 w-16 md:w-32 lg:w-48 mb-6"
-                                            onClick={(e) => setProductosFiltrados(Productos.filter(p => p.familia === e.currentTarget.id))}>{f}</button>
-                                    })
-                                }
-                            </div>
+                            props.serverOperativo &&
+                                props.productos.length <= 0 ?
+                                <div className="grid grid-rows-1 gap-2 m-4 grid-flow-col overflow-y-hidden">
+                                    {
+                                        arrayNum.map((n, i) => {
+                                            return (
+                                                <div key={`SkeletonFav-${i}`} className="animate-pulse h-10 w-16 md:w-32 lg:w-48 mb-6 border-2 rounded-md mx-auto bg-gray-300" />
+                                            );
+                                        })
+                                    }
+                                </div>
+                                :
+                                Familias[0] !== undefined &&
+                                <div className="grid grid-rows-1 gap-2 m-4 grid-flow-col overflow-y-hidden">
+                                    <button key={"Todos"} id={"Todos"} className="bg-blue-400 font-semibold hover:bg-yellow-500 text-white rounded-lg h-10 w-16 md:w-32 lg:w-48 mb-6"
+                                        onClick={() => setProductosFiltrados(props.productos)}>Todos</button>
+                                    {
+                                        Familias.map(f => {
+                                            return <button key={f} id={f} className="bg-blue-400 font-semibold hover:bg-yellow-500 text-white rounded-lg h-10 w-16 md:w-32 lg:w-48 mb-6"
+                                                onClick={(e) => setProductosFiltrados(props.productos.filter(p => p.familia === e.currentTarget.id))}>{f}</button>
+                                        })
+                                    }
+                                </div>
                         }
 
                         <div className="h-full overflow-hidden pt-2">
-                            <div className="h-full overflow-y-auto overflow-x-hidden px-2">
-                                {/* Base de datos vacía o con productos*/}
-                                {
-                                    Productos.length === 0 ?
-                                        <div className="bg-blue-gray-100 rounded-3xl flex flex-wrap content-center justify-center h-full opacity-25">
-                                            <div className="w-full text-center">
-                                                <svg xmlns="http://www.w3.org/2000/svg" className="h-24 w-24 inline-block" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 7v10c0 2.21 3.582 4 8 4s8-1.79 8-4V7M4 7c0 2.21 3.582 4 8 4s8-1.79 8-4M4 7c0-2.21 3.582-4 8-4s8 1.79 8 4m0 5c0 2.21-3.582 4-8 4s-8-1.79-8-4" />
-                                                </svg>
-                                                <p className="text-xl">
-                                                    FALLO DE CONEXIÓN
-                                                    <br />
-                                                    CON LA BBDD
-                                                </p>
-                                            </div>
-                                        </div>
-                                        :
-                                        ProductosFiltrados.length <= 0 ?
-                                            <div className="bg-blue-gray-100 rounded-3xl flex flex-wrap content-center justify-center h-full opacity-25">
-                                                <div className="w-full text-center">
-                                                    <svg xmlns="http://www.w3.org/2000/svg" className="h-24 w-24 inline-block" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
-                                                    </svg>
-                                                    <p className="text-xl">
-                                                        PRODUCTO NO ENCONTRADO
-                                                    </p>
-                                                </div>
-                                            </div>
-                                            :
-                                            <div>
-                                                <div className="grid gap-4 pb-3 sm:grid-cols-1 sm:gap-2 md:grid-cols-2 lg:grid-cols-3 lg:gap-3 xl:grid-cols-4 2xl:grid-cols-5 text-xs">
-                                                    {ProductosFiltrados.map((prod: Producto) => {
-                                                        return (
-                                                            <button key={prod._id} id={prod._id}
-                                                                onClick={() => {
-                                                                    const prodEnCarrito = ProductosEnCarrito.find(p => p.producto._id == prod._id);
-
-                                                                    if (prodEnCarrito) {
-                                                                        const prodIndex = ProductosEnCarrito.indexOf(prodEnCarrito);
-                                                                        const prodAlCarrito = {
-                                                                            producto: prodEnCarrito.producto,
-                                                                            cantidad: (Number(prodEnCarrito.cantidad) + 1).toString(),
-                                                                            dto: prodEnCarrito.dto
-                                                                        } as ProductoVendido;
-
-                                                                        let ProductosEnCarritoUpdated = ProductosEnCarrito;
-                                                                        ProductosEnCarritoUpdated[prodIndex] = prodAlCarrito;
-
-                                                                        SetProductosEnCarrito([...ProductosEnCarritoUpdated]);
-                                                                    }
-                                                                    else {
-                                                                        const prodAlCarrito = {
-                                                                            producto: prod,
-                                                                            cantidad: "1",
-                                                                            dto: "0"
-                                                                        } as ProductoVendido
-
-                                                                        SetProductosEnCarrito([...ProductosEnCarrito, prodAlCarrito]);
-                                                                    }
-                                                                }}>
-                                                                <ProductCard _id={prod._id} alta={prod.alta} descripcion={prod.descripcion} ean={prod.ean} familia={prod.familia}
-                                                                    nombre={prod.nombre} precioVenta={prod.precioVenta} img={prod.img}
-                                                                    iva={prod.iva} precioCompra={prod.precioCompra} tags={prod.tags} cantidad={prod.cantidad} promociones={prod.promociones} />
-                                                            </button>
-                                                        );
-                                                    })}
-                                                </div>
-                                            </div>
-                                }
-                            </div>
+                            <ListaProductos productos={props.productos} productosFiltrados={ProductosFiltrados} ServerUp={props.serverOperativo} />
                         </div>
                     </div>
                 </div>
                 {/* Menú tienda */}
                 {/* Sidebar derecho */}
                 <div className="m-4">
-                    <SidebarDerecho todosProductos={Productos} productosEnCarrito={ProductosEnCarrito} setProductosCarrito={SetProductosEnCarrito} clientes={Clientes} />
+                    <SidebarDerecho todosProductos={props.productos} productosEnCarrito={ProductosEnCarrito} setProductosCarrito={SetProductosEnCarrito} clientes={props.clientes} />
+                </div>
+            </div>
+        </div>
+    );
+}
+
+const ListaProductos = (props: { productos: Producto[], productosFiltrados: Producto[], ServerUp: boolean }) => {
+    const { ProductosEnCarrito, SetProductosEnCarrito } = useProductEnCarritoContext();
+
+    if (props.ServerUp) {
+        if (props.productos.length <= 0) {
+            const arrayNum = [...Array(30)];
+
+            return (
+                <div className="h-full overflow-y-auto overflow-x-hidden px-2">
+                    <div className="grid gap-4 pb-3 sm:grid-cols-1 sm:gap-2 md:grid-cols-2 lg:grid-cols-3 lg:gap-3 xl:grid-cols-4 2xl:grid-cols-5 text-xs">
+                        {arrayNum.map((n, i) => {
+                            return (
+                                <SkeletonProductCard key={"SkeletonTPVCard-" + i} />
+                            );
+                        })}
+                    </div>
+                </div>
+            );
+        }
+
+        else {
+            if (props.productosFiltrados.length > 0) {
+                return (
+                    <div className="h-full overflow-y-auto overflow-x-hidden px-2">
+                        <div className="grid gap-4 pb-3 sm:grid-cols-1 sm:gap-2 md:grid-cols-2 lg:grid-cols-3 lg:gap-3 xl:grid-cols-4 2xl:grid-cols-5 text-xs">
+                            {
+                                props.productosFiltrados.map((prod: Producto) => {
+                                    return (
+                                        <button key={prod._id} id={prod._id}
+                                            onClick={() => {
+                                                const prodEnCarrito = ProductosEnCarrito.find(p => p.producto._id == prod._id);
+
+                                                if (prodEnCarrito) {
+                                                    const prodIndex = ProductosEnCarrito.indexOf(prodEnCarrito);
+                                                    const prodAlCarrito = {
+                                                        producto: prodEnCarrito.producto,
+                                                        cantidad: (Number(prodEnCarrito.cantidad) + 1).toString(),
+                                                        dto: prodEnCarrito.dto
+                                                    } as ProductoVendido;
+
+                                                    let ProductosEnCarritoUpdated = ProductosEnCarrito;
+                                                    ProductosEnCarritoUpdated[prodIndex] = prodAlCarrito;
+
+                                                    SetProductosEnCarrito([...ProductosEnCarritoUpdated]);
+                                                }
+                                                else {
+                                                    const prodAlCarrito = {
+                                                        producto: prod,
+                                                        cantidad: "1",
+                                                        dto: "0"
+                                                    } as ProductoVendido
+
+                                                    SetProductosEnCarrito([...ProductosEnCarrito, prodAlCarrito]);
+                                                }
+                                            }}>
+                                            <ProductCard Prod={prod} />
+                                        </button>
+                                    );
+                                })
+                            }
+                        </div>
+                    </div>
+                );
+            }
+            else {
+                return (<ProductosNoEncontrados />)
+            }
+        }
+    }
+
+    return (
+        <div className="bg-blue-gray-100 rounded-3xl flex flex-wrap content-center justify-center h-full opacity-25">
+            <div className="w-full text-center">
+                <svg xmlns="http://www.w3.org/2000/svg" className="h-24 w-24 inline-block" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 7v10c0 2.21 3.582 4 8 4s8-1.79 8-4V7M4 7c0 2.21 3.582 4 8 4s8-1.79 8-4M4 7c0-2.21 3.582-4 8-4s8 1.79 8 4m0 5c0 2.21-3.582 4-8 4s-8-1.79-8-4" />
+                </svg>
+                <p className="text-xl">
+                    FALLO DE CONEXIÓN
+                    <br />
+                    CON LA BBDD
+                </p>
+            </div>
+        </div>
+    );
+}
+
+const ProductosNoEncontrados = () => {
+    return (
+        <div className="h-full overflow-y-auto overflow-x-hidden px-2">
+            <div className="bg-blue-gray-100 rounded-3xl flex flex-wrap content-center justify-center h-full opacity-25">
+                <div className="w-full text-center">
+                    <svg xmlns="http://www.w3.org/2000/svg" className="h-24 w-24 inline-block" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                    </svg>
+                    <p className="text-xl">
+                        PRODUCTO NO ENCONTRADO
+                    </p>
                 </div>
             </div>
         </div>
@@ -234,11 +285,11 @@ const SidebarDerecho = React.memo((props: { todosProductos: Producto[], producto
 
 
     return (
-        <div className="bg-white rounded-3xl shadow">
+        <div className="bg-white rounded-3xl shadow h-full">
             {/* En caso de carrito vacío o con productos */}
             {
                 props.productosEnCarrito.length <= 0 ?
-                    <div className="grid grid-rows-2 grid-cols-1 h-screen p-4">
+                    <div className="grid grid-rows-2 grid-cols-1 p-4 h-full">
                         <div className="grid grid-rows-2 grid-cols-1 justify-items-center justify-self-center opacity-25 self-end">
                             <svg xmlns="http://www.w3.org/2000/svg" className="h-16" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z" />
@@ -248,18 +299,18 @@ const SidebarDerecho = React.memo((props: { todosProductos: Producto[], producto
                             </p>
                         </div>
 
-                        <div className="row-start-6 row-end-7 flex mb-3 text-lg font-semibold self-end">
-                            <button className="flex gap-2">
-                                Cerrar caja
-                                <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
-                                </svg>
-                            </button>
-
+                        <div className="row-start-6 row-end-7 flex justify-between mb-3 text-lg font-semibold ">
                             <button className="flex gap-2">
                                 Imprimir recibo
                                 <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z" />
+                                </svg>
+                            </button>
+
+                            <button className="flex gap-2">
+                                Cerrar caja
+                                <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
                                 </svg>
                             </button>
                         </div>

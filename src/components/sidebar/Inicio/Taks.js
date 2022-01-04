@@ -102,7 +102,7 @@ export function TasksList(props) {
             <div className="shadow-lg rounded-2xl bg-white dark:bg-gray-700 w-full">
                 <p className="font-bold text-md p-4 text-black dark:text-white">
                     Tareas
-                    <span className="text-sm text-gray-500 dark:text-gray-300 dark:text-white ml-2">
+                    <span className="text-sm text-gray-500 dark:text-gray-300 ml-2">
                         ({props.numTareas})
                     </span>
                 </p>
