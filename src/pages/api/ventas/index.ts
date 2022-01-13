@@ -1,12 +1,11 @@
 import { NextApiRequest, NextApiResponse } from "next";
-import { getSession } from "next-auth/react";
 import { envInformation } from "../../../utils/envInfo";
 
 const handler = async (req: NextApiRequest, res: NextApiResponse) => {
-    const session = await getSession({ req })
-    if (!session) {
-        return res.status(401).json({ message: "Not signed in" });
-    }
+    // const session = await getSession({ req })
+    // if (!session) {
+    //     return res.status(401).json({ message: "Not signed in" });
+    // }
 
     switch (req.method) {
         case 'GET':

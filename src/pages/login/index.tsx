@@ -2,8 +2,6 @@ import { motion } from 'framer-motion';
 import React, { useEffect } from 'react';
 import { SplitLetters } from '../../components/compAnimados/SplitText';
 import Router, { useRouter } from 'next/router';
-import { getCsrfToken, useSession } from "next-auth/react"
-import { CtxOrReq } from 'next-auth/client/_utils';
 import { SpinnerCircular } from 'spinners-react';
 
 const container = {
@@ -51,44 +49,44 @@ const exitVariant = {
     },
 }
 
-const LoginPage = (props: { video: string, csrfToken: string }) => {
-    const { data: session, status } = useSession();
+const LoginPage = (props: { video: string }) => {
+    //const { data: session, status } = useSession();
     const router = useRouter();
 
-    useEffect(() => {
-        if (status === "authenticated") {
-            router.push('/dashboard');
-        }
-    }, [status]);
+    // useEffect(() => {
+    //     if (status === "authenticated") {
+    //         router.push('/dashboard');
+    //     }
+    // }, [status]);
 
-    useEffect(() => {
-        if (!props.csrfToken) {
-            router.push('/');
-        }
-    }, [props.csrfToken]);
+    // useEffect(() => {
+    //     if (!props.csrfToken) {
+    //         router.push('/');
+    //     }
+    // }, [props.csrfToken]);
 
-    if (session) {
-        return (
-            <div className="flex flex-col w-screen h-screen justify-center items-center gap-6">
-                <SpinnerCircular size={90} thickness={180} speed={100} color="rgba(57, 150, 172, 1)" secondaryColor="rgba(0, 0, 0, 0)" />
-                <h1 className="text-xl">
-                    Redirigiendo..
-                </h1>
-            </div>
-        );
-    }
+    // if (session) {
+    //     return (
+    //         <div className="flex flex-col w-screen h-screen justify-center items-center gap-6">
+    //             <SpinnerCircular size={90} thickness={180} speed={100} color="rgba(57, 150, 172, 1)" secondaryColor="rgba(0, 0, 0, 0)" />
+    //             <h1 className="text-xl">
+    //                 Redirigiendo..
+    //             </h1>
+    //         </div>
+    //     );
+    // }
 
     return (
         <motion.div className="bg-white w-full h-full items-center font-sans" initial={exitVariant.initial} animate={exitVariant.animate} exit={exitVariant.exit} variants={exitVariant} >
             <video autoPlay loop muted className='w-full h-full object-cover fixed -z-10'>
                 <source src={props.video} type="video/mp4" />
             </video>
-            <LoginForm csrfToken={props.csrfToken} />
+            <LoginForm />
         </motion.div >
     );
 }
 
-export const LoginForm = (props: { csrfToken: string }) => {
+export const LoginForm = () => {
     const Volver = () => {
         Router.push('/');
     }
@@ -106,7 +104,7 @@ export const LoginForm = (props: { csrfToken: string }) => {
                         </motion.h1>
 
                         <form method="post" action="/api/auth/callback/credentials">
-                            <input name="csrfToken" type="hidden" defaultValue={props.csrfToken} />
+                            <input name="csrfToken" type="hidden" />
 
                             <motion.div variants={item}>
                                 <motion.label animate={{ color: '#111' }} className="font-semibold text-sm text-gray-600 pb-1 block">Dirección de correo</motion.label>
@@ -165,13 +163,11 @@ export const LoginForm = (props: { csrfToken: string }) => {
     );
 }
 
-export async function getServerSideProps(context: CtxOrReq) {
-    const csrf = await getCsrfToken(context);
+export async function getServerSideProps() {
 
     return {
         props: {
             video: `/video/marketVideo-${Math.floor(Math.random() * 5)}.mp4`,
-            csrfToken: csrf,
         },
     }
 }

@@ -6,7 +6,6 @@ import { TipoDocumento } from "../../tipos/Enums/TipoDocumentos";
 
 const Home = () => {
   return (
-    // <Inicio />
     <UploadFile tipoDocumento={TipoDocumento.Productos} />
   )
 }

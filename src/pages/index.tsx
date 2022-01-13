@@ -2,12 +2,11 @@ import type { NextPage } from 'next'
 import { motion } from 'framer-motion';
 import React, { useEffect } from 'react';
 import { SplitLetters, SplitWords } from '../components/compAnimados/SplitText';
-import { useSession, signIn, signOut } from 'next-auth/react';
 import { useRouter } from 'next/router';
 import { SpinnerCircular } from 'spinners-react';
 
 const Home: NextPage = () => {
-    const { data: session, status } = useSession();
+    //const { data: session, status } = useSession();
 
     const animaciones = {
         initial: {
@@ -34,16 +33,16 @@ const Home: NextPage = () => {
         }
     }, [status]);
 
-    if (session) {
-        return (
-            <div className="flex flex-col w-screen h-screen justify-center items-center gap-6">
-                <SpinnerCircular size={90} thickness={180} speed={100} color="rgba(57, 150, 172, 1)" secondaryColor="rgba(0, 0, 0, 0)" />
-                <h1 className="text-xl">
-                    Redirigiendo..
-                </h1>
-            </div>
-        );
-    }
+    // if (session) {
+    //     return (
+    //         <div className="flex flex-col w-screen h-screen justify-center items-center gap-6">
+    //             <SpinnerCircular size={90} thickness={180} speed={100} color="rgba(57, 150, 172, 1)" secondaryColor="rgba(0, 0, 0, 0)" />
+    //             <h1 className="text-xl">
+    //                 Redirigiendo..
+    //             </h1>
+    //         </div>
+    //     );
+    // }
 
     return (
         <motion.div initial={animaciones.initial} animate={animaciones.animate} exit={animaciones.exit} className="min-h-screen bg-no-repeat flex flex-col justify-center sm:py-12 relative overflow-hidden h-screen bg-landing1 bg-cover bg-center">
@@ -61,14 +60,14 @@ const Home: NextPage = () => {
                             </div>
                         </div>
                         <div className="hidden md:flex items-center">
-                            <button onClick={() => status === "authenticated" ? signOut() : signIn('credentials', { callbackUrl: '/dashboard' })}>
+                            {/* <button onClick={() => status === "authenticated" ? signOut() : signIn('credentials', { callbackUrl: '/dashboard' })}>
                                 <motion.a initial={{ opacity: 1 }} animate={{ opacity: 1 }}
                                     whileHover={{ scale: 1.2 }} whileTap={{ scale: 0.8 }} className="text-lg uppercase mx-3 text-white cursor-pointer hover:text-gray-300">
                                     <SplitWords initial={{ y: '100%', rotate: 90, }} animate="visible" variants={{ visible: (i: number) => ({ rotate: 0, y: 0, transition: { delay: 0.95 + (i * 0.1) } }) }} >
                                         {status === "authenticated" ? `Cerrar sesión` : `Iniciar sesión`}
                                     </SplitWords>
                                 </motion.a>
-                            </button>
+                            </button> */}
                         </div>
                     </div>
                 </nav>
