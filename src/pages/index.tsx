@@ -65,7 +65,7 @@ const Home: NextPage = () => {
                                 <motion.a initial={{ opacity: 1 }} animate={{ opacity: 1 }}
                                     whileHover={{ scale: 1.2 }} whileTap={{ scale: 0.8 }} className="text-lg uppercase mx-3 text-white cursor-pointer hover:text-gray-300">
                                     <SplitWords initial={{ y: '100%', rotate: 90, }} animate="visible" variants={{ visible: (i: number) => ({ rotate: 0, y: 0, transition: { delay: 0.95 + (i * 0.1) } }) }} >
-                                        {status === "authenticated" ? `Cerrar sesión` : `Iniciar sesión`}
+                                        Iniciar sesión
                                     </SplitWords>
                                 </motion.a>
                             </button>

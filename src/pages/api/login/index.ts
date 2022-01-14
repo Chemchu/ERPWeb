@@ -25,10 +25,9 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
             }
         );
 
-        // Guardar JWT en algún lado
-
-        if (fetchResult.data.success) {
-            return res.status(200).json({ message: `Éxito al iniciar sesión` });
+        // Devolver en caso de que todo haya ido bien
+        if (!fetchResult.error) {
+            return res.status(200).json({ message: `Éxito al iniciar sesión`, token: fetchResult.data.token });
         }
 
         return res.status(300).json({ message: `Fallo al iniciar sesión: usuario y/o contraseña incorrectos` });

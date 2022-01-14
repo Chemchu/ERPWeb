@@ -75,8 +75,12 @@ export const LoginForm = () => {
             body: JSON.stringify({ email: userEmail, password: userPassword })
         });
 
-        console.log(res);
+        const loginResponse = await res.json();
 
+        console.log(loginResponse);
+        if (res) {
+
+        }
     }
 
     return (
