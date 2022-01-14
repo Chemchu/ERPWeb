@@ -1,5 +1,6 @@
+import { gql } from "@apollo/client";
 import { NextApiRequest, NextApiResponse } from "next";
-import { envInformation } from "../../../utils/envInfo";
+import GQLFetcher from "../../../utils/serverFetcher";
 
 const handler = async (req: NextApiRequest, res: NextApiResponse) => {
     // const session = await getSession({ req })
@@ -7,31 +8,54 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
     //     return res.status(401).json({ message: "Not signed in" });
     // }
 
-    switch (req.method) {
-        case 'GET':
-            const response = await fetch(`${envInformation.ERPBACK_URL}api/ventas`);
-            const resJson = await response.json();
+    try {
+        const reqCredentials = req.body;
+        const fetchResult = await GQLFetcher.query(
+            {
+                query: gql`
+                query Ventas($find: VentasFind, $limit: Int, $order: String, $offset: Int) {
+                    ventas(find: $find, limit: $limit, order: $order, offset: $offset) {
+                        ${reqCredentials.neededValues.map((v: string) => { return v + ", " })}
+                    }
+                }
+                `,
+                variables: {
+                    "find": {
+                        "_ids": reqCredentials.find._ids,
+                        "clienteId": reqCredentials.find.clienteId,
+                        "tipo": reqCredentials.find.tipo,
+                        "vendedorId": reqCredentials.find.vendedorId,
+                        "createdAt": reqCredentials.find.createdAt
+                    },
+                    "limit": reqCredentials.limit,
+                    "order": reqCredentials.order,
+                    "offset": reqCredentials.offset
+                }
+            }
+        );
 
-            let rParsed = resJson.message;
-            for (var i = 0; i < resJson.message.length; i++) {
-                rParsed[i].createdAt = new Date(resJson.message[i].createdAt).toLocaleString();
-                rParsed[i].updatedAt = new Date(resJson.message[i].updatedAt).toLocaleString();
+        if (fetchResult.data.success) {
+            let vParsed = fetchResult.data.ventas;
+            for (var i = 0; i < fetchResult.data.ventas.length; i++) {
+
+                // Transforma Epoch a una fecha legible
+                let d1 = new Date(0);
+                let d2 = new Date(0);
+                d1.setSeconds(fetchResult.data.ventas[i].createdAt);
+                d2.setSeconds(fetchResult.data.ventas[i].createdAt);
+
+                vParsed[i].createdAt = d1.toLocaleString();
+                vParsed[i].updatedAt = d2.toLocaleString();
             }
 
-            res.status(response.status).json(resJson.message);
-            break;
-        case 'PUT':
-            // Update or create data in your database
-            //res.status(200).json({ id, name: name || `User ${id}` })
-            break;
+            return res.status(200).json({ message: `Lista de clientes encontrada`, data: JSON.stringify(vParsed) });
+        }
 
-        case 'DELETE':
-
-            break;
-
-        default:
-            res.setHeader('Allow', ['GET', 'PUT'])
-            res.status(405).end(`Method ${req.method} Not Allowed`)
+        return res.status(300).json({ message: `Fallo al pedir la lista de clientes` });
+    }
+    catch (err) {
+        console.log(err);
+        return res.status(500).json({ message: `Error: ${err}` });
     }
 }
 

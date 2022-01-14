@@ -1,46 +1,49 @@
+import { gql } from "@apollo/client";
 import { NextApiRequest, NextApiResponse } from "next"
-import { envInformation } from "../../../utils/envInfo";
+import GQLFetcher from "../../../utils/serverFetcher";
 
 const handler = async (req: NextApiRequest, res: NextApiResponse) => {
+
+    // const session = await getSession({ req })
+    // if (!session) {
+    //     return res.status(401).json({ message: "Not signed in" });
+    // }
+
     const {
         query: { id, name },
         method,
     } = req;
 
-    switch (method) {
-        case 'GET':
-            const responseGet = await fetch(`${envInformation.ERPBACK_URL}api/productos/${id}`);
-            const resJsonGet = await responseGet.json();
-
-            res.status(responseGet.status).json(resJsonGet.message);
-            break;
-
-        case 'POST':
-            // Update or create data in your database
-            const responsePost = await fetch(`${envInformation.ERPBACK_URL}api/productos/${id}`, {
-                headers: { 'Content-Type': 'application/json' },
-                method: 'POST',
-                body: JSON.stringify({ csv: req.body })
-            });
-
-            const resJsonPost = await responsePost.json();
-
-            if (responsePost.status === 200) {
-                res.status(200).json({ message: `Los productos han sido añadidos correctamente` });
-                return;
+    try {
+        const reqCredentials = req.body;
+        const fetchResult = await GQLFetcher.query(
+            {
+                query: gql`
+                query Producto($find: ProductoFind!) {
+                    producto(find: $find) {
+                        ${reqCredentials.neededValues.map((p: string) => { return p + ", " })}
+                    }
+                }
+                `,
+                variables: {
+                    "find": {
+                        "_id": reqCredentials.find._id,
+                        "nombre": reqCredentials.find.nombre,
+                        "ean": reqCredentials.find.ean
+                    }
+                }
             }
+        );
 
-            res.status(300).json({ message: `Fallo al añadir los siguientes productos: ${resJsonPost.productos}` });
+        if (fetchResult.data.success) {
+            return res.status(200).json({ message: `Producto encontrado` });
+        }
 
-            break;
-
-        case 'DELETE':
-
-            break;
-
-        default:
-            res.setHeader('Allow', ['GET', 'DELETE', 'POST']);
-            res.status(405).end(`Method ${method} Not Allowed`);
+        return res.status(300).json({ message: `Fallo al pedir el producto` });
+    }
+    catch (err) {
+        console.log(err);
+        return res.status(500).json({ message: `Error: ${err}` });
     }
 }
 

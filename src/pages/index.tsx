@@ -27,11 +27,12 @@ const Home: NextPage = () => {
     }
 
     const router = useRouter();
-    useEffect(() => {
-        if (status === "authenticated") {
-            router.push('/dashboard');
-        }
-    }, [status]);
+
+    // useEffect(() => {
+    //     if (status === "authenticated") {
+    //         router.push('/dashboard');
+    //     }
+    // }, [status]);
 
     // if (session) {
     //     return (
@@ -60,14 +61,14 @@ const Home: NextPage = () => {
                             </div>
                         </div>
                         <div className="hidden md:flex items-center">
-                            {/* <button onClick={() => status === "authenticated" ? signOut() : signIn('credentials', { callbackUrl: '/dashboard' })}>
+                            <button onClick={() => { router.push('/login') }}>
                                 <motion.a initial={{ opacity: 1 }} animate={{ opacity: 1 }}
                                     whileHover={{ scale: 1.2 }} whileTap={{ scale: 0.8 }} className="text-lg uppercase mx-3 text-white cursor-pointer hover:text-gray-300">
                                     <SplitWords initial={{ y: '100%', rotate: 90, }} animate="visible" variants={{ visible: (i: number) => ({ rotate: 0, y: 0, transition: { delay: 0.95 + (i * 0.1) } }) }} >
                                         {status === "authenticated" ? `Cerrar sesión` : `Iniciar sesión`}
                                     </SplitWords>
                                 </motion.a>
-                            </button> */}
+                            </button>
                         </div>
                     </div>
                 </nav>
@@ -84,7 +85,7 @@ const Home: NextPage = () => {
                     </motion.a>
                 </div>
             </div>
-        </motion.div>
+        </motion.div >
     );
 }
 

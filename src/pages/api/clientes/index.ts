@@ -1,6 +1,6 @@
+import { gql } from "@apollo/client";
 import { NextApiRequest, NextApiResponse } from "next";
-import { envInformation } from "../../../utils/envInfo";
-
+import GQLFetcher from "../../../utils/serverFetcher";
 
 const handler = async (req: NextApiRequest, res: NextApiResponse) => {
     // const session = await getSession({ req })
@@ -8,26 +8,37 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
     //     return res.status(401).json({ message: "Not signed in" });
     // }
 
-    // switch (req.method) {
-    //     case 'GET':
-    //         // Get data from your database
-    //         const response = await (await fetch(`${envInformation.ERPBACK_URL}api/clientes`)).json();
-    //         res.status(200).json(response.message);
+    try {
+        const reqCredentials = req.body;
+        const fetchResult = await GQLFetcher.query(
+            {
+                query: gql`
+                query Clientes($find: ClientesFind, $limit: Int) {
+                    clientes(find: $find, limit: $limit) {
+                        ${reqCredentials.neededValues.map((c: string) => { return c + ", " })}
+                    }
+                }
+                `,
+                variables: {
+                    "find": {
+                        "_ids": reqCredentials.find._ids,
+                        "nombre": reqCredentials.find.nombre
+                    },
+                    "limit": reqCredentials.limit
+                }
+            }
+        );
 
-    //         break;
-    //     case 'PUT':
-    //         // Update or create data in your database
-    //         //res.status(200).json({ id, name: req.query.name || `User ${req.query.id}` })
-    //         break;
+        if (fetchResult.data.success) {
+            return res.status(200).json({ message: `Lista de clientes encontrada` });
+        }
 
-    //     case 'DELETE':
-
-    //         break;
-
-    //     default:
-    //         res.setHeader('Allow', ['GET', 'PUT'])
-    //         res.status(405).end(`Method ${req.method} Not Allowed`)
-    // }
+        return res.status(300).json({ message: `Fallo al pedir la lista de clientes` });
+    }
+    catch (err) {
+        console.log(err);
+        return res.status(500).json({ message: `Error: ${err}` });
+    }
 }
 
 export default handler;

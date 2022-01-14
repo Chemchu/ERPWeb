@@ -1,5 +1,6 @@
+import { gql } from "@apollo/client";
 import { NextApiRequest, NextApiResponse } from "next"
-import { envInformation } from "../../../utils/envInfo";
+import GQLFetcher from "../../../utils/serverFetcher";
 
 const handler = async (req: NextApiRequest, res: NextApiResponse) => {
     // const session = await getSession({ req })
@@ -7,26 +8,36 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
     //     return res.status(401).json({ message: "Not signed in" });
     // }
 
-    // switch (req.method) {
-    //     case 'GET':
-    //         // Get data from your database 
-    //         const response = await (await fetch(`${envInformation.ERPBACK_URL}api/clientes/${req.query.id}`)).json();
-    //         res.status(200).json(response);
-    //         break;
+    try {
+        const reqCredentials = req.body;
+        const fetchResult = await GQLFetcher.query(
+            {
+                query: gql`
+                query Cliente($find: ClienteFind!) {
+                    cliente(find: $find) {
+                        ${reqCredentials.neededValues.map((c: string) => { return c + ", " })}
+                    }
+                }
+                `,
+                variables: {
+                    "find": {
+                        "_id": reqCredentials.find._id,
+                        "nif": reqCredentials.find.nif
+                    }
+                }
+            }
+        );
 
-    //     case 'PUT':
-    //         // Update or create data in your database
-    //         //res.status(200).json({ id, name: name || `Cliente ${id}` });
-    //         break;
+        if (fetchResult.data.success) {
+            return res.status(200).json({ message: `Cliente encontrado` });
+        }
 
-    //     case 'DELETE':
-
-    //         break;
-
-    //     default:
-    //         res.setHeader('Allow', ['GET', 'DELETE', 'PUT']);
-    //         res.status(405).end(`Method ${req.method} Not Allowed`);
-    // }
+        return res.status(300).json({ message: `Fallo al pedir el cliente` });
+    }
+    catch (err) {
+        console.log(err);
+        return res.status(500).json({ message: `Error: ${err}` });
+    }
 }
 
 export default handler;
