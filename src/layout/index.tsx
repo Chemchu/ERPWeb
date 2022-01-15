@@ -6,8 +6,8 @@ import NextNProgress from "nextjs-progressbar";
 import { VentasContextProvider } from "../context/ventasContext";
 import { ProductContextProvider } from "../context/productContext";
 import { ClienteContextProvider } from "../context/clientContext";
-import { ProductCarritoContextProvider } from "../context/productosEnCarritoContext";
 import { SpinnerCircular, SpinnerDotted } from "spinners-react";
+import { ProductCarritoContextProvider } from "../context/productosEnCarritoContext";
 
 const variants = {
     initial: {

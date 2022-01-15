@@ -14,31 +14,30 @@ const Productos = () => {
             try {
                 let prodRes = [] as Producto[];
 
-                const pResponse = await fetch('/api/productos/estado');
+                const pResponse = await fetch('/api/productos', {
+                    headers: {
+                        'Content-type': 'application/json'
+                    },
+                    method: 'POST',
+                    body: JSON.stringify({
+                        find: {},
+                        limit: 3000,
+                        neededValues: ["_id", "nombre", "proveedor", "familia",
+                            "precioVenta", "precioCompra", "iva", "margen",
+                            "ean", "promociones", "cantidad", "cantidadRestock", "alta"]
+                    })
+                });
 
                 if (pResponse.status > 200) {
                     setServerUp(false);
+                    SetProductos([]);
 
                     return;
                 }
+                const pJson = await pResponse.json();
 
-                const pState = await pResponse.json();
-
-                if (ProductState !== pState.message?.databaseState || Productos.length <= 0) {
-                    SetProductState(pState.message?.databaseState);
-
-                    const pRes = await fetch('/api/productos');
-
-                    if (pRes.status > 200) {
-                        SetProductos([]);
-                        setServerUp(false);
-
-                        return;
-                    }
-                    prodRes = CreateProductList(await pRes.json());
-
-                    if (prodRes.length > 0) SetProductos(prodRes);
-                }
+                prodRes = CreateProductList(pJson.productos);
+                if (prodRes.length > 0) SetProductos(prodRes);
             }
             catch (e) {
                 console.log(e);

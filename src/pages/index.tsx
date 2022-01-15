@@ -3,11 +3,8 @@ import { motion } from 'framer-motion';
 import React, { useEffect } from 'react';
 import { SplitLetters, SplitWords } from '../components/compAnimados/SplitText';
 import { useRouter } from 'next/router';
-import { SpinnerCircular } from 'spinners-react';
 
 const Home: NextPage = () => {
-    //const { data: session, status } = useSession();
-
     const animaciones = {
         initial: {
             opacity: 0
@@ -27,23 +24,6 @@ const Home: NextPage = () => {
     }
 
     const router = useRouter();
-
-    // useEffect(() => {
-    //     if (status === "authenticated") {
-    //         router.push('/dashboard');
-    //     }
-    // }, [status]);
-
-    // if (session) {
-    //     return (
-    //         <div className="flex flex-col w-screen h-screen justify-center items-center gap-6">
-    //             <SpinnerCircular size={90} thickness={180} speed={100} color="rgba(57, 150, 172, 1)" secondaryColor="rgba(0, 0, 0, 0)" />
-    //             <h1 className="text-xl">
-    //                 Redirigiendo..
-    //             </h1>
-    //         </div>
-    //     );
-    // }
 
     return (
         <motion.div initial={animaciones.initial} animate={animaciones.animate} exit={animaciones.exit} className="min-h-screen bg-no-repeat flex flex-col justify-center sm:py-12 relative overflow-hidden h-screen bg-landing1 bg-cover bg-center">
