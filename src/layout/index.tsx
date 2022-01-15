@@ -7,7 +7,6 @@ import { VentasContextProvider } from "../context/ventasContext";
 import { ProductContextProvider } from "../context/productContext";
 import { ClienteContextProvider } from "../context/clientContext";
 import { ProductCarritoContextProvider } from "../context/productosEnCarritoContext";
-import { useSession } from "next-auth/react";
 import { SpinnerCircular, SpinnerDotted } from "spinners-react";
 
 const variants = {
@@ -35,27 +34,21 @@ const variants = {
 const DashboardLayout = React.memo(({ children }: { children: React.ReactNode }) => {
     const [isSidebarCollapsed, setSidebarCollapsed] = useState<boolean>(false);
     const [IndexSidebar, setSidebarIndex] = useState<number>(0);
-    const { status, data: session } = useSession();
 
     {/* router.route es lo que hace que funcione el exit del AnimatePresence */ }
     const router = useRouter();
-    useEffect(() => {
-        if (status === "unauthenticated") {
-            router.push('/login');
-        }
-    }, [status]);
 
-    if (status === "loading") {
-        return (
-            <div className="flex flex-col w-screen h-screen justify-center items-center gap-6">
-                {/* <SpinnerCircular size={90} thickness={180} speed={100} color="rgba(57, 150, 172, 1)" secondaryColor="rgba(0, 0, 0, 0)" /> */}
-                <SpinnerDotted size={90} thickness={180} speed={100} color="rgba(57, 141, 172, 1)" />
-                {/* <h1 className="text-xl">
-                    Cargando..
-                </h1> */}
-            </div>
-        );
-    }
+    // if (status === "loading") {
+    //     return (
+    //         <div className="flex flex-col w-screen h-screen justify-center items-center gap-6">
+    //             {/* <SpinnerCircular size={90} thickness={180} speed={100} color="rgba(57, 150, 172, 1)" secondaryColor="rgba(0, 0, 0, 0)" /> */}
+    //             <SpinnerDotted size={90} thickness={180} speed={100} color="rgba(57, 141, 172, 1)" />
+    //             {/* <h1 className="text-xl">
+    //                 Cargando..
+    //             </h1> */}
+    //         </div>
+    //     );
+    // }
 
     return (
         <VentasContextProvider>

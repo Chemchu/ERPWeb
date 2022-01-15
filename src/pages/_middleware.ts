@@ -1,20 +1,36 @@
 import { NextFetchEvent, NextRequest, NextResponse } from 'next/server'
 
 export async function middleware(req: NextRequest, ev: NextFetchEvent) {
-    // if (req.url === ("/")) {
-    //     return NextResponse.next()
-    // }
+    if (req.url === '/') { return NextResponse.next(); }
 
-    // const { data: session, status } = useSession();
+    if (req.cookies.authorization === undefined) {
+        if (req.url.includes("dashboard")) { return NextResponse.redirect('/login'); }
 
-    // // const session = await getToken({ req, secret: process.env.SECRET })
-    // // // You could also check for any property on the session object,
-    // // // like role === "admin" or name === "John Doe", etc.
-    // if (!session) return NextResponse.redirect("/api/auth/signin");
+        return NextResponse.next();
+    }
 
-    // if (pathname == undefined) {
-    //     return null;
-    // }
+    const authCookie = req.cookies.authorization.split(" ")[1];
+    if (authCookie) {
+        const credentialsValidation = await (await fetch(`${process.env.ERPBACK_URL}graphql`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(
+                {
+                    query: `query ValidateJwt($jwt: String!) {
+                            validateJwt(jwt: $jwt) {
+                                validado
+                            }
+                        }`,
+                    variables: {
+                        jwt: authCookie
+                    }
+                }
+            )
+        })).json();
 
-    return NextResponse.next();
+        if (!credentialsValidation.data.validateJwt.validado) { return NextResponse.redirect(`/login`).clearCookie("authorization"); }
+        if (req.url === '/login') { return NextResponse.redirect(`/dashboard`); }
+    }
 }

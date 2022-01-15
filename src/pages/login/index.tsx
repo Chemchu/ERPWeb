@@ -1,8 +1,9 @@
 import { motion } from 'framer-motion';
 import React, { useEffect, useState } from 'react';
 import { SplitLetters } from '../../components/compAnimados/SplitText';
-import Router, { useRouter } from 'next/router';
-import { SpinnerCircular } from 'spinners-react';
+import Router from 'next/router';
+import useJwtContext from '../../context/sessionJwtContext';
+import Cookies from 'js-cookie';
 
 const container = {
     hidden: { opacity: 0, scale: 0 },
@@ -77,11 +78,12 @@ export const LoginForm = () => {
 
         const loginResponse = await res.json();
 
-        console.log(loginResponse);
-        if (res) {
-
+        if (loginResponse.token) {
+            Cookies.set("authorization", loginResponse.token);
+            Router.push("/dashboard");
         }
     }
+
 
     return (
         <motion.div className={`inset-0 flex items-center min-h-screen bg-no-repeat bg-top justify-center sm:py-12 bg-cover`}
