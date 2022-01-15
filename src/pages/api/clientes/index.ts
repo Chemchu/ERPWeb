@@ -10,27 +10,45 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
 
     try {
         const reqCredentials = req.body;
-        const fetchResult = await GQLFetcher.query(
-            {
-                query: gql`
+        let fetchResult;
+
+        if (reqCredentials.find) {
+            fetchResult = await GQLFetcher.query(
+                {
+                    query: gql`
                 query Clientes($find: ClientesFind, $limit: Int) {
                     clientes(find: $find, limit: $limit) {
-                        ${reqCredentials.neededValues.map((c: string) => { return c + ", " })}
+                        ${reqCredentials.neededValues.map((c: string) => { return c })}
                     }
                 }
                 `,
-                variables: {
-                    "find": {
-                        "_ids": reqCredentials.find._ids,
-                        "nombre": reqCredentials.find.nombre
-                    },
-                    "limit": reqCredentials.limit
+                    variables: {
+                        "find": {
+                            "_ids": reqCredentials.find._ids,
+                            "nombre": reqCredentials.find.nombre
+                        },
+                        "limit": reqCredentials.limit
+                    }
                 }
-            }
-        );
+            );
+        }
+        else {
+            fetchResult = await GQLFetcher.query(
+                {
+                    query: gql`
+                query Clientes($limit: Int) {
+                    clientes(limit: $limit) {
+                        ${reqCredentials.neededValues.map((c: string) => { return c })}
+                    }
+                }
+                `
+                }
+            );
+        }
 
-        if (fetchResult.data.success) {
-            return res.status(200).json({ message: `Lista de clientes encontrada` });
+
+        if (!fetchResult.error) {
+            return res.status(200).json(fetchResult.data);
         }
 
         return res.status(300).json({ message: `Fallo al pedir la lista de clientes` });

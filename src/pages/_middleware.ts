@@ -10,6 +10,10 @@ export async function middleware(req: NextRequest, ev: NextFetchEvent) {
     }
 
     const authCookie = req.cookies.authorization.split(" ")[1];
+    if (IsJwtExpired(authCookie)) {
+        return NextResponse.redirect(`/login`).clearCookie("authorization");
+    }
+
     if (authCookie) {
         const credentialsValidation = await (await fetch(`${process.env.ERPBACK_URL}graphql`, {
             method: 'POST',
@@ -33,4 +37,14 @@ export async function middleware(req: NextRequest, ev: NextFetchEvent) {
         if (!credentialsValidation.data.validateJwt.validado) { return NextResponse.redirect(`/login`).clearCookie("authorization"); }
         if (req.url === '/login') { return NextResponse.redirect(`/dashboard`); }
     }
+}
+
+const IsJwtExpired = (Jwt: string): boolean => {
+    let base64Payload = Jwt.split('.')[1];
+    let payload = Buffer.from(base64Payload, 'base64');
+    const exp = JSON.parse(payload.toString()).exp;
+
+    const expDate = new Date(0).setSeconds(exp);
+
+    return expDate <= Date.now();
 }
