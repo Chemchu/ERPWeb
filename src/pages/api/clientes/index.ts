@@ -3,11 +3,6 @@ import { NextApiRequest, NextApiResponse } from "next";
 import GQLFetcher from "../../../utils/serverFetcher";
 
 const handler = async (req: NextApiRequest, res: NextApiResponse) => {
-    // const session = await getSession({ req })
-    // if (!session) {
-    //     return res.status(401).json({ message: "Not signed in" });
-    // }
-
     try {
         const reqCredentials = req.body;
         let fetchResult;

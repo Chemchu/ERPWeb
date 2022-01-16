@@ -15,54 +15,57 @@ const PuntoDeVenta = () => {
 
     useEffect(() => {
         async function GetAllData() {
-            let prodRes = [] as Producto[];
-            let cliRes = [] as Cliente[];
+            try {
+                let prodRes = [] as Producto[];
+                let cliRes = [] as Cliente[];
 
-            const pResponse = await fetch('/api/productos/estado');
-            const cResponse = await fetch('/api/clientes/estado');
+                const pResponse = await fetch('/api/productos', {
+                    headers: {
+                        'Content-type': 'application/json'
+                    },
+                    method: 'POST',
+                    body: JSON.stringify({
+                        find: {},
+                        limit: 3000,
+                        neededValues: ["_id", "nombre", "proveedor", "familia",
+                            "precioVenta", "precioCompra", "iva", "margen",
+                            "ean", "promociones", "cantidad", "cantidadRestock", "alta"]
+                    })
+                });
 
-            if (pResponse.status > 200 || cResponse.status > 200) {
-                SetProductos([]);
-                SetClientes([]);
-                setServerUp(false);
+                const cResponse = await fetch('/api/clientes', {
+                    headers: {
+                        'Content-type': 'application/json'
+                    },
+                    method: 'POST',
+                    body: JSON.stringify({
+                        find: {},
+                        limit: 50,
+                        neededValues: ["_id", "nombre", "nif", "calle", "cp"]
+                    })
+                });
 
-                return;
-            }
-
-            const pState = await pResponse.json();
-            const cState = await cResponse.json();
-
-            if (ProductState !== pState.message?.databaseState || Productos.length <= 0) {
-                SetProductState(pState.message?.databaseState);
-
-                const pRes = await fetch('/api/productos');
-
-                if (pRes.status > 200) {
+                if (pResponse.status > 200 || cResponse.status > 200) {
+                    setServerUp(false);
                     SetProductos([]);
                     SetClientes([]);
-                    setServerUp(false);
 
                     return;
                 }
-                prodRes = CreateProductList(await pRes.json());
 
-                if (prodRes.length > 0) SetProductos(prodRes);
+                const pJson = await pResponse.json();
+                const cJson = await cResponse.json();
+
+                prodRes = CreateProductList(pJson.productos);
+                if (prodRes.length > 0) SetProductos(prodRes.filter((p) => { p.alta }));
+
+                cliRes = CreateClientList(cJson.clientes);
+                if (cliRes.length > 0) SetClientes(cliRes.filter((c) => { c.nif !== null }));
             }
-
-            if (ClientesState !== cState.message?.databaseState || Clientes.length <= 0) {
-                SetClientesState(cState.message?.databaseState);
-
-                const cRes = await fetch('/api/clientes');
-
-                if (cRes.status > 200) {
-                    SetProductos([]);
-                    SetClientes([]);
-                    setServerUp(false);
-                }
-
-                cliRes = CreateClientList(await cRes.json());
-
-                if (cliRes.length > 0) SetClientes(cliRes);
+            catch (e) {
+                console.log(e);
+                SetProductos([]);
+                SetClientes([]);
             }
         }
 

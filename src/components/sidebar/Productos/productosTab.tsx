@@ -160,7 +160,6 @@ export const ProductPage = (props: { productos: Producto[], serverUp: boolean })
 }
 
 const FilaProducto = (props: { listIndex: number, producto: Producto, selectedProductos: number[], setSelection: Function, setAllChecks: Function }) => {
-    const imagen = `data:image/(png|jpeg);base64,${ConvertBufferToBase64(props.producto.img)}`;
     const [showModal, setModal] = useState<boolean>(false);
 
     const CloseModalProducto = () => {
@@ -192,18 +191,9 @@ const FilaProducto = (props: { listIndex: number, producto: Producto, selectedPr
                             }
                         </div>
                     }
-                    <div className="flex items-center">
-                        <div className="flex-shrink-0">
-                            <a className="block relative">
-                                <img alt="profil" src={imagen} className="mx-auto object-cover rounded-full h-10 w-10 " />
-                            </a>
-                        </div>
-                        <div className="ml-3">
-                            <p className="text-gray-900 whitespace-no-wrap inline-block">
-                                {props.producto.nombre}
-                            </p>
-                        </div>
-                    </div>
+                    <p className="text-gray-900 whitespace-no-wrap inline-block">
+                        {props.producto.nombre}
+                    </p>
                 </div>
                 <div className="flex pr-6 self-center border-gray-200 text-sm">
                     <p className="text-gray-900 whitespace-no-wrap">
@@ -216,8 +206,8 @@ const FilaProducto = (props: { listIndex: number, producto: Producto, selectedPr
                     </p>
                 </div>
                 <div className="flex pr-6 self-center border-gray-200 text-sm">
-                    <span className="relative inline-block px-3 py-1 font-semibold text-green-900 leading-tight">
-                        <span aria-hidden="true" className="absolute inset-0 bg-green-200 opacity-50 rounded-full">
+                    <span className={`relative inline-block px-3 py-1 font-semibold ${props.producto.cantidad > 0 ? " text-green-900" : "text-red-900"} leading-tight`}>
+                        <span aria-hidden="true" className={`absolute inset-0 ${props.producto.cantidad > 0 ? "bg-green-200" : "bg-red-200"} opacity-50 rounded-full`}>
                         </span>
                         <span className="relative">
                             {props.producto.cantidad ? props.producto.cantidad : 0}
