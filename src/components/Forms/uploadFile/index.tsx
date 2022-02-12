@@ -28,11 +28,6 @@ const UploadFile = (props: { tipoDocumento: TipoDocumento }) => {
         }
     };
 
-    // const handleClick = () => {
-    //     console.log(hiddenFileInput);
-    //     hiddenFileInput.current?.click();
-    // };
-
     return (
         <label className="w-64 flex flex-col items-center px-4 py-6 bg-white hover:bg-blue-400 text-black hover:text-white hover:fill-white text-blue rounded-lg shadow-lg border border-blue cursor-pointer hover:bg-blue">
             <svg className="w-8 h-8" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20">

@@ -4,27 +4,27 @@ import GQLFetcher from "../../../utils/serverFetcher";
 
 const handler = async (req: NextApiRequest, res: NextApiResponse) => {
     try {
-        const reqCredentials = req.body;
+        const request = req.body;
         let fetchResult;
 
-        if (reqCredentials.find) {
+        if (request.find) {
             fetchResult = await GQLFetcher.query(
                 {
                     query: gql`
                 query Productos($limit: Int, $find: ProductosFind) {
                     productos(limit: $limit, find: $find) {
-                        ${reqCredentials.neededValues.map((p: string) => { return p })}
+                        ${request.neededValues.map((p: string) => { return p })}
                     }
                 }
                 `,
                     variables: {
                         "find": {
-                            "_ids": reqCredentials.find._ids,
-                            "nombre": reqCredentials.find.nombre,
-                            "familia": reqCredentials.find.familia,
-                            "proveedor": reqCredentials.find.proveedor
+                            "_ids": request.find._ids,
+                            "nombre": request.find.nombre,
+                            "familia": request.find.familia,
+                            "proveedor": request.find.proveedor
                         },
-                        "limit": reqCredentials.limit
+                        "limit": request.limit
                     }
                 }
             );
@@ -35,7 +35,7 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
                     query: gql`
                 query Productos($limit: Int) {
                     productos(limit: $limit) {
-                        ${reqCredentials.neededValues.map((p: string) => { return p })}
+                        ${request.neededValues.map((p: string) => { return p })}
                     }
                 }
                 `
