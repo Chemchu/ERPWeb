@@ -6,7 +6,7 @@ import { TipoCobro } from "../../tipos/Enums/TipoCobro";
 import AutoComplete from "../Forms/autocomplete/autocomplete";
 import { Input } from "../Forms/input/input";
 import { Producto } from "../../tipos/Producto";
-import { ConvertBufferToBase64 } from "../../utils/validator";
+import { ConvertBufferToBase64, ValidatePositiveFloatingNumber } from "../../utils/validator";
 import { Cliente } from "../../tipos/Cliente";
 import { ProductoVendido } from "../../tipos/ProductoVendido";
 import { Venta } from "../../tipos/Venta";
@@ -52,13 +52,11 @@ export const ModalPagar = (props: { productosComprados: ProductoVendido[], setPr
     let cambio: number = isNaN((Number(dineroEntregado) + Number(dineroEntregadoTarjeta) - props.precioFinal)) ? Number(dineroEntregado) + Number(dineroEntregadoTarjeta) : (Number(dineroEntregado) + Number(dineroEntregadoTarjeta) - props.precioFinal);
 
     const SetDineroClienteEfectivo = (dineroDelCliente: string) => {
-        if (!dineroDelCliente.match("^[+-]?([0-9]+([.][0-9]*)?|[.][0-9]+)$") && dineroDelCliente != "") return;
-        setDineroEntregado(dineroDelCliente);
+        setDineroEntregado(ValidatePositiveFloatingNumber(dineroDelCliente));
     }
 
     const SetDineroClienteTarjeta = (dineroDelCliente: string) => {
-        if (!dineroDelCliente.match("^[+-]?([0-9]+([.][0-9]*)?|[.][0-9]+)$") && dineroDelCliente != "") return;
-        setDineroEntregadoTarjeta(dineroDelCliente);
+        setDineroEntregadoTarjeta(ValidatePositiveFloatingNumber(dineroDelCliente));
     }
 
     const OpenResumen = () => {
@@ -191,7 +189,7 @@ export const ModalPagar = (props: { productosComprados: ProductoVendido[], setPr
                             }
                         </div>
                         <AnimatePresence>
-                            {showModalResumen && <ModalResumenCompra pagoCliente={PagoCliente} productosComprados={props.productosComprados} handleCloseResumen={CloseResumen} handleCloseAll={props.handleCerrarModal} setProductosCarrito={props.setProductosCarrito} />}
+                            {showModalResumen && <ModalResumenCompra pagoCliente={PagoCliente} productosVendidos={props.productosComprados} handleCloseResumen={CloseResumen} handleCloseAll={props.handleCerrarModal} setProductosCarrito={props.setProductosCarrito} />}
                         </AnimatePresence>
                     </div>
 
@@ -201,18 +199,18 @@ export const ModalPagar = (props: { productosComprados: ProductoVendido[], setPr
     );
 }
 
-export const ModalResumenCompra = (props: { productosComprados: ProductoVendido[], setProductosCarrito: Function, pagoCliente: CustomerPaymentInformation, handleCloseResumen: Function, handleCloseAll: Function }) => {
+export const ModalResumenCompra = (props: { productosVendidos: ProductoVendido[], setProductosCarrito: Function, pagoCliente: CustomerPaymentInformation, handleCloseResumen: Function, handleCloseAll: Function }) => {
     let date = new Date();
     const fechaActual = `${date.getDate().toLocaleString('es-ES', { minimumIntegerDigits: 2 })}/${parseInt(date.getUTCMonth().toLocaleString('es-ES', { minimumIntegerDigits: 2 })) + 1}/${date.getFullYear()} - ${date.getHours().toLocaleString('es-ES', { minimumIntegerDigits: 2 })}:${date.getMinutes().toLocaleString('es-ES', { minimumIntegerDigits: 2 })}:${date.getSeconds().toLocaleString('es-ES', { minimumIntegerDigits: 2 })}`;
 
     const addSale = async () => {
         const venta = {
+            productos: props.productosVendidos,
             cambio: props.pagoCliente.cambio,
             dineroEntregadoEfectivo: props.pagoCliente.pagoEnEfectivo,
             dineroEntregadoTarjeta: props.pagoCliente.pagoEnTarjeta,
             precioVentaTotal: props.pagoCliente.precioTotal,
             tipo: props.pagoCliente.tipo,
-            productos: props.productosComprados,
             modificadoPor: '',
             //clienteID: props.clienteID
             //descuentoEfectivo: props.descuentoEfectivo,
@@ -268,12 +266,12 @@ export const ModalResumenCompra = (props: { productosComprados: ProductoVendido[
                                     </thead>
                                     <tbody className="h-full overflow-y-auto">
                                         {
-                                            props.productosComprados.map((prod, index) => {
+                                            props.productosVendidos.map((prod, index) => {
                                                 if (prod.dto) {
-                                                    return <GenerarFilaProducto key={"modalRes" + prod.producto._id} numFila={index + 1} nombreProducto={prod.producto.nombre} cantidad={Number(prod.cantidad)} precio={Number(prod.producto.precioVenta * (1 - Number(prod.dto) / 100))} />
+                                                    return <GenerarFilaProducto key={"modalRes" + prod._id} numFila={index + 1} nombreProducto={prod.nombre} cantidad={Number(prod.cantidadVendida)} precio={Number(prod.precioVenta * (1 - Number(prod.dto) / 100))} />
                                                 }
                                                 else {
-                                                    return <GenerarFilaProducto key={"modalRes" + prod.producto._id} numFila={index + 1} nombreProducto={prod.producto.nombre} cantidad={Number(prod.cantidad)} precio={prod.producto.precioVenta} />
+                                                    return <GenerarFilaProducto key={"modalRes" + prod._id} numFila={index + 1} nombreProducto={prod.nombre} cantidad={Number(prod.cantidadVendida)} precio={prod.precioVenta} />
                                                 }
                                             })
                                         }

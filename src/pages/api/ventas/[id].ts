@@ -1,6 +1,15 @@
-import { gql } from "@apollo/client";
+import { gql, useMutation } from "@apollo/client";
 import { NextApiRequest, NextApiResponse } from "next"
 import GQLFetcher from "../../../utils/serverFetcher";
+
+const ADD_SALE = gql`
+    mutation AddVenta($fields: VentaFields!) {
+        addVenta(fields: $fields) {
+            message
+            successful
+        }
+    }`
+    ;
 
 const handler = async (req: NextApiRequest, res: NextApiResponse) => {
     // const session = await getSession({ req })
@@ -8,6 +17,74 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
     //     return res.status(401).json({ message: "Not signed in" });
     // }
 
+    switch (req.method) {
+        case 'GET':
+            return await GetSale(req, res);
+
+        case 'POST':
+            break;
+
+        case 'DELETE':
+
+            break;
+
+        default:
+            res.setHeader('Allow', ['GET', 'DELETE', 'POST']);
+            res.status(405).end(`Method ${req.method} Not Allowed`);
+    }
+}
+
+const AddSale = async (req: NextApiRequest, res: NextApiResponse) => {
+    try {
+        const salesValues = req.body;
+        const [addVentasToDB, { data, loading, error }] = useMutation(ADD_SALE,
+            {
+                variables: {
+                    "fields": {
+                        "productos": salesValues.productos,
+                        "dineroEntregadoEfectivo": salesValues.dineroEntregadoEfectivo,
+                        "dineroEntregadoTarjeta": salesValues.dineroEntregadoTarjeta,
+                        "precioVentaTotal": salesValues.precioVentaTotal,
+                        "cambio": salesValues.cambio,
+                        "cliente": salesValues.cliente,
+                        "vendidoPor": salesValues.vendidoPor,
+                        "modificadoPor": salesValues.modificadoPor,
+                        "tipo": salesValues.tipo,
+                        "descuentoEfectivo": salesValues.descuentoEfectivo,
+                        "descuentoTarjeta": salesValues.descuentoTarjeta
+                    }
+                }
+            });
+
+        const fetchResult = await GQLFetcher.query(
+            {
+                query: gql`
+                mutation AddVenta($fields: VentaFields!) {
+                    addVenta(fields: $fields) {
+                        message
+                        successful
+                    }
+                }
+                `,
+                variables: {
+                    "id": salesValues.id
+                }
+            }
+        );
+
+        if (fetchResult.data.success) {
+            return res.status(200).json({ message: `Lista de ventas encontrada` });
+        }
+
+        return res.status(300).json({ message: `Fallo al pedir la lista de ventas` });
+    }
+    catch (err) {
+        console.log(err);
+        return res.status(500).json({ message: `Error: ${err}` });
+    }
+}
+
+const GetSale = async (req: NextApiRequest, res: NextApiResponse) => {
     try {
         const reqCredentials = req.body;
         const fetchResult = await GQLFetcher.query(
@@ -26,38 +103,16 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
         );
 
         if (fetchResult.data.success) {
-            return res.status(200).json({ message: `Lista de clientes encontrada` });
+            return res.status(200).json({ message: `Lista de ventas encontrada` });
         }
 
-        return res.status(300).json({ message: `Fallo al pedir la lista de clientes` });
+        return res.status(300).json({ message: `Fallo al pedir la lista de ventas` });
     }
     catch (err) {
         console.log(err);
         return res.status(500).json({ message: `Error: ${err}` });
     }
 
-    // switch (method) {
-    //     case 'GET':
-    //         // Get data from your database 
-    //         const response = await fetch(`${envInformation.ERPBACK_URL}api/ventas/${id}`);
-    //         const resJson = await response.json();
-
-    //         res.status(response.status).json(resJson.message);
-    //         break;
-
-    //     case 'PUT':
-    //         // Update or create data in your database
-    //         res.status(200).json({ id, name: name || `Venta ${id}` });
-    //         break;
-
-    //     case 'DELETE':
-
-    //         break;
-
-    //     default:
-    //         res.setHeader('Allow', ['GET', 'DELETE', 'PUT']);
-    //         res.status(405).end(`Method ${method} Not Allowed`);
-    // }
 }
 
 export default handler;

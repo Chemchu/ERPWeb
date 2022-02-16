@@ -144,15 +144,23 @@ const ListaProductos = (props: { productos: Producto[], productosFiltrados: Prod
                                 return (
                                     <button key={prod._id} id={prod._id}
                                         onClick={() => {
-                                            const prodEnCarrito = ProductosEnCarrito.find(p => p.producto._id == prod._id);
+                                            const prodEnCarrito = ProductosEnCarrito.find(p => p._id == prod._id);
 
                                             if (prodEnCarrito) {
                                                 const prodIndex = ProductosEnCarrito.indexOf(prodEnCarrito);
                                                 const prodAlCarrito = {
-                                                    producto: prodEnCarrito.producto,
-                                                    cantidad: (Number(prodEnCarrito.cantidad) + 1).toString(),
-                                                    dto: prodEnCarrito.dto
-                                                } as ProductoVendido;
+                                                    _id: prodEnCarrito._id,
+                                                    nombre: prodEnCarrito.nombre,
+                                                    familia: prodEnCarrito.familia,
+                                                    proveedor: prodEnCarrito.proveedor,
+                                                    cantidadVendida: prodEnCarrito.cantidadVendida + 1,
+                                                    ean: prodEnCarrito.ean,
+                                                    iva: prodEnCarrito.iva,
+                                                    margen: prodEnCarrito.margen,
+                                                    precioCompra: prodEnCarrito.precioCompra,
+                                                    precioVenta: prodEnCarrito.precioVenta,
+                                                    dto: 0
+                                                } as unknown as ProductoVendido;
 
                                                 let ProductosEnCarritoUpdated = ProductosEnCarrito;
                                                 ProductosEnCarritoUpdated[prodIndex] = prodAlCarrito;
@@ -161,10 +169,18 @@ const ListaProductos = (props: { productos: Producto[], productosFiltrados: Prod
                                             }
                                             else {
                                                 const prodAlCarrito = {
-                                                    producto: prod,
-                                                    cantidad: "1",
-                                                    dto: "0"
-                                                } as ProductoVendido
+                                                    _id: prod._id,
+                                                    nombre: prod.nombre,
+                                                    familia: prod.familia,
+                                                    proveedor: prod.proveedor,
+                                                    cantidadVendida: 1,
+                                                    ean: prod.ean,
+                                                    iva: prod.iva,
+                                                    margen: prod.margen,
+                                                    precioCompra: prod.precioCompra,
+                                                    precioVenta: prod.precioVenta,
+                                                    dto: 0
+                                                } as unknown as ProductoVendido
 
                                                 SetProductosEnCarrito([...ProductosEnCarrito, prodAlCarrito]);
                                             }
@@ -238,22 +254,30 @@ const SidebarDerecho = React.memo((props: { todosProductos: Producto[], producto
         if (!IsPositiveFloatingNumber(dto.toString())) { return; }
 
         props.setProductosCarrito((prevCarrito) => {
-            const prodEnCarrito = prevCarrito.find(p => p.producto._id == idProd);
+            const prodEnCarrito = prevCarrito.find(p => p._id == idProd);
 
             if (prodEnCarrito) {
 
                 if (Number(cantidad) === 0 && cantidad.toString() !== "") {
-                    return prevCarrito.filter(p => p.producto._id != idProd);
+                    return prevCarrito.filter(p => p._id != idProd);
                 }
 
                 props.setProductosCarrito((prevCarrito) => {
                     const dtoAjustado = Number(dto) > 100 ? "100" : dto;
                     const prodIndex = prevCarrito.indexOf(prodEnCarrito);
                     const prodAlCarrito = {
-                        producto: prodEnCarrito.producto,
-                        cantidad: cantidad,
-                        dto: dtoAjustado.toString()
-                    } as ProductoVendido;
+                        _id: prodEnCarrito._id,
+                        nombre: prodEnCarrito.nombre,
+                        familia: prodEnCarrito.familia,
+                        proveedor: prodEnCarrito.proveedor,
+                        cantidadVendida: cantidad,
+                        ean: prodEnCarrito.ean,
+                        iva: prodEnCarrito.iva,
+                        margen: prodEnCarrito.margen,
+                        precioCompra: prodEnCarrito.precioCompra,
+                        precioVenta: prodEnCarrito.precioVenta,
+                        dto: dtoAjustado
+                    } as unknown as ProductoVendido;
 
                     let ProductosEnCarritoUpdated = prevCarrito;
                     ProductosEnCarritoUpdated[prodIndex] = prodAlCarrito;
@@ -269,10 +293,10 @@ const SidebarDerecho = React.memo((props: { todosProductos: Producto[], producto
 
     const precioTotal: number = props.productosEnCarrito.reduce((total: number, p: ProductoVendido) => {
         if (p.dto) {
-            return total += ((100 - Number(p.dto)) / 100) * (Number(p.cantidad) * p.producto.precioVenta);
+            return total += ((100 - Number(p.dto)) / 100) * (Number(p.cantidadVendida) * p.precioVenta);
         }
         else {
-            return total += (Number(p.cantidad) * p.producto.precioVenta);
+            return total += (Number(p.cantidadVendida) * p.precioVenta);
         }
     }, 0)
 
@@ -419,7 +443,7 @@ const SidebarDerecho = React.memo((props: { todosProductos: Producto[], producto
             {/* Modal aceptar compra */}
             <AnimatePresence initial={false} exitBeforeEnter={true}>
                 {showModalPagar && <ModalPagar handleCerrarModal={cerrarModal} productosComprados={props.productosEnCarrito} precioFinal={precioTotal} setProductosCarrito={props.setProductosCarrito} />}
-                {showModalCobro && <ModalResumenCompra pagoCliente={pagoRapido} handleCloseResumen={cerrarModalResumen} handleCloseAll={cerrarModalResumen} productosComprados={props.productosEnCarrito} setProductosCarrito={props.setProductosCarrito} />}
+                {showModalCobro && <ModalResumenCompra pagoCliente={pagoRapido} handleCloseResumen={cerrarModalResumen} handleCloseAll={cerrarModalResumen} productosVendidos={props.productosEnCarrito} setProductosCarrito={props.setProductosCarrito} />}
             </AnimatePresence>
         </div>
     );
@@ -431,8 +455,7 @@ const GenerarProductList = React.memo((props: { productosEnCarrito: ProductoVend
             {
                 props.productosEnCarrito.map((p: ProductoVendido) => {
                     return (
-                        <ProductSelectedCard key={`${p.producto._id}`} cantidad={p.cantidad} dto={p.dto}
-                            producto={p.producto} setPropiedadProd={props.setPropiedadProducto} />
+                        <ProductSelectedCard key={`${p._id}`} producto={p} setPropiedadProd={props.setPropiedadProducto} />
                     );
                 })
             }
