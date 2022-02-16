@@ -4,7 +4,6 @@ import { Producto } from '../../tipos/Producto';
 type ProductContextualizado = {
     Productos: Producto[],
     SetProductos: React.Dispatch<React.SetStateAction<Producto[]>>,
-    //SetProductos: Function,
     ProductState: string,
     SetProductState: React.Dispatch<React.SetStateAction<string>>
 }

@@ -1,4 +1,3 @@
-import { useEffect } from "react";
 import { TipoDocumento } from "../../../tipos/Enums/TipoDocumentos";
 
 const UploadFile = (props: { tipoDocumento: TipoDocumento }) => {

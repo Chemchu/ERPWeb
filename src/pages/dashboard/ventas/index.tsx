@@ -17,35 +17,35 @@ const Ventas = () => {
                 let cliRes: Cliente[];
                 let ventasRes: Venta[];
 
-                const vResponse = await fetch('/api/ventas/estado');
-                const cResponse = await fetch('/api/clientes/estado');
+                // const vResponse = await fetch('/api/ventas/estado');
+                // const cResponse = await fetch('/api/clientes/estado');
 
-                if (vResponse.status > 200 || cResponse.status > 200) {
-                    SetVentas([]);
-                    SetClientes([]);
+                // if (vResponse.status > 200 || cResponse.status > 200) {
+                //     SetVentas([]);
+                //     SetClientes([]);
 
-                    return;
-                }
-                const vState = await vResponse.json();
-                const cState = await cResponse.json();
+                //     return;
+                // }
+                // const vState = await vResponse.json();
+                // const cState = await cResponse.json();
 
-                if (VentasState !== vState.message?.databaseState || Ventas.length <= 0) {
-                    SetVentasState(vState.message?.databaseState);
+                // if (VentasState !== vState.message?.databaseState || Ventas.length <= 0) {
+                //     SetVentasState(vState.message?.databaseState);
 
-                    const vRes = await (await fetch(`/api/ventas`)).json();
-                    ventasRes = CreateSalesList(vRes);
+                //     const vRes = await (await fetch(`/api/ventas`)).json();
+                //     ventasRes = CreateSalesList(vRes);
 
-                    if (ventasRes.length > 0) SetVentas(ventasRes);
-                }
+                //     if (ventasRes.length > 0) SetVentas(ventasRes);
+                // }
 
-                if (ClientesState !== cState.message?.databaseState || Clientes.length <= 0) {
-                    SetClientesState(cState.message?.databaseState);
+                // if (ClientesState !== cState.message?.databaseState || Clientes.length <= 0) {
+                //     SetClientesState(cState.message?.databaseState);
 
-                    const cRes = await (await fetch('/api/clientes')).json();
-                    cliRes = CreateClientList(cRes);
+                //     const cRes = await (await fetch('/api/clientes')).json();
+                //     cliRes = CreateClientList(cRes);
 
-                    if (cliRes.length > 0) SetClientes(cliRes);
-                }
+                //     if (cliRes.length > 0) SetClientes(cliRes);
+                // }
 
             }
             catch (e) {

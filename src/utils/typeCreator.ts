@@ -21,7 +21,7 @@ function CreateProduct(p: any): Producto | undefined {
             precioVenta: p.precioVenta,
             tags: p.tags,
             promociones: p.promociones
-        } as Producto
+        } as unknown as Producto
 
         return producto;
     }

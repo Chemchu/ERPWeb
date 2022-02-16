@@ -57,10 +57,10 @@ const PuntoDeVenta = () => {
                 const cJson = await cResponse.json();
 
                 prodRes = CreateProductList(pJson.productos);
-                if (prodRes.length > 0) SetProductos(prodRes.filter((p) => { p.alta }));
+                if (prodRes.length > 0) SetProductos(prodRes.filter((p) => { return p.alta === true }));
 
                 cliRes = CreateClientList(cJson.clientes);
-                if (cliRes.length > 0) SetClientes(cliRes.filter((c) => { c.nif !== null }));
+                if (cliRes.length > 0) SetClientes(cliRes.filter((c) => { return c.nif !== null }));
             }
             catch (e) {
                 console.log(e);

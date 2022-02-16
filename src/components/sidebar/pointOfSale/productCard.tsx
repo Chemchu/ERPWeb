@@ -6,10 +6,12 @@ import { ProductoVendido } from '../../../tipos/ProductoVendido';
 
 export const ProductCard = React.memo((props: { Prod: Producto }) => {
     return (
-        <motion.div whileHover={{ scale: 1.1 }} whileTap={{ scale: 0.9 }} className="flex flex-col bg-gray-200 border-gray-300 h-full border-2 shadow-md rounded-3xl p-2 mx-1 my-3 cursor-pointer hover:shadow-2xl hover:bg-yellow-500 hover:border-yellow-600">
-            <div className="mt-4 pl-3 pr-3">
-                <div className="lg:text-base sm:text-base xs:text-sm truncate text-left text-gray-800">{props.Prod.nombre}</div>
-                <div className="lg:text-base sm:text-base xs:text-sm font-semibold text-left text-gray-800">{props.Prod.precioVenta.toFixed(2)}€</div>
+        <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.9 }}
+            className="flex flex-col shadow-lg h-40 w-full rounded-xl p-2 mx-1 my-3 cursor-pointer border 
+                bg-white hover:shadow-2xl hover:bg-blue-400 hover:border-blue-700 hover:text-white">
+            <div className="flex flex-col justify-between divide-y-2 divide-slate-200 p-2 h-full w-full">
+                <div className="lg:text-base sm:text-base xs:text-sm text-left ">{props.Prod.nombre}</div>
+                <div className="lg:text-base sm:text-base xs:text-sm font-semibold text-right ">{Number(props.Prod.precioVenta).toFixed(2)}€</div>
             </div>
         </motion.div>
     );
