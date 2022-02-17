@@ -6,5 +6,7 @@ export type CustomerPaymentInformation = {
     precioTotal: number,
     pagoEnEfectivo: number,
     pagoEnTarjeta: number,
+    dtoEfectivo: number,
+    dtoPorcentaje: number,
     cambio: number
 }

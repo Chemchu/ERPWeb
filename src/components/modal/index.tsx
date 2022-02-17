@@ -9,8 +9,11 @@ import { Producto } from "../../tipos/Producto";
 import { ConvertBufferToBase64, ValidatePositiveFloatingNumber } from "../../utils/validator";
 import { Cliente } from "../../tipos/Cliente";
 import { ProductoVendido } from "../../tipos/ProductoVendido";
-import { Venta } from "../../tipos/Venta";
 import { Backdrop } from "./backdrop";
+import Cookies from "js-cookie";
+import useClientContext from "../../context/clientContext";
+import { gql, useMutation } from "@apollo/client";
+import { parseJwt } from "../../utils/parseJwt";
 
 const In = {
     hidden: {
@@ -36,15 +39,28 @@ const In = {
     }
 }
 
-export const ModalPagar = (props: { productosComprados: ProductoVendido[], setProductosCarrito: Function, precioFinal: number, handleCerrarModal: MouseEventHandler<HTMLButtonElement> }) => {
+const ADD_SALE = gql`
+    mutation AddVenta($fields: VentaFields!) {
+        addVenta(fields: $fields) {
+            message
+            successful
+        }
+    }`
+    ;
+
+export const ModalPagar = (props: {
+    productosComprados: ProductoVendido[], setProductosCarrito: Function,
+    precioFinal: number, handleCerrarModal: MouseEventHandler<HTMLButtonElement>,
+    dtoEfectivo: number, dtoPorcentaje: number
+}) => {
     const [dineroEntregado, setDineroEntregado] = useState<string>("0");
     const [dineroEntregadoTarjeta, setDineroEntregadoTarjeta] = useState<string>("0");
     const [showModalResumen, setModalResumen] = useState<boolean>(false);
 
     const [ClienteActual, SetClienteActual] = useState<Cliente>({ nombre: "General" } as Cliente);
+    const { Clientes, SetClientes } = useClientContext();
 
     const [PagoCliente, setPagoCliente] = useState<CustomerPaymentInformation>({} as CustomerPaymentInformation);
-    const [FormaDePago, setFormaDePago] = useState<TipoCobro>(TipoCobro.Efectivo);
 
     let date = new Date();
     let fechaActual = `${date.getDate().toLocaleString('es-ES', { minimumIntegerDigits: 2 })}/${parseInt(date.getUTCMonth().toLocaleString('es-ES', { minimumIntegerDigits: 2 })) + 1}/${date.getFullYear()} `;
@@ -60,10 +76,14 @@ export const ModalPagar = (props: { productosComprados: ProductoVendido[], setPr
     }
 
     const OpenResumen = () => {
+        const tipoPago = GetFormaDePago();
+
         const pago: CustomerPaymentInformation = {
-            tipo: FormaDePago,
+            tipo: tipoPago,
             pagoEnEfectivo: Number(dineroEntregado),
             pagoEnTarjeta: Number(dineroEntregadoTarjeta),
+            dtoEfectivo: props.dtoEfectivo,
+            dtoPorcentaje: props.dtoPorcentaje,
             cambio: cambio,
             cliente: ClienteActual,
             precioTotal: props.precioFinal
@@ -77,14 +97,10 @@ export const ModalPagar = (props: { productosComprados: ProductoVendido[], setPr
         setModalResumen(false);
     }
 
-    const CheckFormaDePago = () => {
-        if (Number(dineroEntregado) > 0 && Number(dineroEntregadoTarjeta) <= 0) setFormaDePago(TipoCobro.Efectivo);
-        if (Number(dineroEntregadoTarjeta) > 0) {
-            setFormaDePago(TipoCobro.Tarjeta);
-            if (Number(dineroEntregado) > 0) {
-                setFormaDePago(TipoCobro.Fraccionado);
-            }
-        }
+    const GetFormaDePago = (): string => {
+        if (Number(dineroEntregado) > 0 && Number(dineroEntregadoTarjeta) > 0) { return TipoCobro.Fraccionado.toString(); }
+        if (Number(dineroEntregadoTarjeta) > 0) { return TipoCobro.Tarjeta.toString(); }
+        return TipoCobro.Efectivo.toString();
     }
 
     return (
@@ -199,31 +215,40 @@ export const ModalPagar = (props: { productosComprados: ProductoVendido[], setPr
     );
 }
 
-export const ModalResumenCompra = (props: { productosVendidos: ProductoVendido[], setProductosCarrito: Function, pagoCliente: CustomerPaymentInformation, handleCloseResumen: Function, handleCloseAll: Function }) => {
+export const ModalResumenCompra = (props: {
+    productosVendidos: ProductoVendido[], setProductosCarrito: Function,
+    pagoCliente: CustomerPaymentInformation, handleCloseResumen: Function, handleCloseAll: Function
+}) => {
+    const [addVentasToDB, { data, loading, error }] = useMutation(ADD_SALE);
+
     let date = new Date();
     const fechaActual = `${date.getDate().toLocaleString('es-ES', { minimumIntegerDigits: 2 })}/${parseInt(date.getUTCMonth().toLocaleString('es-ES', { minimumIntegerDigits: 2 })) + 1}/${date.getFullYear()} - ${date.getHours().toLocaleString('es-ES', { minimumIntegerDigits: 2 })}:${date.getMinutes().toLocaleString('es-ES', { minimumIntegerDigits: 2 })}:${date.getSeconds().toLocaleString('es-ES', { minimumIntegerDigits: 2 })}`;
 
     const addSale = async () => {
-        const venta = {
-            productos: props.productosVendidos,
-            cambio: props.pagoCliente.cambio,
-            dineroEntregadoEfectivo: props.pagoCliente.pagoEnEfectivo,
-            dineroEntregadoTarjeta: props.pagoCliente.pagoEnTarjeta,
-            precioVentaTotal: props.pagoCliente.precioTotal,
-            tipo: props.pagoCliente.tipo,
-            modificadoPor: '',
-            //clienteID: props.clienteID
-            //descuentoEfectivo: props.descuentoEfectivo,
-            //descuentoTarjeta: props.pagoCliente.descuentoTarjeta,
-            //vendidoPor: props.trabajadorID
-        } as Venta;
+        const authCookie = Cookies.get("authorization")
+        if (!authCookie) { return; }
 
-        const res = await fetch(`/api/ventas`, {
-            method: 'PUT',
-            body: JSON.stringify(venta)
-        });
+        const jwt = parseJwt(authCookie.split(" ")[1]);
+        addVentasToDB({
+            variables: {
+                "fields": {
+                    "productos": props.productosVendidos,
+                    "dineroEntregadoEfectivo": props.pagoCliente.pagoEnEfectivo,
+                    "dineroEntregadoTarjeta": props.pagoCliente.pagoEnTarjeta,
+                    "precioVentaTotal": props.pagoCliente.precioTotal,
+                    "tipo": props.pagoCliente.tipo,
+                    "cambio": props.pagoCliente.cambio,
+                    "cliente": props.pagoCliente.cliente._id,
+                    "vendidoPor": jwt._id,
+                    "modificadoPor": jwt._id,
+                    "descuentoEfectivo": props.pagoCliente.dtoEfectivo,
+                    "descuentoPorcentaje": props.pagoCliente.dtoPorcentaje,
+                    "tpv": jwt.tpv
+                }
+            }
+        })
 
-        if (res.status == 200) {
+        if (!error && !loading) {
             props.handleCloseAll();
             props.setProductosCarrito([]);
         }
@@ -281,7 +306,7 @@ export const ModalResumenCompra = (props: { productosVendidos: ProductoVendido[]
                             <hr className="my-2" />
                             <div className="flex justify-between">
                                 <div className="font-semibold self-center">
-                                    Pago en {props.pagoCliente.tipo.toLowerCase()}
+                                    {props.pagoCliente.tipo}
                                 </div>
                                 <div>
                                     <div>

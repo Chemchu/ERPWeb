@@ -79,8 +79,16 @@ function CreateSale(s: any): Venta | undefined {
 function CreateProductoVendido(s: any): ProductoVendido | undefined {
     try {
         let prod: ProductoVendido = {
-            producto: s._id,
-            cantidad: s.cantidad,
+            _id: s._id,
+            nombre: s.nombre,
+            familia: s.familia,
+            proveedor: s.proveedor,
+            ean: s.ean,
+            iva: s.iva,
+            margen: s.margen,
+            precioCompra: s.precioCompra,
+            precioVenta: s.precioVenta,
+            cantidadVendida: s.cantidadVendida,
             dto: s.dto
         }
 

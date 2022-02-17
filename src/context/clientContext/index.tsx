@@ -4,8 +4,6 @@ import { Cliente } from '../../tipos/Cliente';
 type ClienteContextualizado = {
     Clientes: Cliente[],
     SetClientes: React.Dispatch<React.SetStateAction<Cliente[]>>,
-    ClientesState: string,
-    SetClientesState: React.Dispatch<React.SetStateAction<string>>
 }
 
 //Context
@@ -18,9 +16,7 @@ export const ClienteContextProvider = ({ children }: { children: React.ReactNode
 
     const values: ClienteContextualizado = {
         Clientes: Clientes,
-        SetClientes: setClientes,
-        ClientesState: ClientesState,
-        SetClientesState: setClientesState
+        SetClientes: setClientes
     }
 
     // Interface donde será expuesto como proveedor y envolverá la App.

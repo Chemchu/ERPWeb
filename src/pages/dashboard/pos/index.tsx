@@ -7,11 +7,13 @@ import { motion } from "framer-motion";
 import { Producto } from "../../../tipos/Producto";
 import { Cliente } from "../../../tipos/Cliente";
 import { CreateClientList, CreateProductList } from "../../../utils/typeCreator";
+import TpvOpenModal from "../../../components/modal/tpvOpen";
 
 const PuntoDeVenta = () => {
-    const { Productos, SetProductos, ProductState, SetProductState } = useProductContext();
-    const { Clientes, SetClientes, ClientesState, SetClientesState } = useClientContext();
+    const { Productos, SetProductos } = useProductContext();
+    const { Clientes, SetClientes } = useClientContext();
     const [ServerUp, setServerUp] = useState<boolean>(true);
+
 
     useEffect(() => {
         async function GetAllData() {
@@ -74,6 +76,7 @@ const PuntoDeVenta = () => {
 
     return (
         <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}>
+            <TpvOpenModal />
             <TPV clientes={Clientes} productos={Productos} serverOperativo={ServerUp} />
         </motion.div>
     );

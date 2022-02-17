@@ -3,9 +3,7 @@ import { Producto } from '../../tipos/Producto';
 
 type ProductContextualizado = {
     Productos: Producto[],
-    SetProductos: React.Dispatch<React.SetStateAction<Producto[]>>,
-    ProductState: string,
-    SetProductState: React.Dispatch<React.SetStateAction<string>>
+    SetProductos: React.Dispatch<React.SetStateAction<Producto[]>>
 }
 
 //Context
@@ -19,8 +17,6 @@ export const ProductContextProvider = ({ children }: { children: React.ReactNode
     const values: ProductContextualizado = {
         Productos: Productos,
         SetProductos: setAllProductos,
-        ProductState: ProductState,
-        SetProductState: setProductState
     }
 
     // Interface donde será expuesto como proveedor y envolverá la App.
