@@ -35,7 +35,7 @@ export async function middleware(req: NextRequest, ev: NextFetchEvent) {
         })).json();
 
         if (!credentialsValidation.data.validateJwt.validado) { return NextResponse.redirect(`/login`).clearCookie("authorization"); }
-        if (req.url === '/login') { return NextResponse.redirect(`/dashboard`); }
+        if (req.nextUrl.pathname === '/login') { console.log("yey"); return NextResponse.redirect(`/dashboard`); }
     }
 }
 
@@ -45,6 +45,5 @@ const IsJwtExpired = (Jwt: string): boolean => {
     const exp = JSON.parse(payload.toString()).exp;
 
     const expDate = new Date(0).setSeconds(exp);
-
     return expDate <= Date.now();
 }
