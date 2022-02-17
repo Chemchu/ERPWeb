@@ -101,6 +101,7 @@ export const LoginForm = () => {
                                 <motion.label animate={{ color: '#111' }} className="font-semibold text-sm text-gray-600 pb-1 block">Dirección de correo</motion.label>
                                 <motion.input animate={{ borderColor: '#ddd', color: '#111' }} name="email" type="text"
                                     onChange={(e) => { SetEmail(e.target.value) }}
+                                    onKeyPress={(e) => { if (e.key === "Enter") { Authenticate(email, password); } }}
                                     className="border rounded-lg px-3 py-2 mt-1 mb-5 text-sm w-full" />
                             </motion.div>
 
@@ -108,6 +109,7 @@ export const LoginForm = () => {
                                 <motion.label animate={{ color: '#111' }} className="font-semibold text-sm text-gray-600 pb-1 block">Contraseña</motion.label>
                                 <motion.input animate={{ borderColor: '#ddd', color: '#111' }} name="password" type="password"
                                     onChange={(e) => { SetPassword(e.target.value) }}
+                                    onKeyPress={(e) => { if (e.key === "Enter") { Authenticate(email, password); } }}
                                     className="border rounded-lg px-3 py-2 mt-1 mb-5 text-sm w-full" />
                             </motion.div>
 
