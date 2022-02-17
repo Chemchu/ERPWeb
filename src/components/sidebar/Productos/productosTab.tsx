@@ -76,7 +76,7 @@ export const ProductPage = (props: { productos: Producto[], serverUp: boolean })
     const arrayNum = [...Array(8)];
 
     return (
-        <div className="flex flex-col h-screen antialiased mx-8 py-8" >
+        <div className="flex flex-col h-screen w-full antialiased px-8 py-8" >
             <h2 className="text-2xl leading-tight">
                 Productos
             </h2>

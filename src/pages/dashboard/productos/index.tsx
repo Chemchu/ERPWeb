@@ -6,7 +6,7 @@ import { Producto } from "../../../tipos/Producto";
 import { CreateProductList } from "../../../utils/typeCreator";
 
 const Productos = () => {
-    const { Productos, SetProductos, ProductState, SetProductState } = useProductContext();
+    const { Productos, SetProductos } = useProductContext();
     const [serverUp, setServerUp] = useState<boolean>(true)
 
     useEffect(() => {
