@@ -76,17 +76,13 @@ export const LoginForm = () => {
     }
 
     const Authenticate = async (userEmail: string, userPassword: string) => {
-        const res = await fetch(`api/login`, {
+        const res = await fetch(`/api/login`, {
             headers: { 'Content-Type': 'application/json' },
             method: 'POST',
             body: JSON.stringify({ email: userEmail, password: userPassword })
         });
 
         const loginResponse = await res.json();
-
-        console.log(loginResponse);
-
-
         if (loginResponse.token) {
             Cookies.set("authorization", loginResponse.token);
             Router.push("/dashboard");

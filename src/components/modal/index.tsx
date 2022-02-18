@@ -40,7 +40,7 @@ const In = {
 }
 
 const ADD_SALE = gql`
-    mutation AddVenta($fields: VentaFields!) {
+    mutation Mutation($fields: VentaFields!) {
         addVenta(fields: $fields) {
             message
             successful
@@ -228,8 +228,9 @@ export const ModalResumenCompra = (props: {
         const authCookie = Cookies.get("authorization")
         if (!authCookie) { return; }
 
-        const jwt = parseJwt(authCookie.split(" ")[1]);
-        addVentasToDB({
+        const jwt = parseJwt(authCookie);
+
+        const fetchResult = await addVentasToDB({
             variables: {
                 "fields": {
                     "productos": props.productosVendidos,
@@ -243,14 +244,19 @@ export const ModalResumenCompra = (props: {
                     "modificadoPor": jwt._id,
                     "descuentoEfectivo": props.pagoCliente.dtoEfectivo,
                     "descuentoPorcentaje": props.pagoCliente.dtoPorcentaje,
-                    "tpv": jwt.tpv
+                    "tpv": jwt.TPV
                 }
             }
-        })
+        });
+
+        console.log("lol");
 
         if (!error && !loading) {
             props.handleCloseAll();
             props.setProductosCarrito([]);
+
+            console.log(data);
+
         }
         else {
             console.log("Error al realizar la venta");

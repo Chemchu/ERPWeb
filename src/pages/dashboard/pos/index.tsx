@@ -8,12 +8,14 @@ import { Producto } from "../../../tipos/Producto";
 import { Cliente } from "../../../tipos/Cliente";
 import { CreateClientList, CreateProductList } from "../../../utils/typeCreator";
 import TpvOpenModal from "../../../components/modal/tpvOpen";
+import { parseJwt } from "../../../utils/parseJwt";
+import Cookies from "js-cookie";
 
 const PuntoDeVenta = () => {
     const { Productos, SetProductos } = useProductContext();
     const { Clientes, SetClientes } = useClientContext();
     const [ServerUp, setServerUp] = useState<boolean>(true);
-
+    const authCookie = Cookies.get("authorization");
 
     useEffect(() => {
         async function GetAllData() {
@@ -76,7 +78,9 @@ const PuntoDeVenta = () => {
 
     return (
         <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}>
-            <TpvOpenModal />
+            {
+                authCookie && !parseJwt(authCookie).TPV && <TpvOpenModal />
+            }
             <TPV clientes={Clientes} productos={Productos} serverOperativo={ServerUp} />
         </motion.div>
     );
