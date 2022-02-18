@@ -106,9 +106,10 @@ const TPV = (props: { productos: Producto[], clientes: Cliente[], serverOperativ
                 </div>
                 {/* Menú tienda */}
                 {/* Sidebar derecho */}
-                <div className="m-4">
+                <div className="h-screen">
                     <SidebarDerecho todosProductos={props.productos} productosEnCarrito={ProductosEnCarrito} setProductosCarrito={SetProductosEnCarrito} clientes={props.clientes} />
                 </div>
+
             </div>
         </div>
     );
@@ -311,140 +312,142 @@ const SidebarDerecho = React.memo((props: { todosProductos: Producto[], producto
 
 
     return (
-        <div className="bg-white rounded-3xl shadow h-full resize-x">
-            {/* En caso de carrito vacío o con productos */}
-            {
-                props.productosEnCarrito.length <= 0 ?
-                    <div className="grid grid-rows-2 grid-cols-1 p-4 h-full">
-                        <div className="grid grid-rows-2 grid-cols-1 justify-items-center justify-self-center opacity-25 self-end">
-                            <svg xmlns="http://www.w3.org/2000/svg" className="h-16" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z" />
-                            </svg>
-                            <p className="self-center">
-                                CARRITO VACÍO
-                            </p>
-                        </div>
-
-                        <div className="row-start-6 row-end-7 flex justify-between mb-3 text-lg font-semibold ">
-                            <button className="flex gap-2">
-                                Imprimir recibo
-                                <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z" />
+        <div className="h-full p-2">
+            <div className="bg-white rounded-3xl shadow h-full resize-x">
+                {/* En caso de carrito vacío o con productos */}
+                {
+                    props.productosEnCarrito.length <= 0 ?
+                        <div className="grid grid-rows-2 grid-cols-1 h-full">
+                            <div className="grid grid-rows-2 grid-cols-1 justify-items-center justify-self-center opacity-25 self-end">
+                                <svg xmlns="http://www.w3.org/2000/svg" className="h-16" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z" />
                                 </svg>
-                            </button>
+                                <p className="self-center">
+                                    CARRITO VACÍO
+                                </p>
+                            </div>
 
-                            <button className="flex gap-2">
-                                Cerrar caja
-                                <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
-                                </svg>
-                            </button>
-                        </div>
-                    </div>
-                    :
-                    <div className="flex flex-col h-screen mb-4">
-                        <div className="text-center">
-                            <div className="grid grid-cols-2">
-                                <div className="pl-8 text-left text-lg py-4 relative">
-                                    {/* Icono carrito */}
-                                    <svg xmlns="http://www.w3.org/2000/svg" className="h-6 inline-block" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z" />
+                            <div className="row-start-6 row-end-7 flex justify-between mb-3 text-lg font-semibold ">
+                                <button className="flex gap-2">
+                                    Imprimir recibo
+                                    <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z" />
                                     </svg>
-                                    <div className="text-center absolute text-white w-5 h-5 text-xs p-0 leading-5 rounded-full -right-2 top-3" />
-                                    {` ${props.productosEnCarrito.length}`}
-                                </div>
-                                <div className="px-8 text-right text-lg py-4 relative">
-                                    {/* Boton basura */}
-                                    <button className="text-blue-gray-300 hover:text-red-700 focus:outline-none" onClick={() => { props.setProductosCarrito([]) }}>
-                                        <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6 inline-block" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
-                                        </svg>
-                                    </button>
-                                </div>
+                                </button>
+
+                                <button className="flex gap-2">
+                                    Cerrar caja
+                                    <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
+                                    </svg>
+                                </button>
                             </div>
                         </div>
-                        <div className="flex flex-col flex-grow gap-2 px-2 overflow-scroll overflow-x-hidden">
-                            {/* Añadir producto al carrito (fila con información y cantidad)*/}
-                            {
-                                <GenerarProductList productosEnCarrito={props.productosEnCarrito} setPropiedadProducto={SetPropiedadProd} />
-                            }
-                        </div>
-                        <div className="text-center p-4 mb-4">
-                            <div>
-                                {descuentoOpen &&
-                                    <div className="h-auto border-t-2 border-2 p-2 border-blue-400 rounded-xl">
-                                        <div className="flex text-left text-sm">
-                                            <div className="flex self-center gap-4">
-                                                <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 9V7a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2m2 4h10a2 2 0 002-2v-6a2 2 0 00-2-2H9a2 2 0 00-2 2v6a2 2 0 002 2zm7-5a2 2 0 11-4 0 2 2 0 014 0z" />
-                                                </svg>
-                                                <div>
-                                                    <input type="text" inputMode="numeric" className="text-xs text-center rounded-lg w-1/2 h-6 shadow" name="DtoEfectivo" value={dtoEfectivo}
-                                                        onChange={(e) => {
-                                                            setDtoEfectivo(ValidatePositiveFloatingNumber(e.target.value));
-                                                        }}
-                                                    />
-                                                    €
+                        :
+                        <div className="flex flex-col h-full">
+                            <div className="text-center">
+                                <div className="grid grid-cols-2">
+                                    <div className="pl-8 text-left text-lg py-4 relative">
+                                        {/* Icono carrito */}
+                                        <svg xmlns="http://www.w3.org/2000/svg" className="h-6 inline-block" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z" />
+                                        </svg>
+                                        <div className="text-center absolute text-white w-5 h-5 text-xs p-0 leading-5 rounded-full -right-2 top-3" />
+                                        {` ${props.productosEnCarrito.length}`}
+                                    </div>
+                                    <div className="px-8 text-right text-lg py-4 relative">
+                                        {/* Boton basura */}
+                                        <button className="text-blue-gray-300 hover:text-red-700 focus:outline-none" onClick={() => { props.setProductosCarrito([]) }}>
+                                            <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6 inline-block" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                                            </svg>
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                            <div className="flex flex-col flex-grow gap-2 px-2 overflow-scroll overflow-x-hidden">
+                                {/* Añadir producto al carrito (fila con información y cantidad)*/}
+                                {
+                                    <GenerarProductList productosEnCarrito={props.productosEnCarrito} setPropiedadProducto={SetPropiedadProd} />
+                                }
+                            </div>
+                            <div className="text-center p-4 mb-4">
+                                <div>
+                                    {descuentoOpen &&
+                                        <div className="h-auto border-t-2 border-2 p-2 border-blue-400 rounded-xl">
+                                            <div className="flex text-left text-sm">
+                                                <div className="flex self-center gap-4">
+                                                    <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 9V7a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2m2 4h10a2 2 0 002-2v-6a2 2 0 00-2-2H9a2 2 0 00-2 2v6a2 2 0 002 2zm7-5a2 2 0 11-4 0 2 2 0 014 0z" />
+                                                    </svg>
+                                                    <div>
+                                                        <input type="text" inputMode="numeric" className="text-xs text-center rounded-lg w-1/2 h-6 shadow" name="DtoEfectivo" value={dtoEfectivo}
+                                                            onChange={(e) => {
+                                                                setDtoEfectivo(ValidatePositiveFloatingNumber(e.target.value));
+                                                            }}
+                                                        />
+                                                        €
+                                                    </div>
                                                 </div>
-                                            </div>
 
-                                            <div className="flex ml-auto gap-4">
-                                                <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z" />
-                                                </svg>
-                                                <div>
-                                                    <input type="text" inputMode="numeric" className="text-xs text-center rounded-lg w-1/2 h-6 shadow" name="DtoPorcentaje" value={dtoPorcentaje}
-                                                        onChange={(e) => {
-                                                            setDtoPorcentaje(ValidatePositiveFloatingNumber(e.target.value));
-                                                        }}
-                                                    />
-                                                    %
+                                                <div className="flex ml-auto gap-4">
+                                                    <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z" />
+                                                    </svg>
+                                                    <div>
+                                                        <input type="text" inputMode="numeric" className="text-xs text-center rounded-lg w-1/2 h-6 shadow" name="DtoPorcentaje" value={dtoPorcentaje}
+                                                            onChange={(e) => {
+                                                                setDtoPorcentaje(ValidatePositiveFloatingNumber(e.target.value));
+                                                            }}
+                                                        />
+                                                        %
+                                                    </div>
                                                 </div>
                                             </div>
                                         </div>
+                                    }
+                                    <div className="flex flex-col text-left text-lg font-semibold hover:text-blue-500 underline cursor-pointer" onClick={() => setDescuentoPupup(!descuentoOpen)}>
+                                        Descuento
                                     </div>
-                                }
-                                <div className="flex flex-col text-left text-lg font-semibold hover:text-blue-500 underline cursor-pointer" onClick={() => setDescuentoPupup(!descuentoOpen)}>
-                                    Descuento
                                 </div>
-                            </div>
-                            <div className="flex mb-3 text-lg font-semibold">
-                                <div>Total</div>
-                                {
-                                    HayDescuento(dtoEfectivo, dtoPorcentaje) ?
-                                        <div className="flex gap-2 justify-end ml-auto">
-                                            <div className="text-right w-full text-red-500 line-through">
+                                <div className="flex mb-3 text-lg font-semibold">
+                                    <div>Total</div>
+                                    {
+                                        HayDescuento(dtoEfectivo, dtoPorcentaje) ?
+                                            <div className="flex gap-2 justify-end ml-auto">
+                                                <div className="text-right w-full text-red-500 line-through">
+                                                    {/*Cambiar en caso de que la cesta tenga productos y calcular el valor total*/}
+                                                    {props.productosEnCarrito.length <= 0 ? 0.00 : precioTotal.toFixed(2)} €
+                                                </div>
+                                                <div className="text-right w-full">
+                                                    {/*Cambiar en caso de que la cesta tenga productos y calcular el valor total*/}
+                                                    {props.productosEnCarrito.length <= 0 ? 0.00 : ApplyDtoPercentage(ApplyDtoCash(precioTotal, Number(dtoEfectivo)), Number(dtoPorcentaje)).toFixed(2)} €
+                                                </div>
+                                            </div>
+                                            :
+                                            <div className="text-right w-full">
                                                 {/*Cambiar en caso de que la cesta tenga productos y calcular el valor total*/}
                                                 {props.productosEnCarrito.length <= 0 ? 0.00 : precioTotal.toFixed(2)} €
                                             </div>
-                                            <div className="text-right w-full">
-                                                {/*Cambiar en caso de que la cesta tenga productos y calcular el valor total*/}
-                                                {props.productosEnCarrito.length <= 0 ? 0.00 : ApplyDtoPercentage(ApplyDtoCash(precioTotal, Number(dtoEfectivo)), Number(dtoPorcentaje)).toFixed(2)} €
-                                            </div>
-                                        </div>
-                                        :
-                                        <div className="text-right w-full">
-                                            {/*Cambiar en caso de que la cesta tenga productos y calcular el valor total*/}
-                                            {props.productosEnCarrito.length <= 0 ? 0.00 : precioTotal.toFixed(2)} €
-                                        </div>
+                                    }
+                                </div>
+
+                                {
+                                    props.productosEnCarrito.length > 0 && !isNaN(precioTotal) &&
+                                    <div className="grid grid-cols-1 gap-2 h-auto">
+                                        <motion.button whileTap={{ scale: 0.9 }} className="bg-blue-500 h-12 shadow rounded-lg hover:shadow-lg hover:bg-blue-600 text-white focus:outline-none" onClick={(e) => { setPagarModal(true) }}>PAGAR</motion.button>
+                                        <motion.button whileTap={{ scale: 0.9 }} className="bg-blue-500 h-12 shadow rounded-lg hover:shadow-lg hover:bg-blue-600 text-white focus:outline-none" onClick={(e) => { setCobroModal(true) }}>COBRO RAPIDO</motion.button>
+                                    </div>
                                 }
                             </div>
-
-                            {
-                                props.productosEnCarrito.length > 0 && !isNaN(precioTotal) &&
-                                <div className="grid grid-cols-1 gap-2 h-auto">
-                                    <motion.button whileTap={{ scale: 0.9 }} className="bg-blue-500 h-12 shadow rounded-lg hover:shadow-lg hover:bg-blue-600 text-white focus:outline-none" onClick={(e) => { setPagarModal(true) }}>PAGAR</motion.button>
-                                    <motion.button whileTap={{ scale: 0.9 }} className="bg-blue-500 h-12 shadow rounded-lg hover:shadow-lg hover:bg-blue-600 text-white focus:outline-none" onClick={(e) => { setCobroModal(true) }}>COBRO RAPIDO</motion.button>
-                                </div>
-                            }
                         </div>
-                    </div>
-            }
-            {/* Modal aceptar compra */}
-            <AnimatePresence initial={false} exitBeforeEnter={true}>
-                {showModalPagar && <ModalPagar handleCerrarModal={cerrarModal} productosComprados={props.productosEnCarrito} dtoEfectivo={Number(dtoEfectivo)} dtoPorcentaje={Number(dtoPorcentaje)} precioFinal={precioTotal} setProductosCarrito={props.setProductosCarrito} />}
-                {showModalCobro && <ModalResumenCompra pagoCliente={pagoRapido} handleCloseResumen={cerrarModalResumen} handleCloseAll={cerrarModalResumen} productosVendidos={props.productosEnCarrito} setProductosCarrito={props.setProductosCarrito} />}
-            </AnimatePresence>
+                }
+                {/* Modal aceptar compra */}
+                <AnimatePresence initial={false} exitBeforeEnter={true}>
+                    {showModalPagar && <ModalPagar handleCerrarModal={cerrarModal} productosComprados={props.productosEnCarrito} dtoEfectivo={Number(dtoEfectivo)} dtoPorcentaje={Number(dtoPorcentaje)} precioFinal={precioTotal} setProductosCarrito={props.setProductosCarrito} />}
+                    {showModalCobro && <ModalResumenCompra pagoCliente={pagoRapido} handleCloseResumen={cerrarModalResumen} handleCloseAll={cerrarModalResumen} productosVendidos={props.productosEnCarrito} setProductosCarrito={props.setProductosCarrito} />}
+                </AnimatePresence>
+            </div>
         </div>
     );
 });
