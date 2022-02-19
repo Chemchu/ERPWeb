@@ -49,12 +49,6 @@ const exitVariant = {
     },
 }
 
-const loginFallidoVariant = {
-    rotar: {
-        rotate: [-2, 1.9, -0.87, 1.1, -0.5, 0.5, 0],
-    },
-}
-
 const LoginPage = (props: { video: string }) => {
     return (
         <motion.div className="bg-white w-full h-full items-center font-sans" initial={exitVariant.initial} animate={exitVariant.animate} exit={exitVariant.exit} variants={exitVariant} >
@@ -96,8 +90,8 @@ export const LoginForm = () => {
     return (
         <motion.div className={`inset-0 flex items-center min-h-screen bg-no-repeat bg-top justify-center sm:py-12 bg-cover`}
             variants={exitVariant} initial={exitVariant.initial} animate={exitVariant.animate} >
-            <motion.div className="p-10 xs:p-0 mx-auto md:w-full md:max-w-md" animate="visible" initial="hidden" variants={container}>
-                <motion.div animate={loginFallido ? "rotar" : undefined} variants={loginFallidoVariant}
+            <motion.div className="p-10 xs:p-0 mx-auto md:w-full md:max-w-md" animate="visible" initial="hidden" >
+                <motion.div animate={loginFallido ? { rotate: [-2, 1.9, -0.87, 1.1, -0.5, 0.5, 0] } : { rotate: 0 }} variants={container}
                     className="bg-white shadow w-full rounded-lg divide-y divide-gray-200" >
                     <div className="px-5 py-7">
                         <motion.h1 className="font-bold text-center text-2xl mb-5" variants={item}>
@@ -106,7 +100,7 @@ export const LoginForm = () => {
                             </SplitLetters>
                         </motion.h1>
 
-                        <div>
+                        <motion.div>
                             <motion.div variants={item}>
                                 <label className="font-semibold text-sm text-black pb-1 block">Dirección de correo</label>
                                 <input name="email" type="text"
@@ -135,7 +129,7 @@ export const LoginForm = () => {
                                     </svg>
                                 </button>
                             </motion.div>
-                        </div>
+                        </motion.div>
 
                         <motion.div variants={item}>
                             <button onClick={Volver} className="transition duration-200 py-2.5 cursor-pointer font-normal text-sm rounded-lg text-white bg-red-500 hover:bg-red-600 focus:outline-none focus:bg-red-700 focus:ring-2 focus:ring-gray-400 focus:ring-opacity-50 w-full ring-inset">
@@ -168,7 +162,7 @@ export const LoginForm = () => {
                     </div>
                 </motion.div>
             </motion.div>
-        </motion.div>
+        </motion.div >
     );
 }
 
