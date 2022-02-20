@@ -4,8 +4,8 @@ import { Producto } from "../../../tipos/Producto";
 import { CheckBox } from "../../Forms/checkbox";
 import { Paginador } from "../../Forms/paginador";
 import { ConvertBufferToBase64 } from "../../../utils/validator";
-import { ModalEditarProducto } from "../../modal";
 import SkeletonCard from "../../Skeletons/skeletonCard";
+import EditarProducto from "../../modal/editarProducto";
 
 export const ProductPage = (props: { productos: Producto[], serverUp: boolean }) => {
     const [currentPage, setCurrentPage] = useState<number>(1);
@@ -221,7 +221,7 @@ const FilaProducto = (props: { listIndex: number, producto: Producto, selectedPr
                     </svg>
                 </button>
             </div>
-            {showModal && <ModalEditarProducto handleClose={CloseModalProducto} product={props.producto} />}
+            {showModal && <EditarProducto handleClose={CloseModalProducto} product={props.producto} />}
         </div>
 
     );

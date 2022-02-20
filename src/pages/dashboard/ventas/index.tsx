@@ -5,11 +5,10 @@ import useVentaContext from '../../../context/ventasContext';
 import DashboardLayout from '../../../layout';
 import { Cliente } from '../../../tipos/Cliente';
 import { Venta } from '../../../tipos/Venta';
-import { CreateClientList, CreateSalesList } from '../../../utils/typeCreator';
 
 const Ventas = () => {
-    const { Ventas, SetVentas, VentasState, SetVentasState } = useVentaContext();
-    const { Clientes, SetClientes, ClientesState, SetClientesState } = useClientContext();
+    const { Ventas, SetVentas } = useVentaContext();
+    const { Clientes, SetClientes } = useClientContext();
 
     useEffect(() => {
         async function GetAllData() {

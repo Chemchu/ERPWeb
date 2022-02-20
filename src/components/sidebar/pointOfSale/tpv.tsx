@@ -6,10 +6,11 @@ import { CustomerPaymentInformation } from "../../../tipos/CustomerPayment";
 import { Producto } from "../../../tipos/Producto";
 import { TipoCobro } from "../../../tipos/Enums/TipoCobro";
 import { ProductoVendido } from "../../../tipos/ProductoVendido";
-import { ModalPagar, ModalResumenCompra } from "../../modal";
 import { ProductCard, ProductSelectedCard } from "./productCard";
 import useProductEnCarritoContext from "../../../context/productosEnCarritoContext";
 import SkeletonProductCard from "../../Skeletons/skeletonProductCard";
+import ModalPagar from "../../modal/pagar";
+import Resumen from "../../modal/resumen";
 
 const TPV = (props: { productos: Producto[], clientes: Cliente[], serverOperativo: boolean }) => {
     const [Busqueda, setBusqueda] = useState<string>("");
@@ -444,7 +445,7 @@ const SidebarDerecho = React.memo((props: { todosProductos: Producto[], producto
                 {/* Modal aceptar compra */}
                 <AnimatePresence initial={false} exitBeforeEnter={true}>
                     {showModalPagar && <ModalPagar handleCerrarModal={cerrarModal} productosComprados={props.productosEnCarrito} dtoEfectivo={Number(dtoEfectivo)} dtoPorcentaje={Number(dtoPorcentaje)} precioFinal={precioTotal} setProductosCarrito={props.setProductosCarrito} />}
-                    {showModalCobro && <ModalResumenCompra pagoCliente={pagoRapido} handleCloseResumen={cerrarModalResumen} handleCloseAll={cerrarModalResumen} productosVendidos={props.productosEnCarrito} setProductosCarrito={props.setProductosCarrito} />}
+                    {showModalCobro && <Resumen pagoCliente={pagoRapido} handleCloseResumen={cerrarModalResumen} handleCloseAll={cerrarModalResumen} productosVendidos={props.productosEnCarrito} setProductosCarrito={props.setProductosCarrito} />}
                 </AnimatePresence>
             </div>
         </div>
