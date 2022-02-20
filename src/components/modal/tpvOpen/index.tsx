@@ -1,15 +1,25 @@
+import { gql, useMutation } from "@apollo/client";
 import { motion } from "framer-motion";
+import Cookies from "js-cookie";
 import Router from "next/router";
 import { useEffect, useState } from "react";
+import { parseJwt } from "../../../utils/parseJwt";
 import { ValidatePositiveFloatingNumber } from "../../../utils/validator";
 import Dropdown from "../../Forms/dropdown";
 import { Backdrop } from "../backdrop";
 
 const TpvOpenModal = () => {
-    const [modalOpen, setModalOpen] = useState<boolean>(true);
+    const OCUPY_TPV = gql`
+        mutation OcupyTPV($idEmpleado: ID!, $idTpv: ID!) {
+            ocupyTPV(idEmpleado: $idEmpleado, idTPV: $idTpv) {
+                token
+            }
+        }
+    `;
     const [tpvs, setTpvs] = useState<Map<string, string>>(new Map());
     const [currentTpv, setCurrentTpv] = useState<string>();
     const [cajaInicial, setCajaInicial] = useState<string>('0');
+    const [ocuparTpv, { data, error }] = useMutation(OCUPY_TPV);
 
     useEffect(() => {
         const TpvsAbiertas = async () => {
@@ -34,6 +44,20 @@ const TpvOpenModal = () => {
         setCurrentTpv(tpvs.values().next().value)
     }, [tpvs]);
 
+    const AbrirTPV = async () => {
+        const auth = Cookies.get("authorization");
+        if (!auth) { return; }
+
+        const payload = parseJwt(auth);
+
+        ocuparTpv({
+            variables: {
+                "idEmpleado": payload._id,
+                "idTpv": payload.TPV
+            }
+        });
+
+    }
 
     return (
         <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}>
@@ -72,7 +96,8 @@ const TpvOpenModal = () => {
                     <div className="flex flex-row-reverse gap-10 text-center justify-end items-end text-white pb-4">
                         {
                             Number(cajaInicial) > 0 && currentTpv && tpvs ?
-                                <div className="flex h-10 w-32 m-auto bg-blue-500 hover:bg-blue-600 rounded-2xl cursor-pointer items-center justify-center shadow-lg">
+                                <div className="flex h-10 w-32 m-auto bg-blue-500 hover:bg-blue-600 rounded-2xl cursor-pointer items-center justify-center shadow-lg"
+                                    onClick={AbrirTPV}>
                                     <div>
                                         Abrir TPV
                                     </div>

@@ -7,7 +7,6 @@ import {
   InMemoryCache,
   ApolloProvider,
 } from "@apollo/client";
-import { envInformation } from '../utils/envInfo';
 
 type AppPropsConPageLayout = AppProps & {
   Component: AppProps['Component'] & {
@@ -15,14 +14,13 @@ type AppPropsConPageLayout = AppProps & {
   }
 }
 
-
 const client = new ApolloClient({
-  uri: process.env.ERPBACK_URL,
+  //uri: process.env.ERPBACK_URL + "graphql",
+  uri: "http://192.168.1.140:8080/graphql",
   cache: new InMemoryCache()
 });
 
 function MyApp({ Component, pageProps, router }: AppPropsConPageLayout) {
-
   return (
     <AnimatePresence exitBeforeEnter>
       <ApolloProvider client={client}>

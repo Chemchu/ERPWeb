@@ -153,11 +153,11 @@ const ListaProductos = (props: { productos: Producto[], productosFiltrados: Prod
                                                     _id: prodEnCarrito._id,
                                                     nombre: prodEnCarrito.nombre,
                                                     familia: prodEnCarrito.familia,
-                                                    proveedor: prodEnCarrito.proveedor,
+                                                    proveedor: prodEnCarrito.proveedor || "Desconocido",
                                                     cantidadVendida: prodEnCarrito.cantidadVendida + 1,
                                                     ean: prodEnCarrito.ean,
                                                     iva: prodEnCarrito.iva,
-                                                    margen: prodEnCarrito.margen,
+                                                    margen: prodEnCarrito.margen || 0,
                                                     precioCompra: prodEnCarrito.precioCompra,
                                                     precioVenta: prodEnCarrito.precioVenta,
                                                     dto: 0
@@ -173,11 +173,11 @@ const ListaProductos = (props: { productos: Producto[], productosFiltrados: Prod
                                                     _id: prod._id,
                                                     nombre: prod.nombre,
                                                     familia: prod.familia,
-                                                    proveedor: prod.proveedor,
+                                                    proveedor: prod.proveedor || "Desconocido",
                                                     cantidadVendida: 1,
                                                     ean: prod.ean,
                                                     iva: prod.iva,
-                                                    margen: prod.margen,
+                                                    margen: prod.margen || 0,
                                                     precioCompra: prod.precioCompra,
                                                     precioVenta: prod.precioVenta,
                                                     dto: 0
@@ -302,7 +302,6 @@ const SidebarDerecho = React.memo((props: { todosProductos: Producto[], producto
     }, 0)
 
     const pagoRapido = {
-        cliente: { nombre: "General" } as Cliente,
         cambio: 0,
         pagoEnEfectivo: precioTotal,
         pagoEnTarjeta: 0,

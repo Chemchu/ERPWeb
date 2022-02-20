@@ -38,18 +38,6 @@ const DashboardLayout = React.memo(({ children }: { children: React.ReactNode })
     {/* router.route es lo que hace que funcione el exit del AnimatePresence */ }
     const router = useRouter();
 
-    // if (status === "loading") {
-    //     return (
-    //         <div className="flex flex-col w-screen h-screen justify-center items-center gap-6">
-    //             {/* <SpinnerCircular size={90} thickness={180} speed={100} color="rgba(57, 150, 172, 1)" secondaryColor="rgba(0, 0, 0, 0)" /> */}
-    //             <SpinnerDotted size={90} thickness={180} speed={100} color="rgba(57, 141, 172, 1)" />
-    //             {/* <h1 className="text-xl">
-    //                 Cargando..
-    //             </h1> */}
-    //         </div>
-    //     );
-    // }
-
     return (
         <VentasContextProvider>
             <ProductContextProvider>

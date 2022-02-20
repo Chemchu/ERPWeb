@@ -1,17 +1,20 @@
 import { NextFetchEvent, NextRequest, NextResponse } from 'next/server'
 
 export async function middleware(req: NextRequest, ev: NextFetchEvent) {
-    if (req.url === '/') { return NextResponse.next(); }
+    if (req.nextUrl.pathname === '/') { return NextResponse.next(); }
 
-    if (req.cookies.authorization === undefined) {
-        if (req.url.includes("dashboard")) { return NextResponse.redirect('/login'); }
+    const url = req.nextUrl.clone();
+
+    if (!req.cookies.authorization) {
+        if (req.nextUrl.pathname.includes("dashboard")) { url.pathname = "/login"; return NextResponse.rewrite(url); }
 
         return NextResponse.next();
     }
 
     const authCookie = req.cookies.authorization.split(" ")[1];
     if (IsJwtExpired(authCookie)) {
-        return NextResponse.redirect(`/login`).clearCookie("authorization");
+        url.pathname = "/login";
+        return NextResponse.rewrite(url).clearCookie("authorization");
     }
 
     if (authCookie) {
@@ -34,8 +37,8 @@ export async function middleware(req: NextRequest, ev: NextFetchEvent) {
             )
         })).json();
 
-        if (!credentialsValidation.data.validateJwt.validado) { return NextResponse.redirect(`/login`).clearCookie("authorization"); }
-        if (req.nextUrl.pathname === '/login') { console.log("yey"); return NextResponse.redirect(`/dashboard`); }
+        if (!credentialsValidation.data.validateJwt.validado) { url.pathname = "/login"; return NextResponse.rewrite(url).clearCookie("authorization"); }
+        if (req.nextUrl.pathname === '/login') { url.pathname = "/dashboard"; return NextResponse.rewrite(url); }
     }
 }
 

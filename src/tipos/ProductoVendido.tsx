@@ -1,5 +1,3 @@
-import { Producto } from "./Producto";
-
 export type ProductoVendido = {
     _id: string,
     nombre: string,

@@ -40,7 +40,7 @@ const In = {
 }
 
 const ADD_SALE = gql`
-    mutation Mutation($fields: VentaFields!) {
+    mutation addVenta($fields: VentaFields!) {
         addVenta(fields: $fields) {
             message
             successful
@@ -57,9 +57,8 @@ export const ModalPagar = (props: {
     const [dineroEntregadoTarjeta, setDineroEntregadoTarjeta] = useState<string>("0");
     const [showModalResumen, setModalResumen] = useState<boolean>(false);
 
-    const [ClienteActual, SetClienteActual] = useState<Cliente>({ nombre: "General" } as Cliente);
     const { Clientes, SetClientes } = useClientContext();
-
+    const [ClienteActual, SetClienteActual] = useState<Cliente>(Clientes.filter((c) => { return c.nombre === "General" })[0]);
     const [PagoCliente, setPagoCliente] = useState<CustomerPaymentInformation>({} as CustomerPaymentInformation);
 
     let date = new Date();
@@ -220,6 +219,7 @@ export const ModalResumenCompra = (props: {
     pagoCliente: CustomerPaymentInformation, handleCloseResumen: Function, handleCloseAll: Function
 }) => {
     const [addVentasToDB, { data, loading, error }] = useMutation(ADD_SALE);
+    const { Clientes, } = useClientContext();
 
     let date = new Date();
     const fechaActual = `${date.getDate().toLocaleString('es-ES', { minimumIntegerDigits: 2 })}/${parseInt(date.getUTCMonth().toLocaleString('es-ES', { minimumIntegerDigits: 2 })) + 1}/${date.getFullYear()} - ${date.getHours().toLocaleString('es-ES', { minimumIntegerDigits: 2 })}:${date.getMinutes().toLocaleString('es-ES', { minimumIntegerDigits: 2 })}:${date.getSeconds().toLocaleString('es-ES', { minimumIntegerDigits: 2 })}`;
@@ -228,9 +228,17 @@ export const ModalResumenCompra = (props: {
         const authCookie = Cookies.get("authorization")
         if (!authCookie) { return; }
 
-        const jwt = parseJwt(authCookie);
+        let cliente;
 
-        const fetchResult = await addVentasToDB({
+        if (!props.pagoCliente.cliente) {
+            cliente = Clientes.find((c) => c.nombre === "General");
+        }
+        else {
+            cliente = props.pagoCliente.cliente;
+        }
+
+        const jwt = parseJwt(authCookie);
+        await addVentasToDB({
             variables: {
                 "fields": {
                     "productos": props.productosVendidos,
@@ -239,17 +247,15 @@ export const ModalResumenCompra = (props: {
                     "precioVentaTotal": props.pagoCliente.precioTotal,
                     "tipo": props.pagoCliente.tipo,
                     "cambio": props.pagoCliente.cambio,
-                    "cliente": props.pagoCliente.cliente._id,
+                    "cliente": cliente?._id,
                     "vendidoPor": jwt._id,
                     "modificadoPor": jwt._id,
-                    "descuentoEfectivo": props.pagoCliente.dtoEfectivo,
-                    "descuentoPorcentaje": props.pagoCliente.dtoPorcentaje,
+                    "descuentoEfectivo": props.pagoCliente.dtoEfectivo || 0,
+                    "descuentoPorcentaje": props.pagoCliente.dtoPorcentaje || 0,
                     "tpv": jwt.TPV
                 }
             }
         });
-
-        console.log("lol");
 
         if (!error && !loading) {
             props.handleCloseAll();
@@ -273,15 +279,14 @@ export const ModalResumenCompra = (props: {
                     animate="visible"
                     exit="exit"
                 >
-
-                    <div className="sm:w-96 w-96 rounded-3xl bg-white z-10">
+                    <div className="sm:w-96 w-96 rounded-3xl bg-white z-10 self">
                         <div id="receipt-content" className="text-left w-full text-sm p-6 overflow-auto">
                             <div className="text-center">
                                 <h2 className="text-xl font-semibold">ERPWeb</h2>
                                 <p> Resumen de la compra </p>
                             </div>
                             <div className="grid grid-cols-2 grid-rows-1 mt-4 text-xs text-center justify-center">
-                                <div className="text-left relative ">Cliente: {props.pagoCliente.cliente.nombre} </div>
+                                {/* <div className="text-left relative ">Cliente: {props.pagoCliente.cliente.nombre} </div> */}
                                 <div className="text-right relative text-black"> {fechaActual} </div>
                             </div>
                             <hr className="my-2" />
