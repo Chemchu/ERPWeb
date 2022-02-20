@@ -111,6 +111,8 @@ export function CreateProductList(pList: any[]): Producto[] {
 }
 
 export function CreateClientList(cList: any[]): Cliente[] {
+    if (cList === undefined) { return []; }
+
     let res: Cliente[] = [];
     cList.forEach((c: any) => {
         const client = CreateClient(c);
@@ -122,6 +124,8 @@ export function CreateClientList(cList: any[]): Cliente[] {
 }
 
 export function CreateSalesList(sList: any[]): Venta[] {
+    if (sList === undefined) { return [] as Venta[]; }
+
     let res: Venta[] = [];
     sList.forEach((c: any) => {
         const venta = CreateSale(c);

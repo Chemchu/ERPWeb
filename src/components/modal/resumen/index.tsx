@@ -5,6 +5,7 @@ import useClientContext from "../../../context/clientContext";
 import { CustomerPaymentInformation } from "../../../tipos/CustomerPayment";
 import { ProductoVendido } from "../../../tipos/ProductoVendido";
 import { parseJwt } from "../../../utils/parseJwt";
+import { ADD_SALE } from "../../../utils/querys";
 import { Backdrop } from "../backdrop";
 
 const In = {
@@ -30,15 +31,6 @@ const In = {
         }
     }
 }
-
-const ADD_SALE = gql`
-    mutation addVenta($fields: VentaFields!) {
-        addVenta(fields: $fields) {
-            message
-            successful
-        }
-    }`
-    ;
 
 
 export const Resumen = (props: {
