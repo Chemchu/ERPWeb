@@ -11,8 +11,9 @@ import useProductEnCarritoContext from "../../../context/productosEnCarritoConte
 import SkeletonProductCard from "../../Skeletons/skeletonProductCard";
 import ModalPagar from "../../modal/pagar";
 import Resumen from "../../modal/resumen";
+import useClientContext from "../../../context/clientContext";
 
-const TPV = (props: { productos: Producto[], clientes: Cliente[], serverOperativo: boolean }) => {
+const TPV = (props: { productos: Producto[], serverOperativo: boolean }) => {
     const [Busqueda, setBusqueda] = useState<string>("");
     const [ProductosFiltrados, setProductosFiltrados] = useState<Producto[]>([]);
     const { ProductosEnCarrito, SetProductosEnCarrito } = useProductEnCarritoContext();
@@ -56,7 +57,6 @@ const TPV = (props: { productos: Producto[], clientes: Cliente[], serverOperativ
     }
 
     const arrayNum = [...Array(5)];
-
     return (
         <div className="antialiased overflow-hidden text-gray-800">
             {/* Página principal del POS */}
@@ -70,7 +70,7 @@ const TPV = (props: { productos: Producto[], clientes: Cliente[], serverOperativ
                                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
                                 </svg>
                             </div>
-                            <input onChange={(e) => { Filtrar(e.target.value); }} value={Busqueda} onInputCapture={() => { console.log("Ajustar con el lector") }} className="bg-white rounded-3xl shadow text-lg full w-full h-16 py-4 pl-16 transition-shadow focus:shadow-2xl focus:outline-none" placeholder="Buscar producto o código de barras..." />
+                            <input disabled={!props.serverOperativo} onChange={(e) => { Filtrar(e.target.value); }} value={Busqueda} onInputCapture={() => { console.log("Ajustar con el lector") }} className="bg-white rounded-3xl shadow text-lg full w-full h-16 py-4 pl-16 transition-shadow focus:shadow-2xl focus:outline-none" placeholder="Buscar producto o código de barras..." />
                         </div>
 
                         {/* Genera los botones de favorito */}
@@ -108,7 +108,7 @@ const TPV = (props: { productos: Producto[], clientes: Cliente[], serverOperativ
                 {/* Menú tienda */}
                 {/* Sidebar derecho */}
                 <div className="h-screen">
-                    <SidebarDerecho todosProductos={props.productos} productosEnCarrito={ProductosEnCarrito} setProductosCarrito={SetProductosEnCarrito} clientes={props.clientes} />
+                    <SidebarDerecho todosProductos={props.productos} productosEnCarrito={ProductosEnCarrito} setProductosCarrito={SetProductosEnCarrito} />
                 </div>
 
             </div>
@@ -234,10 +234,11 @@ const ProductosNoEncontrados = () => {
     );
 }
 
-const SidebarDerecho = React.memo((props: { todosProductos: Producto[], productosEnCarrito: ProductoVendido[], clientes: Cliente[], setProductosCarrito: React.Dispatch<React.SetStateAction<ProductoVendido[]>> }) => {
+const SidebarDerecho = React.memo((props: { todosProductos: Producto[], productosEnCarrito: ProductoVendido[], setProductosCarrito: React.Dispatch<React.SetStateAction<ProductoVendido[]>> }) => {
     const [descuentoOpen, setDescuentoPupup] = useState<boolean>(false);
     const [dtoEfectivo, setDtoEfectivo] = useState<string>("0");
     const [dtoPorcentaje, setDtoPorcentaje] = useState<string>("0");
+    const { Clientes } = useClientContext();
 
     const [showModalPagar, setPagarModal] = useState(false);
     const [showModalCobro, setCobroModal] = useState(false);
@@ -303,6 +304,7 @@ const SidebarDerecho = React.memo((props: { todosProductos: Producto[], producto
     }, 0)
 
     const pagoRapido = {
+        cliente: Clientes.find((c) => c.nombre === "General"),
         cambio: 0,
         pagoEnEfectivo: precioTotal,
         pagoEnTarjeta: 0,

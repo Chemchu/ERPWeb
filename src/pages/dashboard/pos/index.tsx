@@ -13,7 +13,7 @@ import Cookies from "js-cookie";
 
 const PuntoDeVenta = () => {
     const { Productos, SetProductos } = useProductContext();
-    const { Clientes, SetClientes } = useClientContext();
+    const { SetClientes } = useClientContext();
     const [ServerUp, setServerUp] = useState<boolean>(true);
     const authCookie = Cookies.get("authorization");
 
@@ -81,7 +81,7 @@ const PuntoDeVenta = () => {
             {
                 authCookie && !parseJwt(authCookie).TPV && <TpvOpenModal />
             }
-            <TPV clientes={Clientes} productos={Productos} serverOperativo={ServerUp} />
+            <TPV productos={Productos} serverOperativo={ServerUp} />
         </motion.div>
     );
 }

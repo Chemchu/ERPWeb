@@ -7,6 +7,7 @@ import { TipoCobro } from "../../../tipos/Enums/TipoCobro";
 import { ProductoVendido } from "../../../tipos/ProductoVendido";
 import { ValidatePositiveFloatingNumber } from "../../../utils/validator";
 import AutoComplete from "../../Forms/autocomplete/autocomplete";
+import Dropdown from "../../Forms/dropdown";
 import { Input } from "../../Forms/input/input";
 import { InputNumber } from "../../Forms/input/inputDinero";
 import { Backdrop } from "../backdrop";
@@ -49,9 +50,6 @@ export const ModalPagar = (props: {
     const [ClienteActual, SetClienteActual] = useState<Cliente>(Clientes.filter((c) => { return c.nombre === "General" })[0]);
     const [PagoCliente, setPagoCliente] = useState<CustomerPaymentInformation>({} as CustomerPaymentInformation);
 
-    let date = new Date();
-    let fechaActual = `${date.getDate().toLocaleString('es-ES', { minimumIntegerDigits: 2 })}/${parseInt(date.getUTCMonth().toLocaleString('es-ES', { minimumIntegerDigits: 2 })) + 1}/${date.getFullYear()} `;
-    let horaActual = `${date.getHours().toLocaleString('es-ES', { minimumIntegerDigits: 2 })}:${date.getMinutes().toLocaleString('es-ES', { minimumIntegerDigits: 2 })}:${date.getSeconds().toLocaleString('es-ES', { minimumIntegerDigits: 2 })}`
     let cambio: number = isNaN((Number(dineroEntregado) + Number(dineroEntregadoTarjeta) - props.precioFinal)) ? Number(dineroEntregado) + Number(dineroEntregadoTarjeta) : (Number(dineroEntregado) + Number(dineroEntregadoTarjeta) - props.precioFinal);
 
     const SetDineroClienteEfectivo = (dineroDelCliente: string) => {
@@ -108,13 +106,14 @@ export const ModalPagar = (props: {
                                 <div>
                                     <div className="text-2xl font-semibold">Datos cliente</div>
                                     <hr />
-                                    <div className="text-lg text-left px-2 pt-4">Fecha: {fechaActual} </div>
-                                    <div className="text-lg text-left px-2">Hora: {horaActual} </div>
-                                    <div className="flex justify-between mt-4 px-2 text-lg text-center">
-                                        <AutoComplete className="text-left text-lg" sugerencias={["Luca Lee", "Simone", "Miguel"]} nombreInput="Cliente" placeholder="General" />
+                                    <div className="flex flex-col justify-between mt-4 px-2 text-lg text-center">
+                                        {/* <AutoComplete className="text-left text-lg" sugerencias={["Luca Lee", "Simone", "Miguel"]} nombreInput="Cliente" placeholder="General" />
+                                         */}
+                                        <label className="text-left">Seleccionar cliente</label>
+                                        <Dropdown elementos={Clientes.map((c) => { return c.nombre })} selectedElemento={ClienteActual.nombre} setElemento={SetClienteActual} />
                                     </div>
                                 </div>
-                                <div className="grid grid-cols-2 py-6 px-2 gap-10 justify-items-start w-full">
+                                <div className="flex flex-col px-2 py-2 justify-items-start w-full">
                                     <div className="text-left">
                                         <h1 className="text-lg">Nombre completo</h1>
                                         <Input placeholder="Nombre del cliente" />

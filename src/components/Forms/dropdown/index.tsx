@@ -9,7 +9,7 @@ const Dropdown = (props: { titulo?: string, elementos: string[] | undefined, sel
         <div className="w-64">
             <div className="mt-1 relative">
                 {props.titulo}
-                <button type="button" className="relative w-full bg-white rounded-md shadow-lg pl-3 pr-10 py-3 text-left cursor-default focus:outline-none focus:ring-1 focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
+                <button type="button" className="relative w-full bg-white border rounded-md shadow-lg pl-3 pr-10 py-3 text-left cursor-default focus:outline-none focus:ring-1 focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
                     onClick={() => { setOpen(!open) }}>
                     <span className="flex items-center">
                         <span className="ml-3 block truncate">

@@ -45,7 +45,7 @@ export const Resumen = (props: {
     productosVendidos: ProductoVendido[], setProductosCarrito: Function,
     pagoCliente: CustomerPaymentInformation, handleCloseResumen: Function, handleCloseAll: Function
 }) => {
-    const [addVentasToDB, { data, loading, error }] = useMutation(ADD_SALE);
+    const [addVentasToDB, { loading, error }] = useMutation(ADD_SALE);
     const { Clientes, } = useClientContext();
 
     let date = new Date();
@@ -87,7 +87,6 @@ export const Resumen = (props: {
         if (!error && !loading) {
             props.handleCloseAll();
             props.setProductosCarrito([]);
-
         }
         else {
             console.log("Error al realizar la venta");
@@ -97,35 +96,32 @@ export const Resumen = (props: {
     return (
         <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} >
             <Backdrop onClick={() => { props.handleCloseResumen() }} >
-                <motion.div className="m-auto py-2 flex flex-col items-center bg-white rounded-2xl"
+                <motion.div className="py-2 flex flex-col items-center bg-white rounded-2xl"
                     onClick={(e) => e.stopPropagation()}
                     variants={In}
                     initial="hidden"
                     animate="visible"
                     exit="exit"
                 >
-                    <div className="sm:w-96 w-96 rounded-3xl bg-white z-10 self">
-                        <div id="receipt-content" className="text-left w-full text-sm p-6 overflow-auto">
-                            <div className="text-center">
-                                <h2 className="text-xl font-semibold">ERPWeb</h2>
-                                <p> Resumen de la compra </p>
-                            </div>
-                            <div className="grid grid-cols-2 grid-rows-1 mt-4 text-xs text-center justify-center">
-                                {/* <div className="text-left relative ">Cliente: {props.pagoCliente.cliente.nombre} </div> */}
-                                <div className="text-right relative text-black"> {fechaActual} </div>
-                            </div>
-                            <hr className="my-2" />
-                            <div>
-                                <table className="w-full text-xs">
-                                    <thead>
-                                        <tr>
-                                            <th className="py-1 w-1/12 text-center">#</th>
-                                            <th className="py-1 text-left">Producto</th>
-                                            <th className="py-1 w-2/12 text-center">Cantidad</th>
-                                            <th className="py-1 w-3/12 text-right">Total</th>
+                    <div className="w-96 max-h-96 rounded-3xl bg-white z-10 ">
+                        <h2 className="text-xl font-semibold text-center py-4">ERPWeb</h2>
+                        <div className="flex justify-evenly text-sm">
+                            <div className="text-left relative ">Cliente: {props.pagoCliente.cliente.nombre} </div>
+                            <div className="text-right relative text-black"> {fechaActual} </div>
+                        </div>
+                        <div id="receipt-content" className="text-left w-full max-h-96 text-sm p-6 ">
+                            <hr />
+                            <div className="container">
+                                <table className="w-full h-full text-xs ">
+                                    <thead className="flex w-full py-1">
+                                        <tr className="flex w-full justify-around">
+                                            <th className="w-1/4 text-left">#</th>
+                                            <th className="w-1/4 text-left">Producto</th>
+                                            <th className="w-1/4 text-center">Cantidad</th>
+                                            <th className="w-1/4 text-right">Total</th>
                                         </tr>
                                     </thead>
-                                    <tbody className="h-full overflow-y-auto">
+                                    <tbody className="flex flex-col gap-2 w-full h-full bg-red-500 overflow-clip">
                                         {
                                             props.productosVendidos.map((prod, index) => {
                                                 if (prod.dto) {
@@ -139,19 +135,19 @@ export const Resumen = (props: {
                                     </tbody>
                                 </table>
                             </div>
-                            <hr className="my-2" />
-                            <div className="flex justify-between">
-                                <div className="font-semibold self-center">
-                                    {props.pagoCliente.tipo}
-                                </div>
-                                <div>
-                                    <div>
-                                        Total: {props.pagoCliente.precioTotal.toFixed(2)}€
-                                    </div>
-                                    <div className="">
-                                        Cambio: {props.pagoCliente.cambio.toFixed(2)}€
-                                    </div>
-                                </div>
+                            <hr />
+                        </div>
+                    </div>
+                    <div className="flex justify-evenly w-full h-full">
+                        <div className="font-semibold self-center">
+                            {props.pagoCliente.tipo}
+                        </div>
+                        <div className="text-sm">
+                            <div>
+                                Total: {props.pagoCliente.precioTotal.toFixed(2)}€
+                            </div>
+                            <div>
+                                Cambio: {props.pagoCliente.cambio.toFixed(2)}€
                             </div>
                         </div>
                     </div>
@@ -176,11 +172,19 @@ export const Resumen = (props: {
 
 const GenerarFilaProducto = (props: { numFila: number, nombreProducto: string, cantidad: number, precio: number }) => {
     return (
-        <tr>
-            <td className="py-1 w-1/12 text-center">{props.numFila}</td>
-            <td className="py-1 text-left">{props.nombreProducto}</td>
-            <td className="py-1 w-2/12 text-center">{props.cantidad}</td>
-            <td className="py-1 w-3/12 text-right">{(props.precio * props.cantidad).toFixed(2)}€</td>
+        <tr className="flex w-full">
+            <td className="w-1/4 text-left">
+                {props.numFila}
+            </td>
+            <td className="w-1/4 text-left">
+                {props.nombreProducto}
+            </td>
+            <td className="w-1/4 text-center">
+                {props.cantidad}
+            </td>
+            <td className="w-1/4 text-right">
+                {(props.precio * props.cantidad).toFixed(2)}€
+            </td>
         </tr>
     );
 }
