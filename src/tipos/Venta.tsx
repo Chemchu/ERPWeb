@@ -1,3 +1,5 @@
+import { Cliente } from "./Cliente";
+import { Empleado } from "./Empleado";
 import { ProductoVendido } from "./ProductoVendido";
 
 export type Venta = {
@@ -7,8 +9,8 @@ export type Venta = {
     dineroEntregadoTarjeta: number,
     precioVentaTotal: number,
     cambio: number,
-    clienteID: string,
-    vendidoPor: string,
+    cliente: Cliente,
+    vendidoPor: Empleado,
     modificadoPor: string,
     tipo: string,
     descuentoEfectivo: number,

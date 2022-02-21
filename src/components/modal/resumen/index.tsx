@@ -1,8 +1,11 @@
 import { gql, useMutation } from "@apollo/client";
 import { motion } from "framer-motion";
 import Cookies from "js-cookie";
+import { useEffect } from "react";
 import useClientContext from "../../../context/clientContext";
+import useEmpleadoContext from "../../../context/empleadoContext";
 import { CustomerPaymentInformation } from "../../../tipos/CustomerPayment";
+import { Empleado } from "../../../tipos/Empleado";
 import { ProductoVendido } from "../../../tipos/ProductoVendido";
 import { parseJwt } from "../../../utils/parseJwt";
 import { ADD_SALE } from "../../../utils/querys";
@@ -39,49 +42,74 @@ export const Resumen = (props: {
 }) => {
     const [addVentasToDB, { loading, error }] = useMutation(ADD_SALE);
     const { Clientes, } = useClientContext();
+    const { Empleado, SetEmpleado } = useEmpleadoContext();
 
-    let date = new Date();
-    const fechaActual = `${date.getDate().toLocaleString('es-ES', { minimumIntegerDigits: 2 })}/${parseInt(date.getUTCMonth().toLocaleString('es-ES', { minimumIntegerDigits: 2 })) + 1}/${date.getFullYear()} - ${date.getHours().toLocaleString('es-ES', { minimumIntegerDigits: 2 })}:${date.getMinutes().toLocaleString('es-ES', { minimumIntegerDigits: 2 })}:${date.getSeconds().toLocaleString('es-ES', { minimumIntegerDigits: 2 })}`;
+    useEffect(() => {
+        const GetEmpleadoFromDB = async () => {
+            if (Empleado._id) { return; }
+
+            const authCookie = Cookies.get("authorization");
+            if (!authCookie) { return; }
+
+            const jwt = parseJwt(authCookie);
+            const fetchRes = await fetch(`/api/empleado/${jwt._id}`);
+
+            const empleadoJson = await fetchRes.json();
+            SetEmpleado(empleadoJson.empleado);
+        }
+
+        GetEmpleadoFromDB();
+    }, [])
+
 
     const addSale = async () => {
-        const authCookie = Cookies.get("authorization")
-        if (!authCookie) { return; }
-
-        let cliente;
-
-        if (!props.pagoCliente.cliente) {
-            cliente = Clientes.find((c) => c.nombre === "General");
-        }
-        else {
-            cliente = props.pagoCliente.cliente;
-        }
-
-        const jwt = parseJwt(authCookie);
-        await addVentasToDB({
-            variables: {
-                "fields": {
-                    "productos": props.productosVendidos,
-                    "dineroEntregadoEfectivo": props.pagoCliente.pagoEnEfectivo,
-                    "dineroEntregadoTarjeta": props.pagoCliente.pagoEnTarjeta,
-                    "precioVentaTotal": props.pagoCliente.precioTotal,
-                    "tipo": props.pagoCliente.tipo,
-                    "cambio": props.pagoCliente.cambio,
-                    "cliente": cliente?._id,
-                    "vendidoPor": jwt._id,
-                    "modificadoPor": jwt._id,
-                    "descuentoEfectivo": props.pagoCliente.dtoEfectivo || 0,
-                    "descuentoPorcentaje": props.pagoCliente.dtoPorcentaje || 0,
-                    "tpv": jwt.TPV
-                }
+        try {
+            let cliente;
+            if (!props.pagoCliente.cliente) {
+                cliente = Clientes.find((c) => c.nombre === "General");
             }
-        });
+            else {
+                cliente = props.pagoCliente.cliente;
+            }
 
-        if (!error && !loading) {
-            props.handleCloseAll();
-            props.setProductosCarrito([]);
+            const authCookie = Cookies.get("authorization");
+            if (!authCookie) { return; }
+
+            const jwt = parseJwt(authCookie);
+            await addVentasToDB({
+                variables: {
+                    "fields": {
+                        "productos": props.productosVendidos,
+                        "dineroEntregadoEfectivo": props.pagoCliente.pagoEnEfectivo,
+                        "dineroEntregadoTarjeta": props.pagoCliente.pagoEnTarjeta,
+                        "precioVentaTotal": props.pagoCliente.precioTotal,
+                        "tipo": props.pagoCliente.tipo,
+                        "cambio": props.pagoCliente.cambio,
+                        "cliente": cliente,
+                        "vendidoPor": Empleado,
+                        "modificadoPor": Empleado,
+                        "descuentoEfectivo": props.pagoCliente.dtoEfectivo || 0,
+                        "descuentoPorcentaje": props.pagoCliente.dtoPorcentaje || 0,
+                        "tpv": jwt.TPV
+                    }
+                }
+            });
+
+            console.log(error);
+
+            if (!error && !loading) {
+                props.handleCloseAll();
+                props.setProductosCarrito([]);
+            }
+            else {
+                console.log("Error al realizar la venta");
+            }
         }
-        else {
-            console.log("Error al realizar la venta");
+        catch (err) {
+            console.log(err);
+
+            // Mostrar mensaje de error
+
         }
     }
 
@@ -100,7 +128,6 @@ export const Resumen = (props: {
                             <h2 className="text-xl font-semibold text-center py-4">ERPWeb</h2>
                             <div className="flex justify-evenly text-sm">
                                 <div className="text-left relative ">Cliente: {props.pagoCliente.cliente.nombre} </div>
-                                <div className="text-right relative text-black"> {fechaActual} </div>
                             </div>
                         </div>
                         <div id="receipt-content" className="text-left w-full h-5/6 text-sm p-4">

@@ -252,6 +252,7 @@ const SidebarDerecho = React.memo((props: { todosProductos: Producto[], producto
     }
 
     // Se accede a la lista de productos actualizada usando "functional state update" de react
+    // Es para evitar muchos rerenders
     const SetPropiedadProd = useCallback((idProd: string, cantidad: string, dto: string) => {
         if (!IsPositiveIntegerNumber(cantidad.toString())) { return; }
         if (!IsPositiveFloatingNumber(dto.toString())) { return; }

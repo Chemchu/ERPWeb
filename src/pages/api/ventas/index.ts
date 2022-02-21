@@ -15,7 +15,40 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
                 query: gql`
                 query Ventas($limit: Int)  {
                     ventas(limit: $limit) {
-                        ${body.neededValues}
+                        _id
+                        productos {
+                            _id
+                            nombre
+                            precioVenta
+                            ean
+                            cantidadVendida
+                            createdAt
+                            updatedAt
+                            familia
+                        }
+                        dineroEntregadoEfectivo
+                        dineroEntregadoTarjeta
+                        precioVentaTotal
+                        cambio
+                        cliente {
+                            _id
+                            nombre
+                            nif
+                            calle
+                            cp
+                        }
+                        vendidoPor {
+                            _id
+                            nombre
+                            apellidos
+                            rol
+                            email
+                        }
+                        tipo
+                        descuentoEfectivo
+                        descuentoPorcentaje
+                        createdAt
+                        updatedAt
                     }
                 }
                 `,
@@ -27,21 +60,17 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
 
         if (fetchResult) {
             let vParsed = fetchResult.data.ventas;
+            for (var i = 0; i < fetchResult.data.ventas.length; i++) {
+                // Transforma Epoch a una fecha legible
+                let d1 = new Date(0);
+                let d2 = new Date(0);
+                d1.setUTCMilliseconds(fetchResult.data.ventas[i].createdAt);
+                d2.setUTCMilliseconds(fetchResult.data.ventas[i].updatedAt);
 
-            // console.log(vParsed.updatedAt);
+                vParsed[i].createdAt = d1.toLocaleString();
+                vParsed[i].updatedAt = d2.toLocaleString();
+            }
 
-            // for (var i = 0; i < fetchResult.data.ventas.length; i++) {
-            //     // Transforma Epoch a una fecha legible
-            //     let d1 = new Date(0);
-            //     let d2 = new Date(0);
-            //     d1.setSeconds(fetchResult.data.ventas[i].createdAt);
-            //     d2.setSeconds(fetchResult.data.ventas[i].updatedAt);
-
-            //     vParsed[i].createdAt = d1.toLocaleString();
-            //     vParsed[i].updatedAt = d2.toLocaleString();
-            // }
-
-            // console.log(vParsed);
             return res.status(200).json({ message: `Lista de clientes encontrada`, data: JSON.stringify(vParsed) });
         }
 

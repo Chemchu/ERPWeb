@@ -40,7 +40,6 @@ function CreateClient(c: any): Cliente | undefined {
             nif: c.nif,
             calle: c.calle ? c.calle : "",
             cp: c.cp ? c.cp : "",
-            telefono: c.telefono ? c.telefono : ""
         } as Cliente
 
         return client;
@@ -59,9 +58,9 @@ function CreateSale(s: any): Venta | undefined {
             dineroEntregadoTarjeta: s.dineroEntregadoTarjeta,
             precioVentaTotal: s.precioVentaTotal,
             cambio: s.cambio,
-            clienteID: s.cliente || "Cliente Tester",
-            vendidoPor: s.vendidoPor || "Tester",
-            modificadoPor: s.modificadoPor || "Tester",
+            cliente: s.cliente,
+            vendidoPor: s.vendidoPor,
+            modificadoPor: s.modificadoPor,
             tipo: s.tipo,
             descuentoEfectivo: s.descuentoEfectivo || 0,
             descuentoPorcentaje: s.descuentoPorcentaje || 0,

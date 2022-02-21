@@ -8,6 +8,7 @@ import { ProductContextProvider } from "../context/productContext";
 import { ClienteContextProvider } from "../context/clientContext";
 import { SpinnerCircular, SpinnerDotted } from "spinners-react";
 import { ProductCarritoContextProvider } from "../context/productosEnCarritoContext";
+import { EmpleadoContextProvider } from "../context/empleadoContext";
 
 const variants = {
     initial: {
@@ -39,27 +40,29 @@ const DashboardLayout = React.memo(({ children }: { children: React.ReactNode })
     const router = useRouter();
 
     return (
-        <VentasContextProvider>
-            <ProductContextProvider>
-                <ProductCarritoContextProvider>
-                    <ClienteContextProvider>
-                        {
-                            <main className="bg-gray-100 dark:bg-gray-800 h-full w-full overflow-hidden" >
-                                <NextNProgress />
-                                <div className="flex items-start w-full h-full justify-start">
-                                    <SideBar isCollapsed={isSidebarCollapsed} setCollapsed={setSidebarCollapsed} IndexSeleccionado={IndexSidebar} />
-                                    <AnimatePresence exitBeforeEnter>
-                                        <motion.div key={router.route} className="w-full h-full" initial={variants.initial} animate={variants.animate} exit={variants.exit}>
-                                            {children}
-                                        </motion.div>
-                                    </AnimatePresence>
-                                </div>
-                            </main >
-                        }
-                    </ClienteContextProvider>
-                </ProductCarritoContextProvider>
-            </ProductContextProvider>
-        </VentasContextProvider>
+        <EmpleadoContextProvider>
+            <VentasContextProvider>
+                <ProductContextProvider>
+                    <ProductCarritoContextProvider>
+                        <ClienteContextProvider>
+                            {
+                                <main className="bg-gray-100 dark:bg-gray-800 h-full w-full overflow-hidden" >
+                                    <NextNProgress />
+                                    <div className="flex items-start w-full h-full justify-start">
+                                        <SideBar isCollapsed={isSidebarCollapsed} setCollapsed={setSidebarCollapsed} IndexSeleccionado={IndexSidebar} />
+                                        <AnimatePresence exitBeforeEnter>
+                                            <motion.div key={router.route} className="w-full h-full" initial={variants.initial} animate={variants.animate} exit={variants.exit}>
+                                                {children}
+                                            </motion.div>
+                                        </AnimatePresence>
+                                    </div>
+                                </main >
+                            }
+                        </ClienteContextProvider>
+                    </ProductCarritoContextProvider>
+                </ProductContextProvider>
+            </VentasContextProvider>
+        </EmpleadoContextProvider>
     );
 });
 

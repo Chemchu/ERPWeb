@@ -6,6 +6,9 @@ import { Venta } from '../../../tipos/Venta';
 import { CreateSalesList } from '../../../utils/typeCreator';
 
 const Ventas = () => {
+    const [Ventas, setVentas] = useState<Venta[]>([]);
+    const [Clientes, setClientes] = useState<Cliente[]>([]);
+
     useEffect(() => {
         const GetAllData = async () => {
             const vRes = await fetch('/api/ventas', {
@@ -13,36 +16,7 @@ const Ventas = () => {
                 method: 'POST',
                 body: JSON.stringify(
                     {
-                        limit: 3000,
-                        neededValues: `_id
-                                        productos {
-                                        _id
-                                        nombre
-                                        precioVenta
-                                        ean
-                                        cantidadVendida
-                                        createdAt
-                                        updatedAt
-                                        familia
-                                        }
-                                        dineroEntregadoEfectivo
-                                        dineroEntregadoTarjeta
-                                        precioVentaTotal
-                                        cambio
-                                        cliente {
-                                        _id
-                                        nombre
-                                        }
-                                        vendidoPor {
-                                        _id
-                                        nombre
-                                        apellidos
-                                        }
-                                        tipo
-                                        descuentoEfectivo
-                                        descuentoPorcentaje
-                                        createdAt
-                                        updatedAt`
+                        limit: 3000
                     }
                 )
             });
@@ -53,9 +27,6 @@ const Ventas = () => {
 
         GetAllData();
     }, []);
-
-    const [Ventas, setVentas] = useState<Venta[]>([]);
-    const [Clientes, setClientes] = useState<Cliente[]>([]);
 
     return (
         <SalesPage ventas={Ventas} clientes={Clientes} />
