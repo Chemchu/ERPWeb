@@ -14,11 +14,7 @@ const Ventas = () => {
             const vRes = await fetch('/api/ventas', {
                 headers: { 'Content-type': 'application/json' },
                 method: 'POST',
-                body: JSON.stringify(
-                    {
-                        limit: 3000
-                    }
-                )
+                body: JSON.stringify({ limit: 3000 })
             });
 
             const ventas = await vRes.json();

@@ -79,7 +79,6 @@ const SalesPage = (props: { ventas: Venta[], clientes: Cliente[] }) => {
                     </div>
                 </div>
                 <div className="bg-white flex flex-col border-b-4 overflow-scroll overflow-x-hidden">
-                    {console.log(props.ventas)}
                     {
                         props.ventas.length <= 0 ?
                             arrayNum.map((e, i) => <SkeletonCard key={`skeletonprops.ventas-${i}`} />)
@@ -102,6 +101,9 @@ const SalesPage = (props: { ventas: Venta[], clientes: Cliente[] }) => {
 }
 
 const FilaVenta = (props: { venta: Venta }) => {
+    let fecha = new Date(0);
+    fecha.setUTCMilliseconds(Number(props.venta.createdAt));
+
     return (
         <div className="grid grid-cols-4 w-full justify-evenly gap-x-6 border-t">
             <div className="px-5 py-5 border-gray-200 text-sm">
@@ -111,7 +113,7 @@ const FilaVenta = (props: { venta: Venta }) => {
             </div>
             <div className="py-5 border-gray-200 text-sm">
                 <p className="text-gray-900 whitespace-no-wrap">
-                    {props.venta.createdAt}
+                    {fecha.toLocaleString()}
                 </p>
             </div>
             <div className="py-5 border-gray-200 text-sm">

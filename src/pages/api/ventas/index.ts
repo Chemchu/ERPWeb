@@ -60,17 +60,6 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
 
         if (fetchResult) {
             let vParsed = fetchResult.data.ventas;
-            for (var i = 0; i < fetchResult.data.ventas.length; i++) {
-                // Transforma Epoch a una fecha legible
-                let d1 = new Date(0);
-                let d2 = new Date(0);
-                d1.setUTCMilliseconds(fetchResult.data.ventas[i].createdAt);
-                d2.setUTCMilliseconds(fetchResult.data.ventas[i].updatedAt);
-
-                vParsed[i].createdAt = d1.toLocaleString();
-                vParsed[i].updatedAt = d2.toLocaleString();
-            }
-
             return res.status(200).json({ message: `Lista de clientes encontrada`, data: JSON.stringify(vParsed) });
         }
 

@@ -56,7 +56,6 @@ export const Resumen = (props: {
             const fetchRes = await fetch(`/api/empleado/${jwt._id}`);
 
             const empleadoJson = await fetchRes.json();
-
             SetEmpleado(CreateEmployee(empleadoJson.empleado));
         }
 
@@ -78,23 +77,6 @@ export const Resumen = (props: {
             if (!authCookie) { return; }
 
             const jwt = parseJwt(authCookie);
-            const v = {
-                productos: props.productosVendidos,
-                dineroEntregadoEfectivo: props.pagoCliente.pagoEnEfectivo,
-                dineroEntregadoTarjeta: props.pagoCliente.pagoEnTarjeta,
-                precioVentaTotal: props.pagoCliente.precioTotal,
-                tipo: props.pagoCliente.tipo,
-                cambio: props.pagoCliente.cambio,
-                cliente: cliente,
-                vendidoPor: Empleado,
-                modificadoPor: Empleado,
-                descuentoEfectivo: props.pagoCliente.dtoEfectivo || 0,
-                descuentoPorcentaje: props.pagoCliente.dtoPorcentaje || 0,
-                tpv: jwt.TPV
-            }
-            console.log(v);
-
-
             await addVentasToDB({
                 variables: {
                     "fields": {
@@ -114,8 +96,6 @@ export const Resumen = (props: {
                 }
             });
 
-            console.log(error);
-
             if (!error && !loading) {
                 props.handleCloseAll();
                 props.setProductosCarrito([]);
@@ -126,9 +106,6 @@ export const Resumen = (props: {
         }
         catch (err) {
             console.log(err);
-
-            // Mostrar mensaje de error
-
         }
     }
 
