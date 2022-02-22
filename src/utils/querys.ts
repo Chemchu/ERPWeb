@@ -52,3 +52,57 @@ export const QUERY_CLIENTS = gql`
         }
     }
 `;
+
+export const QUERY_TPV_SALES = gql`
+    query Ventas {
+        ventas {
+            _id
+            dineroEntregadoEfectivo
+            dineroEntregadoTarjeta
+            precioVentaTotal
+            cambio
+            tipo
+            productos {
+                _id
+                nombre
+                proveedor
+                familia
+                precioVenta
+                precioCompra
+                iva
+                margen
+                ean
+                cantidadVendida
+            }
+            cliente {
+                _id
+                nif
+                nombre
+                calle
+                cp
+            }
+            vendidoPor {
+                _id
+                nombre
+                apellidos
+                email
+                rol
+            }
+            modificadoPor {
+                _id
+                nombre
+                apellidos
+                email
+                rol
+            }
+        }
+    }
+`;
+
+export const OCUPY_TPV = gql`
+        mutation OcupyTPV($idEmpleado: ID!, $idTpv: ID!) {
+            ocupyTPV(idEmpleado: $idEmpleado, idTPV: $idTpv) {
+                token
+            }
+        }
+    `;

@@ -1,25 +1,20 @@
-import { gql, useMutation } from "@apollo/client";
+import { useMutation } from "@apollo/client";
 import { motion } from "framer-motion";
 import Cookies from "js-cookie";
 import Router from "next/router";
 import { useEffect, useState } from "react";
-import { parseJwt } from "../../../utils/parseJwt";
+import useJwt from "../../../../hooks/jwt";
+import { OCUPY_TPV } from "../../../utils/querys";
 import { ValidatePositiveFloatingNumber } from "../../../utils/validator";
 import Dropdown from "../../Forms/dropdown";
 import { Backdrop } from "../backdrop";
 
-const TpvOpenModal = () => {
-    const OCUPY_TPV = gql`
-        mutation OcupyTPV($idEmpleado: ID!, $idTpv: ID!) {
-            ocupyTPV(idEmpleado: $idEmpleado, idTPV: $idTpv) {
-                token
-            }
-        }
-    `;
+const TpvOpenModal = (props: { setEmpleadoUsandoTPV: Function }) => {
     const [tpvs, setTpvs] = useState<Map<string, string>>(new Map());
     const [currentTpv, setCurrentTpv] = useState<string>();
     const [cajaInicial, setCajaInicial] = useState<string>('0');
     const [ocuparTpv, { data, error }] = useMutation(OCUPY_TPV);
+    const jwt = useJwt();
 
     useEffect(() => {
         const TpvsAbiertas = async () => {
@@ -45,18 +40,24 @@ const TpvOpenModal = () => {
     }, [tpvs]);
 
     const AbrirTPV = async () => {
-        const auth = Cookies.get("authorization");
-        if (!auth) { return; }
-
-        const payload = parseJwt(auth);
-
-        ocuparTpv({
-            variables: {
-                "idEmpleado": payload._id,
-                "idTpv": payload.TPV
+        let tpvID: string = "undefined";
+        tpvs.forEach((value: string, key: string) => {
+            if (value === currentTpv) {
+                tpvID = key;
             }
         });
 
+        ocuparTpv({
+            variables: {
+                "idEmpleado": jwt._id,
+                "idTpv": tpvID
+            }
+        });
+    }
+
+    if (!error && data) {
+        Cookies.set("authorization", data.ocupyTPV.token)
+        props.setEmpleadoUsandoTPV(true);
     }
 
     return (

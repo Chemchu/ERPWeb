@@ -2,12 +2,12 @@ import { gql, useMutation } from "@apollo/client";
 import { motion } from "framer-motion";
 import Cookies from "js-cookie";
 import { useEffect } from "react";
+import useJwt from "../../../../hooks/jwt";
 import useClientContext from "../../../context/clientContext";
 import useEmpleadoContext from "../../../context/empleadoContext";
 import { CustomerPaymentInformation } from "../../../tipos/CustomerPayment";
 import { Empleado } from "../../../tipos/Empleado";
 import { ProductoVendido } from "../../../tipos/ProductoVendido";
-import { parseJwt } from "../../../utils/parseJwt";
 import { ADD_SALE } from "../../../utils/querys";
 import { CreateEmployee } from "../../../utils/typeCreator";
 import { Backdrop } from "../backdrop";
@@ -44,15 +44,11 @@ export const Resumen = (props: {
     const [addVentasToDB, { loading, error }] = useMutation(ADD_SALE);
     const { Clientes, } = useClientContext();
     const { Empleado, SetEmpleado } = useEmpleadoContext();
+    const jwt = useJwt();
 
     useEffect(() => {
         const GetEmpleadoFromDB = async () => {
             if (Empleado._id) { return; }
-
-            const authCookie = Cookies.get("authorization");
-            if (!authCookie) { return; }
-
-            const jwt = parseJwt(authCookie);
             const fetchRes = await fetch(`/api/empleado/${jwt._id}`);
 
             const empleadoJson = await fetchRes.json();
@@ -73,10 +69,6 @@ export const Resumen = (props: {
                 cliente = props.pagoCliente.cliente;
             }
 
-            const authCookie = Cookies.get("authorization");
-            if (!authCookie) { return; }
-
-            const jwt = parseJwt(authCookie);
             await addVentasToDB({
                 variables: {
                     "fields": {

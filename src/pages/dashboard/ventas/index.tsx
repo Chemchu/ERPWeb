@@ -7,7 +7,7 @@ import { CreateSalesList } from '../../../utils/typeCreator';
 
 const Ventas = () => {
     const [Ventas, setVentas] = useState<Venta[]>([]);
-    const [Clientes, setClientes] = useState<Cliente[]>([]);
+    const [Clientes,] = useState<Cliente[]>([]);
 
     useEffect(() => {
         const GetAllData = async () => {

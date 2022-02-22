@@ -1,7 +1,6 @@
 import { AnimatePresence, motion } from "framer-motion";
 import React, { useCallback, useEffect, useState } from "react";
 import { ApplyDtoCash, ApplyDtoPercentage, IsPositiveFloatingNumber, IsPositiveIntegerNumber, ValidatePositiveFloatingNumber, ValidateSearchString } from "../../../utils/validator";
-import { Cliente } from "../../../tipos/Cliente";
 import { CustomerPaymentInformation } from "../../../tipos/CustomerPayment";
 import { Producto } from "../../../tipos/Producto";
 import { TipoCobro } from "../../../tipos/Enums/TipoCobro";
@@ -12,6 +11,7 @@ import SkeletonProductCard from "../../Skeletons/skeletonProductCard";
 import ModalPagar from "../../modal/pagar";
 import Resumen from "../../modal/resumen";
 import useClientContext from "../../../context/clientContext";
+import CerrarCaja from "../../modal/cerrarCaja";
 
 const TPV = (props: { productos: Producto[], serverOperativo: boolean }) => {
     const [Busqueda, setBusqueda] = useState<string>("");
@@ -242,6 +242,7 @@ const SidebarDerecho = React.memo((props: { todosProductos: Producto[], producto
 
     const [showModalPagar, setPagarModal] = useState(false);
     const [showModalCobro, setCobroModal] = useState(false);
+    const [showModalCerrarCaja, setCerrarCajaModal] = useState(false);
 
     const cerrarModal = () => {
         setPagarModal(false);
@@ -338,7 +339,7 @@ const SidebarDerecho = React.memo((props: { todosProductos: Producto[], producto
                                     </svg>
                                 </button>
 
-                                <button className="flex gap-2">
+                                <button className="flex gap-2" onClick={() => { setCerrarCajaModal(true) }}>
                                     Cerrar caja
                                     <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
@@ -449,6 +450,7 @@ const SidebarDerecho = React.memo((props: { todosProductos: Producto[], producto
                 <AnimatePresence initial={false} exitBeforeEnter={true}>
                     {showModalPagar && <ModalPagar handleCerrarModal={cerrarModal} productosComprados={props.productosEnCarrito} dtoEfectivo={Number(dtoEfectivo)} dtoPorcentaje={Number(dtoPorcentaje)} precioFinal={precioTotal} setProductosCarrito={props.setProductosCarrito} />}
                     {showModalCobro && <Resumen pagoCliente={pagoRapido} handleCloseResumen={cerrarModalResumen} handleCloseAll={cerrarModalResumen} productosVendidos={props.productosEnCarrito} setProductosCarrito={props.setProductosCarrito} />}
+                    {showModalCerrarCaja && <CerrarCaja handleClose={setCerrarCajaModal} />}
                 </AnimatePresence>
             </div>
         </div>

@@ -8,14 +8,14 @@ import { Producto } from "../../../tipos/Producto";
 import { Cliente } from "../../../tipos/Cliente";
 import { CreateClientList, CreateProductList } from "../../../utils/typeCreator";
 import TpvOpenModal from "../../../components/modal/tpvOpen";
-import { parseJwt } from "../../../utils/parseJwt";
-import Cookies from "js-cookie";
+import useJwt from "../../../../hooks/jwt";
 
 const PuntoDeVenta = () => {
     const { Productos, SetProductos } = useProductContext();
     const { SetClientes } = useClientContext();
     const [ServerUp, setServerUp] = useState<boolean>(true);
-    const authCookie = Cookies.get("authorization");
+    const jwt = useJwt();
+    const [empleadoUsandoTPV, setEmpleadoUsandoTPV] = useState<boolean>(jwt.TPV !== undefined)
 
     useEffect(() => {
         async function GetAllData() {
@@ -79,7 +79,7 @@ const PuntoDeVenta = () => {
     return (
         <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}>
             {
-                authCookie && !parseJwt(authCookie).TPV && <TpvOpenModal />
+                !empleadoUsandoTPV && <TpvOpenModal setEmpleadoUsandoTPV={setEmpleadoUsandoTPV} />
             }
             <TPV productos={Productos} serverOperativo={ServerUp} />
         </motion.div>

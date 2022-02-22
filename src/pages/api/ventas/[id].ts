@@ -31,40 +31,6 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
     }
 }
 
-// const AddSale = async (req: NextApiRequest, res: NextApiResponse) => {
-//     try {
-//         const salesValues = req.body;
-//         const [addVentasToDB, { data, loading, error }] = useMutation(ADD_SALE,
-//             {
-//                 variables: {
-//                     "fields": {
-//                         "productos": salesValues.productos,
-//                         "dineroEntregadoEfectivo": salesValues.dineroEntregadoEfectivo,
-//                         "dineroEntregadoTarjeta": salesValues.dineroEntregadoTarjeta,
-//                         "precioVentaTotal": salesValues.precioVentaTotal,
-//                         "cambio": salesValues.cambio,
-//                         "cliente": salesValues.cliente,
-//                         "vendidoPor": salesValues.vendidoPor,
-//                         "modificadoPor": salesValues.modificadoPor,
-//                         "tipo": salesValues.tipo,
-//                         "descuentoEfectivo": salesValues.descuentoEfectivo,
-//                         "descuentoTarjeta": salesValues.descuentoTarjeta
-//                     }
-//                 }
-//             });
-
-//         if (fetchResult.data.success) {
-//             return res.status(200).json({ message: `Lista de ventas encontrada` });
-//         }
-
-//         return res.status(300).json({ message: `Fallo al pedir la lista de ventas` });
-//     }
-//     catch (err) {
-//         console.log(err);
-//         return res.status(500).json({ message: `Error: ${err}` });
-//     }
-// }
-
 const GetSale = async (req: NextApiRequest, res: NextApiResponse) => {
     try {
         const reqCredentials = req.body;
