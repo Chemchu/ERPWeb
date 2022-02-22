@@ -2,7 +2,7 @@ import { gql, useMutation } from "@apollo/client";
 import { motion } from "framer-motion";
 import Cookies from "js-cookie";
 import { useEffect } from "react";
-import useJwt from "../../../../hooks/jwt";
+import useJwt from "../../../hooks/jwt";
 import useClientContext from "../../../context/clientContext";
 import useEmpleadoContext from "../../../context/empleadoContext";
 import { CustomerPaymentInformation } from "../../../tipos/CustomerPayment";

@@ -8,7 +8,7 @@ import { Producto } from "../../../tipos/Producto";
 import { Cliente } from "../../../tipos/Cliente";
 import { CreateClientList, CreateProductList } from "../../../utils/typeCreator";
 import TpvOpenModal from "../../../components/modal/tpvOpen";
-import useJwt from "../../../../hooks/jwt";
+import useJwt from "../../../hooks/jwt";
 
 const PuntoDeVenta = () => {
     const { Productos, SetProductos } = useProductContext();

@@ -3,7 +3,7 @@ import { motion } from "framer-motion";
 import Cookies from "js-cookie";
 import Router from "next/router";
 import { useEffect, useState } from "react";
-import useJwt from "../../../../hooks/jwt";
+import useJwt from "../../../hooks/jwt";
 import { OCUPY_TPV } from "../../../utils/querys";
 import { ValidatePositiveFloatingNumber } from "../../../utils/validator";
 import Dropdown from "../../Forms/dropdown";
