@@ -9,6 +9,7 @@ import { Empleado } from "../../../tipos/Empleado";
 import { ProductoVendido } from "../../../tipos/ProductoVendido";
 import { parseJwt } from "../../../utils/parseJwt";
 import { ADD_SALE } from "../../../utils/querys";
+import { CreateEmployee } from "../../../utils/typeCreator";
 import { Backdrop } from "../backdrop";
 
 const In = {
@@ -55,7 +56,8 @@ export const Resumen = (props: {
             const fetchRes = await fetch(`/api/empleado/${jwt._id}`);
 
             const empleadoJson = await fetchRes.json();
-            SetEmpleado(empleadoJson.empleado);
+
+            SetEmpleado(CreateEmployee(empleadoJson.empleado));
         }
 
         GetEmpleadoFromDB();
@@ -76,6 +78,23 @@ export const Resumen = (props: {
             if (!authCookie) { return; }
 
             const jwt = parseJwt(authCookie);
+            const v = {
+                productos: props.productosVendidos,
+                dineroEntregadoEfectivo: props.pagoCliente.pagoEnEfectivo,
+                dineroEntregadoTarjeta: props.pagoCliente.pagoEnTarjeta,
+                precioVentaTotal: props.pagoCliente.precioTotal,
+                tipo: props.pagoCliente.tipo,
+                cambio: props.pagoCliente.cambio,
+                cliente: cliente,
+                vendidoPor: Empleado,
+                modificadoPor: Empleado,
+                descuentoEfectivo: props.pagoCliente.dtoEfectivo || 0,
+                descuentoPorcentaje: props.pagoCliente.dtoPorcentaje || 0,
+                tpv: jwt.TPV
+            }
+            console.log(v);
+
+
             await addVentasToDB({
                 variables: {
                     "fields": {

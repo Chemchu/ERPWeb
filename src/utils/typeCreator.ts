@@ -1,4 +1,5 @@
 import { Cliente } from "../tipos/Cliente";
+import { Empleado } from "../tipos/Empleado";
 import { Producto } from "../tipos/Producto";
 import { ProductoVendido } from "../tipos/ProductoVendido";
 import { Venta } from "../tipos/Venta";
@@ -142,6 +143,22 @@ export function CreateProductoVendidoList(pList: any[]): ProductoVendido[] {
 
         if (prod) res.push(prod);
     });
+
+    return res;
+}
+
+export function CreateEmployee(employee: any): Empleado {
+    let res: Empleado = {
+        _id: employee._id,
+        nombre: employee.nombre,
+        apellidos: employee.apellidos,
+        email: employee.email,
+        rol: employee.rol,
+        dni: employee.dni || "",
+        fechaAlta: employee.fechaAlta || "",
+        genero: employee.genero || "",
+        horasPorSemana: employee.horasPorSemana || -1
+    }
 
     return res;
 }
