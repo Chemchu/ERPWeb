@@ -46,8 +46,8 @@ export const ModalPagar = (props: {
     const [dineroEntregadoTarjeta, setDineroEntregadoTarjeta] = useState<string>("0");
     const [showModalResumen, setModalResumen] = useState<boolean>(false);
 
-    const { Clientes, SetClientes } = useClientContext();
-    const [ClienteActual, SetClienteActual] = useState<Cliente>(Clientes.filter((c) => { return c.nombre === "General" })[0]);
+    const { Clientes, } = useClientContext();
+    const [ClienteActual, SetClienteActual] = useState<string>("General");
     const [PagoCliente, setPagoCliente] = useState<CustomerPaymentInformation>({} as CustomerPaymentInformation);
 
     let cambio: number = isNaN((Number(dineroEntregado) + Number(dineroEntregadoTarjeta) - props.precioFinal)) ? Number(dineroEntregado) + Number(dineroEntregadoTarjeta) : (Number(dineroEntregado) + Number(dineroEntregadoTarjeta) - props.precioFinal);
@@ -62,6 +62,8 @@ export const ModalPagar = (props: {
 
     const OpenResumen = () => {
         const tipoPago = GetFormaDePago();
+        const cliente = Clientes.find((c) => c.nombre == ClienteActual);
+        if (!cliente) { return; }
 
         const pago: CustomerPaymentInformation = {
             tipo: tipoPago,
@@ -70,7 +72,7 @@ export const ModalPagar = (props: {
             dtoEfectivo: props.dtoEfectivo,
             dtoPorcentaje: props.dtoPorcentaje,
             cambio: cambio,
-            cliente: ClienteActual,
+            cliente: cliente,
             precioTotal: props.precioFinal
         };
 
@@ -107,13 +109,11 @@ export const ModalPagar = (props: {
                                     <div className="text-2xl font-semibold">Datos cliente</div>
                                     <hr />
                                     <div className="flex flex-col justify-between mt-4 px-2 text-lg text-center">
-                                        {/* <AutoComplete className="text-left text-lg" sugerencias={["Luca Lee", "Simone", "Miguel"]} nombreInput="Cliente" placeholder="General" />
-                                         */}
                                         <label className="text-left">Seleccionar cliente</label>
-                                        <Dropdown elementos={Clientes.map((c) => { return c.nombre })} selectedElemento={ClienteActual.nombre} setElemento={SetClienteActual} />
+                                        <Dropdown elementos={Clientes.map((c) => { return c.nombre })} selectedElemento={ClienteActual} setElemento={SetClienteActual} />
                                     </div>
                                 </div>
-                                <div className="flex flex-col px-2 py-2 justify-items-start w-full">
+                                <div className="flex flex-col px-2 pt-6 justify-items-start w-full">
                                     <div className="text-left">
                                         <h1 className="text-lg">Nombre completo</h1>
                                         <Input placeholder="Nombre del cliente" />
