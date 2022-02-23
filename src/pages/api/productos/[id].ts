@@ -1,4 +1,4 @@
-import { gql, useMutation } from "@apollo/client";
+import { gql } from "@apollo/client";
 import { NextApiRequest, NextApiResponse } from "next"
 import { envInformation } from "../../../utils/envInfo";
 import GQLFetcher from "../../../utils/serverFetcher";

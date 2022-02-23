@@ -1,4 +1,6 @@
 import { ProductoVendido } from "../tipos/ProductoVendido";
+import { TPV } from "../tipos/TPV";
+import { Venta } from "../tipos/Venta";
 
 export const AplicarDescuentos = (productos: ProductoVendido[], descuentoEfectivo: number, descuentoPorcentaje: number) => {
     let precioTotal: number;
@@ -31,4 +33,16 @@ export const PrecioTotalCarrito = (productos: ProductoVendido[]) => {
 
 export const CalcularCambio = (precioTotalAPagar: number, dineroEntregadoEfectivo: number, dineroEntregadoTarjeta: number): number => {
     return (dineroEntregadoEfectivo + dineroEntregadoTarjeta) - precioTotalAPagar;
+}
+
+export const GetTotalEnEfectivo = (Ventas: Venta[]): number => {
+    return -1;
+}
+
+export const GetTotalEnTarjeta = (Ventas: Venta[]): number => {
+    return -1;
+}
+
+export const GetTotalEnCaja = (Ventas: Venta[], Tpv: TPV): number => {
+    return -1;
 }

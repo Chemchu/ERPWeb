@@ -2,6 +2,7 @@ import { Cliente } from "../tipos/Cliente";
 import { Empleado } from "../tipos/Empleado";
 import { Producto } from "../tipos/Producto";
 import { ProductoVendido } from "../tipos/ProductoVendido";
+import { TPV } from "../tipos/TPV";
 import { Venta } from "../tipos/Venta";
 
 function CreateProduct(p: any): Producto | undefined {
@@ -158,6 +159,20 @@ export function CreateEmployee(employee: any): Empleado {
         fechaAlta: employee.fechaAlta || "",
         genero: employee.genero || "",
         horasPorSemana: employee.horasPorSemana || -1
+    }
+
+    return res;
+}
+
+export function CreateTPV(tpv: any): TPV {
+    let res: TPV = {
+        _id: tpv._id,
+        nombre: tpv.nombre,
+        enUsoPor: tpv.enUsoPor,
+        cajaInicial: tpv.cajaInicial,
+        libre: tpv.libre,
+        createdAt: tpv.createdAt,
+        updatedAt: tpv.updatedAt
     }
 
     return res;

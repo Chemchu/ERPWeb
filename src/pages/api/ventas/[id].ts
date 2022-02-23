@@ -1,15 +1,6 @@
-import { gql, useMutation } from "@apollo/client";
 import { NextApiRequest, NextApiResponse } from "next"
+import { QUERY_SALE } from "../../../utils/querys";
 import GQLFetcher from "../../../utils/serverFetcher";
-
-const ADD_SALE = gql`
-    mutation AddVenta($fields: VentaFields!) {
-        addVenta(fields: $fields) {
-            message
-            successful
-        }
-    }`
-    ;
 
 const handler = async (req: NextApiRequest, res: NextApiResponse) => {
     // const session = await getSession({ req })
@@ -33,33 +24,24 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
 
 const GetSale = async (req: NextApiRequest, res: NextApiResponse) => {
     try {
-        const reqCredentials = req.body;
         const fetchResult = await GQLFetcher.query(
             {
-                query: gql`
-                query Venta($id: ID!) {
-                    venta(_id: $id) {
-                        ${reqCredentials.neededValues.map((v: string) => { return v + ", " })}
-                    }
-                }
-                `,
+                query: QUERY_SALE,
                 variables: {
-                    "id": reqCredentials.id
+                    "id": req.query.id
                 }
             }
         );
 
-        if (fetchResult.data.success) {
-            return res.status(200).json({ message: `Lista de ventas encontrada` });
+        if (fetchResult.error) {
+            return res.status(300).json({ message: `Fallo al buscar la venta` });
         }
-
-        return res.status(300).json({ message: `Fallo al pedir la lista de ventas` });
+        return res.status(200).json({ message: `Venta encontrada` });
     }
     catch (err) {
         console.log(err);
         return res.status(500).json({ message: `Error: ${err}` });
     }
-
 }
 
 export default handler;
