@@ -12,6 +12,7 @@ import ModalPagar from "../../modal/pagar";
 import Resumen from "../../modal/resumen";
 import useClientContext from "../../../context/clientContext";
 import CerrarCaja from "../../modal/cerrarCaja";
+import { AplicarDescuentos, PrecioTotalCarrito } from "../../../utils/preciosUtils";
 
 const TPV = (props: { productos: Producto[], serverOperativo: boolean }) => {
     const [Busqueda, setBusqueda] = useState<string>("");
@@ -296,22 +297,29 @@ const SidebarDerecho = React.memo((props: { todosProductos: Producto[], producto
         })
     }, []);
 
-    const precioTotal: number = props.productosEnCarrito.reduce((total: number, p: ProductoVendido) => {
-        if (p.dto) {
-            return total += ((100 - Number(p.dto)) / 100) * (Number(p.cantidadVendida) * p.precioVenta);
-        }
-        else {
-            return total += (Number(p.cantidadVendida) * p.precioVenta);
-        }
-    }, 0)
+    const precioTotal: number = PrecioTotalCarrito(props.productosEnCarrito);
+    const precioTotalDescontado: number = AplicarDescuentos(props.productosEnCarrito, Number(dtoEfectivo), Number(dtoPorcentaje));
 
     const pagoRapido = {
         cliente: Clientes.find((c) => c.nombre === "General"),
         cambio: 0,
         pagoEnEfectivo: precioTotal,
         pagoEnTarjeta: 0,
-        precioTotal: precioTotal,
+        precioTotal: precioTotalDescontado,
+        dtoEfectivo: Number(dtoEfectivo),
+        dtoPorcentaje: Number(dtoPorcentaje),
         tipo: TipoCobro.Rapido
+    } as CustomerPaymentInformation;
+
+    const pago = {
+        cliente: Clientes.find((c) => c.nombre === "General"),
+        cambio: precioTotalDescontado * -1,
+        pagoEnEfectivo: 0,
+        pagoEnTarjeta: 0,
+        precioTotal: precioTotalDescontado,
+        dtoEfectivo: Number(dtoEfectivo),
+        dtoPorcentaje: Number(dtoPorcentaje),
+        tipo: TipoCobro.Efectivo
     } as CustomerPaymentInformation;
 
 
@@ -417,7 +425,7 @@ const SidebarDerecho = React.memo((props: { todosProductos: Producto[], producto
                                 <div className="flex mb-3 text-lg font-semibold">
                                     <div>Total</div>
                                     {
-                                        HayDescuento(dtoEfectivo, dtoPorcentaje) ?
+                                        precioTotal !== precioTotalDescontado ?
                                             <div className="flex gap-2 justify-end ml-auto">
                                                 <div className="text-right w-full text-red-500 line-through">
                                                     {/*Cambiar en caso de que la cesta tenga productos y calcular el valor total*/}
@@ -425,7 +433,7 @@ const SidebarDerecho = React.memo((props: { todosProductos: Producto[], producto
                                                 </div>
                                                 <div className="text-right w-full">
                                                     {/*Cambiar en caso de que la cesta tenga productos y calcular el valor total*/}
-                                                    {props.productosEnCarrito.length <= 0 ? 0.00 : ApplyDtoPercentage(ApplyDtoCash(precioTotal, Number(dtoEfectivo)), Number(dtoPorcentaje)).toFixed(2)} €
+                                                    {props.productosEnCarrito.length <= 0 ? 0.00 : precioTotalDescontado.toFixed(2)} €
                                                 </div>
                                             </div>
                                             :
@@ -448,8 +456,8 @@ const SidebarDerecho = React.memo((props: { todosProductos: Producto[], producto
                 }
                 {/* Modal aceptar compra */}
                 <AnimatePresence initial={false} exitBeforeEnter={true}>
-                    {showModalPagar && <ModalPagar handleCerrarModal={cerrarModal} productosComprados={props.productosEnCarrito} dtoEfectivo={Number(dtoEfectivo)} dtoPorcentaje={Number(dtoPorcentaje)} precioFinal={precioTotal} setProductosCarrito={props.setProductosCarrito} />}
-                    {showModalCobro && <Resumen pagoCliente={pagoRapido} handleCloseResumen={cerrarModalResumen} handleCloseAll={cerrarModalResumen} productosVendidos={props.productosEnCarrito} setProductosCarrito={props.setProductosCarrito} />}
+                    {showModalPagar && <ModalPagar productosComprados={props.productosEnCarrito} setProductosComprados={props.setProductosCarrito} PagoCliente={pago} handleCerrarModal={cerrarModal} />}
+                    {showModalCobro && <Resumen pagoCliente={pagoRapido} handleCloseResumen={cerrarModalResumen} handleCloseAll={cerrarModalResumen} productosVendidos={props.productosEnCarrito} setProductosComprados={props.setProductosCarrito} />}
                     {showModalCerrarCaja && <CerrarCaja handleClose={setCerrarCajaModal} />}
                 </AnimatePresence>
             </div>
@@ -470,11 +478,5 @@ const GenerarProductList = React.memo((props: { productosEnCarrito: ProductoVend
         </>
     );
 });
-
-function HayDescuento(DtoEfectivo: string, DtoPorcentaje: string): boolean {
-    // Si el descuento efectivo o el descuento por porcentaje es diferente de cero 
-    // es decir, si se aplica descuento de alguna forma, devuelve true
-    return (DtoEfectivo != "" && DtoEfectivo != "0" && DtoEfectivo != "0.00") || (DtoPorcentaje != "" && DtoPorcentaje != "0" && DtoPorcentaje != "0.00");
-}
 
 export default TPV;

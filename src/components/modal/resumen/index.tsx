@@ -1,12 +1,10 @@
-import { gql, useMutation } from "@apollo/client";
+import { useMutation } from "@apollo/client";
 import { motion } from "framer-motion";
-import Cookies from "js-cookie";
 import { useEffect } from "react";
 import useJwt from "../../../hooks/jwt";
 import useClientContext from "../../../context/clientContext";
 import useEmpleadoContext from "../../../context/empleadoContext";
 import { CustomerPaymentInformation } from "../../../tipos/CustomerPayment";
-import { Empleado } from "../../../tipos/Empleado";
 import { ProductoVendido } from "../../../tipos/ProductoVendido";
 import { ADD_SALE } from "../../../utils/querys";
 import { CreateEmployee } from "../../../utils/typeCreator";
@@ -38,7 +36,7 @@ const In = {
 
 
 export const Resumen = (props: {
-    productosVendidos: ProductoVendido[], setProductosCarrito: Function,
+    productosVendidos: ProductoVendido[], setProductosComprados: Function,
     pagoCliente: CustomerPaymentInformation, handleCloseResumen: Function, handleCloseAll: Function
 }) => {
     const [addVentasToDB, { loading, error }] = useMutation(ADD_SALE);
@@ -73,16 +71,16 @@ export const Resumen = (props: {
                 variables: {
                     "fields": {
                         "productos": props.productosVendidos,
-                        "dineroEntregadoEfectivo": props.pagoCliente.pagoEnEfectivo,
-                        "dineroEntregadoTarjeta": props.pagoCliente.pagoEnTarjeta,
-                        "precioVentaTotal": props.pagoCliente.precioTotal,
+                        "dineroEntregadoEfectivo": Number(props.pagoCliente.pagoEnEfectivo.toFixed(2)),
+                        "dineroEntregadoTarjeta": Number(props.pagoCliente.pagoEnTarjeta.toFixed(2)),
+                        "precioVentaTotal": Number(props.pagoCliente.precioTotal.toFixed(2)),
                         "tipo": props.pagoCliente.tipo,
-                        "cambio": props.pagoCliente.cambio,
+                        "cambio": Number(props.pagoCliente.cambio.toFixed(2)),
                         "cliente": cliente,
                         "vendidoPor": Empleado,
                         "modificadoPor": Empleado,
-                        "descuentoEfectivo": props.pagoCliente.dtoEfectivo || 0,
-                        "descuentoPorcentaje": props.pagoCliente.dtoPorcentaje || 0,
+                        "descuentoEfectivo": Number(props.pagoCliente.dtoEfectivo.toFixed(2)) || 0,
+                        "descuentoPorcentaje": Number(props.pagoCliente.dtoPorcentaje.toFixed(2)) || 0,
                         "tpv": jwt.TPV
                     }
                 }
@@ -90,7 +88,7 @@ export const Resumen = (props: {
 
             if (!error && !loading) {
                 props.handleCloseAll();
-                props.setProductosCarrito([]);
+                props.setProductosComprados([]);
             }
             else {
                 console.log("Error al realizar la venta");

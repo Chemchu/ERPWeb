@@ -5,6 +5,7 @@ import { Cliente } from "../../../tipos/Cliente";
 import { CustomerPaymentInformation } from "../../../tipos/CustomerPayment";
 import { TipoCobro } from "../../../tipos/Enums/TipoCobro";
 import { ProductoVendido } from "../../../tipos/ProductoVendido";
+import { CalcularCambio } from "../../../utils/preciosUtils";
 import { ValidatePositiveFloatingNumber } from "../../../utils/validator";
 import AutoComplete from "../../Forms/autocomplete/autocomplete";
 import Dropdown from "../../Forms/dropdown";
@@ -38,45 +39,45 @@ const In = {
 }
 
 export const ModalPagar = (props: {
-    productosComprados: ProductoVendido[], setProductosCarrito: Function,
-    precioFinal: number, handleCerrarModal: MouseEventHandler<HTMLButtonElement>,
-    dtoEfectivo: number, dtoPorcentaje: number
+    productosComprados: ProductoVendido[], setProductosComprados: Function, PagoCliente: CustomerPaymentInformation, handleCerrarModal: MouseEventHandler<HTMLButtonElement>,
 }) => {
     const [dineroEntregado, setDineroEntregado] = useState<string>("0");
     const [dineroEntregadoTarjeta, setDineroEntregadoTarjeta] = useState<string>("0");
+    const [cambio, setCambio] = useState<number>(props.PagoCliente.cambio);
     const [showModalResumen, setModalResumen] = useState<boolean>(false);
 
     const { Clientes, } = useClientContext();
     const [ClienteActual, SetClienteActual] = useState<string>("General");
-    const [PagoCliente, setPagoCliente] = useState<CustomerPaymentInformation>({} as CustomerPaymentInformation);
 
-    let cambio: number = isNaN((Number(dineroEntregado) + Number(dineroEntregadoTarjeta) - props.precioFinal)) ? Number(dineroEntregado) + Number(dineroEntregadoTarjeta) : (Number(dineroEntregado) + Number(dineroEntregadoTarjeta) - props.precioFinal);
+    const [PagoDelCliente, SetPagoCliente] = useState<CustomerPaymentInformation>(props.PagoCliente);
 
     const SetDineroClienteEfectivo = (dineroDelCliente: string) => {
-        setDineroEntregado(ValidatePositiveFloatingNumber(dineroDelCliente));
+        const dinero = ValidatePositiveFloatingNumber(dineroDelCliente);
+
+        setDineroEntregado(dinero);
+        setCambio(CalcularCambio(PagoDelCliente.precioTotal, Number(dinero), Number(dineroEntregadoTarjeta)))
     }
 
     const SetDineroClienteTarjeta = (dineroDelCliente: string) => {
-        setDineroEntregadoTarjeta(ValidatePositiveFloatingNumber(dineroDelCliente));
+        const dinero = ValidatePositiveFloatingNumber(dineroDelCliente);
+
+        setDineroEntregadoTarjeta(dinero);
+        setCambio(CalcularCambio(PagoDelCliente.precioTotal, Number(dineroEntregado), Number(dinero)))
     }
 
     const OpenResumen = () => {
-        const tipoPago = GetFormaDePago();
+        let p = PagoDelCliente;
+        p.tipo = GetFormaDePago();
+
+        p.pagoEnEfectivo = Number(dineroEntregado);
+        p.pagoEnTarjeta = Number(dineroEntregadoTarjeta);
+        p.cambio = cambio;
+
         const cliente = Clientes.find((c) => c.nombre == ClienteActual);
-        if (!cliente) { return; }
+        if (!cliente) { p.cliente = Clientes[0] }
+        else { p.cliente = cliente }
 
-        const pago: CustomerPaymentInformation = {
-            tipo: tipoPago,
-            pagoEnEfectivo: Number(dineroEntregado),
-            pagoEnTarjeta: Number(dineroEntregadoTarjeta),
-            dtoEfectivo: props.dtoEfectivo,
-            dtoPorcentaje: props.dtoPorcentaje,
-            cambio: cambio,
-            cliente: cliente,
-            precioTotal: props.precioFinal
-        };
-
-        setPagoCliente(pago);
+        SetPagoCliente(p);
         setModalResumen(true);
     }
 
@@ -160,7 +161,7 @@ export const ModalPagar = (props: {
                                 <div className="grid grid-cols-3 text-lg text-center justify-center">
                                     <div>
                                         <div>Total a pagar</div>
-                                        <div className="text-4xl font-semibold">{props.precioFinal.toFixed(2)}€</div>
+                                        <div className="text-4xl font-semibold">{PagoDelCliente.precioTotal.toFixed(2)}€</div>
                                     </div>
                                     <div>
                                         <div>Entregado</div>
@@ -191,7 +192,7 @@ export const ModalPagar = (props: {
                             }
                         </div>
                         <AnimatePresence>
-                            {showModalResumen && <Resumen pagoCliente={PagoCliente} productosVendidos={props.productosComprados} handleCloseResumen={CloseResumen} handleCloseAll={props.handleCerrarModal} setProductosCarrito={props.setProductosCarrito} />}
+                            {showModalResumen && <Resumen pagoCliente={PagoDelCliente} productosVendidos={props.productosComprados} handleCloseResumen={CloseResumen} handleCloseAll={props.handleCerrarModal} setProductosComprados={props.setProductosComprados} />}
                         </AnimatePresence>
                     </div>
 
