@@ -1,8 +1,10 @@
 import { useQuery } from "@apollo/client";
 import { motion } from "framer-motion";
 import { useEffect, useState } from "react";
+import useJwt from "../../../hooks/jwt";
 import { Venta } from "../../../tipos/Venta";
 import { QUERY_TPV_SALES } from "../../../utils/querys";
+import { CreateSalesList } from "../../../utils/typeCreator";
 import { Backdrop } from "../backdrop";
 
 const In = {
@@ -32,20 +34,26 @@ const In = {
 
 export const CerrarCaja = (props: { handleClose: Function }) => {
     const [Ventas, setVentas] = useState<Venta[]>();
+    const jwt = useJwt();
+
     const { data, loading, error } = useQuery(QUERY_TPV_SALES, {
         variables: {
             find: {
-                tpv: null
+                tpv: jwt.TPV
             }
         }
     });
 
-    // useEffect(() => {
-    //     const GetVentas = async () => {
-    //         const fetchResult = fetch('/api/ventas')
-    //     }
-    //     GetVentas();
-    // }, [])
+    if (data) {
+        console.log(data);
+        //setVentas(CreateSalesList(data.ventas));
+    }
+
+    if (error) {
+        return (
+            <p>Error!</p>
+        )
+    }
 
     return (
         <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} >
