@@ -10,9 +10,10 @@ import useProductEnCarritoContext from "../../../context/productosEnCarritoConte
 import SkeletonProductCard from "../../Skeletons/skeletonProductCard";
 import ModalPagar from "../../modal/pagar";
 import Resumen from "../../modal/resumen";
-import useClientContext from "../../../context/clientContext";
 import CerrarCaja from "../../modal/cerrarCaja";
 import { AplicarDescuentos, PrecioTotalCarrito } from "../../../utils/preciosUtils";
+import { Cliente } from "../../../tipos/Cliente";
+import { FetchClientes } from "../../../utils/fetches";
 
 const TPV = (props: { productos: Producto[], serverOperativo: boolean }) => {
     const [Busqueda, setBusqueda] = useState<string>("");
@@ -241,19 +242,20 @@ const SidebarDerecho = React.memo((props: { todosProductos: Producto[], producto
     const [descuentoOpen, setDescuentoPupup] = useState<boolean>(false);
     const [dtoEfectivo, setDtoEfectivo] = useState<string>("0");
     const [dtoPorcentaje, setDtoPorcentaje] = useState<string>("0");
-    const { Clientes } = useClientContext();
 
     const [showModalPagar, setPagarModal] = useState(false);
     const [showModalCobro, setCobroModal] = useState(false);
     const [showModalCerrarCaja, setCerrarCajaModal] = useState(false);
 
-    const cerrarModal = () => {
-        setPagarModal(false);
-    }
+    const [Clientes, SetClientes] = useState<Cliente[]>([]);
 
-    const cerrarModalResumen = () => {
-        setCobroModal(false);
-    }
+    useEffect(() => {
+        const GetClientesFromDB = async () => {
+            SetClientes(await FetchClientes());
+        }
+
+        GetClientesFromDB();
+    }, [])
 
     // Se accede a la lista de productos actualizada usando "functional state update" de react
     // Es para evitar muchos rerenders
@@ -458,8 +460,8 @@ const SidebarDerecho = React.memo((props: { todosProductos: Producto[], producto
                 }
                 {/* Modal aceptar compra */}
                 <AnimatePresence initial={false} exitBeforeEnter={true}>
-                    {showModalPagar && <ModalPagar productosComprados={props.productosEnCarrito} setProductosComprados={props.setProductosCarrito} PagoCliente={pago} handleCerrarModal={cerrarModal} />}
-                    {showModalCobro && <Resumen pagoCliente={pagoRapido} handleCloseResumen={cerrarModalResumen} handleCloseAll={cerrarModalResumen} productosVendidos={props.productosEnCarrito} setProductosComprados={props.setProductosCarrito} />}
+                    {showModalPagar && <ModalPagar productosComprados={props.productosEnCarrito} setProductosComprados={props.setProductosCarrito} PagoCliente={pago} handleModalOpen={setPagarModal} />}
+                    {showModalCobro && <Resumen pagoCliente={pagoRapido} handleOpen={setCobroModal} productosVendidos={props.productosEnCarrito} setProductosComprados={props.setProductosCarrito} />}
                     {showModalCerrarCaja && <CerrarCaja handleClose={setCerrarCajaModal} />}
                 </AnimatePresence>
             </div>

@@ -2,14 +2,13 @@ import { useMutation } from "@apollo/client";
 import { motion } from "framer-motion";
 import { useEffect, useState } from "react";
 import useJwt from "../../../hooks/jwt";
-import useClientContext from "../../../context/clientContext";
 import useEmpleadoContext from "../../../context/empleadoContext";
 import { CustomerPaymentInformation } from "../../../tipos/CustomerPayment";
 import { ProductoVendido } from "../../../tipos/ProductoVendido";
 import { ADD_SALE } from "../../../utils/querys";
-import { CreateClientList, CreateEmployee } from "../../../utils/typeCreator";
 import { Backdrop } from "../backdrop";
 import { Cliente } from "../../../tipos/Cliente";
+import { FetchClientes, FetchEmpleado } from "../../../utils/fetches";
 
 const In = {
     hidden: {
@@ -38,23 +37,24 @@ const In = {
 
 export const Resumen = (props: {
     productosVendidos: ProductoVendido[], setProductosComprados: Function,
-    pagoCliente: CustomerPaymentInformation, handleCloseResumen: Function, handleCloseAll: Function
+    pagoCliente: CustomerPaymentInformation, handleOpen: Function, handleOpenPagarModal?: Function
 }) => {
+    const [Clientes, SetClientes] = useState<Cliente[]>([]);
     const [addVentasToDB, { loading, error }] = useMutation(ADD_SALE);
-    const { Clientes, } = useClientContext();
     const { Empleado, SetEmpleado } = useEmpleadoContext();
     const jwt = useJwt();
 
     useEffect(() => {
         const GetEmpleadoFromDB = async () => {
-            if (Empleado._id) { return; }
-            const fetchRes = await fetch(`/api/empleado/${jwt._id}`);
+            SetEmpleado(await FetchEmpleado(jwt._id));
+        }
 
-            const empleadoJson = await fetchRes.json();
-            SetEmpleado(CreateEmployee(empleadoJson.empleado));
+        const GetClientesFromDB = async () => {
+            SetClientes(await FetchClientes());
         }
 
         GetEmpleadoFromDB();
+        GetClientesFromDB();
     }, [])
 
 
@@ -88,8 +88,12 @@ export const Resumen = (props: {
             });
 
             if (!error && !loading) {
-                props.handleCloseAll();
+                props.handleOpen(false);
                 props.setProductosComprados([]);
+
+                if (props.handleOpenPagarModal) {
+                    props.handleOpenPagarModal(false);
+                }
             }
             else {
                 console.log("Error al realizar la venta");
@@ -102,7 +106,7 @@ export const Resumen = (props: {
 
     return (
         <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} >
-            <Backdrop onClick={() => { props.handleCloseResumen() }} >
+            <Backdrop onClick={() => { props.handleOpen(false) }} >
                 <motion.div className="flex flex-col gap-2 items-center bg-white rounded-2xl w-96 h-5/6 py-2"
                     onClick={(e) => e.stopPropagation()}
                     variants={In}
@@ -156,7 +160,7 @@ export const Resumen = (props: {
                         </div>
                     </div>
                     <div className="px-4 pb-2 w-full h-auto flex flex-grow text-center gap-2">
-                        <button className="bg-red-500 hover:bg-red-600 text-white w-1/2 h-8 hover:shadow-lg rounded-lg ml-auto flex items-center justify-center" onClick={() => props.handleCloseResumen()}>
+                        <button className="bg-red-500 hover:bg-red-600 text-white w-1/2 h-8 hover:shadow-lg rounded-lg ml-auto flex items-center justify-center" onClick={() => props.handleOpen()}>
                             <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
                             </svg>

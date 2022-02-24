@@ -1,10 +1,10 @@
 import { AnimatePresence, motion } from "framer-motion";
-import React, { MouseEventHandler, useState } from "react";
-import useClientContext from "../../../context/clientContext";
+import React, { MouseEventHandler, useEffect, useState } from "react";
 import { Cliente } from "../../../tipos/Cliente";
 import { CustomerPaymentInformation } from "../../../tipos/CustomerPayment";
 import { TipoCobro } from "../../../tipos/Enums/TipoCobro";
 import { ProductoVendido } from "../../../tipos/ProductoVendido";
+import { FetchClientes } from "../../../utils/fetches";
 import { CalcularCambio } from "../../../utils/preciosUtils";
 import { ValidatePositiveFloatingNumber } from "../../../utils/validator";
 import AutoComplete from "../../Forms/autocomplete/autocomplete";
@@ -39,17 +39,25 @@ const In = {
 }
 
 export const ModalPagar = (props: {
-    productosComprados: ProductoVendido[], setProductosComprados: Function, PagoCliente: CustomerPaymentInformation, handleCerrarModal: MouseEventHandler<HTMLButtonElement>,
+    productosComprados: ProductoVendido[], setProductosComprados: Function, PagoCliente: CustomerPaymentInformation,
+    handleModalOpen: Function,
 }) => {
     const [dineroEntregado, setDineroEntregado] = useState<string>("0");
     const [dineroEntregadoTarjeta, setDineroEntregadoTarjeta] = useState<string>("0");
     const [cambio, setCambio] = useState<number>(props.PagoCliente.cambio);
     const [showModalResumen, setModalResumen] = useState<boolean>(false);
 
-    const { Clientes, } = useClientContext();
+    const [Clientes, SetClientes] = useState<Cliente[]>([]);
     const [ClienteActual, SetClienteActual] = useState<string>("General");
-
     const [PagoDelCliente, SetPagoCliente] = useState<CustomerPaymentInformation>(props.PagoCliente);
+
+    useEffect(() => {
+        const GetClientesFromDB = async () => {
+            SetClientes(await FetchClientes());
+        }
+
+        GetClientesFromDB();
+    }, [])
 
     const SetDineroClienteEfectivo = (dineroDelCliente: string) => {
         const dinero = ValidatePositiveFloatingNumber(dineroDelCliente);
@@ -81,10 +89,6 @@ export const ModalPagar = (props: {
         setModalResumen(true);
     }
 
-    const CloseResumen = (): void => {
-        setModalResumen(false);
-    }
-
     const GetFormaDePago = (): string => {
         if (Number(dineroEntregado) > 0 && Number(dineroEntregadoTarjeta) > 0) { return TipoCobro.Fraccionado.toString(); }
         if (Number(dineroEntregadoTarjeta) > 0) { return TipoCobro.Tarjeta.toString(); }
@@ -93,7 +97,7 @@ export const ModalPagar = (props: {
 
     return (
         <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} >
-            <Backdrop onClick={props.handleCerrarModal} >
+            <Backdrop onClick={() => { props.handleModalOpen(false) }} >
                 <motion.div className="mx-20 my-20 flex flex-grow items-center bg-white rounded-2xl"
                     onClick={(e) => e.stopPropagation()}
                     variants={In}
@@ -178,7 +182,7 @@ export const ModalPagar = (props: {
 
                         <hr className="my-2" />
                         <div className="grid grid-cols-2 justify-items-center gap-4">
-                            <button className="bg-red-500 hover:bg-red-600 text-white w-full h-12 hover:shadow-lg rounded-lg flex items-center justify-center" onClick={props.handleCerrarModal}>
+                            <button className="bg-red-500 hover:bg-red-600 text-white w-full h-12 hover:shadow-lg rounded-lg flex items-center justify-center" onClick={() => props.handleModalOpen(false)}>
                                 <div className="text-lg">CANCELAR</div>
                             </button>
                             {cambio < 0 ?
@@ -192,7 +196,7 @@ export const ModalPagar = (props: {
                             }
                         </div>
                         <AnimatePresence>
-                            {showModalResumen && <Resumen pagoCliente={PagoDelCliente} productosVendidos={props.productosComprados} handleCloseResumen={CloseResumen} handleCloseAll={props.handleCerrarModal} setProductosComprados={props.setProductosComprados} />}
+                            {showModalResumen && <Resumen pagoCliente={PagoDelCliente} productosVendidos={props.productosComprados} handleOpen={setModalResumen} handleOpenPagarModal={props.handleModalOpen} setProductosComprados={props.setProductosComprados} />}
                         </AnimatePresence>
                     </div>
 

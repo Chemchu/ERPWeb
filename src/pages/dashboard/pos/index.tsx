@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from "react";
 import TPV from "../../../components/sidebar/pointOfSale/tpv";
-import useClientContext from "../../../context/clientContext";
 import DashboardLayout from "../../../layout";
 import { motion } from "framer-motion";
 import { Producto } from "../../../tipos/Producto";
@@ -9,7 +8,6 @@ import useJwt from "../../../hooks/jwt";
 import { FetchProductos } from "../../../utils/fetches";
 
 const PuntoDeVenta = () => {
-    const { SetClientes } = useClientContext();
     const [Productos, SetProductos] = useState<Producto[]>([]);
     const [ServerUp, setServerUp] = useState<boolean>(true);
     const jwt = useJwt();

@@ -1,7 +1,8 @@
 import { Cliente } from "../tipos/Cliente";
+import { Empleado } from "../tipos/Empleado";
 import { Producto } from "../tipos/Producto";
 import { Venta } from "../tipos/Venta";
-import { CreateClientList, CreateProductList, CreateSalesList } from "./typeCreator";
+import { CreateClientList, CreateEmployee, CreateProductList, CreateSalesList } from "./typeCreator";
 
 export const FetchProductos = async (): Promise<Producto[]> => {
     try {
@@ -76,4 +77,12 @@ export const FetchVentas = async (): Promise<Venta[]> => {
         console.log(e);
         return [];
     }
+}
+
+export const FetchEmpleado = async (_id: string): Promise<Empleado> => {
+    if (!_id) { throw "ID del empleado no puede ser undefined"; }
+    const fetchRes = await fetch(`/api/empleado/${_id}`);
+
+    const empleadoJson = await fetchRes.json();
+    return CreateEmployee(empleadoJson.empleado);
 }
