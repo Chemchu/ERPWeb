@@ -96,6 +96,7 @@ export const CerrarCaja = (props: { handleClose: Function }) => {
                         <div className="text-lg text-center font-bold">
                             Ventana de Cierre de TPV
                         </div>
+                        <hr />
                         <div className="flex flex-col gap-4 w-full h-full">
                             <div className="flex gap-2">
                                 <p>Número de ventas en esta TPV: </p>
@@ -125,13 +126,17 @@ export const CerrarCaja = (props: { handleClose: Function }) => {
 
 
                         </div>
-                        <div className="flex gap-10 h-auto w-full mb-auto justify-center text-white">
+                        <div className="flex gap-10 h-auto w-full mb-auto justify-center text-white items-center">
                             <div className="h-10 w-2/6 rounded-lg bg-red-500 cursor-pointer text-center"
                                 onClick={() => props.handleClose(false)}>
-                                Cancelar
+                                <div className="h-full w-full">
+                                    Cancelar
+                                </div>
                             </div>
                             <div className="h-10 w-2/6 rounded-lg bg-blue-500 text-center">
-                                Cerrar caja
+                                <span className="inline-block h-full w-full align-middle self-center">
+                                    Cerrar caja
+                                </span>
                             </div>
                         </div>
                     </div>

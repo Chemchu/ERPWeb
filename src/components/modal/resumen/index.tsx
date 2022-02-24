@@ -1,14 +1,15 @@
 import { useMutation } from "@apollo/client";
 import { motion } from "framer-motion";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import useJwt from "../../../hooks/jwt";
 import useClientContext from "../../../context/clientContext";
 import useEmpleadoContext from "../../../context/empleadoContext";
 import { CustomerPaymentInformation } from "../../../tipos/CustomerPayment";
 import { ProductoVendido } from "../../../tipos/ProductoVendido";
 import { ADD_SALE } from "../../../utils/querys";
-import { CreateEmployee } from "../../../utils/typeCreator";
+import { CreateClientList, CreateEmployee } from "../../../utils/typeCreator";
 import { Backdrop } from "../backdrop";
+import { Cliente } from "../../../tipos/Cliente";
 
 const In = {
     hidden: {

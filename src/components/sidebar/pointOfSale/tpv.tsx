@@ -1,6 +1,6 @@
 import { AnimatePresence, motion } from "framer-motion";
 import React, { useCallback, useEffect, useState } from "react";
-import { ApplyDtoCash, ApplyDtoPercentage, IsPositiveFloatingNumber, IsPositiveIntegerNumber, ValidatePositiveFloatingNumber, ValidateSearchString } from "../../../utils/validator";
+import { IsPositiveFloatingNumber, IsPositiveIntegerNumber, ValidatePositiveFloatingNumber, ValidateSearchString } from "../../../utils/validator";
 import { CustomerPaymentInformation } from "../../../tipos/CustomerPayment";
 import { Producto } from "../../../tipos/Producto";
 import { TipoCobro } from "../../../tipos/Enums/TipoCobro";
@@ -38,10 +38,12 @@ const TPV = (props: { productos: Producto[], serverOperativo: boolean }) => {
 
             return out;
         }
+
+        if (!props.productos) { return; }
+
         setFamilias(uniq_fast(props.productos));
         setProductosFiltrados(props.productos);
     }, [props.productos]);
-
 
     var Filtrar = (cadena: string) => {
         const stringValidated = ValidateSearchString(cadena);

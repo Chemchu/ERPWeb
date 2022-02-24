@@ -2,7 +2,7 @@ import { motion } from 'framer-motion';
 import Link from 'next/link';
 import React from 'react';
 
-const SideBar = React.memo((props: { isCollapsed: boolean, setCollapsed: Function, IndexSeleccionado: number }) => {
+const Sidebar = React.memo((props: { isCollapsed: boolean, setCollapsed: Function, IndexSeleccionado: number }) => {
     return (
         props.isCollapsed ? <CollapsedSidebar setCollapsed={props.setCollapsed} /> : <OpenedSidebar setCollapsed={props.setCollapsed} />
     );
@@ -81,6 +81,19 @@ const OpenedSidebar = (props: { setCollapsed: Function }) => {
                             </svg>
                             <span className="mx-4">
                                 Ventas
+                            </span>
+                            <span className="flex-grow text-right">
+                            </span>
+                        </div>
+                    </Link>
+
+                    <Link href="/dashboard/clientes">
+                        <div onClick={(e) => e.stopPropagation()} className="hover:text-gray-800 hover:bg-gray-100 flex items-center cursor-pointer transition-colors dark:hover:text-white dark:hover:bg-gray-600 duration-200  text-gray-600 dark:text-gray-400 rounded-lg " >
+                            <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z" />
+                            </svg>
+                            <span className="mx-4">
+                                Clientes
                             </span>
                             <span className="flex-grow text-right">
                             </span>
@@ -176,6 +189,14 @@ const CollapsedSidebar = (props: { setCollapsed: Function }) => {
                             </svg>
                         </div>
                     </Link>
+
+                    <Link href="/dashboard/clientes">
+                        <div onClick={(e) => e.stopPropagation()} className="hover:text-gray-800 hover:bg-gray-100 cursor-pointer flex items-center transition-colors dark:hover:text-white dark:hover:bg-gray-600 duration-200  text-gray-600 dark:text-gray-400 rounded-lg " >
+                            <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z" />
+                            </svg>
+                        </div>
+                    </Link>
                 </div>
 
                 <div className='flex flex-col gap-10 px-7'>
@@ -203,4 +224,4 @@ const CollapsedSidebar = (props: { setCollapsed: Function }) => {
     );
 }
 
-export default SideBar;
+export default Sidebar;
