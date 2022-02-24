@@ -1,9 +1,8 @@
 import { useEffect, useState } from "react";
-import { ProductPage } from "../../../components/sidebar/Productos/productosTab";
+import ProductPage from "../../../components/sidebar/Productos/productosTab";
 import DashboardLayout from "../../../layout";
 import { Producto } from "../../../tipos/Producto";
 import { FetchProductos } from "../../../utils/fetches";
-import { CreateProductList } from "../../../utils/typeCreator";
 
 const Productos = () => {
     const [Productos, SetProductos] = useState<Producto[]>([]);

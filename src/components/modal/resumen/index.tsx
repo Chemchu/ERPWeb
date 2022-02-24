@@ -57,7 +57,6 @@ export const Resumen = (props: {
         GetClientesFromDB();
     }, [])
 
-
     const addSale = async () => {
         try {
             let cliente;
