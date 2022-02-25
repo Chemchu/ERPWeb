@@ -2,7 +2,7 @@ import { Cliente } from "../tipos/Cliente";
 import { Empleado } from "../tipos/Empleado";
 import { Producto } from "../tipos/Producto";
 import { Venta } from "../tipos/Venta";
-import { CreateClientList, CreateEmployee, CreateProductList, CreateSalesList } from "./typeCreator";
+import { CreateClientList, CreateEmployee, CreateProductList, CreateSalesList, CreateTPV } from "./typeCreator";
 
 export const FetchProductos = async (): Promise<Producto[]> => {
     try {
@@ -85,4 +85,22 @@ export const FetchEmpleado = async (_id: string): Promise<Empleado> => {
 
     const empleadoJson = await fetchRes.json();
     return CreateEmployee(empleadoJson.empleado);
+}
+
+export const FetchSalesByTPV = async (TPV: string): Promise<Venta[]> => {
+    if (!TPV) { throw "ID del empleado no puede ser undefined"; }
+
+    const fetchVentas = await fetch(`/api/ventas/tpv/${TPV}`);
+    const ventasJson = await fetchVentas.json();
+
+    return CreateSalesList(JSON.parse(ventasJson.ventas));
+}
+
+export const FetchTPV = async (TPV: string) => {
+    if (!TPV) { throw "ID del empleado no puede ser undefined"; }
+
+    const fetchTPV = await fetch(`/api/tpv/${TPV}`);
+    const tpvJson = await fetchTPV.json();
+
+    return CreateTPV(JSON.parse(tpvJson.tpv));
 }

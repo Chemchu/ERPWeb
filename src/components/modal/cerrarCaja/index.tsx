@@ -3,9 +3,11 @@ import { useEffect, useState } from "react";
 import { SpinnerCircular } from "spinners-react";
 import useJwt from "../../../hooks/jwt";
 import { Venta } from "../../../tipos/Venta";
+import { FetchSalesByTPV, FetchTPV } from "../../../utils/fetches";
 import { GetTotalEnCaja, GetTotalEnEfectivo, GetTotalEnTarjeta } from "../../../utils/preciosUtils";
 import { CreateSalesList, CreateTPV } from "../../../utils/typeCreator";
 import { ValidatePositiveFloatingNumber } from "../../../utils/validator";
+import StatsCard from "../../dataDisplay/estadisticas";
 import { Backdrop } from "../backdrop";
 
 const In = {
@@ -44,14 +46,8 @@ export const CerrarCaja = (props: { handleClose: Function }) => {
 
     useEffect(() => {
         const GetVentas = async () => {
-            const fetchVentas = await fetch(`/api/ventas/tpv/${jwt.TPV}`);
-            const fetchTPV = await fetch(`/api/tpv/${jwt.TPV}`);
-
-            const ventasJson = await fetchVentas.json();
-            const tpvJson = await fetchTPV.json();
-
-            const ventas = CreateSalesList(JSON.parse(ventasJson.ventas));
-            const tpv = CreateTPV(JSON.parse(tpvJson.tpv));
+            const ventas = await FetchSalesByTPV(jwt.TPV);
+            const tpv = await FetchTPV(jwt.TPV);
 
             setVentas(ventas);
             setTotalEfectivo(GetTotalEnEfectivo(ventas));
@@ -67,14 +63,14 @@ export const CerrarCaja = (props: { handleClose: Function }) => {
             <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
                 className="h-full w-full ">
                 <Backdrop onClick={(e) => { e.stopPropagation(); props.handleClose(false) }} >
-                    <motion.div className="h-4/5 w-4/5 m-auto py-2 flex flex-col items-center bg-white rounded-2xl"
+                    <motion.div className="h-4/5 w-4/5 m-auto py-2 flex flex-col items-center justify-center bg-white rounded-2xl"
                         onClick={(e) => e.stopPropagation()}
                         variants={In}
                         initial="hidden"
                         animate="visible"
                         exit="exit"
                     >
-                        <SpinnerCircular />
+                        <SpinnerCircular size={"30%"} />
                     </motion.div>
                 </Backdrop>
             </motion.div>
@@ -92,38 +88,42 @@ export const CerrarCaja = (props: { handleClose: Function }) => {
                     animate="visible"
                     exit="exit"
                 >
-                    <div className="flex flex-col h-full w-full rounded justify-center content-center">
+                    <div className="flex flex-col gap-4 h-full w-full rounded justify-center content-center">
                         <div className="text-lg text-center font-bold">
-                            Ventana de Cierre de TPV
+                            Ventana de cierre de TPV
                         </div>
                         <hr />
-                        <div className="flex flex-col gap-4 w-full h-full">
-                            <div className="flex gap-2">
-                                <p>Número de ventas en esta TPV: </p>
-                                <p>{Ventas.length}</p>
-                            </div>
+                        <div className="flex w-full h-full">
+                            <div className="flex flex-col gap-4 w-full h-full">
+                                <div className="flex gap-2">
+                                    <p>Número de ventas: </p>
+                                    <p>{Ventas.length}</p>
+                                </div>
 
-                            <div className="flex gap-2">
-                                <p>Ventas en efectivo: </p>
-                                <p>{TotalEfectivo}</p>
-                            </div>
+                                <div className="flex gap-2">
+                                    <p>Ventas en efectivo: </p>
+                                    <p>{TotalEfectivo}€</p>
+                                </div>
 
-                            <div className="flex gap-2">
-                                <p>Ventas en tarjeta: </p>
-                                <p>{TotalTarjeta}</p>
-                            </div>
+                                <div className="flex gap-2">
+                                    <p>Ventas en tarjeta: </p>
+                                    <p>{TotalTarjeta}€</p>
+                                </div>
 
-                            <div className="flex gap-2">
-                                <p>Dinero total esperado en caja: </p>
-                                <p>{TotalPrevistoEnCaja}</p>
-                            </div>
+                                <div className="flex gap-2">
+                                    <p>Dinero total esperado en caja: </p>
+                                    <p>{TotalPrevistoEnCaja}€</p>
+                                </div>
 
-                            <div className="flex gap-2">
-                                <p>Dinero total real en caja: </p>
-                                <input className="rounded-lg border"
-                                    onChange={(e) => { setTotalRealEnCaja(Number(ValidatePositiveFloatingNumber(e.target.value))) }} value={TotalRealEnCaja} />
-                            </div>
+                                <div className="flex gap-2">
+                                    <p>Dinero total real en caja: </p>
+                                    <input className="rounded-lg border"
+                                        onChange={(e) => { setTotalRealEnCaja(Number(ValidatePositiveFloatingNumber(e.target.value))) }} value={TotalRealEnCaja} />
+                                    €
+                                </div>
 
+
+                            </div>
 
                         </div>
                         <div className="flex gap-10 h-auto w-full mb-auto justify-center text-white items-center">
@@ -134,7 +134,7 @@ export const CerrarCaja = (props: { handleClose: Function }) => {
                                 </div>
                             </div>
                             <div className="h-10 w-2/6 rounded-lg bg-blue-500 text-center">
-                                <span className="inline-block h-full w-full align-middle self-center">
+                                <span className="inline-block h-full w-full self-center">
                                     Cerrar caja
                                 </span>
                             </div>
