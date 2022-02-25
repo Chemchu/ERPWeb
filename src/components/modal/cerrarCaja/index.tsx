@@ -2,10 +2,10 @@ import { motion } from "framer-motion";
 import { useEffect, useState } from "react";
 import { SpinnerCircular } from "spinners-react";
 import useJwt from "../../../hooks/jwt";
+import { TipoCobro } from "../../../tipos/Enums/TipoCobro";
 import { Venta } from "../../../tipos/Venta";
 import { FetchSalesByTPV, FetchTPV } from "../../../utils/fetches";
-import { GetTotalEnCaja, GetTotalEnEfectivo, GetTotalEnTarjeta } from "../../../utils/preciosUtils";
-import { CreateSalesList, CreateTPV } from "../../../utils/typeCreator";
+import { GetTotalEnCaja, GetTotalPorTipos } from "../../../utils/preciosUtils";
 import { ValidatePositiveFloatingNumber } from "../../../utils/validator";
 import StatsCard from "../../dataDisplay/estadisticas";
 import { Backdrop } from "../backdrop";
@@ -40,7 +40,8 @@ export const CerrarCaja = (props: { handleClose: Function }) => {
     const [TotalEfectivo, setTotalEfectivo] = useState<number>();
     const [TotalTarjeta, setTotalTarjeta] = useState<number>();
     const [TotalPrevistoEnCaja, setTotalPrevistoEnCaja] = useState<number>();
-    const [TotalRealEnCaja, setTotalRealEnCaja] = useState<number>();
+    const [TotalRealEnCaja, setTotalRealEnCaja] = useState<number>(0);
+    const [DineroRetirado, setDineroRetirado] = useState<number>(0);
 
     const jwt = useJwt();
 
@@ -50,9 +51,10 @@ export const CerrarCaja = (props: { handleClose: Function }) => {
             const tpv = await FetchTPV(jwt.TPV);
 
             setVentas(ventas);
-            setTotalEfectivo(GetTotalEnEfectivo(ventas));
-            setTotalTarjeta(GetTotalEnTarjeta(ventas));
+            setTotalEfectivo(GetTotalPorTipos(ventas, [TipoCobro.Efectivo, TipoCobro.Rapido]));
+            setTotalTarjeta(GetTotalPorTipos(ventas, [TipoCobro.Tarjeta]));
             setTotalPrevistoEnCaja(GetTotalEnCaja(ventas, tpv));
+
         }
         GetVentas();
 
@@ -70,7 +72,7 @@ export const CerrarCaja = (props: { handleClose: Function }) => {
                         animate="visible"
                         exit="exit"
                     >
-                        <SpinnerCircular size={"30%"} />
+                        {/* Meter skeletons */}
                     </motion.div>
                 </Backdrop>
             </motion.div>
@@ -81,7 +83,7 @@ export const CerrarCaja = (props: { handleClose: Function }) => {
         <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
             className="h-full w-full ">
             <Backdrop onClick={(e) => { e.stopPropagation(); props.handleClose(false) }} >
-                <motion.div className="h-4/5 w-4/5 flex flex-col items-center bg-white rounded-2xl p-4"
+                <motion.div className="h-3/6 w-2/6 flex flex-col items-center bg-white rounded-2xl p-4"
                     onClick={(e) => e.stopPropagation()}
                     variants={In}
                     initial="hidden"
@@ -122,6 +124,12 @@ export const CerrarCaja = (props: { handleClose: Function }) => {
                                     €
                                 </div>
 
+                                <div className="flex gap-2">
+                                    <p>Dinero retirado: </p>
+                                    <input className="rounded-lg border"
+                                        onChange={(e) => { setDineroRetirado(Number(ValidatePositiveFloatingNumber(e.target.value))) }} value={DineroRetirado} />
+                                    €
+                                </div>
 
                             </div>
 

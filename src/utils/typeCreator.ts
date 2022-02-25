@@ -66,6 +66,7 @@ function CreateSale(s: any): Venta | undefined {
             tipo: s.tipo,
             descuentoEfectivo: s.descuentoEfectivo || 0,
             descuentoPorcentaje: s.descuentoPorcentaje || 0,
+            tpv: s.tpv,
             createdAt: s.createdAt,
             updatedAt: s.updatedAt
         }

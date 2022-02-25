@@ -16,5 +16,6 @@ export type Venta = {
     descuentoEfectivo: number,
     descuentoPorcentaje: number,
     createdAt: string,
-    updatedAt: string
+    updatedAt: string,
+    tpv: string
 }
