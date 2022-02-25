@@ -1,5 +1,5 @@
-import { gql } from "@apollo/client";
 import { NextApiRequest, NextApiResponse } from "next"
+import { QUERY_SALE } from "../../../utils/querys";
 import GQLFetcher from "../../../utils/serverFetcher";
 
 const handler = async (req: NextApiRequest, res: NextApiResponse) => {
@@ -8,56 +8,40 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
     //     return res.status(401).json({ message: "Not signed in" });
     // }
 
+    switch (req.method) {
+        case 'GET':
+            return await GetSale(req, res);
+
+        case 'DELETE':
+
+            break;
+
+        default:
+            res.setHeader('Allow', ['GET', 'DELETE', 'POST']);
+            res.status(405).end(`Method ${req.method} Not Allowed`);
+    }
+}
+
+const GetSale = async (req: NextApiRequest, res: NextApiResponse) => {
     try {
-        const reqCredentials = req.body;
         const fetchResult = await GQLFetcher.query(
             {
-                query: gql`
-                query Venta($id: ID!) {
-                    venta(_id: $id) {
-                        ${reqCredentials.neededValues.map((v: string) => { return v + ", " })}
-                    }
-                }
-                `,
+                query: QUERY_SALE,
                 variables: {
-                    "id": reqCredentials.id
+                    "id": req.query.id
                 }
             }
         );
 
-        if (fetchResult.data.success) {
-            return res.status(200).json({ message: `Lista de clientes encontrada` });
+        if (fetchResult.error) {
+            return res.status(300).json({ message: `Fallo al buscar la venta` });
         }
-
-        return res.status(300).json({ message: `Fallo al pedir la lista de clientes` });
+        return res.status(200).json({ message: `Venta encontrada` });
     }
     catch (err) {
         console.log(err);
         return res.status(500).json({ message: `Error: ${err}` });
     }
-
-    // switch (method) {
-    //     case 'GET':
-    //         // Get data from your database 
-    //         const response = await fetch(`${envInformation.ERPBACK_URL}api/ventas/${id}`);
-    //         const resJson = await response.json();
-
-    //         res.status(response.status).json(resJson.message);
-    //         break;
-
-    //     case 'PUT':
-    //         // Update or create data in your database
-    //         res.status(200).json({ id, name: name || `Venta ${id}` });
-    //         break;
-
-    //     case 'DELETE':
-
-    //         break;
-
-    //     default:
-    //         res.setHeader('Allow', ['GET', 'DELETE', 'PUT']);
-    //         res.status(405).end(`Method ${method} Not Allowed`);
-    // }
 }
 
 export default handler;

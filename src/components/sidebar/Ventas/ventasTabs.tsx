@@ -30,42 +30,10 @@ const SalesPage = (props: { ventas: Venta[], clientes: Cliente[] }) => {
     if (props.ventas == undefined) throw new Error("Props de ventas en ventasTabs.tsx es undefined");
     if (props.clientes == undefined) throw new Error("Props de clientes en ventasTabs.tsx es undefined");
 
-    const [Ventas, setVentas] = useState<Venta[]>([]);
-    const [Clientes, setClientes] = useState<Cliente[]>([]);
     const [CurrentPage, setCurrentPage] = useState<number>(1);
 
-    useEffect(() => {
-        setVentas(props.ventas);
-        setClientes(props.clientes)
-    }, [props.clientes, props.ventas])
-
     const elementsPerPage = 10;
-    const numPages = Ventas.length <= 0 ? 1 : Math.ceil(Ventas.length / elementsPerPage);
-
-    // const UpdateVentas = (ventas: Array<any>, clientes: Cliente[]): void => {
-    //     let ventasFormatted: Array<Venta> = [];
-    //     ventas.forEach((v: Venta) => {
-    //         const nombreCliente = clientes.find(c => c._id == v.clienteID)?.nombre;
-    //         const sale: Venta = {
-    //             _id: v._id,
-    //             clienteID: nombreCliente || "General",
-    //             productos: v.productos,
-    //             descuentoEfectivo: v.descuentoEfectivo,
-    //             descuentoTarjeta: v.descuentoTarjeta,
-    //             dineroEntregadoEfectivo: v.dineroEntregadoEfectivo,
-    //             dineroEntregadoTarjeta: v.dineroEntregadoTarjeta,
-    //             precioVentaTotal: v.precioVentaTotal,
-    //             cambio: v.cambio,
-    //             tipo: v.tipo,
-    //             vendidoPor: v.vendidoPor,
-    //             modificadoPor: v.modificadoPor,
-    //             createdAt: v.createdAt,
-    //             updatedAt: v.updatedAt
-    //         }
-    //         ventasFormatted.push(sale);
-    //     });
-    //     setVentas(ventasFormatted);
-    // }
+    const numPages = props.ventas.length <= 0 ? 1 : Math.ceil(props.ventas.length / elementsPerPage);
 
     const arrayNum = [...Array(8)];
 
@@ -112,14 +80,13 @@ const SalesPage = (props: { ventas: Venta[], clientes: Cliente[] }) => {
                 </div>
                 <div className="bg-white flex flex-col border-b-4 overflow-scroll overflow-x-hidden">
                     {
-                        Ventas.length <= 0 ?
-                            arrayNum.map((e, i) => <SkeletonCard key={`skeletonVentas-${i}`} />)
-
+                        props.ventas.length <= 0 ?
+                            arrayNum.map((e, i) => <SkeletonCard key={`skeletonprops.ventas-${i}`} />)
                             :
-                            Ventas.slice((elementsPerPage * (CurrentPage - 1)), CurrentPage * elementsPerPage).map((v) => {
+                            props.ventas.slice((elementsPerPage * (CurrentPage - 1)), CurrentPage * elementsPerPage).map((v) => {
                                 return (
                                     <div key={`FilaProdTable${v._id}`}>
-                                        <FilaVenta key={`FilaVenta${v._id}`} IDCompra={v._id} nombreCliente={v.clienteID} fechaCompra={v.createdAt} metodoPago={v.tipo} valorTotal={v.precioVentaTotal} />
+                                        <FilaVenta key={`FilaVenta${v._id}`} venta={v} />
                                     </div>
                                 );
                             })
@@ -133,27 +100,30 @@ const SalesPage = (props: { ventas: Venta[], clientes: Cliente[] }) => {
     );
 }
 
-const FilaVenta = (props: { IDCompra: string, nombreCliente: string, fechaCompra: string, metodoPago: string, valorTotal: number }) => {
+const FilaVenta = (props: { venta: Venta }) => {
+    let fecha = new Date(0);
+    fecha.setUTCMilliseconds(Number(props.venta.createdAt));
+
     return (
         <div className="grid grid-cols-4 w-full justify-evenly gap-x-6 border-t">
             <div className="px-5 py-5 border-gray-200 text-sm">
                 <p className="text-gray-900">
-                    {props.nombreCliente}
+                    {props.venta.cliente.nombre}
                 </p>
             </div>
             <div className="py-5 border-gray-200 text-sm">
                 <p className="text-gray-900 whitespace-no-wrap">
-                    {props.fechaCompra}
+                    {fecha.toLocaleString()}
                 </p>
             </div>
             <div className="py-5 border-gray-200 text-sm">
                 <p className="text-gray-900 whitespace-no-wrap">
-                    {props.metodoPago}
+                    {props.venta.tipo}
                 </p>
             </div>
             <div className="py-5 border-gray-200 text-lg">
                 <p className="text-gray-900 whitespace-no-wrap">
-                    {props.valorTotal}€
+                    {props.venta.precioVentaTotal.toFixed(2)}€
                 </p>
             </div>
         </div>

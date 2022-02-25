@@ -1,6 +1,8 @@
 import { Cliente } from "../tipos/Cliente";
+import { Empleado } from "../tipos/Empleado";
 import { Producto } from "../tipos/Producto";
 import { ProductoVendido } from "../tipos/ProductoVendido";
+import { TPV } from "../tipos/TPV";
 import { Venta } from "../tipos/Venta";
 
 function CreateProduct(p: any): Producto | undefined {
@@ -40,7 +42,6 @@ function CreateClient(c: any): Cliente | undefined {
             nif: c.nif,
             calle: c.calle ? c.calle : "",
             cp: c.cp ? c.cp : "",
-            telefono: c.telefono ? c.telefono : ""
         } as Cliente
 
         return client;
@@ -59,9 +60,9 @@ function CreateSale(s: any): Venta | undefined {
             dineroEntregadoTarjeta: s.dineroEntregadoTarjeta,
             precioVentaTotal: s.precioVentaTotal,
             cambio: s.cambio,
-            clienteID: s.cliente || "Cliente Tester",
-            vendidoPor: s.vendidoPor || "Tester",
-            modificadoPor: s.modificadoPor || "Tester",
+            cliente: s.cliente,
+            vendidoPor: s.vendidoPor,
+            modificadoPor: s.modificadoPor,
             tipo: s.tipo,
             descuentoEfectivo: s.descuentoEfectivo || 0,
             descuentoPorcentaje: s.descuentoPorcentaje || 0,
@@ -79,8 +80,16 @@ function CreateSale(s: any): Venta | undefined {
 function CreateProductoVendido(s: any): ProductoVendido | undefined {
     try {
         let prod: ProductoVendido = {
-            producto: s._id,
-            cantidad: s.cantidad,
+            _id: s._id,
+            nombre: s.nombre,
+            familia: s.familia,
+            proveedor: s.proveedor,
+            ean: s.ean,
+            iva: s.iva,
+            margen: s.margen,
+            precioCompra: s.precioCompra,
+            precioVenta: s.precioVenta,
+            cantidadVendida: s.cantidadVendida,
             dto: s.dto
         }
 
@@ -103,6 +112,8 @@ export function CreateProductList(pList: any[]): Producto[] {
 }
 
 export function CreateClientList(cList: any[]): Cliente[] {
+    if (cList === undefined) { return []; }
+
     let res: Cliente[] = [];
     cList.forEach((c: any) => {
         const client = CreateClient(c);
@@ -114,6 +125,8 @@ export function CreateClientList(cList: any[]): Cliente[] {
 }
 
 export function CreateSalesList(sList: any[]): Venta[] {
+    if (sList === undefined) { return [] as Venta[]; }
+
     let res: Venta[] = [];
     sList.forEach((c: any) => {
         const venta = CreateSale(c);
@@ -131,6 +144,36 @@ export function CreateProductoVendidoList(pList: any[]): ProductoVendido[] {
 
         if (prod) res.push(prod);
     });
+
+    return res;
+}
+
+export function CreateEmployee(employee: any): Empleado {
+    let res: Empleado = {
+        _id: employee._id,
+        nombre: employee.nombre,
+        apellidos: employee.apellidos,
+        email: employee.email,
+        rol: employee.rol,
+        dni: employee.dni || "",
+        fechaAlta: employee.fechaAlta || "",
+        genero: employee.genero || "",
+        horasPorSemana: employee.horasPorSemana || -1
+    }
+
+    return res;
+}
+
+export function CreateTPV(tpv: any): TPV {
+    let res: TPV = {
+        _id: tpv._id,
+        nombre: tpv.nombre,
+        enUsoPor: tpv.enUsoPor,
+        cajaInicial: tpv.cajaInicial,
+        libre: tpv.libre,
+        createdAt: tpv.createdAt,
+        updatedAt: tpv.updatedAt
+    }
 
     return res;
 }

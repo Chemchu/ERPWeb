@@ -3,11 +3,38 @@ import React, { useState } from "react";
 import { Producto } from "../../../tipos/Producto";
 import { CheckBox } from "../../Forms/checkbox";
 import { Paginador } from "../../Forms/paginador";
-import { ConvertBufferToBase64 } from "../../../utils/validator";
-import { ModalEditarProducto } from "../../modal";
 import SkeletonCard from "../../Skeletons/skeletonCard";
+import EditarProducto from "../../modal/editarProducto";
 
-export const ProductPage = (props: { productos: Producto[], serverUp: boolean }) => {
+const variants = {
+    initial: {
+        opacity: 0
+    },
+    animate: {
+        opacity: 1,
+        transition: {
+            duration: 1,
+            ease: "easeInOut",
+        },
+    },
+    exit: {
+        y: '-100vh',
+        opacity: 0,
+        transition: {
+            ease: [0.87, 0, 0.13, 1],
+            duration: 1
+        }
+    },
+    exitFadeOut: {
+        opacity: 0,
+        transition: {
+            ease: "easeInOut",
+            duration: 1
+        }
+    },
+}
+
+const ProductPage = (props: { productos: Producto[], serverUp: boolean }) => {
     const [currentPage, setCurrentPage] = useState<number>(1);
     const [selectedProducts, setSelectedProducts] = useState<number[]>([]);
     const [allChecked, setAllChecked] = useState<boolean>(false);
@@ -45,38 +72,10 @@ export const ProductPage = (props: { productos: Producto[], serverUp: boolean })
         }
     }
 
-    const variants = {
-        initial: {
-            opacity: 0
-        },
-        animate: {
-            opacity: 1,
-            transition: {
-                duration: 1,
-                ease: "easeInOut",
-            },
-        },
-        exit: {
-            y: '-100vh',
-            opacity: 0,
-            transition: {
-                ease: [0.87, 0, 0.13, 1],
-                duration: 1
-            }
-        },
-        exitFadeOut: {
-            opacity: 0,
-            transition: {
-                ease: "easeInOut",
-                duration: 1
-            }
-        },
-    }
-
     const arrayNum = [...Array(8)];
 
     return (
-        <div className="flex flex-col h-screen antialiased mx-8 py-8" >
+        <div className="flex flex-col h-screen w-full antialiased px-8 py-8" >
             <h2 className="text-2xl leading-tight">
                 Productos
             </h2>
@@ -108,7 +107,7 @@ export const ProductPage = (props: { productos: Producto[], serverUp: boolean })
                 </div>
                 <div className="text-end">
                     <div className="flex flex-col md:flex-row w-3/4 md:w-full max-w-sm md:space-x-3 space-y-3 md:space-y-0 justify-center">
-                        <input type="text" id="form-subscribe-Filter" className="rounded-lg border-transparent flex-1 appearance-none border border-gray-300 w-full py-2 px-4 bg-white text-gray-700 placeholder-gray-400 shadow-sm text-base focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-transparent" placeholder="Producto a buscar..." />
+                        <input type="text" id="form-subscribe-Filter" className="rounded-lg flex-1 appearance-none border border-gray-300 w-full py-2 px-4 bg-white text-gray-700 placeholder-gray-400 shadow-sm text-base focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-transparent" placeholder="Producto a buscar..." />
                         <button className="flex-shrink-0 px-4 py-2 text-base font-semibold text-white bg-blue-500 rounded-lg shadow-md hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 focus:ring-offset-blue-200">
                             Filtrar
                         </button>
@@ -221,8 +220,10 @@ const FilaProducto = (props: { listIndex: number, producto: Producto, selectedPr
                     </svg>
                 </button>
             </div>
-            {showModal && <ModalEditarProducto handleClose={CloseModalProducto} product={props.producto} />}
+            {showModal && <EditarProducto handleClose={CloseModalProducto} product={props.producto} />}
         </div>
 
     );
 }
+
+export default ProductPage;

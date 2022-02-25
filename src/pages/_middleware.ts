@@ -1,41 +1,50 @@
 import { NextFetchEvent, NextRequest, NextResponse } from 'next/server'
 
 export async function middleware(req: NextRequest, ev: NextFetchEvent) {
-    if (req.url === '/') { return NextResponse.next(); }
+    try {
+        if (req.nextUrl.pathname === '/') { return NextResponse.next(); }
 
-    if (req.cookies.authorization === undefined) {
-        if (req.url.includes("dashboard")) { return NextResponse.redirect('/login'); }
+        const url = req.nextUrl.clone();
 
-        return NextResponse.next();
-    }
+        if (!req.cookies.authorization) {
+            if (req.nextUrl.pathname.includes("dashboard")) { url.pathname = "/login"; return NextResponse.rewrite(url); }
 
-    const authCookie = req.cookies.authorization.split(" ")[1];
-    if (IsJwtExpired(authCookie)) {
-        return NextResponse.redirect(`/login`).clearCookie("authorization");
-    }
+            return NextResponse.next();
+        }
 
-    if (authCookie) {
-        const credentialsValidation = await (await fetch(`${process.env.ERPBACK_URL}graphql`, {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify(
-                {
-                    query: `query ValidateJwt($jwt: String!) {
+        const authCookie = req.cookies.authorization.split(" ")[1];
+        if (IsJwtExpired(authCookie)) {
+            url.pathname = "/login";
+            return NextResponse.rewrite(url).clearCookie("authorization");
+        }
+
+        if (authCookie) {
+            const credentialsValidation = await (await fetch(`${process.env.ERPBACK_URL}graphql`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(
+                    {
+                        query: `query ValidateJwt($jwt: String!) {
                             validateJwt(jwt: $jwt) {
                                 validado
                             }
                         }`,
-                    variables: {
-                        jwt: authCookie
+                        variables: {
+                            jwt: authCookie
+                        }
                     }
-                }
-            )
-        })).json();
+                )
+            })).json();
 
-        if (!credentialsValidation.data.validateJwt.validado) { return NextResponse.redirect(`/login`).clearCookie("authorization"); }
-        if (req.url === '/login') { return NextResponse.redirect(`/dashboard`); }
+            if (!credentialsValidation.data.validateJwt.validado) { url.pathname = "/login"; return NextResponse.rewrite(url).clearCookie("authorization"); }
+            if (req.nextUrl.pathname === '/login') { url.pathname = "/dashboard"; return NextResponse.rewrite(url); }
+        }
+    }
+    catch (err) {
+        const url = req.nextUrl.clone();
+        url.pathname = "/serverError"; return NextResponse.rewrite(url);
     }
 }
 
@@ -45,6 +54,5 @@ const IsJwtExpired = (Jwt: string): boolean => {
     const exp = JSON.parse(payload.toString()).exp;
 
     const expDate = new Date(0).setSeconds(exp);
-
     return expDate <= Date.now();
 }

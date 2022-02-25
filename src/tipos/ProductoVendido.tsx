@@ -1,8 +1,13 @@
-import { Producto } from "./Producto";
-import { JSONBuffer } from "./JsonBuffer";
-
 export type ProductoVendido = {
-    producto: Producto,
-    cantidad: string,
-    dto: string
+    _id: string,
+    nombre: string,
+    proveedor: string,
+    familia: string,
+    precioVenta: number,
+    precioCompra: number,
+    iva: number,
+    margen: number,
+    ean: string,
+    cantidadVendida: number,
+    dto: number
 }
