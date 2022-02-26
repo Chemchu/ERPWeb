@@ -47,10 +47,12 @@ const TpvOpenModal = (props: { setEmpleadoUsandoTPV: Function }) => {
             }
         });
 
+        const cInicial: number = parseFloat(Number(cajaInicial).toFixed(2))
         ocuparTpv({
             variables: {
                 "idEmpleado": jwt._id,
-                "idTpv": tpvID
+                "idTpv": tpvID,
+                "cajaInicial": cInicial
             }
         });
     }
