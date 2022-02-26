@@ -79,8 +79,7 @@ export const LoginForm = () => {
         const loginResponse = await res.json();
         if (loginResponse.token) {
             Cookies.set("authorization", loginResponse.token);
-            Router.push("/dashboard");
-            return;
+            return Router.push("/dashboard");
         }
 
         setLoginFallido(true);

@@ -1,11 +1,12 @@
+import { useMutation } from "@apollo/client";
 import { motion } from "framer-motion";
 import { useEffect, useState } from "react";
-import { SpinnerCircular } from "spinners-react";
 import useJwt from "../../../hooks/jwt";
-import { TipoCobro } from "../../../tipos/Enums/TipoCobro";
+import { TPV } from "../../../tipos/TPV";
 import { Venta } from "../../../tipos/Venta";
-import { FetchSalesByTPV, FetchTPV } from "../../../utils/fetches";
-import { GetTotalEnCaja, GetTotalPorTipos } from "../../../utils/preciosUtils";
+import { FetchSalesByTPVDate, FetchTPV } from "../../../utils/fetches";
+import { GetEfectivoTotal, GetTarjetaTotal, GetTotalEnCaja } from "../../../utils/preciosUtils";
+import { ADD_CIERRE } from "../../../utils/querys";
 import { ValidatePositiveFloatingNumber } from "../../../utils/validator";
 import StatsCard from "../../dataDisplay/estadisticas";
 import { Backdrop } from "../backdrop";
@@ -36,25 +37,54 @@ const In = {
 
 
 export const CerrarCaja = (props: { handleClose: Function }) => {
-    const [Ventas, setVentas] = useState<Venta[]>();
-    const [TotalEfectivo, setTotalEfectivo] = useState<number>();
-    const [TotalTarjeta, setTotalTarjeta] = useState<number>();
-    const [TotalPrevistoEnCaja, setTotalPrevistoEnCaja] = useState<number>();
-    const [TotalRealEnCaja, setTotalRealEnCaja] = useState<number>(0);
-    const [DineroRetirado, setDineroRetirado] = useState<number>(0);
-
     const jwt = useJwt();
+    const [Ventas, setVentas] = useState<Venta[]>();
+    const [Tpv, setTPV] = useState<TPV>();
+    const [TotalEfectivo, setTotalEfectivo] = useState<string>();
+    const [TotalTarjeta, setTotalTarjeta] = useState<string>();
+    const [TotalPrevistoEnCaja, setTotalPrevistoEnCaja] = useState<string>();
+    const [TotalRealEnCaja, setTotalRealEnCaja] = useState<string>("0");
+    const [DineroRetirado, setDineroRetirado] = useState<string>("0");
+    const [cerrarCaja, { loading, data }] = useMutation(ADD_CIERRE, {
+        variables: {
+            "cierre": {
+                "tpv": jwt.TPV,
+                "cajaInicial": Tpv?.cajaInicial,
+                "abiertoPor": {
+                    "_id": Tpv?.enUsoPor._id,
+                    "nombre": Tpv?.enUsoPor.nombre,
+                    "apellidos": Tpv?.enUsoPor.apellidos,
+                    "rol": Tpv?.enUsoPor.rol,
+                    "email": Tpv?.enUsoPor.email
+                },
+                "cerradoPor": {
+                    "_id": jwt._id,
+                    "nombre": jwt.nombre,
+                    "apellidos": jwt.apellidos,
+                    "rol": jwt.rol,
+                    "email": jwt.email
+                },
+                "apertura": Tpv?.updatedAt,
+                "ventasEfectivo": Number(TotalEfectivo),
+                "ventasTarjeta": Number(TotalTarjeta),
+                "ventasTotales": Number(TotalEfectivo) + Number(TotalTarjeta),
+                "dineroRetirado": Number(DineroRetirado),
+                "fondoDeCaja": Number(TotalRealEnCaja) - Number(DineroRetirado)
+            }
+        }
+    });
+
 
     useEffect(() => {
         const GetVentas = async () => {
-            const ventas = await FetchSalesByTPV(jwt.TPV);
             const tpv = await FetchTPV(jwt.TPV);
+            const ventas = await FetchSalesByTPVDate(jwt.TPV, tpv.updatedAt.toString());
 
             setVentas(ventas);
-            setTotalEfectivo(GetTotalPorTipos(ventas, [TipoCobro.Efectivo, TipoCobro.Rapido]));
-            setTotalTarjeta(GetTotalPorTipos(ventas, [TipoCobro.Tarjeta]));
-            setTotalPrevistoEnCaja(GetTotalEnCaja(ventas, tpv));
-
+            setTPV(tpv);
+            setTotalEfectivo(GetEfectivoTotal(ventas).toString());
+            setTotalTarjeta(GetTarjetaTotal(ventas).toString());
+            setTotalPrevistoEnCaja(GetTotalEnCaja(ventas, tpv).toString());
         }
         GetVentas();
 
@@ -63,9 +93,9 @@ export const CerrarCaja = (props: { handleClose: Function }) => {
     if (!Ventas) {
         return (
             <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
-                className="h-full w-full ">
+                className="h-full w-full">
                 <Backdrop onClick={(e) => { e.stopPropagation(); props.handleClose(false) }} >
-                    <motion.div className="h-4/5 w-4/5 m-auto py-2 flex flex-col items-center justify-center bg-white rounded-2xl"
+                    <motion.div className="h-3/6 w-2/6 m-auto py-2 flex flex-col items-center justify-center bg-white rounded-2xl"
                         onClick={(e) => e.stopPropagation()}
                         variants={In}
                         initial="hidden"
@@ -83,7 +113,7 @@ export const CerrarCaja = (props: { handleClose: Function }) => {
         <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
             className="h-full w-full ">
             <Backdrop onClick={(e) => { e.stopPropagation(); props.handleClose(false) }} >
-                <motion.div className="h-3/6 w-2/6 flex flex-col items-center bg-white rounded-2xl p-4"
+                <motion.div className="h-3/6 w-3/6 flex flex-col items-center bg-white rounded-2xl p-4"
                     onClick={(e) => e.stopPropagation()}
                     variants={In}
                     initial="hidden"
@@ -104,30 +134,30 @@ export const CerrarCaja = (props: { handleClose: Function }) => {
 
                                 <div className="flex gap-2">
                                     <p>Ventas en efectivo: </p>
-                                    <p>{TotalEfectivo}€</p>
+                                    <p>{Number(TotalEfectivo).toFixed(2)}€</p>
                                 </div>
 
                                 <div className="flex gap-2">
                                     <p>Ventas en tarjeta: </p>
-                                    <p>{TotalTarjeta}€</p>
+                                    <p>{Number(TotalTarjeta).toFixed(2)}€</p>
                                 </div>
 
                                 <div className="flex gap-2">
                                     <p>Dinero total esperado en caja: </p>
-                                    <p>{TotalPrevistoEnCaja}€</p>
+                                    <p>{Number(TotalPrevistoEnCaja).toFixed(2)}€</p>
                                 </div>
 
                                 <div className="flex gap-2">
                                     <p>Dinero total real en caja: </p>
                                     <input className="rounded-lg border"
-                                        onChange={(e) => { setTotalRealEnCaja(Number(ValidatePositiveFloatingNumber(e.target.value))) }} value={TotalRealEnCaja} />
+                                        onChange={(e) => { setTotalRealEnCaja(ValidatePositiveFloatingNumber(e.target.value)) }} value={TotalRealEnCaja} />
                                     €
                                 </div>
 
                                 <div className="flex gap-2">
                                     <p>Dinero retirado: </p>
                                     <input className="rounded-lg border"
-                                        onChange={(e) => { setDineroRetirado(Number(ValidatePositiveFloatingNumber(e.target.value))) }} value={DineroRetirado} />
+                                        onChange={(e) => { setDineroRetirado(ValidatePositiveFloatingNumber(e.target.value)) }} value={DineroRetirado} />
                                     €
                                 </div>
 
@@ -141,7 +171,8 @@ export const CerrarCaja = (props: { handleClose: Function }) => {
                                     Cancelar
                                 </div>
                             </div>
-                            <div className="h-10 w-2/6 rounded-lg bg-blue-500 text-center">
+                            <div className={`h-10 w-2/6 rounded-lg ${Number(TotalRealEnCaja) > 0 ? 'bg-blue-500 cursor-pointer' : 'bg-blue-400 cursor-default'} text-center`}
+                                onClick={() => { Number(TotalRealEnCaja) > 0 ? cerrarCaja() : undefined }}>
                                 <span className="inline-block h-full w-full self-center">
                                     Cerrar caja
                                 </span>

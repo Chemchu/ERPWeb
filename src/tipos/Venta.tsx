@@ -11,7 +11,7 @@ export type Venta = {
     cambio: number,
     cliente: Cliente,
     vendidoPor: Empleado,
-    modificadoPor: string,
+    modificadoPor: Empleado,
     tipo: string,
     descuentoEfectivo: number,
     descuentoPorcentaje: number,

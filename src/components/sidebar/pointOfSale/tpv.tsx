@@ -286,7 +286,7 @@ const SidebarDerecho = React.memo((props: { todosProductos: Producto[], producto
                         margen: prodEnCarrito.margen,
                         precioCompra: prodEnCarrito.precioCompra,
                         precioVenta: prodEnCarrito.precioVenta,
-                        dto: dtoAjustado
+                        dto: Number(dtoAjustado)
                     } as unknown as ProductoVendido;
 
                     let ProductosEnCarritoUpdated = prevCarrito;

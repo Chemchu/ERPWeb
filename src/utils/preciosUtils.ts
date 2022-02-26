@@ -36,9 +36,31 @@ export const CalcularCambio = (precioTotalAPagar: number, dineroEntregadoEfectiv
     return (dineroEntregadoEfectivo + dineroEntregadoTarjeta) - precioTotalAPagar;
 }
 
-export const GetTotalPorTipos = (Ventas: Venta[], tipos: TipoCobro[]): number => {
+export const GetEfectivoTotal = (Ventas: Venta[]): number => {
     return Ventas.reduce((total: number, v: Venta): number => {
-        if (tipos.includes(v.tipo as TipoCobro)) {
+        const tipoVenta = v.tipo as TipoCobro;
+
+        if (tipoVenta === TipoCobro.Fraccionado) {
+            return total += v.dineroEntregadoEfectivo - v.cambio;
+        }
+
+        if (tipoVenta === TipoCobro.Rapido || tipoVenta === TipoCobro.Efectivo) {
+            return total += v.precioVentaTotal;
+        }
+        return total;
+    }, 0);
+
+}
+
+export const GetTarjetaTotal = (Ventas: Venta[]): number => {
+    return Ventas.reduce((total: number, v: Venta): number => {
+        const tipoVenta = v.tipo as TipoCobro;
+
+        if (tipoVenta === TipoCobro.Fraccionado) {
+            return total += v.dineroEntregadoTarjeta;
+        }
+
+        if (tipoVenta === TipoCobro.Tarjeta) {
             return total += v.precioVentaTotal;
         }
         return total;
@@ -47,16 +69,17 @@ export const GetTotalPorTipos = (Ventas: Venta[], tipos: TipoCobro[]): number =>
 }
 
 export const GetTotalEnCaja = (Ventas: Venta[], Tpv: TPV): number => {
-    return Ventas.reduce((total: number, v: Venta): number => {
+    return Tpv.cajaInicial + Ventas.reduce((total: number, v: Venta): number => {
         if (Tpv._id !== v.tpv) {
             return total;
         }
+        const tipoVenta = v.tipo as TipoCobro;
 
-        if (v.tipo as TipoCobro === TipoCobro.Efectivo) {
+        if (tipoVenta === TipoCobro.Efectivo || tipoVenta === TipoCobro.Rapido) {
             return total += v.precioVentaTotal;
         }
 
-        if (v.tipo as TipoCobro === TipoCobro.Fraccionado) {
+        if (tipoVenta === TipoCobro.Fraccionado) {
             return total += v.dineroEntregadoEfectivo - v.cambio;
         }
 

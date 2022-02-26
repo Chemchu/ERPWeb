@@ -9,29 +9,28 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
     // }
 
     switch (req.method) {
-        case 'POST':
+        case 'GET':
             return await GetSaleByTPVDate(req, res);
 
-        case 'DELETE':
-
-            break;
-
         default:
-            res.setHeader('Allow', ['POST', 'DELETE']);
+            res.setHeader('Allow', ['GET']);
             res.status(405).end(`Method ${req.method} Not Allowed`);
     }
 }
 
 const GetSaleByTPVDate = async (req: NextApiRequest, res: NextApiResponse) => {
     try {
+        const { ids } = req.query;
+
         const fetchResult = await GQLFetcher.query({
             query: QUERY_SALES,
             variables: {
                 find: {
-                    tpv: req.body.fecha,
-                    createdAt: req.query.id
+                    tpv: ids[0],
+                    createdAt: ids[1]
                 }
-            }
+            },
+            fetchPolicy: "no-cache"
         });
 
         if (fetchResult.error) {

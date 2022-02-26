@@ -60,9 +60,9 @@ function CreateSale(s: any): Venta | undefined {
             dineroEntregadoTarjeta: s.dineroEntregadoTarjeta,
             precioVentaTotal: s.precioVentaTotal,
             cambio: s.cambio,
-            cliente: s.cliente,
-            vendidoPor: s.vendidoPor,
-            modificadoPor: s.modificadoPor,
+            cliente: CreateClient(s.cliente) || s.client,
+            vendidoPor: CreateEmployee(s.vendidoPor),
+            modificadoPor: CreateEmployee(s.modificadoPor),
             tipo: s.tipo,
             descuentoEfectivo: s.descuentoEfectivo || 0,
             descuentoPorcentaje: s.descuentoPorcentaje || 0,
@@ -91,7 +91,7 @@ function CreateProductoVendido(s: any): ProductoVendido | undefined {
             precioCompra: s.precioCompra,
             precioVenta: s.precioVenta,
             cantidadVendida: s.cantidadVendida,
-            dto: s.dto
+            dto: s.dto || 0
         }
 
         return prod;

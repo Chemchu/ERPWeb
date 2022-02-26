@@ -2,6 +2,7 @@ import { motion } from 'framer-motion';
 import React, { useState } from 'react';
 import { Producto } from '../../../tipos/Producto';
 import { ProductoVendido } from '../../../tipos/ProductoVendido';
+import { ValidatePositiveFloatingNumber } from '../../../utils/validator';
 
 
 export const ProductCard = React.memo((props: { Prod: Producto }) => {
@@ -23,7 +24,6 @@ export const ProductSelectedCard = React.memo((props: { producto: ProductoVendid
         e.stopPropagation();
         props.setPropiedadProd(props.producto._id, 0, props.producto.dto);
     }
-    //const producto: ProductoVendido = { producto: props.producto, cantidad: props.cantidad, dto: props.dto } as ProductoVendido;
 
     return (
         <div key={`${props.producto._id}`} >
@@ -99,7 +99,7 @@ export const ProductSelectedCard = React.memo((props: { producto: ProductoVendid
                                 <input type="text" inputMode="numeric" className="text-xs text-center rounded-lg w-10 h-6 shadow"
                                     value={props.producto.dto} onClick={(e) => { e.stopPropagation(); }} onChange={(e) => {
                                         e.stopPropagation();
-                                        props.setPropiedadProd(props.producto._id, props.producto.cantidadVendida, e.target.value);
+                                        props.setPropiedadProd(props.producto._id, props.producto.cantidadVendida, ValidatePositiveFloatingNumber(e.target.value));
                                     }} />
                                 <> %</>
                             </div>
