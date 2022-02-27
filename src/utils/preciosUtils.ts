@@ -83,6 +83,10 @@ export const GetTotalEnCaja = (Ventas: Venta[], Tpv: TPV): number => {
             return total += v.dineroEntregadoEfectivo - v.cambio;
         }
 
+        if (tipoVenta === TipoCobro.Tarjeta) {
+            return total -= v.cambio;
+        }
+
         return total;
     }, 0);
 }

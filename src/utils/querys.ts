@@ -14,6 +14,7 @@ export const ADD_CIERRE = gql`
         addCierreTPV(cierre: $cierre) {
             message
             successful
+            token
         }
     }
 `;
@@ -170,9 +171,9 @@ query Tpvs($find: TPVsFind, $limit: Int) {
 `;
 
 export const OCUPY_TPV = gql`
-        mutation OcupyTPV($idEmpleado: ID!, $idTpv: ID!) {
-            ocupyTPV(idEmpleado: $idEmpleado, idTPV: $idTpv) {
-                token
-            }
+    mutation OcupyTPV($idEmpleado: ID!, $idTpv: ID!, $cajaInicial: Float!) {
+        ocupyTPV(idEmpleado: $idEmpleado, idTPV: $idTpv, cajaInicial: $cajaInicial) {
+            token
         }
+    }
 `;

@@ -14,12 +14,16 @@ import CerrarCaja from "../../modal/cerrarCaja";
 import { AplicarDescuentos, PrecioTotalCarrito } from "../../../utils/preciosUtils";
 import { Cliente } from "../../../tipos/Cliente";
 import { FetchClientes } from "../../../utils/fetches";
+import useJwt from "../../../hooks/jwt";
+import TpvOpenModal from "../../modal/tpvOpen";
+import jwt from "../../../hooks/jwt";
 
-const TPV = (props: { productos: Producto[], serverOperativo: boolean }) => {
+const TPV = (props: { productos: Producto[], serverOperativo: boolean, empleadoUsandoTPV: boolean, setEmpleadoUsandoTPV: Function }) => {
     const [Busqueda, setBusqueda] = useState<string>("");
     const [ProductosFiltrados, setProductosFiltrados] = useState<Producto[]>([]);
     const { ProductosEnCarrito, SetProductosEnCarrito } = useProductEnCarritoContext();
     const [Familias, setFamilias] = useState<string[]>([]);
+    const jwt = useJwt();
 
     useEffect(() => {
         function uniq_fast(a: Producto[]) {
@@ -60,9 +64,41 @@ const TPV = (props: { productos: Producto[], serverOperativo: boolean }) => {
         setProductosFiltrados(productosFiltrados);
     }
 
+    if (!props.empleadoUsandoTPV) {
+        return (<div className="antialiased overflow-hidden text-gray-800">
+            {console.log("Cerrado")}
+            {/* Página principal del POS */}
+            <div className="grid grid-cols-3 bg-gray-100">
+                {/* Menú tienda, donde se muestran los productos */}
+                <div className="col-span-2 h-screen">
+                    <div className="flex flex-col h-full w-full py-4">
+                        <div className="flex px-2 flex-row relative">
+                            <div className="absolute left-5 top-3 px-2 py-2 rounded-full bg-blue-400 text-white">
+                                <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                                </svg>
+                            </div>
+                            <input disabled className="bg-white rounded-3xl shadow text-lg full w-full h-16 py-4 pl-16 transition-shadow focus:shadow-2xl focus:outline-none" placeholder="Buscar producto o código de barras..." />
+                        </div>
+                        <div className="h-full overflow-hidden">
+                            <ListaProductos productos={[]} productosFiltrados={ProductosFiltrados} ServerUp={props.serverOperativo} />
+                        </div>
+                    </div>
+                </div>
+                {/* Menú tienda */}
+                {/* Sidebar derecho */}
+                <div className="h-screen">
+                    <SidebarDerecho todosProductos={[]} productosEnCarrito={[]} setProductosCarrito={SetProductosEnCarrito} empleadoUsandoTPV={props.empleadoUsandoTPV} setEmpleadoUsandoTPV={props.setEmpleadoUsandoTPV} />
+                </div>
+
+            </div>
+        </div>)
+    }
+
     const arrayNum = [...Array(5)];
     return (
         <div className="antialiased overflow-hidden text-gray-800">
+            {console.log("Abierto")}
             {/* Página principal del POS */}
             <div className="grid grid-cols-3 bg-gray-100">
                 {/* Menú tienda, donde se muestran los productos */}
@@ -112,7 +148,7 @@ const TPV = (props: { productos: Producto[], serverOperativo: boolean }) => {
                 {/* Menú tienda */}
                 {/* Sidebar derecho */}
                 <div className="h-screen">
-                    <SidebarDerecho todosProductos={props.productos} productosEnCarrito={ProductosEnCarrito} setProductosCarrito={SetProductosEnCarrito} />
+                    <SidebarDerecho todosProductos={props.productos} productosEnCarrito={ProductosEnCarrito} setProductosCarrito={SetProductosEnCarrito} empleadoUsandoTPV={props.empleadoUsandoTPV} setEmpleadoUsandoTPV={props.setEmpleadoUsandoTPV} />
                 </div>
 
             </div>
@@ -238,13 +274,17 @@ const ProductosNoEncontrados = () => {
     );
 }
 
-const SidebarDerecho = React.memo((props: { todosProductos: Producto[], productosEnCarrito: ProductoVendido[], setProductosCarrito: React.Dispatch<React.SetStateAction<ProductoVendido[]>> }) => {
+const SidebarDerecho = React.memo((props: {
+    todosProductos: Producto[], productosEnCarrito: ProductoVendido[],
+    setProductosCarrito: React.Dispatch<React.SetStateAction<ProductoVendido[]>>, empleadoUsandoTPV: boolean, setEmpleadoUsandoTPV: Function
+}) => {
     const [descuentoOpen, setDescuentoPupup] = useState<boolean>(false);
     const [dtoEfectivo, setDtoEfectivo] = useState<string>("0");
     const [dtoPorcentaje, setDtoPorcentaje] = useState<string>("0");
 
     const [showModalPagar, setPagarModal] = useState(false);
     const [showModalCobro, setCobroModal] = useState(false);
+    const [showModalAbrirCaja, setAbrirCajaModal] = useState(true);
     const [showModalCerrarCaja, setCerrarCajaModal] = useState(false);
 
     const [Clientes, SetClientes] = useState<Cliente[]>([]);
@@ -301,6 +341,10 @@ const SidebarDerecho = React.memo((props: { todosProductos: Producto[], producto
         })
     }, []);
 
+    const AbrirCaja = () => {
+        //setAbrirCajaModal()
+    }
+
     const precioTotal: number = PrecioTotalCarrito(props.productosEnCarrito);
     const precioTotalDescontado: number = AplicarDescuentos(props.productosEnCarrito, Number(dtoEfectivo), Number(dtoPorcentaje));
 
@@ -343,21 +387,22 @@ const SidebarDerecho = React.memo((props: { todosProductos: Producto[], producto
                                 </p>
                             </div>
 
-                            <div className="row-start-6 row-end-7 flex justify-between mb-3 text-lg font-semibold ">
-                                <button className="flex gap-2">
-                                    Imprimir
-                                    <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z" />
-                                    </svg>
-                                </button>
-
-                                <button className="flex gap-2" onClick={() => { setCerrarCajaModal(true) }}>
-                                    Cerrar caja
-                                    <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
-                                    </svg>
-                                </button>
-                            </div>
+                            {
+                                props.empleadoUsandoTPV ?
+                                    <button className="flex gap-2 justify-center self-end pb-4" onClick={() => { setCerrarCajaModal(true) }}>
+                                        CERRAR CAJA
+                                        <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
+                                        </svg>
+                                    </button>
+                                    :
+                                    <button className="flex gap-2 justify-center self-end pb-4" onClick={() => { setAbrirCajaModal(true) }}>
+                                        ABRIR CAJA
+                                        <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
+                                        </svg>
+                                    </button>
+                            }
                         </div>
                         :
                         <div className="flex flex-col h-full">
@@ -462,7 +507,8 @@ const SidebarDerecho = React.memo((props: { todosProductos: Producto[], producto
                 <AnimatePresence initial={false} exitBeforeEnter={true}>
                     {showModalPagar && <ModalPagar productosComprados={props.productosEnCarrito} setProductosComprados={props.setProductosCarrito} PagoCliente={pago} handleModalOpen={setPagarModal} />}
                     {showModalCobro && <Resumen pagoCliente={pagoRapido} handleOpen={setCobroModal} productosVendidos={props.productosEnCarrito} setProductosComprados={props.setProductosCarrito} />}
-                    {showModalCerrarCaja && <CerrarCaja handleClose={setCerrarCajaModal} />}
+                    {showModalCerrarCaja && <CerrarCaja setModalOpen={setCerrarCajaModal} />}
+                    {showModalAbrirCaja && <TpvOpenModal setShowModal={setAbrirCajaModal} />}
                 </AnimatePresence>
             </div>
         </div>

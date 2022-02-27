@@ -23,9 +23,9 @@ const PuntoDeVenta = () => {
     return (
         <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}>
             {
-                !empleadoUsandoTPV && <TpvOpenModal setEmpleadoUsandoTPV={setEmpleadoUsandoTPV} />
+                // !empleadoUsandoTPV && <TpvOpenModal setEmpleadoUsandoTPV={setEmpleadoUsandoTPV} />
             }
-            <TPV productos={Productos} serverOperativo={ServerUp} />
+            <TPV productos={Productos} serverOperativo={ServerUp} empleadoUsandoTPV={empleadoUsandoTPV} setEmpleadoUsandoTPV={setEmpleadoUsandoTPV} />
         </motion.div>
     );
 }

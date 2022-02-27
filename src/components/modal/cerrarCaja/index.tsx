@@ -1,5 +1,7 @@
 import { useMutation } from "@apollo/client";
 import { motion } from "framer-motion";
+import Cookies from "js-cookie";
+import Router from "next/router";
 import { useEffect, useState } from "react";
 import useJwt from "../../../hooks/jwt";
 import { TPV } from "../../../tipos/TPV";
@@ -36,7 +38,7 @@ const In = {
 }
 
 
-export const CerrarCaja = (props: { handleClose: Function }) => {
+export const CerrarCaja = (props: { setModalOpen: Function }) => {
     const jwt = useJwt();
     const [Ventas, setVentas] = useState<Venta[]>();
     const [Tpv, setTPV] = useState<TPV>();
@@ -45,7 +47,7 @@ export const CerrarCaja = (props: { handleClose: Function }) => {
     const [TotalPrevistoEnCaja, setTotalPrevistoEnCaja] = useState<string>();
     const [TotalRealEnCaja, setTotalRealEnCaja] = useState<string>("0");
     const [DineroRetirado, setDineroRetirado] = useState<string>("0");
-    const [cerrarCaja, { loading, data }] = useMutation(ADD_CIERRE, {
+    const [cerrarCaja, { loading, data, error }] = useMutation(ADD_CIERRE, {
         variables: {
             "cierre": {
                 "tpv": jwt.TPV,
@@ -74,7 +76,6 @@ export const CerrarCaja = (props: { handleClose: Function }) => {
         }
     });
 
-
     useEffect(() => {
         const GetVentas = async () => {
             const tpv = await FetchTPV(jwt.TPV);
@@ -86,15 +87,22 @@ export const CerrarCaja = (props: { handleClose: Function }) => {
             setTotalTarjeta(GetTarjetaTotal(ventas).toString());
             setTotalPrevistoEnCaja(GetTotalEnCaja(ventas, tpv).toString());
         }
-        GetVentas();
 
+        GetVentas();
     }, [])
+
+    useEffect(() => {
+        if (data && data.addCierreTPV.successful && !error && !loading) {
+            Cookies.set("authorization", data.addCierreTPV.token)
+            props.setModalOpen(false);
+        }
+    }, [data]);
 
     if (!Ventas) {
         return (
             <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
                 className="h-full w-full">
-                <Backdrop onClick={(e) => { e.stopPropagation(); props.handleClose(false) }} >
+                <Backdrop onClick={(e) => { e.stopPropagation(); props.setModalOpen(false) }} >
                     <motion.div className="h-3/6 w-2/6 m-auto py-2 flex flex-col items-center justify-center bg-white rounded-2xl"
                         onClick={(e) => e.stopPropagation()}
                         variants={In}
@@ -112,7 +120,7 @@ export const CerrarCaja = (props: { handleClose: Function }) => {
     return (
         <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
             className="h-full w-full ">
-            <Backdrop onClick={(e) => { e.stopPropagation(); props.handleClose(false) }} >
+            <Backdrop onClick={(e) => { e.stopPropagation(); props.setModalOpen(false) }} >
                 <motion.div className="h-3/6 w-3/6 flex flex-col items-center bg-white rounded-2xl p-4"
                     onClick={(e) => e.stopPropagation()}
                     variants={In}
@@ -166,7 +174,7 @@ export const CerrarCaja = (props: { handleClose: Function }) => {
                         </div>
                         <div className="flex gap-10 h-auto w-full mb-auto justify-center text-white items-center">
                             <div className="h-10 w-2/6 rounded-lg bg-red-500 cursor-pointer text-center"
-                                onClick={() => props.handleClose(false)}>
+                                onClick={() => props.setModalOpen(false)}>
                                 <div className="h-full w-full">
                                     Cancelar
                                 </div>

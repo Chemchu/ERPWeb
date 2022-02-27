@@ -9,7 +9,7 @@ import { ValidatePositiveFloatingNumber } from "../../../utils/validator";
 import Dropdown from "../../Forms/dropdown";
 import { Backdrop } from "../backdrop";
 
-const TpvOpenModal = (props: { setEmpleadoUsandoTPV: Function }) => {
+const TpvOpenModal = (props: { setShowModal: Function }) => {
     const [tpvs, setTpvs] = useState<Map<string, string>>(new Map());
     const [currentTpv, setCurrentTpv] = useState<string>();
     const [cajaInicial, setCajaInicial] = useState<string>('0');
@@ -18,10 +18,7 @@ const TpvOpenModal = (props: { setEmpleadoUsandoTPV: Function }) => {
 
     useEffect(() => {
         const TpvsAbiertas = async () => {
-            const res = await fetch(`/api/tpv`, {
-                headers: { 'Content-Type': 'application/json' },
-                method: 'GET'
-            });
+            const res = await fetch(`/api/tpv`);
 
             const Response = await res.json();
 
@@ -39,6 +36,14 @@ const TpvOpenModal = (props: { setEmpleadoUsandoTPV: Function }) => {
         setCurrentTpv(tpvs.values().next().value)
     }, [tpvs]);
 
+    useEffect(() => {
+        if (!error && data) {
+            Cookies.set("authorization", data.ocupyTPV.token)
+            props.setShowModal(false);
+        }
+
+    }, [data])
+
     const AbrirTPV = async () => {
         let tpvID: string = "undefined";
         tpvs.forEach((value: string, key: string) => {
@@ -55,11 +60,6 @@ const TpvOpenModal = (props: { setEmpleadoUsandoTPV: Function }) => {
                 "cajaInicial": cInicial
             }
         });
-    }
-
-    if (!error && data) {
-        Cookies.set("authorization", data.ocupyTPV.token)
-        props.setEmpleadoUsandoTPV(true);
     }
 
     return (
