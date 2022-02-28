@@ -88,7 +88,7 @@ export const FetchEmpleado = async (_id: string): Promise<Empleado> => {
 }
 
 export const FetchSalesByTPV = async (TPV: string): Promise<Venta[]> => {
-    if (!TPV) { throw "ID del empleado no puede ser undefined"; }
+    if (!TPV) { throw "ID de la TPV no puede ser undefined"; }
 
     const fetchVentas = await fetch(`/api/ventas/tpv/${TPV}`);
     const ventasJson = await fetchVentas.json();
@@ -96,8 +96,17 @@ export const FetchSalesByTPV = async (TPV: string): Promise<Venta[]> => {
     return CreateSalesList(JSON.parse(ventasJson.ventas));
 }
 
+export const FetchSalesByTPVDate = async (TPV: string, fecha: string): Promise<Venta[]> => {
+    if (!TPV) { throw "ID de la TPV no puede ser undefined"; }
+
+    const fetchVentasTPVPorFecha = await fetch(`/api/ventas/tpv/fecha/${TPV}/${fecha}`);
+
+    const ventasJson = await fetchVentasTPVPorFecha.json();
+    return CreateSalesList(JSON.parse(ventasJson.ventas));
+}
+
 export const FetchTPV = async (TPV: string) => {
-    if (!TPV) { throw "ID del empleado no puede ser undefined"; }
+    if (!TPV) { throw "ID de la TPV no puede ser undefined"; }
 
     const fetchTPV = await fetch(`/api/tpv/${TPV}`);
     const tpvJson = await fetchTPV.json();

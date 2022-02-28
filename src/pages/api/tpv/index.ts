@@ -1,22 +1,12 @@
-import { gql } from "@apollo/client";
 import { NextApiRequest, NextApiResponse } from "next";
+import { QUERY_TPVS } from "../../../utils/querys";
 import GQLFetcher from "../../../utils/serverFetcher";
 
 const handler = async (req: NextApiRequest, res: NextApiResponse) => {
     try {
         const fetchResult = await GQLFetcher.query(
             {
-                query: gql`
-                        query Tpvs($find: TPVsFind) {
-                            tpvs(find: $find) {
-                                _id
-                                nombre
-                                libre
-                                enUsoPor
-                                cajaInicial
-                            }
-                        }
-                        `,
+                query: QUERY_TPVS,
                 variables: {
                     "find": {
                         "libre": false

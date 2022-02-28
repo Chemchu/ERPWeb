@@ -1,5 +1,6 @@
 import { gql } from "@apollo/client";
 import { NextApiRequest, NextApiResponse } from "next";
+import { QUERY_SALES } from "../../../utils/querys";
 import GQLFetcher from "../../../utils/serverFetcher";
 
 const handler = async (req: NextApiRequest, res: NextApiResponse) => {
@@ -12,46 +13,7 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
         const body = req.body;
         const fetchResult = await GQLFetcher.query(
             {
-                query: gql`
-                query Ventas($limit: Int)  {
-                    ventas(limit: $limit) {
-                        _id
-                        productos {
-                            _id
-                            nombre
-                            precioVenta
-                            ean
-                            cantidadVendida
-                            createdAt
-                            updatedAt
-                            familia
-                        }
-                        dineroEntregadoEfectivo
-                        dineroEntregadoTarjeta
-                        precioVentaTotal
-                        cambio
-                        cliente {
-                            _id
-                            nombre
-                            nif
-                            calle
-                            cp
-                        }
-                        vendidoPor {
-                            _id
-                            nombre
-                            apellidos
-                            rol
-                            email
-                        }
-                        tipo
-                        descuentoEfectivo
-                        descuentoPorcentaje
-                        createdAt
-                        updatedAt
-                    }
-                }
-                `,
+                query: QUERY_SALES,
                 variables: {
                     "limit": body.limit,
                 }

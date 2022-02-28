@@ -1,13 +1,12 @@
+import AyudaPage from "../../../components/sidebar/Ayuda";
 import DashboardLayout from "../../../layout";
 
-const AyudaPage = () => {
+const Ayuda = () => {
     return (
-        <div>
-            Ayuda
-        </div>
+        <AyudaPage />
     );
 }
 
-AyudaPage.PageLayout = DashboardLayout;
+Ayuda.PageLayout = DashboardLayout;
 
-export default AyudaPage;
+export default Ayuda;

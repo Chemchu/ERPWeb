@@ -11,7 +11,7 @@ const Home = () => {
   return (
     <div>
       <UploadFile tipoDocumento={TipoDocumento.Productos} />
-      <CerrarCaja handleClose={bar} />
+      {/* <CerrarCaja handleClose={bar} /> */}
     </div>
   )
 }

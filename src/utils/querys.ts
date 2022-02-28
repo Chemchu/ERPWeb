@@ -9,6 +9,16 @@ export const ADD_SALE = gql`
     }
 `;
 
+export const ADD_CIERRE = gql`
+    mutation AddCierreTPV($cierre: CierreTPVInput!) {
+        addCierreTPV(cierre: $cierre) {
+            message
+            successful
+            token
+        }
+    }
+`;
+
 export const QUERY_CLIENTS = gql`
     query Clientes($limit: Int) {
         clientes(limit: $limit) {
@@ -72,14 +82,17 @@ export const QUERY_SALE = gql`
 `
 
 export const QUERY_SALES = gql`
-    query Ventas {
-        ventas {
+    query VentasVentas($find: VentasFind) {
+        ventas(find: $find) {
             _id
             dineroEntregadoEfectivo
             dineroEntregadoTarjeta
             precioVentaTotal
             cambio
             tipo
+            tpv
+            createdAt
+            updatedAt
             productos {
                 _id
                 nombre
@@ -118,23 +131,49 @@ export const QUERY_SALES = gql`
 `;
 
 export const QUERY_TPV = gql`
-query Tpv($find: TPVFind!) {
+query QueryTPV($find: TPVFind!) {
     tpv(find: $find) {
-        _id
-        nombre
-        enUsoPor
-        libre
-        cajaInicial
-        createdAt
-        updatedAt
+            _id
+            nombre
+            enUsoPor {
+                _id
+                nombre
+                apellidos
+                rol
+                email
+            }
+            libre
+            cajaInicial
+            createdAt
+            updatedAt
+        }
     }
+`;
+
+export const QUERY_TPVS = gql`
+query Tpvs($find: TPVsFind, $limit: Int) {
+  tpvs(find: $find, limit: $limit) {
+    _id
+    nombre
+    enUsoPor {
+      _id
+      nombre
+      apellidos
+      rol
+      email
+    }
+    libre
+    cajaInicial
+    createdAt
+    updatedAt
+  }
 }
 `;
 
 export const OCUPY_TPV = gql`
-        mutation OcupyTPV($idEmpleado: ID!, $idTpv: ID!) {
-            ocupyTPV(idEmpleado: $idEmpleado, idTPV: $idTpv) {
-                token
-            }
+    mutation OcupyTPV($idEmpleado: ID!, $idTpv: ID!, $cajaInicial: Float!) {
+        ocupyTPV(idEmpleado: $idEmpleado, idTPV: $idTpv, cajaInicial: $cajaInicial) {
+            token
         }
+    }
 `;

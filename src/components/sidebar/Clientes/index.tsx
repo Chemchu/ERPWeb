@@ -1,37 +1,8 @@
-import { motion } from "framer-motion";
 import { Cliente } from "../../../tipos/Cliente";
-
-const variants = {
-    initial: {
-        opacity: 0
-    },
-    animate: {
-        opacity: 1,
-        transition: {
-            duration: 1,
-            ease: "easeInOut",
-        },
-    },
-    exit: {
-        y: '-100vh',
-        opacity: 0,
-        transition: {
-            ease: [0.87, 0, 0.13, 1],
-            duration: 1
-        }
-    },
-    exitFadeOut: {
-        opacity: 0,
-        transition: {
-            ease: "easeInOut",
-            duration: 1
-        }
-    },
-}
 
 const ClientesPage = (props: { Clientes: Cliente[] }) => {
     return (
-        <motion.div className="flex flex-col h-screen w-full antialiased px-8 py-8" >
+        <div className="flex flex-col h-screen w-full antialiased px-8 py-8" >
             <h2 className="text-2xl leading-tight">
                 Clientes
             </h2>
@@ -57,7 +28,7 @@ const ClientesPage = (props: { Clientes: Cliente[] }) => {
             <div className="flex flex-col h-full w-full bg-white mt-4 pb-20 justify-center items-center rounded-xl shadow-lg">
 
             </div>
-        </motion.div>
+        </div>
     );
 }
 

@@ -9,7 +9,31 @@ import { ValidatePositiveFloatingNumber } from "../../../utils/validator";
 import Dropdown from "../../Forms/dropdown";
 import { Backdrop } from "../backdrop";
 
-const TpvOpenModal = (props: { setEmpleadoUsandoTPV: Function }) => {
+const In = {
+    hidden: {
+        scale: 0,
+        opacity: 0
+    },
+    visible: {
+        scale: 1,
+        opacity: 1,
+        transition: {
+            duration: 0.1,
+            type: "spring",
+            damping: 15,
+            stifness: 500
+        }
+    },
+    exit: {
+        y: "-100vh",
+        opacity: 0,
+        transition: {
+            duration: 0.25,
+        }
+    }
+}
+
+const AbrirCaja = (props: { setShowModal: Function, setEmpleadoUsandoTPV: Function }) => {
     const [tpvs, setTpvs] = useState<Map<string, string>>(new Map());
     const [currentTpv, setCurrentTpv] = useState<string>();
     const [cajaInicial, setCajaInicial] = useState<string>('0');
@@ -18,10 +42,7 @@ const TpvOpenModal = (props: { setEmpleadoUsandoTPV: Function }) => {
 
     useEffect(() => {
         const TpvsAbiertas = async () => {
-            const res = await fetch(`/api/tpv`, {
-                headers: { 'Content-Type': 'application/json' },
-                method: 'GET'
-            });
+            const res = await fetch(`/api/tpv`);
 
             const Response = await res.json();
 
@@ -39,6 +60,15 @@ const TpvOpenModal = (props: { setEmpleadoUsandoTPV: Function }) => {
         setCurrentTpv(tpvs.values().next().value)
     }, [tpvs]);
 
+    useEffect(() => {
+        if (!error && data) {
+            Cookies.set("authorization", data.ocupyTPV.token)
+            props.setShowModal(false);
+            props.setEmpleadoUsandoTPV(true);
+        }
+
+    }, [data])
+
     const AbrirTPV = async () => {
         let tpvID: string = "undefined";
         tpvs.forEach((value: string, key: string) => {
@@ -47,23 +77,21 @@ const TpvOpenModal = (props: { setEmpleadoUsandoTPV: Function }) => {
             }
         });
 
+        const cInicial: number = parseFloat(Number(cajaInicial).toFixed(2))
         ocuparTpv({
             variables: {
                 "idEmpleado": jwt._id,
-                "idTpv": tpvID
+                "idTpv": tpvID,
+                "cajaInicial": cInicial
             }
         });
-    }
-
-    if (!error && data) {
-        Cookies.set("authorization", data.ocupyTPV.token)
-        props.setEmpleadoUsandoTPV(true);
     }
 
     return (
         <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}>
             <Backdrop >
-                <div className="flex flex-col h-3/5 w-3/5 bg-white rounded-xl  items-center">
+                <motion.div variants={In} initial="hidden" animate="visible" exit="exit"
+                    className="flex flex-col h-3/5 w-3/5 bg-white rounded-xl  items-center">
                     <div className="text-2xl justify-self-start pt-4 w">
                         TPV Cerrada
                     </div>
@@ -92,9 +120,13 @@ const TpvOpenModal = (props: { setEmpleadoUsandoTPV: Function }) => {
                         </div>
                     </div>
 
-
-
-                    <div className="flex flex-row-reverse gap-10 text-center justify-end items-end text-white pb-4">
+                    <div className="flex gap-10 text-center justify-end items-end text-white pb-4">
+                        <div className="flex h-10 w-32 m-auto bg-red-500 hover:bg-red-600 rounded-2xl cursor-pointer items-center justify-center shadow-lg"
+                            onClick={() => { props.setShowModal(false) }}>
+                            <div>
+                                Cancelar
+                            </div>
+                        </div>
                         {
                             Number(cajaInicial) > 0 && currentTpv && tpvs ?
                                 <div className="flex h-10 w-32 m-auto bg-blue-500 hover:bg-blue-600 rounded-2xl cursor-pointer items-center justify-center shadow-lg"
@@ -110,17 +142,12 @@ const TpvOpenModal = (props: { setEmpleadoUsandoTPV: Function }) => {
                                     </div>
                                 </div>
                         }
-                        <div className="flex h-10 w-32 m-auto bg-red-500 hover:bg-red-600 rounded-2xl cursor-pointer items-center justify-center shadow-lg"
-                            onClick={() => { Router.push('/dashboard/') }}>
-                            <div>
-                                Cancelar
-                            </div>
-                        </div>
+
                     </div>
-                </div>
+                </motion.div>
             </Backdrop>
         </motion.div>
     );
 }
 
-export default TpvOpenModal;
+export default AbrirCaja;
