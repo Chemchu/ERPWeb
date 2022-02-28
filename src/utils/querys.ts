@@ -72,6 +72,15 @@ export const ADD_PRODUCT = gql`
     }
 `;
 
+export const ADD_PRODUCTOS_FILE = gql`
+    mutation AddProductosFile($csv: String!) {
+        addProductosFile(csv: $csv) {
+            message
+            successful
+        }
+    }
+`;
+
 export const QUERY_CLIENTS = gql`
     query Clientes($limit: Int) {
         clientes(limit: $limit) {
