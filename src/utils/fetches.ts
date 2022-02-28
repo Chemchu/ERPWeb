@@ -9,17 +9,12 @@ export const FetchProductos = async (): Promise<Producto[]> => {
         let prodRes = [] as Producto[];
 
         const pResponse = await fetch('/api/productos', {
-            headers: {
-                'Content-type': 'application/json'
-            },
             method: 'POST',
-            body: JSON.stringify({
-                find: {},
-                limit: 3000,
-                neededValues: ["_id", "nombre", "proveedor", "familia",
-                    "precioVenta", "precioCompra", "iva", "margen",
-                    "ean", "promociones", "cantidad", "cantidadRestock", "alta"]
-            })
+            headers: {
+                'Accept': 'application/json',
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ limit: 3000 })
         });
 
         if (pResponse.status > 200) { return []; }

@@ -19,6 +19,59 @@ export const ADD_CIERRE = gql`
     }
 `;
 
+export const QUERY_PRODUCTS = gql`
+    query Productos($limit: Int, $find: ProductosFind) {
+        productos(limit: $limit, find: $find) {
+            _id
+            nombre
+            proveedor
+            familia
+            precioVenta
+            precioCompra
+            iva
+            margen
+            promociones
+            ean
+            cantidad
+            cantidadRestock
+            alta
+            createdAt
+            updatedAt
+        }
+    }
+`;
+
+export const QUERY_PRODUCT = gql`
+    query Producto($find: ProductoFind!) {
+        producto(find: $find) {
+            _id
+            nombre
+            proveedor
+            familia
+            precioVenta
+            precioCompra
+            iva
+            margen
+            promociones
+            ean
+            cantidad
+            cantidadRestock
+            alta
+            createdAt
+            updatedAt
+        }
+    }
+`;
+
+export const ADD_PRODUCT = gql`
+    mutation AddProducto($precioVenta: Float!, $ean: String!, $iva: Float, $proveedor: String, $familia: String, $nombre: String!, $precioCompra: Float, $margen: Float, $cantidad: Int, $cantidadRestock: Int, $alta: Boolean) {
+        addProducto(precioVenta: $precioVenta, ean: $ean, iva: $iva, proveedor: $proveedor, familia: $familia, nombre: $nombre, precioCompra: $precioCompra, margen: $margen, cantidad: $cantidad, cantidadRestock: $cantidadRestock, alta: $alta) {
+            message
+            successful
+        }
+    }
+`;
+
 export const QUERY_CLIENTS = gql`
     query Clientes($limit: Int) {
         clientes(limit: $limit) {
