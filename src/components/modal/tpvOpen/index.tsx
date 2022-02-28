@@ -113,7 +113,7 @@ const TpvOpenModal = (props: { setShowModal: Function }) => {
                                 </div>
                         }
                         <div className="flex h-10 w-32 m-auto bg-red-500 hover:bg-red-600 rounded-2xl cursor-pointer items-center justify-center shadow-lg"
-                            onClick={() => { Router.push('/dashboard/') }}>
+                            onClick={() => { props.setShowModal(false) }}>
                             <div>
                                 Cancelar
                             </div>

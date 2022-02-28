@@ -508,7 +508,7 @@ const SidebarDerecho = React.memo((props: {
                     {showModalPagar && <ModalPagar productosComprados={props.productosEnCarrito} setProductosComprados={props.setProductosCarrito} PagoCliente={pago} handleModalOpen={setPagarModal} />}
                     {showModalCobro && <Resumen pagoCliente={pagoRapido} handleOpen={setCobroModal} productosVendidos={props.productosEnCarrito} setProductosComprados={props.setProductosCarrito} />}
                     {showModalCerrarCaja && <CerrarCaja setModalOpen={setCerrarCajaModal} />}
-                    {showModalAbrirCaja && <TpvOpenModal setShowModal={setAbrirCajaModal} />}
+                    {showModalAbrirCaja && !props.empleadoUsandoTPV && <TpvOpenModal setShowModal={setAbrirCajaModal} />}
                 </AnimatePresence>
             </div>
         </div>

@@ -8,10 +8,10 @@ import useJwt from "../../../hooks/jwt";
 import { FetchProductos } from "../../../utils/fetches";
 
 const PuntoDeVenta = () => {
+    const jwt = useJwt();
     const [Productos, SetProductos] = useState<Producto[]>([]);
     const [ServerUp, setServerUp] = useState<boolean>(true);
-    const jwt = useJwt();
-    const [empleadoUsandoTPV, setEmpleadoUsandoTPV] = useState<boolean>(jwt.TPV !== undefined)
+    const [showAbrirCajaModal, setShowAbrirCajaModal] = useState<boolean>(jwt.TPV)
 
     useEffect(() => {
         const GetProd = async () => {
@@ -22,10 +22,7 @@ const PuntoDeVenta = () => {
 
     return (
         <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}>
-            {
-                // !empleadoUsandoTPV && <TpvOpenModal setEmpleadoUsandoTPV={setEmpleadoUsandoTPV} />
-            }
-            <TPV productos={Productos} serverOperativo={ServerUp} empleadoUsandoTPV={empleadoUsandoTPV} setEmpleadoUsandoTPV={setEmpleadoUsandoTPV} />
+            <TPV productos={Productos} serverOperativo={ServerUp} empleadoUsandoTPV={showAbrirCajaModal} setEmpleadoUsandoTPV={setShowAbrirCajaModal} />
         </motion.div>
     );
 }
