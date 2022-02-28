@@ -15,7 +15,6 @@ import { Cliente } from "../../../tipos/Cliente";
 import { FetchClientes } from "../../../utils/fetches";
 
 const TPV = (props: { productos: Producto[], serverOperativo: boolean, empleadoUsandoTPV: boolean, setEmpleadoUsandoTPV: Function, setShowModalCerrar: Function, setShowModalAbrir: Function }) => {
-    const [Busqueda, setBusqueda] = useState<string>("");
     const [ProductosFiltrados, setProductosFiltrados] = useState<Producto[]>([]);
     const { ProductosEnCarrito, SetProductosEnCarrito } = useProductEnCarritoContext();
     const [Familias, setFamilias] = useState<string[]>([]);
@@ -47,13 +46,12 @@ const TPV = (props: { productos: Producto[], serverOperativo: boolean, empleadoU
 
     var Filtrar = (cadena: string) => {
         const stringValidated = ValidateSearchString(cadena);
-        setBusqueda(stringValidated);
 
         let productosFiltrados: Producto[];
         if (stringValidated === "") productosFiltrados = props.productos;
         else {
             productosFiltrados = props.productos.filter((p: Producto) => {
-                return p.nombre.toUpperCase().includes(stringValidated.toUpperCase()) || p.ean.includes(stringValidated.toUpperCase())
+                return p.nombre.toUpperCase().includes(stringValidated.toUpperCase()) || p.ean === stringValidated.toUpperCase()
             });
         }
         setProductosFiltrados(productosFiltrados);
@@ -112,7 +110,7 @@ const TPV = (props: { productos: Producto[], serverOperativo: boolean, empleadoU
                                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
                                 </svg>
                             </div>
-                            <input disabled={!props.serverOperativo} onChange={(e) => { Filtrar(e.target.value); }} value={Busqueda} onInputCapture={() => { console.log("Ajustar con el lector") }} className="bg-white rounded-3xl shadow text-lg full w-full h-16 py-4 pl-16 transition-shadow focus:shadow-2xl focus:outline-none" placeholder="Buscar producto o código de barras..." />
+                            <input onChange={(e) => { Filtrar(e.target.value); }} className="bg-white rounded-3xl shadow text-lg full w-full h-16 py-4 pl-16 transition-shadow focus:shadow-2xl focus:outline-none" placeholder="Buscar producto o código de barras..." />
                         </div>
 
                         {/* Genera los botones de favorito */}
