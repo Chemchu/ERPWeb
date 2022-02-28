@@ -70,7 +70,10 @@ export const CerrarCaja = (props: { setModalOpen: Function, setEmpleadoUsandoTPV
                 "ventasTarjeta": Number(TotalTarjeta),
                 "ventasTotales": Number(TotalEfectivo) + Number(TotalTarjeta),
                 "dineroRetirado": Number(DineroRetirado),
-                "fondoDeCaja": Number(TotalRealEnCaja) - Number(DineroRetirado)
+                "fondoDeCaja": Number(TotalRealEnCaja) - Number(DineroRetirado),
+                "numVentas": Ventas?.length || -1,
+                "dineroEsperadoEnCaja": Number(TotalPrevistoEnCaja) || -1,
+                "dineroRealEnCaja": Number(TotalRealEnCaja) || -1
             }
         }
     });
