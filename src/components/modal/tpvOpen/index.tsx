@@ -9,7 +9,31 @@ import { ValidatePositiveFloatingNumber } from "../../../utils/validator";
 import Dropdown from "../../Forms/dropdown";
 import { Backdrop } from "../backdrop";
 
-const TpvOpenModal = (props: { setShowModal: Function }) => {
+const In = {
+    hidden: {
+        scale: 0,
+        opacity: 0
+    },
+    visible: {
+        scale: 1,
+        opacity: 1,
+        transition: {
+            duration: 0.1,
+            type: "spring",
+            damping: 15,
+            stifness: 500
+        }
+    },
+    exit: {
+        y: "-100vh",
+        opacity: 0,
+        transition: {
+            duration: 0.25,
+        }
+    }
+}
+
+const AbrirCaja = (props: { setShowModal: Function, setEmpleadoUsandoTPV: Function }) => {
     const [tpvs, setTpvs] = useState<Map<string, string>>(new Map());
     const [currentTpv, setCurrentTpv] = useState<string>();
     const [cajaInicial, setCajaInicial] = useState<string>('0');
@@ -40,6 +64,7 @@ const TpvOpenModal = (props: { setShowModal: Function }) => {
         if (!error && data) {
             Cookies.set("authorization", data.ocupyTPV.token)
             props.setShowModal(false);
+            props.setEmpleadoUsandoTPV(true);
         }
 
     }, [data])
@@ -65,7 +90,8 @@ const TpvOpenModal = (props: { setShowModal: Function }) => {
     return (
         <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}>
             <Backdrop >
-                <div className="flex flex-col h-3/5 w-3/5 bg-white rounded-xl  items-center">
+                <motion.div variants={In} initial="hidden" animate="visible" exit="exit"
+                    className="flex flex-col h-3/5 w-3/5 bg-white rounded-xl  items-center">
                     <div className="text-2xl justify-self-start pt-4 w">
                         TPV Cerrada
                     </div>
@@ -119,10 +145,10 @@ const TpvOpenModal = (props: { setShowModal: Function }) => {
                             </div>
                         </div>
                     </div>
-                </div>
+                </motion.div>
             </Backdrop>
         </motion.div>
     );
 }
 
-export default TpvOpenModal;
+export default AbrirCaja;

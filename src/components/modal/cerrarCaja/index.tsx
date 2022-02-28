@@ -1,7 +1,6 @@
 import { useMutation } from "@apollo/client";
 import { motion } from "framer-motion";
 import Cookies from "js-cookie";
-import Router from "next/router";
 import { useEffect, useState } from "react";
 import useJwt from "../../../hooks/jwt";
 import { TPV } from "../../../tipos/TPV";
@@ -38,7 +37,7 @@ const In = {
 }
 
 
-export const CerrarCaja = (props: { setModalOpen: Function }) => {
+export const CerrarCaja = (props: { setModalOpen: Function, setEmpleadoUsandoTPV: Function }) => {
     const jwt = useJwt();
     const [Ventas, setVentas] = useState<Venta[]>();
     const [Tpv, setTPV] = useState<TPV>();
@@ -95,6 +94,7 @@ export const CerrarCaja = (props: { setModalOpen: Function }) => {
         if (data && data.addCierreTPV.successful && !error && !loading) {
             Cookies.set("authorization", data.addCierreTPV.token)
             props.setModalOpen(false);
+            props.setEmpleadoUsandoTPV(false);
         }
     }, [data]);
 

@@ -1,17 +1,20 @@
 import React, { useEffect, useState } from "react";
 import TPV from "../../../components/sidebar/pointOfSale/tpv";
 import DashboardLayout from "../../../layout";
-import { motion } from "framer-motion";
+import { AnimatePresence, motion } from "framer-motion";
 import { Producto } from "../../../tipos/Producto";
-import TpvOpenModal from "../../../components/modal/tpvOpen";
+import AbrirCaja from "../../../components/modal/tpvOpen";
 import useJwt from "../../../hooks/jwt";
 import { FetchProductos } from "../../../utils/fetches";
+import CerrarCaja from "../../../components/modal/cerrarCaja";
 
 const PuntoDeVenta = () => {
     const jwt = useJwt();
     const [Productos, SetProductos] = useState<Producto[]>([]);
     const [ServerUp, setServerUp] = useState<boolean>(true);
-    const [showAbrirCajaModal, setShowAbrirCajaModal] = useState<boolean>(jwt.TPV)
+    const [empleadoUsandoTPV, setEmpleadoUsandoTPV] = useState(jwt.TPV);
+    const [showModalCerrarCaja, setCerrarCajaModal] = useState<boolean>(false)
+    const [showModalAbrirCaja, setAbrirCajaModal] = useState<boolean>(!jwt.TPV)
 
     useEffect(() => {
         const GetProd = async () => {
@@ -22,7 +25,11 @@ const PuntoDeVenta = () => {
 
     return (
         <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}>
-            <TPV productos={Productos} serverOperativo={ServerUp} empleadoUsandoTPV={showAbrirCajaModal} setEmpleadoUsandoTPV={setShowAbrirCajaModal} />
+            <TPV productos={Productos} serverOperativo={ServerUp} empleadoUsandoTPV={empleadoUsandoTPV} setEmpleadoUsandoTPV={setEmpleadoUsandoTPV} setShowModalAbrir={setAbrirCajaModal} setShowModalCerrar={setCerrarCajaModal} />
+            <AnimatePresence initial={false} exitBeforeEnter={true}>
+                {showModalCerrarCaja && <CerrarCaja setModalOpen={setCerrarCajaModal} setEmpleadoUsandoTPV={setEmpleadoUsandoTPV} />}
+                {showModalAbrirCaja && !empleadoUsandoTPV && <AbrirCaja setShowModal={setAbrirCajaModal} setEmpleadoUsandoTPV={setEmpleadoUsandoTPV} />}
+            </AnimatePresence>
         </motion.div>
     );
 }

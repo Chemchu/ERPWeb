@@ -10,20 +10,15 @@ import useProductEnCarritoContext from "../../../context/productosEnCarritoConte
 import SkeletonProductCard from "../../Skeletons/skeletonProductCard";
 import ModalPagar from "../../modal/pagar";
 import Resumen from "../../modal/resumen";
-import CerrarCaja from "../../modal/cerrarCaja";
 import { AplicarDescuentos, PrecioTotalCarrito } from "../../../utils/preciosUtils";
 import { Cliente } from "../../../tipos/Cliente";
 import { FetchClientes } from "../../../utils/fetches";
-import useJwt from "../../../hooks/jwt";
-import TpvOpenModal from "../../modal/tpvOpen";
-import jwt from "../../../hooks/jwt";
 
-const TPV = (props: { productos: Producto[], serverOperativo: boolean, empleadoUsandoTPV: boolean, setEmpleadoUsandoTPV: Function }) => {
+const TPV = (props: { productos: Producto[], serverOperativo: boolean, empleadoUsandoTPV: boolean, setEmpleadoUsandoTPV: Function, setShowModalCerrar: Function, setShowModalAbrir: Function }) => {
     const [Busqueda, setBusqueda] = useState<string>("");
     const [ProductosFiltrados, setProductosFiltrados] = useState<Producto[]>([]);
     const { ProductosEnCarrito, SetProductosEnCarrito } = useProductEnCarritoContext();
     const [Familias, setFamilias] = useState<string[]>([]);
-    const jwt = useJwt();
 
     useEffect(() => {
         function uniq_fast(a: Producto[]) {
@@ -64,9 +59,10 @@ const TPV = (props: { productos: Producto[], serverOperativo: boolean, empleadoU
         setProductosFiltrados(productosFiltrados);
     }
 
+    const arrayNum = [...Array(3)];
+
     if (!props.empleadoUsandoTPV) {
         return (<div className="antialiased overflow-hidden text-gray-800">
-            {console.log("Cerrado")}
             {/* Página principal del POS */}
             <div className="grid grid-cols-3 bg-gray-100">
                 {/* Menú tienda, donde se muestran los productos */}
@@ -80,25 +76,31 @@ const TPV = (props: { productos: Producto[], serverOperativo: boolean, empleadoU
                             </div>
                             <input disabled className="bg-white rounded-3xl shadow text-lg full w-full h-16 py-4 pl-16 transition-shadow focus:shadow-2xl focus:outline-none" placeholder="Buscar producto o código de barras..." />
                         </div>
+                        <div className="flex gap-2 p-4">
+                            {
+                                arrayNum.map((n, i) => {
+                                    return (
+                                        <div key={`SkeletonFav-${i}`} className="animate-pulse h-10 w-16 md:w-32 lg:w-48 border-2 rounded-md mx-auto bg-gray-300" />
+                                    );
+                                })
+                            }
+                        </div>
                         <div className="h-full overflow-hidden">
                             <ListaProductos productos={[]} productosFiltrados={ProductosFiltrados} ServerUp={props.serverOperativo} />
                         </div>
                     </div>
                 </div>
-                {/* Menú tienda */}
                 {/* Sidebar derecho */}
                 <div className="h-screen">
-                    <SidebarDerecho todosProductos={[]} productosEnCarrito={[]} setProductosCarrito={SetProductosEnCarrito} empleadoUsandoTPV={props.empleadoUsandoTPV} setEmpleadoUsandoTPV={props.setEmpleadoUsandoTPV} />
+                    <SidebarDerecho todosProductos={[]} productosEnCarrito={[]} setProductosCarrito={SetProductosEnCarrito} empleadoUsandoTPV={props.empleadoUsandoTPV} setShowModalAbrir={props.setShowModalAbrir} setShowModalCerrar={props.setShowModalCerrar} />
                 </div>
 
             </div>
         </div>)
     }
 
-    const arrayNum = [...Array(5)];
     return (
         <div className="antialiased overflow-hidden text-gray-800">
-            {console.log("Abierto")}
             {/* Página principal del POS */}
             <div className="grid grid-cols-3 bg-gray-100">
                 {/* Menú tienda, donde se muestran los productos */}
@@ -117,11 +119,11 @@ const TPV = (props: { productos: Producto[], serverOperativo: boolean, empleadoU
                         {
                             props.serverOperativo &&
                                 props.productos.length <= 0 ?
-                                <div className="flex gap-2 pt-4 pl-4 overflow-y-hidden">
+                                <div className="flex gap-2 p-4">
                                     {
                                         arrayNum.map((n, i) => {
                                             return (
-                                                <div key={`SkeletonFav-${i}`} className="animate-pulse h-10 w-16 md:w-32 lg:w-48 mb-6 border-2 rounded-md mx-auto bg-gray-300" />
+                                                <div key={`SkeletonFav-${i}`} className="animate-pulse h-10 w-16 md:w-32 lg:w-48 border-2 rounded-md mx-auto bg-gray-300" />
                                             );
                                         })
                                     }
@@ -145,10 +147,9 @@ const TPV = (props: { productos: Producto[], serverOperativo: boolean, empleadoU
                         </div>
                     </div>
                 </div>
-                {/* Menú tienda */}
                 {/* Sidebar derecho */}
                 <div className="h-screen">
-                    <SidebarDerecho todosProductos={props.productos} productosEnCarrito={ProductosEnCarrito} setProductosCarrito={SetProductosEnCarrito} empleadoUsandoTPV={props.empleadoUsandoTPV} setEmpleadoUsandoTPV={props.setEmpleadoUsandoTPV} />
+                    <SidebarDerecho todosProductos={props.productos} productosEnCarrito={ProductosEnCarrito} setProductosCarrito={SetProductosEnCarrito} empleadoUsandoTPV={props.empleadoUsandoTPV} setShowModalAbrir={props.setShowModalAbrir} setShowModalCerrar={props.setShowModalCerrar} />
                 </div>
 
             </div>
@@ -276,7 +277,8 @@ const ProductosNoEncontrados = () => {
 
 const SidebarDerecho = React.memo((props: {
     todosProductos: Producto[], productosEnCarrito: ProductoVendido[],
-    setProductosCarrito: React.Dispatch<React.SetStateAction<ProductoVendido[]>>, empleadoUsandoTPV: boolean, setEmpleadoUsandoTPV: Function
+    setProductosCarrito: React.Dispatch<React.SetStateAction<ProductoVendido[]>>, empleadoUsandoTPV: boolean,
+    setShowModalCerrar: Function, setShowModalAbrir: Function
 }) => {
     const [descuentoOpen, setDescuentoPupup] = useState<boolean>(false);
     const [dtoEfectivo, setDtoEfectivo] = useState<string>("0");
@@ -284,8 +286,6 @@ const SidebarDerecho = React.memo((props: {
 
     const [showModalPagar, setPagarModal] = useState(false);
     const [showModalCobro, setCobroModal] = useState(false);
-    const [showModalAbrirCaja, setAbrirCajaModal] = useState(true);
-    const [showModalCerrarCaja, setCerrarCajaModal] = useState(false);
 
     const [Clientes, SetClientes] = useState<Cliente[]>([]);
 
@@ -341,10 +341,6 @@ const SidebarDerecho = React.memo((props: {
         })
     }, []);
 
-    const AbrirCaja = () => {
-        //setAbrirCajaModal()
-    }
-
     const precioTotal: number = PrecioTotalCarrito(props.productosEnCarrito);
     const precioTotalDescontado: number = AplicarDescuentos(props.productosEnCarrito, Number(dtoEfectivo), Number(dtoPorcentaje));
 
@@ -389,14 +385,14 @@ const SidebarDerecho = React.memo((props: {
 
                             {
                                 props.empleadoUsandoTPV ?
-                                    <button className="flex gap-2 justify-center self-end pb-4" onClick={() => { setCerrarCajaModal(true) }}>
+                                    <button className="flex gap-2 justify-center self-end pb-4" onClick={() => { props.setShowModalCerrar(true) }}>
                                         CERRAR CAJA
                                         <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
                                         </svg>
                                     </button>
                                     :
-                                    <button className="flex gap-2 justify-center self-end pb-4" onClick={() => { setAbrirCajaModal(true) }}>
+                                    <button className="flex gap-2 justify-center self-end pb-4" onClick={() => { props.setShowModalAbrir(true) }}>
                                         ABRIR CAJA
                                         <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
@@ -507,8 +503,6 @@ const SidebarDerecho = React.memo((props: {
                 <AnimatePresence initial={false} exitBeforeEnter={true}>
                     {showModalPagar && <ModalPagar productosComprados={props.productosEnCarrito} setProductosComprados={props.setProductosCarrito} PagoCliente={pago} handleModalOpen={setPagarModal} />}
                     {showModalCobro && <Resumen pagoCliente={pagoRapido} handleOpen={setCobroModal} productosVendidos={props.productosEnCarrito} setProductosComprados={props.setProductosCarrito} />}
-                    {showModalCerrarCaja && <CerrarCaja setModalOpen={setCerrarCajaModal} />}
-                    {showModalAbrirCaja && !props.empleadoUsandoTPV && <TpvOpenModal setShowModal={setAbrirCajaModal} />}
                 </AnimatePresence>
             </div>
         </div>
