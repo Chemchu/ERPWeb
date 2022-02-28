@@ -134,7 +134,7 @@ export const CerrarCaja = (props: { setModalOpen: Function, setEmpleadoUsandoTPV
                         </div>
                         <hr />
                         <div className="flex w-full h-full">
-                            <div className="flex flex-col gap-4 w-full h-full">
+                            <div className="flex flex-col gap-2 xl:gap-4 w-full h-full">
                                 <div className="flex gap-2">
                                     <p>Número de ventas: </p>
                                     <p>{Ventas.length}</p>
@@ -172,18 +172,19 @@ export const CerrarCaja = (props: { setModalOpen: Function, setEmpleadoUsandoTPV
                             </div>
 
                         </div>
-                        <div className="flex gap-10 h-auto w-full mb-auto justify-center text-white items-center">
-                            <div className="h-10 w-2/6 rounded-lg bg-red-500 cursor-pointer text-center"
-                                onClick={() => props.setModalOpen(false)}>
-                                <div className="h-full w-full">
+
+                        <div className="flex gap-4 h-auto w-full mb-auto text-white">
+                            <div className="flex h-10 w-2/3 m-auto bg-red-500 hover:bg-red-600 rounded-2xl cursor-pointer items-center justify-center shadow-lg"
+                                onClick={() => { props.setModalOpen(false) }}>
+                                <div>
                                     Cancelar
                                 </div>
                             </div>
-                            <div className={`h-10 w-2/6 rounded-lg ${Number(TotalRealEnCaja) > 0 ? 'bg-blue-500 cursor-pointer' : 'bg-blue-400 cursor-default'} text-center`}
+                            <div className="flex h-10 w-2/3 m-auto bg-blue-500 hover:bg-blue-600 rounded-2xl cursor-pointer items-center justify-center shadow-lg"
                                 onClick={() => { Number(TotalRealEnCaja) > 0 ? cerrarCaja() : undefined }}>
-                                <span className="inline-block h-full w-full self-center">
-                                    Cerrar caja
-                                </span>
+                                <div>
+                                    Cerrar TPV
+                                </div>
                             </div>
                         </div>
                     </div>

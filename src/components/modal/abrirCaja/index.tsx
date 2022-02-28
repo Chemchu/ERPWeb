@@ -120,9 +120,13 @@ const AbrirCaja = (props: { setShowModal: Function, setEmpleadoUsandoTPV: Functi
                         </div>
                     </div>
 
-
-
-                    <div className="flex flex-row-reverse gap-10 text-center justify-end items-end text-white pb-4">
+                    <div className="flex gap-10 text-center justify-end items-end text-white pb-4">
+                        <div className="flex h-10 w-32 m-auto bg-red-500 hover:bg-red-600 rounded-2xl cursor-pointer items-center justify-center shadow-lg"
+                            onClick={() => { props.setShowModal(false) }}>
+                            <div>
+                                Cancelar
+                            </div>
+                        </div>
                         {
                             Number(cajaInicial) > 0 && currentTpv && tpvs ?
                                 <div className="flex h-10 w-32 m-auto bg-blue-500 hover:bg-blue-600 rounded-2xl cursor-pointer items-center justify-center shadow-lg"
@@ -138,12 +142,7 @@ const AbrirCaja = (props: { setShowModal: Function, setEmpleadoUsandoTPV: Functi
                                     </div>
                                 </div>
                         }
-                        <div className="flex h-10 w-32 m-auto bg-red-500 hover:bg-red-600 rounded-2xl cursor-pointer items-center justify-center shadow-lg"
-                            onClick={() => { props.setShowModal(false) }}>
-                            <div>
-                                Cancelar
-                            </div>
-                        </div>
+
                     </div>
                 </motion.div>
             </Backdrop>

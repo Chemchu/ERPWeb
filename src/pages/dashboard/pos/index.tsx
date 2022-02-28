@@ -3,7 +3,7 @@ import TPV from "../../../components/sidebar/pointOfSale/tpv";
 import DashboardLayout from "../../../layout";
 import { AnimatePresence, motion } from "framer-motion";
 import { Producto } from "../../../tipos/Producto";
-import AbrirCaja from "../../../components/modal/tpvOpen";
+import AbrirCaja from "../../../components/modal/abrirCaja";
 import useJwt from "../../../hooks/jwt";
 import { FetchProductos } from "../../../utils/fetches";
 import CerrarCaja from "../../../components/modal/cerrarCaja";
