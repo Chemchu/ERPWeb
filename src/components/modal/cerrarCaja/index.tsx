@@ -71,9 +71,9 @@ export const CerrarCaja = (props: { setModalOpen: Function, setEmpleadoUsandoTPV
                 "ventasTotales": Number(TotalEfectivo) + Number(TotalTarjeta),
                 "dineroRetirado": Number(DineroRetirado),
                 "fondoDeCaja": Number(TotalRealEnCaja) - Number(DineroRetirado),
-                "numVentas": Ventas?.length || -1,
-                "dineroEsperadoEnCaja": Number(TotalPrevistoEnCaja) || -1,
-                "dineroRealEnCaja": Number(TotalRealEnCaja) || -1
+                "numVentas": Ventas?.length || 0,
+                "dineroEsperadoEnCaja": Number(TotalPrevistoEnCaja),
+                "dineroRealEnCaja": Number(TotalRealEnCaja)
             }
         }
     });
@@ -183,12 +183,21 @@ export const CerrarCaja = (props: { setModalOpen: Function, setEmpleadoUsandoTPV
                                     Cancelar
                                 </div>
                             </div>
-                            <div className="flex h-10 w-2/3 m-auto bg-blue-500 hover:bg-blue-600 rounded-2xl cursor-pointer items-center justify-center shadow-lg"
-                                onClick={() => { Number(TotalRealEnCaja) > 0 ? cerrarCaja() : undefined }}>
-                                <div>
-                                    Cerrar TPV
-                                </div>
-                            </div>
+                            {
+                                Number(TotalRealEnCaja) > 0 && Number(TotalRealEnCaja) - Number(DineroRetirado) >= 0 ?
+                                    <div className={`flex h-10 w-2/3 m-auto bg-blue-500 hover:bg-blue-600 rounded-2xl cursor-pointer items-center justify-center shadow-lg`}
+                                        onClick={() => { cerrarCaja() }}>
+                                        <div>
+                                            Cerrar TPV
+                                        </div>
+                                    </div>
+                                    :
+                                    <div className={`flex h-10 w-2/3 m-auto bg-blue-400 hover:bg-blue-400 rounded-2xl cursor-default items-center justify-center shadow-lg`}>
+                                        <div>
+                                            Cerrar TPV
+                                        </div>
+                                    </div>
+                            }
                         </div>
                     </div>
                 </motion.div>
