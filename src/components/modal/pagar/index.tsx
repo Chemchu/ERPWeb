@@ -1,18 +1,22 @@
-import { AnimatePresence, motion } from "framer-motion";
-import React, { MouseEventHandler, useEffect, useState } from "react";
+import { useMutation } from "@apollo/client";
+import { motion } from "framer-motion";
+import React, { useEffect, useRef, useState } from "react";
+import ReactToPrint from "react-to-print";
+import useEmpleadoContext from "../../../context/empleadoContext";
+import useJwt from "../../../hooks/jwt";
 import { Cliente } from "../../../tipos/Cliente";
 import { CustomerPaymentInformation } from "../../../tipos/CustomerPayment";
 import { TipoCobro } from "../../../tipos/Enums/TipoCobro";
 import { ProductoVendido } from "../../../tipos/ProductoVendido";
-import { FetchClientes } from "../../../utils/fetches";
+import { FetchClientes, FetchEmpleado } from "../../../utils/fetches";
 import { CalcularCambio } from "../../../utils/preciosUtils";
+import { ADD_SALE } from "../../../utils/querys";
 import { ValidatePositiveFloatingNumber } from "../../../utils/validator";
-import AutoComplete from "../../Forms/autocomplete/autocomplete";
 import Dropdown from "../../Forms/dropdown";
 import { Input } from "../../Forms/input/input";
 import { InputNumber } from "../../Forms/input/inputDinero";
+import { Ticket } from "../../ticket";
 import { Backdrop } from "../backdrop";
-import Resumen from "../resumen";
 
 const In = {
     hidden: {
@@ -42,14 +46,17 @@ export const ModalPagar = (props: {
     productosComprados: ProductoVendido[], setProductosComprados: Function, PagoCliente: CustomerPaymentInformation,
     handleModalOpen: Function,
 }) => {
+    const jwt = useJwt();
     const [dineroEntregado, setDineroEntregado] = useState<string>("0");
     const [dineroEntregadoTarjeta, setDineroEntregadoTarjeta] = useState<string>("0");
     const [cambio, setCambio] = useState<number>(props.PagoCliente.cambio);
-    const [showModalResumen, setModalResumen] = useState<boolean>(false);
+    const [addVentasToDB, { loading, error }] = useMutation(ADD_SALE);
+    const { Empleado, SetEmpleado } = useEmpleadoContext();
 
     const [Clientes, SetClientes] = useState<Cliente[]>([]);
     const [ClienteActual, SetClienteActual] = useState<string>("General");
     const [PagoDelCliente, SetPagoCliente] = useState<CustomerPaymentInformation>(props.PagoCliente);
+    const componentRef = useRef(null);
 
     useEffect(() => {
         const GetClientesFromDB = async () => {
@@ -73,7 +80,49 @@ export const ModalPagar = (props: {
         setCambio(CalcularCambio(PagoDelCliente.precioTotal, Number(dineroEntregado), Number(dinero)))
     }
 
-    const OpenResumen = () => {
+    const addSale = async (productosVendidos: ProductoVendido[], pagoCliente: CustomerPaymentInformation, handleOpen: Function, setProductosComprados: Function) => {
+        try {
+            let cliente;
+            if (!pagoCliente.cliente) {
+                cliente = Clientes.find((c) => c.nombre === "General");
+            }
+            else {
+                cliente = pagoCliente.cliente;
+            }
+
+            await addVentasToDB({
+                variables: {
+                    "fields": {
+                        "productos": productosVendidos,
+                        "dineroEntregadoEfectivo": Number(pagoCliente.pagoEnEfectivo.toFixed(2)),
+                        "dineroEntregadoTarjeta": Number(pagoCliente.pagoEnTarjeta.toFixed(2)),
+                        "precioVentaTotal": Number(pagoCliente.precioTotal.toFixed(2)),
+                        "tipo": pagoCliente.tipo,
+                        "cambio": Number(pagoCliente.cambio.toFixed(2)),
+                        "cliente": cliente,
+                        "vendidoPor": Empleado,
+                        "modificadoPor": Empleado,
+                        "descuentoEfectivo": Number(pagoCliente.dtoEfectivo.toFixed(2)) || 0,
+                        "descuentoPorcentaje": Number(pagoCliente.dtoPorcentaje.toFixed(2)) || 0,
+                        "tpv": jwt.TPV
+                    }
+                }
+            });
+
+            if (!error && !loading) {
+                handleOpen(false);
+                setProductosComprados([]);
+            }
+            else {
+                console.log("Error al realizar la venta");
+            }
+        }
+        catch (err) {
+            console.log(err);
+        }
+    }
+
+    const OpenResumen = async () => {
         let p = PagoDelCliente;
         p.tipo = GetFormaDePago();
 
@@ -86,7 +135,9 @@ export const ModalPagar = (props: {
         else { p.cliente = cliente }
 
         SetPagoCliente(p);
-        setModalResumen(true);
+
+        SetEmpleado(await FetchEmpleado(jwt._id));
+        SetClientes(await FetchClientes());
     }
 
     const GetFormaDePago = (): string => {
@@ -190,14 +241,22 @@ export const ModalPagar = (props: {
                                     <div className="text-lg">DINERO INSUFICIENTE</div>
                                 </button>
                                 :
-                                <button className="bg-blue-500 hover:bg-blue-600 text-white w-full h-12 hover:shadow-lg rounded-lg flex items-center justify-center" onClick={OpenResumen}>
-                                    <div className="text-lg">COMPLETAR VENTA</div>
-                                </button>
+                                <ReactToPrint
+                                    trigger={() =>
+                                        <button className="bg-blue-500 hover:bg-blue-600 text-white w-full h-12 hover:shadow-lg rounded-lg flex items-center justify-center" onClick={async () => { await OpenResumen() }}>
+                                            <div className="text-lg">COMPLETAR VENTA</div>
+                                        </button>
+                                    }
+                                    content={() => componentRef.current}
+                                    onBeforePrint={() => { addSale(props.productosComprados, PagoDelCliente, props.handleModalOpen, props.setProductosComprados) }}
+                                />
+
                             }
                         </div>
-                        <AnimatePresence>
-                            {showModalResumen && <Resumen pagoCliente={PagoDelCliente} productosVendidos={props.productosComprados} handleOpen={setModalResumen} handleOpenPagarModal={props.handleModalOpen} setProductosComprados={props.setProductosComprados} />}
-                        </AnimatePresence>
+
+                        <div style={{ display: "none" }}>
+                            <Ticket ref={componentRef} pagoCliente={PagoDelCliente} productosVendidos={props.productosComprados} />
+                        </div>
                     </div>
 
                 </motion.div>

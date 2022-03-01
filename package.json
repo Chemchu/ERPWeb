@@ -18,7 +18,8 @@
     "next": "^12.0.10",
     "nextjs-progressbar": "^0.0.13",
     "react": "17.0.2",
-    "react-dom": "17.0.2"
+    "react-dom": "17.0.2",
+    "react-to-print": "^2.14.4"
   },
   "devDependencies": {
     "@types/js-cookie": "^3.0.1",
