@@ -5,17 +5,17 @@ import { ProductoVendido } from "../../tipos/ProductoVendido";
 export class Ticket extends React.PureComponent<{ pagoCliente: CustomerPaymentInformation, productosVendidos: ProductoVendido[] }> {
     render() {
         return (
-            <div className="flex flex-col gap-2 items-center bg-white rounded-2xl w-full h-5/6 py-2">
+            <div className="flex flex-col gap-4 items-center bg-white rounded-2xl w-full h-auto text-xs">
                 <div className="w-full h-5/6 rounded-3xl bg-white z-10 ">
-                    <div >
-                        <h2 className="text-xl font-semibold text-center py-4">ERPWeb</h2>
-                        <div className="flex justify-evenly text-sm">
+                    <div>
+                        <h2 className="text-xl font-semibold text-center ">ERPWeb</h2>
+                        <div className="flex justify-evenly">
                             <div className="text-left relative ">Cliente: {this.props.pagoCliente.cliente.nombre} </div>
                         </div>
                     </div>
-                    <div id="receipt-content" className="text-left w-full h-5/6 text-sm p-4">
+                    <div id="receipt-content" className="text-left w-full h-5/6 p-4">
                         <hr />
-                        <div className="w-full h-full text-xs">
+                        <div className="w-full h-full">
                             <div className="flex w-full justify-around">
                                 <p className="w-1/4 text-left font-semibold">#</p>
                                 <p className="w-1/4 text-left font-semibold">Producto</p>
@@ -42,7 +42,7 @@ export class Ticket extends React.PureComponent<{ pagoCliente: CustomerPaymentIn
                     <div className="font-semibold">
                         {this.props.pagoCliente.tipo}
                     </div>
-                    <div className="text-sm">
+                    <div>
                         <div>
                             Total: {this.props.pagoCliente.precioTotal.toFixed(2)}€
                         </div>
@@ -50,6 +50,13 @@ export class Ticket extends React.PureComponent<{ pagoCliente: CustomerPaymentIn
                             Cambio: {this.props.pagoCliente.cambio.toFixed(2)}€
                         </div>
                     </div>
+                </div>
+
+                <div className="flex flex-col pb-2">
+                    <span>
+                        ¡Gracias por su compra! Vuelva siempre
+                    </span>
+                    <hr />
                 </div>
             </div>
         );

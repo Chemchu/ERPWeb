@@ -1,8 +1,9 @@
 import { useMutation } from "@apollo/client";
 import { motion } from "framer-motion";
-import React, { useEffect, useRef, useState } from "react";
-import ReactToPrint from "react-to-print";
+import React, { useCallback, useEffect, useRef, useState } from "react";
+import ReactToPrint, { useReactToPrint } from "react-to-print";
 import useEmpleadoContext from "../../../context/empleadoContext";
+import useProductEnCarritoContext from "../../../context/productosEnCarritoContext";
 import useJwt from "../../../hooks/jwt";
 import { Cliente } from "../../../tipos/Cliente";
 import { CustomerPaymentInformation } from "../../../tipos/CustomerPayment";
@@ -42,21 +43,27 @@ const In = {
     }
 }
 
-export const ModalPagar = (props: {
-    productosComprados: ProductoVendido[], setProductosComprados: Function, PagoCliente: CustomerPaymentInformation,
-    handleModalOpen: Function,
-}) => {
+export const ModalPagar = (props: { PagoCliente: CustomerPaymentInformation, handleModalOpen: Function }) => {
     const jwt = useJwt();
     const [dineroEntregado, setDineroEntregado] = useState<string>("0");
     const [dineroEntregadoTarjeta, setDineroEntregadoTarjeta] = useState<string>("0");
     const [cambio, setCambio] = useState<number>(props.PagoCliente.cambio);
-    const [addVentasToDB, { loading, error }] = useMutation(ADD_SALE);
     const { Empleado, SetEmpleado } = useEmpleadoContext();
 
     const [Clientes, SetClientes] = useState<Cliente[]>([]);
     const [ClienteActual, SetClienteActual] = useState<string>("General");
     const [PagoDelCliente, SetPagoCliente] = useState<CustomerPaymentInformation>(props.PagoCliente);
-    const componentRef = useRef(null);
+
+    const { ProductosEnCarrito, SetProductosEnCarrito } = useProductEnCarritoContext();
+    const onBeforeGetContentResolve = React.useRef<(() => void) | null>(null);
+
+    const [addVentasToDB, { loading, error }] = useMutation(ADD_SALE);
+    let componentRef = useRef(null);
+    const handlePrint = useReactToPrint({
+        onBeforeGetContent: () => handleOnBeforeGetContent(),
+        content: () => reactToPrintContent(),
+        onAfterPrint: useCallback(async () => await addSale(PagoDelCliente), [])
+    });
 
     useEffect(() => {
         const GetClientesFromDB = async () => {
@@ -65,6 +72,26 @@ export const ModalPagar = (props: {
 
         GetClientesFromDB();
     }, [])
+
+    const handleOnBeforeGetContent = React.useCallback(() => {
+        console.log("`onBeforeGetContent` called");
+
+        return new Promise<void>(async (resolve) => {
+            onBeforeGetContentResolve.current = resolve;
+
+            await UpdatePaymentInfo();
+        });
+    }, [PagoDelCliente, SetPagoCliente]);
+
+    React.useEffect(() => {
+        if (typeof onBeforeGetContentResolve.current === "function") {
+            onBeforeGetContentResolve.current();
+        }
+    }, [onBeforeGetContentResolve.current, PagoDelCliente]);
+
+    const reactToPrintContent = React.useCallback(() => {
+        return componentRef.current;
+    }, [componentRef.current]);
 
     const SetDineroClienteEfectivo = (dineroDelCliente: string) => {
         const dinero = ValidatePositiveFloatingNumber(dineroDelCliente);
@@ -80,7 +107,7 @@ export const ModalPagar = (props: {
         setCambio(CalcularCambio(PagoDelCliente.precioTotal, Number(dineroEntregado), Number(dinero)))
     }
 
-    const addSale = async (productosVendidos: ProductoVendido[], pagoCliente: CustomerPaymentInformation, handleOpen: Function, setProductosComprados: Function) => {
+    const addSale = async (pagoCliente: CustomerPaymentInformation) => {
         try {
             let cliente;
             if (!pagoCliente.cliente) {
@@ -93,7 +120,7 @@ export const ModalPagar = (props: {
             await addVentasToDB({
                 variables: {
                     "fields": {
-                        "productos": productosVendidos,
+                        "productos": ProductosEnCarrito,
                         "dineroEntregadoEfectivo": Number(pagoCliente.pagoEnEfectivo.toFixed(2)),
                         "dineroEntregadoTarjeta": Number(pagoCliente.pagoEnTarjeta.toFixed(2)),
                         "precioVentaTotal": Number(pagoCliente.precioTotal.toFixed(2)),
@@ -109,9 +136,9 @@ export const ModalPagar = (props: {
                 }
             });
 
-            if (!error && !loading) {
-                handleOpen(false);
-                setProductosComprados([]);
+            if (!error) {
+                props.handleModalOpen(false);
+                SetProductosEnCarrito([]);
             }
             else {
                 console.log("Error al realizar la venta");
@@ -122,7 +149,7 @@ export const ModalPagar = (props: {
         }
     }
 
-    const OpenResumen = async () => {
+    const UpdatePaymentInfo = async () => {
         let p = PagoDelCliente;
         p.tipo = GetFormaDePago();
 
@@ -241,21 +268,14 @@ export const ModalPagar = (props: {
                                     <div className="text-lg">DINERO INSUFICIENTE</div>
                                 </button>
                                 :
-                                <ReactToPrint
-                                    trigger={() =>
-                                        <button className="bg-blue-500 hover:bg-blue-600 text-white w-full h-12 hover:shadow-lg rounded-lg flex items-center justify-center" onClick={async () => { await OpenResumen() }}>
-                                            <div className="text-lg">COMPLETAR VENTA</div>
-                                        </button>
-                                    }
-                                    content={() => componentRef.current}
-                                    onBeforePrint={() => { addSale(props.productosComprados, PagoDelCliente, props.handleModalOpen, props.setProductosComprados) }}
-                                />
-
+                                <button className="bg-blue-500 hover:bg-blue-600 text-white w-full h-12 hover:shadow-lg rounded-lg flex items-center justify-center" onClick={handlePrint}>
+                                    <div className="text-lg">COMPLETAR VENTA</div>
+                                </button>
                             }
                         </div>
 
                         <div style={{ display: "none" }}>
-                            <Ticket ref={componentRef} pagoCliente={PagoDelCliente} productosVendidos={props.productosComprados} />
+                            <Ticket ref={componentRef} pagoCliente={PagoDelCliente} productosVendidos={ProductosEnCarrito} />
                         </div>
                     </div>
 
