@@ -55,15 +55,7 @@ export const ModalPagar = (props: { PagoCliente: CustomerPaymentInformation, han
     const [PagoDelCliente, SetPagoCliente] = useState<CustomerPaymentInformation>(props.PagoCliente);
 
     const { ProductosEnCarrito, SetProductosEnCarrito } = useProductEnCarritoContext();
-    const onBeforeGetContentResolve = React.useRef<(() => void) | null>(null);
-
     const [addVentasToDB, { loading, error }] = useMutation(ADD_SALE);
-    let componentRef = useRef(null);
-    const handlePrint = useReactToPrint({
-        onBeforeGetContent: () => handleOnBeforeGetContent(),
-        content: () => reactToPrintContent(),
-        onAfterPrint: useCallback(async () => await addSale(PagoDelCliente), [])
-    });
 
     useEffect(() => {
         const GetClientesFromDB = async () => {
@@ -72,26 +64,6 @@ export const ModalPagar = (props: { PagoCliente: CustomerPaymentInformation, han
 
         GetClientesFromDB();
     }, [])
-
-    const handleOnBeforeGetContent = React.useCallback(() => {
-        console.log("`onBeforeGetContent` called");
-
-        return new Promise<void>(async (resolve) => {
-            onBeforeGetContentResolve.current = resolve;
-
-            await UpdatePaymentInfo();
-        });
-    }, [PagoDelCliente, SetPagoCliente]);
-
-    React.useEffect(() => {
-        if (typeof onBeforeGetContentResolve.current === "function") {
-            onBeforeGetContentResolve.current();
-        }
-    }, [onBeforeGetContentResolve.current, PagoDelCliente]);
-
-    const reactToPrintContent = React.useCallback(() => {
-        return componentRef.current;
-    }, [componentRef.current]);
 
     const SetDineroClienteEfectivo = (dineroDelCliente: string) => {
         const dinero = ValidatePositiveFloatingNumber(dineroDelCliente);
@@ -161,7 +133,7 @@ export const ModalPagar = (props: { PagoCliente: CustomerPaymentInformation, han
         if (!cliente) { p.cliente = Clientes[0] }
         else { p.cliente = cliente }
 
-        SetPagoCliente(p);
+        SetPagoCliente([p][0]);
 
         SetEmpleado(await FetchEmpleado(jwt._id));
         SetClientes(await FetchClientes());
@@ -268,14 +240,10 @@ export const ModalPagar = (props: { PagoCliente: CustomerPaymentInformation, han
                                     <div className="text-lg">DINERO INSUFICIENTE</div>
                                 </button>
                                 :
-                                <button className="bg-blue-500 hover:bg-blue-600 text-white w-full h-12 hover:shadow-lg rounded-lg flex items-center justify-center" onClick={handlePrint}>
+                                <button className="bg-blue-500 hover:bg-blue-600 text-white w-full h-12 hover:shadow-lg rounded-lg flex items-center justify-center" onClick={() => { console.error("Abrir print dialog") }}>
                                     <div className="text-lg">COMPLETAR VENTA</div>
                                 </button>
                             }
-                        </div>
-
-                        <div style={{ display: "none" }}>
-                            <Ticket ref={componentRef} pagoCliente={PagoDelCliente} productosVendidos={ProductosEnCarrito} />
                         </div>
                     </div>
 
