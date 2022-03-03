@@ -1,14 +1,12 @@
 import { useMutation } from "@apollo/client";
 import { motion } from "framer-motion";
-import React, { useCallback, useEffect, useRef, useState } from "react";
-import ReactToPrint, { useReactToPrint } from "react-to-print";
+import React, { useEffect, useState } from "react";
 import useEmpleadoContext from "../../../context/empleadoContext";
 import useProductEnCarritoContext from "../../../context/productosEnCarritoContext";
 import useJwt from "../../../hooks/jwt";
 import { Cliente } from "../../../tipos/Cliente";
 import { CustomerPaymentInformation } from "../../../tipos/CustomerPayment";
 import { TipoCobro } from "../../../tipos/Enums/TipoCobro";
-import { ProductoVendido } from "../../../tipos/ProductoVendido";
 import { FetchClientes, FetchEmpleado } from "../../../utils/fetches";
 import { CalcularCambio } from "../../../utils/preciosUtils";
 import { ADD_SALE } from "../../../utils/querys";
@@ -16,7 +14,6 @@ import { ValidatePositiveFloatingNumber } from "../../../utils/validator";
 import Dropdown from "../../Forms/dropdown";
 import { Input } from "../../Forms/input/input";
 import { InputNumber } from "../../Forms/input/inputDinero";
-import { Ticket } from "../../ticket";
 import { Backdrop } from "../backdrop";
 
 const In = {
@@ -226,7 +223,6 @@ export const ModalPagar = (props: { PagoCliente: CustomerPaymentInformation, han
                                         <div className={`text-4xl font-semibold ${cambio < 0 ? "text-red-500" : "text-green-500"}`}>{cambio.toFixed(2)}€</div>
                                     </div>
                                 </div>
-
                             </div>
                         </div>
 
@@ -246,7 +242,6 @@ export const ModalPagar = (props: { PagoCliente: CustomerPaymentInformation, han
                             }
                         </div>
                     </div>
-
                 </motion.div>
             </Backdrop>
         </motion.div>
