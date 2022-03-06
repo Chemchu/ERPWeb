@@ -57,9 +57,7 @@ const DashboardLayout = React.memo(({ children }: { children: React.ReactNode })
                                 newestOnTop={false}
                                 closeOnClick
                                 rtl={false}
-                                pauseOnFocusLoss
                                 draggable
-                                pauseOnHover
                             />
                         </div>
                     </main >

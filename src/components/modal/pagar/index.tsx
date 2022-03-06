@@ -17,7 +17,7 @@ import { Input } from "../../Forms/input/input";
 import { InputNumber } from "../../Forms/input/inputDinero";
 import Ticket from "../../ticket";
 import { Backdrop } from "../backdrop";
-import { toast } from 'react-toastify';
+import { notifyError, notifySuccess } from "../../../utils/toastify";
 
 const In = {
     hidden: {
@@ -57,14 +57,24 @@ export const ModalPagar = (props: { PagoCliente: CustomerPaymentInformation, han
 
     const { ProductosEnCarrito, SetProductosEnCarrito } = useProductEnCarritoContext();
     const [addVentasToDB, { error }] = useMutation(ADD_SALE, { errorPolicy: 'all' });
+    const [serverUp, setServerStatus] = useState<boolean>(false);
 
     const componentRef = useRef(null);
 
     useEffect(() => {
-        const GetClientesFromDB = async () => {
-            SetClientes(await FetchClientes());
+        let isUnmounted = false;
+        FetchClientes().then((r) => {
+            if (!isUnmounted) {
+                SetClientes(r)
+                setServerStatus(true);
+            }
+        }).catch(() => {
+            setServerStatus(false);
+        });
+
+        return () => {
+            isUnmounted = true;
         }
-        GetClientesFromDB();
     }, []);
 
     const reactToPrintContent = React.useCallback(() => {
@@ -96,7 +106,7 @@ export const ModalPagar = (props: { PagoCliente: CustomerPaymentInformation, han
         setCambio(CalcularCambio(PagoDelCliente.precioTotal, Number(dineroEntregado), Number(dinero)))
     }
 
-    const addSale = async (pagoCliente: CustomerPaymentInformation) => {
+    const AddSale = async (pagoCliente: CustomerPaymentInformation) => {
         try {
             UpdatePaymentInfo()
 
@@ -162,30 +172,6 @@ export const ModalPagar = (props: { PagoCliente: CustomerPaymentInformation, han
         if (Number(dineroEntregado) > 0 && Number(dineroEntregadoTarjeta) > 0) { return TipoCobro.Fraccionado.toString(); }
         if (Number(dineroEntregadoTarjeta) > 0) { return TipoCobro.Tarjeta.toString(); }
         return TipoCobro.Efectivo.toString();
-    }
-
-    const notifyError = (msg: string) => {
-        toast.error(msg, {
-            position: "bottom-right",
-            autoClose: 5000,
-            hideProgressBar: false,
-            closeOnClick: true,
-            pauseOnHover: true,
-            draggable: true,
-            progress: undefined,
-        });
-    }
-
-    const notifySuccess = (msg: string) => {
-        toast.success(msg, {
-            position: "bottom-right",
-            autoClose: 5000,
-            hideProgressBar: false,
-            closeOnClick: true,
-            pauseOnHover: true,
-            draggable: true,
-            progress: undefined,
-        });
     }
 
     return (
@@ -276,14 +262,21 @@ export const ModalPagar = (props: { PagoCliente: CustomerPaymentInformation, han
                             <button className="bg-red-500 hover:bg-red-600 text-white w-full h-12 hover:shadow-lg rounded-lg flex items-center justify-center" onClick={() => props.handleModalOpen(false)}>
                                 <div className="text-lg">CANCELAR</div>
                             </button>
-                            {cambio < 0 ?
-                                <button className="bg-blue-400 text-white w-full h-12 cursor-default rounded-lg flex items-center justify-center">
-                                    <div className="text-lg">DINERO INSUFICIENTE</div>
-                                </button>
-                                :
-                                <button className="bg-blue-500 hover:bg-blue-600 text-white w-full h-12 hover:shadow-lg rounded-lg flex items-center justify-center" onClick={async () => { await addSale(PagoDelCliente); }}>
-                                    <div className="text-lg">COMPLETAR VENTA</div>
-                                </button>
+                            {
+                                serverUp ?
+                                    cambio >= 0 ?
+                                        <button className="bg-blue-500 hover:bg-blue-600 text-white w-full h-12 hover:shadow-lg rounded-lg flex items-center justify-center" onClick={async () => { await AddSale(PagoDelCliente); }} >
+                                            <div className="text-lg">COMPLETAR VENTA</div>
+                                        </button>
+                                        :
+                                        <button className="bg-blue-400 text-white w-full h-12 cursor-default rounded-lg flex items-center justify-center">
+                                            <div className="text-lg">DINERO INSUFICIENTE</div>
+                                        </button>
+
+                                    :
+                                    <button className="bg-slate-500 hover:bg-slate-500 cursor-pointer text-white w-full h-12 hover:shadow-lg rounded-lg flex items-center justify-center">
+                                        <div className="text-lg">CARGANDO CLIENTES...</div>
+                                    </button>
                             }
                         </div>
                     </div>
