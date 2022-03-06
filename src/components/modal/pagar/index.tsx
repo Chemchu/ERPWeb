@@ -109,6 +109,9 @@ export const ModalPagar = (props: { PagoCliente: CustomerPaymentInformation, han
                 cliente = pagoCliente.cliente;
             }
 
+            console.log(Empleado);
+
+
             await addVentasToDB({
                 variables: {
                     "fields": {
