@@ -1,6 +1,7 @@
 import { useMutation } from "@apollo/client";
 import { motion } from "framer-motion";
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
+import { useReactToPrint } from "react-to-print";
 import useEmpleadoContext from "../../../context/empleadoContext";
 import useProductEnCarritoContext from "../../../context/productosEnCarritoContext";
 import useJwt from "../../../hooks/jwt";
@@ -14,6 +15,7 @@ import { ValidatePositiveFloatingNumber } from "../../../utils/validator";
 import Dropdown from "../../Forms/dropdown";
 import { Input } from "../../Forms/input/input";
 import { InputNumber } from "../../Forms/input/inputDinero";
+import Ticket from "../../ticket";
 import { Backdrop } from "../backdrop";
 
 const In = {
@@ -50,9 +52,26 @@ export const ModalPagar = (props: { PagoCliente: CustomerPaymentInformation, han
     const [Clientes, SetClientes] = useState<Cliente[]>([]);
     const [ClienteActual, SetClienteActual] = useState<string>("General");
     const [PagoDelCliente, SetPagoCliente] = useState<CustomerPaymentInformation>(props.PagoCliente);
+    const [errorVenta, setErrorVenta] = useState<boolean>(true);
 
     const { ProductosEnCarrito, SetProductosEnCarrito } = useProductEnCarritoContext();
     const [addVentasToDB, { loading, error }] = useMutation(ADD_SALE);
+
+    const componentRef = useRef(null);
+
+    const reactToPrintContent = React.useCallback(() => {
+        return componentRef.current;
+    }, []);
+
+    const onBeforePrintHandler = React.useCallback(async () => {
+        await addSale(PagoDelCliente);
+    }, []);
+
+    const handlePrint = useReactToPrint({
+        content: reactToPrintContent,
+        documentTitle: "Ticket",
+        onBeforeGetContent: async () => { await onBeforePrintHandler() }
+    });
 
     useEffect(() => {
         const GetClientesFromDB = async () => {
@@ -109,9 +128,7 @@ export const ModalPagar = (props: { PagoCliente: CustomerPaymentInformation, han
                 props.handleModalOpen(false);
                 SetProductosEnCarrito([]);
             }
-            else {
-                console.log("Error al realizar la venta");
-            }
+            setErrorVenta(error ? true : false);
         }
         catch (err) {
             console.log(err);
@@ -236,11 +253,19 @@ export const ModalPagar = (props: { PagoCliente: CustomerPaymentInformation, han
                                     <div className="text-lg">DINERO INSUFICIENTE</div>
                                 </button>
                                 :
-                                <button className="bg-blue-500 hover:bg-blue-600 text-white w-full h-12 hover:shadow-lg rounded-lg flex items-center justify-center" onClick={() => { console.error("Abrir print dialog") }}>
+                                <button className="bg-blue-500 hover:bg-blue-600 text-white w-full h-12 hover:shadow-lg rounded-lg flex items-center justify-center" onClick={async () => { await UpdatePaymentInfo(); handlePrint() }}>
                                     <div className="text-lg">COMPLETAR VENTA</div>
                                 </button>
                             }
                         </div>
+                    </div>
+                    <div style={{ display: "none" }}>
+                        <Ticket
+                            ref={componentRef}
+                            pagoCliente={PagoDelCliente}
+                            productosVendidos={ProductosEnCarrito}
+                            errorVenta={errorVenta}
+                        />
                     </div>
                 </motion.div>
             </Backdrop>
