@@ -93,9 +93,6 @@ function CreateProductoVendido(s: any): ProductoVendido | undefined {
             cantidadVendida: Number(s.cantidadVendida),
             dto: s.dto || 0
         }
-
-        console.log(prod);
-
         return prod;
     }
     catch (e) {

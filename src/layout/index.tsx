@@ -58,6 +58,7 @@ const DashboardLayout = React.memo(({ children }: { children: React.ReactNode })
                                 closeOnClick
                                 rtl={false}
                                 draggable
+                                pauseOnHover={false}
                             />
                         </div>
                     </main >

@@ -144,6 +144,11 @@ export const CerrarCaja = (props: { setModalOpen: Function, setEmpleadoUsandoTPV
                                 </div>
 
                                 <div className="flex gap-2">
+                                    <p>Ventas totales: </p>
+                                    <p>{(Number(TotalEfectivo) + Number(TotalTarjeta)).toFixed(2)}€</p>
+                                </div>
+
+                                <div className="flex gap-2">
                                     <p>Ventas en efectivo: </p>
                                     <p>{Number(TotalEfectivo).toFixed(2)}€</p>
                                 </div>
@@ -177,7 +182,7 @@ export const CerrarCaja = (props: { setModalOpen: Function, setEmpleadoUsandoTPV
                         </div>
 
                         <div className="flex gap-4 h-auto w-full mb-auto text-white">
-                            <div className="flex h-10 w-2/3 m-auto bg-red-500 hover:bg-red-600 rounded-2xl cursor-pointer items-center justify-center shadow-lg"
+                            <div className="flex h-10 w-2/3 m-auto bg-red-500 hover:bg-red-600 rounded-lg cursor-pointer items-center justify-center shadow-lg"
                                 onClick={() => { props.setModalOpen(false) }}>
                                 <div>
                                     Cancelar
@@ -185,14 +190,14 @@ export const CerrarCaja = (props: { setModalOpen: Function, setEmpleadoUsandoTPV
                             </div>
                             {
                                 Number(TotalRealEnCaja) > 0 && Number(TotalRealEnCaja) - Number(DineroRetirado) >= 0 ?
-                                    <div className={`flex h-10 w-2/3 m-auto bg-blue-500 hover:bg-blue-600 rounded-2xl cursor-pointer items-center justify-center shadow-lg`}
+                                    <div className={`flex h-10 w-2/3 m-auto bg-blue-500 hover:bg-blue-600 rounded-lg cursor-pointer items-center justify-center shadow-lg`}
                                         onClick={() => { cerrarCaja() }}>
                                         <div>
                                             Cerrar TPV
                                         </div>
                                     </div>
                                     :
-                                    <div className={`flex h-10 w-2/3 m-auto bg-blue-400 hover:bg-blue-400 rounded-2xl cursor-default items-center justify-center shadow-lg`}>
+                                    <div className={`flex h-10 w-2/3 m-auto bg-blue-400 hover:bg-blue-400 rounded-lg cursor-default items-center justify-center shadow-lg`}>
                                         <div>
                                             Cerrar TPV
                                         </div>

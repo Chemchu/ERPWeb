@@ -34,8 +34,11 @@ const Ticket = React.forwardRef((props: { pagoCliente: CustomerPaymentInformatio
             <div className="w-full h-5/6 rounded-3xl bg-white z-10 ">
                 <div>
                     <h2 className="text-xl font-semibold text-center ">ERPWeb</h2>
-                    <div className="flex justify-evenly">
-                        <div className="text-left relative ">Cliente: {props.pagoCliente.cliente.nombre} </div>
+                    <div className="flex flex-col text-center">
+                        <div>Cliente: {props.pagoCliente.cliente.nombre} </div>
+                        {props.pagoCliente.cliente.nif && props.pagoCliente.cliente.nif !== "General" && <div>CIF: {props.pagoCliente.cliente.nif} </div>}
+                        {props.pagoCliente.cliente.calle && props.pagoCliente.cliente.calle !== "General" && <div>Dirección: {props.pagoCliente.cliente.calle} </div>}
+                        {props.pagoCliente.cliente.cp && props.pagoCliente.cliente.cp !== "General" && <div>Código postal: {props.pagoCliente.cliente.cp} </div>}
                     </div>
                 </div>
                 <div id="receipt-content" className="text-left w-full h-5/6 p-4">
@@ -69,10 +72,16 @@ const Ticket = React.forwardRef((props: { pagoCliente: CustomerPaymentInformatio
                 </div>
                 <div>
                     <div>
-                        Total: {props.pagoCliente.precioTotal.toFixed(2)}€
+                        Precio total: {props.pagoCliente.precioTotal.toFixed(2)}€
                     </div>
                     <div>
                         Cambio: {props.pagoCliente.cambio.toFixed(2)}€
+                    </div>
+                    <div>
+                        Pagado con efectivo: {props.pagoCliente.pagoEnEfectivo.toFixed(2)}€
+                    </div>
+                    <div>
+                        Pagado con tarjeta: {props.pagoCliente.pagoEnTarjeta.toFixed(2)}€
                     </div>
                 </div>
             </div>
