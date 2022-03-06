@@ -62,9 +62,6 @@ export const ModalPagar = (props: { PagoCliente: CustomerPaymentInformation, han
     const componentRef = useRef(null);
 
     useEffect(() => {
-        console.log(ProductosEnCarrito);
-
-
         let isUnmounted = false;
         FetchClientes().then((r) => {
             if (!isUnmounted) {
