@@ -331,7 +331,7 @@ const SidebarDerecho = React.memo((props: {
                         nombre: prodEnCarrito.nombre,
                         familia: prodEnCarrito.familia,
                         proveedor: prodEnCarrito.proveedor,
-                        cantidadVendida: cantidad,
+                        cantidadVendida: Number(cantidad),
                         ean: prodEnCarrito.ean,
                         iva: prodEnCarrito.iva,
                         margen: prodEnCarrito.margen,

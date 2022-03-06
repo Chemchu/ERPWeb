@@ -90,9 +90,11 @@ function CreateProductoVendido(s: any): ProductoVendido | undefined {
             margen: s.margen,
             precioCompra: s.precioCompra,
             precioVenta: s.precioVenta,
-            cantidadVendida: s.cantidadVendida,
+            cantidadVendida: Number(s.cantidadVendida),
             dto: s.dto || 0
         }
+
+        console.log(prod);
 
         return prod;
     }
