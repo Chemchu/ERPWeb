@@ -12,12 +12,27 @@ import ModalPagar from "../../modal/pagar";
 import Resumen from "../../modal/resumen";
 import { AplicarDescuentos, PrecioTotalCarrito } from "../../../utils/preciosUtils";
 import { Cliente } from "../../../tipos/Cliente";
-import { FetchClientes } from "../../../utils/fetches";
+import { FetchClientes, FetchEmpleado } from "../../../utils/fetches";
+import useEmpleadoContext from "../../../context/empleadoContext";
+import useJwt from "../../../hooks/jwt";
 
 const TPV = (props: { productos: Producto[], serverOperativo: boolean, empleadoUsandoTPV: boolean, setEmpleadoUsandoTPV: Function, setShowModalCerrar: Function, setShowModalAbrir: Function }) => {
     const [ProductosFiltrados, setProductosFiltrados] = useState<Producto[]>([]);
     const { ProductosEnCarrito, SetProductosEnCarrito } = useProductEnCarritoContext();
+    const { SetEmpleado } = useEmpleadoContext()
     const [Familias, setFamilias] = useState<string[]>([]);
+    const jwt = useJwt();
+
+    useEffect(() => {
+        // Actualiza el Empleado
+        const GetData = async () => {
+            if (jwt) {
+                SetEmpleado(await FetchEmpleado(jwt._id));
+            }
+        }
+
+        GetData();
+    }, [])
 
     useEffect(() => {
         function uniq_fast(a: Producto[]) {

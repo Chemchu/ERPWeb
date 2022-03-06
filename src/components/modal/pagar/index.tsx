@@ -47,7 +47,7 @@ export const ModalPagar = (props: { PagoCliente: CustomerPaymentInformation, han
     const [dineroEntregado, setDineroEntregado] = useState<string>("0");
     const [dineroEntregadoTarjeta, setDineroEntregadoTarjeta] = useState<string>("0");
     const [cambio, setCambio] = useState<number>(props.PagoCliente.cambio);
-    const { Empleado, SetEmpleado } = useEmpleadoContext();
+    const { Empleado } = useEmpleadoContext();
 
     const [Clientes, SetClientes] = useState<Cliente[]>([]);
     const [ClienteActual, SetClienteActual] = useState<string>("General");
@@ -55,10 +55,9 @@ export const ModalPagar = (props: { PagoCliente: CustomerPaymentInformation, han
     const [errorVenta, setErrorVenta] = useState<boolean>(true);
 
     const { ProductosEnCarrito, SetProductosEnCarrito } = useProductEnCarritoContext();
-    const [addVentasToDB, { loading, error }] = useMutation(ADD_SALE);
+    const [addVentasToDB, { error }] = useMutation(ADD_SALE);
 
     const componentRef = useRef(null);
-
     const reactToPrintContent = React.useCallback(() => {
         return componentRef.current;
     }, []);
@@ -67,14 +66,16 @@ export const ModalPagar = (props: { PagoCliente: CustomerPaymentInformation, han
         await addSale(PagoDelCliente);
     }, []);
 
+    const onAfterPrintHandler = React.useCallback(async () => {
+        SetProductosEnCarrito([]);
+        setErrorVenta(true);
+    }, [errorVenta]);
+
     const handlePrint = useReactToPrint({
+        documentTitle: "Ticket de venta",
         content: reactToPrintContent,
-        documentTitle: "Ticket",
-        onBeforeGetContent: async () => { await onBeforePrintHandler() },
-        onAfterPrint: () => {
-            SetProductosEnCarrito([]);
-            setErrorVenta(true);
-        }
+        onBeforePrint: async () => { await onBeforePrintHandler() },
+        onAfterPrint: async () => { await onAfterPrintHandler() }
     });
 
     useEffect(() => {
@@ -108,9 +109,6 @@ export const ModalPagar = (props: { PagoCliente: CustomerPaymentInformation, han
             else {
                 cliente = pagoCliente.cliente;
             }
-
-            console.log(Empleado);
-
 
             await addVentasToDB({
                 variables: {
@@ -157,8 +155,6 @@ export const ModalPagar = (props: { PagoCliente: CustomerPaymentInformation, han
         else { p.cliente = cliente }
 
         SetPagoCliente([p][0]);
-
-        SetEmpleado(await FetchEmpleado(jwt._id));
         SetClientes(await FetchClientes());
     }
 
