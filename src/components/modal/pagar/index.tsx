@@ -70,7 +70,11 @@ export const ModalPagar = (props: { PagoCliente: CustomerPaymentInformation, han
     const handlePrint = useReactToPrint({
         content: reactToPrintContent,
         documentTitle: "Ticket",
-        onBeforeGetContent: async () => { await onBeforePrintHandler() }
+        onBeforeGetContent: async () => { await onBeforePrintHandler() },
+        onAfterPrint: () => {
+            SetProductosEnCarrito([]);
+            setErrorVenta(true);
+        }
     });
 
     useEffect(() => {
@@ -126,9 +130,11 @@ export const ModalPagar = (props: { PagoCliente: CustomerPaymentInformation, han
 
             if (!error) {
                 props.handleModalOpen(false);
-                SetProductosEnCarrito([]);
+                setErrorVenta(false)
             }
-            setErrorVenta(error ? true : false);
+            else {
+                setErrorVenta(true);
+            }
         }
         catch (err) {
             console.log(err);
