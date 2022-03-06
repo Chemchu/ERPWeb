@@ -278,7 +278,6 @@ export const ModalPagar = (props: { PagoCliente: CustomerPaymentInformation, han
                             errorVenta={errorVenta}
                         />
                     </div>
-                    {/* <ToastContainer /> */}
                 </motion.div>
             </Backdrop>
         </motion.div>
