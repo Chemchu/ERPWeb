@@ -8,7 +8,7 @@ import useJwt from "../../../hooks/jwt";
 import { Cliente } from "../../../tipos/Cliente";
 import { CustomerPaymentInformation } from "../../../tipos/CustomerPayment";
 import { TipoCobro } from "../../../tipos/Enums/TipoCobro";
-import { FetchClientes, FetchEmpleado } from "../../../utils/fetches";
+import { FetchClientes } from "../../../utils/fetches";
 import { CalcularCambio } from "../../../utils/preciosUtils";
 import { ADD_SALE } from "../../../utils/querys";
 import { ValidatePositiveFloatingNumber } from "../../../utils/validator";
@@ -17,6 +17,8 @@ import { Input } from "../../Forms/input/input";
 import { InputNumber } from "../../Forms/input/inputDinero";
 import Ticket from "../../ticket";
 import { Backdrop } from "../backdrop";
+import { ToastContainer, toast } from 'react-toastify';
+import "react-toastify/dist/ReactToastify.css";
 
 const In = {
     hidden: {
@@ -62,19 +64,18 @@ export const ModalPagar = (props: { PagoCliente: CustomerPaymentInformation, han
         return componentRef.current;
     }, []);
 
-    const onBeforePrintHandler = React.useCallback(async () => {
+    const onBeforeGetContentHandler = React.useCallback(async () => {
         await addSale(PagoDelCliente);
     }, []);
 
     const onAfterPrintHandler = React.useCallback(async () => {
         SetProductosEnCarrito([]);
-        setErrorVenta(true);
-    }, [errorVenta]);
+    }, []);
 
     const handlePrint = useReactToPrint({
         documentTitle: "Ticket de venta",
         content: reactToPrintContent,
-        onBeforePrint: async () => { await onBeforePrintHandler() },
+        onBeforeGetContent: async () => { await onBeforeGetContentHandler() },
         onAfterPrint: async () => { await onAfterPrintHandler() }
     });
 
@@ -82,7 +83,6 @@ export const ModalPagar = (props: { PagoCliente: CustomerPaymentInformation, han
         const GetClientesFromDB = async () => {
             SetClientes(await FetchClientes());
         }
-
         GetClientesFromDB();
     }, [])
 
@@ -131,10 +131,15 @@ export const ModalPagar = (props: { PagoCliente: CustomerPaymentInformation, han
 
             if (!error) {
                 props.handleModalOpen(false);
-                setErrorVenta(false)
+                setErrorVenta(false);
+                //notify("Venta realizada correctamente");
+                console.log("Venta realizada correctamente");
+
             }
             else {
                 setErrorVenta(true);
+                //notify("Error al realizar la venta");
+                console.log("Error al realizar la venta");
             }
         }
         catch (err) {
@@ -142,7 +147,7 @@ export const ModalPagar = (props: { PagoCliente: CustomerPaymentInformation, han
         }
     }
 
-    const UpdatePaymentInfo = async () => {
+    const UpdatePaymentInfo = () => {
         let p = PagoDelCliente;
         p.tipo = GetFormaDePago();
 
@@ -155,7 +160,6 @@ export const ModalPagar = (props: { PagoCliente: CustomerPaymentInformation, han
         else { p.cliente = cliente }
 
         SetPagoCliente([p][0]);
-        SetClientes(await FetchClientes());
     }
 
     const GetFormaDePago = (): string => {
@@ -163,6 +167,8 @@ export const ModalPagar = (props: { PagoCliente: CustomerPaymentInformation, han
         if (Number(dineroEntregadoTarjeta) > 0) { return TipoCobro.Tarjeta.toString(); }
         return TipoCobro.Efectivo.toString();
     }
+
+    //const notify = (msg: string) => toast(msg);
 
     return (
         <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} >
@@ -258,7 +264,7 @@ export const ModalPagar = (props: { PagoCliente: CustomerPaymentInformation, han
                                     <div className="text-lg">DINERO INSUFICIENTE</div>
                                 </button>
                                 :
-                                <button className="bg-blue-500 hover:bg-blue-600 text-white w-full h-12 hover:shadow-lg rounded-lg flex items-center justify-center" onClick={async () => { await UpdatePaymentInfo(); handlePrint() }}>
+                                <button className="bg-blue-500 hover:bg-blue-600 text-white w-full h-12 hover:shadow-lg rounded-lg flex items-center justify-center" onClick={() => { UpdatePaymentInfo(); handlePrint() }}>
                                     <div className="text-lg">COMPLETAR VENTA</div>
                                 </button>
                             }
@@ -272,6 +278,7 @@ export const ModalPagar = (props: { PagoCliente: CustomerPaymentInformation, han
                             errorVenta={errorVenta}
                         />
                     </div>
+                    {/* <ToastContainer /> */}
                 </motion.div>
             </Backdrop>
         </motion.div>
