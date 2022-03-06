@@ -154,7 +154,6 @@ const TPV = (props: { productos: Producto[], serverOperativo: boolean, empleadoU
                                     }
                                 </div>
                         }
-
                         <div className="h-full overflow-hidden">
                             <ListaProductos productos={props.productos} productosFiltrados={ProductosFiltrados} ServerUp={props.serverOperativo} />
                         </div>
@@ -164,7 +163,6 @@ const TPV = (props: { productos: Producto[], serverOperativo: boolean, empleadoU
                 <div className="h-screen">
                     <SidebarDerecho todosProductos={props.productos} productosEnCarrito={ProductosEnCarrito} setProductosCarrito={SetProductosEnCarrito} empleadoUsandoTPV={props.empleadoUsandoTPV} setShowModalAbrir={props.setShowModalAbrir} setShowModalCerrar={props.setShowModalCerrar} />
                 </div>
-
             </div>
         </div>
     );

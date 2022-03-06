@@ -17,8 +17,7 @@ import { Input } from "../../Forms/input/input";
 import { InputNumber } from "../../Forms/input/inputDinero";
 import Ticket from "../../ticket";
 import { Backdrop } from "../backdrop";
-import { ToastContainer, toast } from 'react-toastify';
-import "react-toastify/dist/ReactToastify.css";
+import { toast } from 'react-toastify';
 
 const In = {
     hidden: {
@@ -54,37 +53,34 @@ export const ModalPagar = (props: { PagoCliente: CustomerPaymentInformation, han
     const [Clientes, SetClientes] = useState<Cliente[]>([]);
     const [ClienteActual, SetClienteActual] = useState<string>("General");
     const [PagoDelCliente, SetPagoCliente] = useState<CustomerPaymentInformation>(props.PagoCliente);
-    const [errorVenta, setErrorVenta] = useState<boolean>(true);
+    const [errorVenta, setErrorVenta] = useState<boolean>(false);
 
     const { ProductosEnCarrito, SetProductosEnCarrito } = useProductEnCarritoContext();
-    const [addVentasToDB, { error }] = useMutation(ADD_SALE);
+    const [addVentasToDB, { error }] = useMutation(ADD_SALE, { errorPolicy: 'all' });
 
     const componentRef = useRef(null);
-    const reactToPrintContent = React.useCallback(() => {
-        return componentRef.current;
-    }, []);
-
-    const onBeforeGetContentHandler = React.useCallback(async () => {
-        await addSale(PagoDelCliente);
-    }, []);
-
-    const onAfterPrintHandler = React.useCallback(async () => {
-        SetProductosEnCarrito([]);
-    }, []);
-
-    const handlePrint = useReactToPrint({
-        documentTitle: "Ticket de venta",
-        content: reactToPrintContent,
-        onBeforeGetContent: async () => { await onBeforeGetContentHandler() },
-        onAfterPrint: async () => { await onAfterPrintHandler() }
-    });
 
     useEffect(() => {
         const GetClientesFromDB = async () => {
             SetClientes(await FetchClientes());
         }
         GetClientesFromDB();
-    }, [])
+    }, []);
+
+    const reactToPrintContent = React.useCallback(() => {
+        return componentRef.current;
+    }, []);
+
+    const onAfterPrintHandler = React.useCallback(() => {
+        SetProductosEnCarrito([]);
+        notifySuccess("Venta realizada correctamente")
+    }, []);
+
+    const handlePrint = useReactToPrint({
+        documentTitle: "Ticket de venta",
+        content: reactToPrintContent,
+        onAfterPrint: onAfterPrintHandler
+    });
 
     const SetDineroClienteEfectivo = (dineroDelCliente: string) => {
         const dinero = ValidatePositiveFloatingNumber(dineroDelCliente);
@@ -102,6 +98,8 @@ export const ModalPagar = (props: { PagoCliente: CustomerPaymentInformation, han
 
     const addSale = async (pagoCliente: CustomerPaymentInformation) => {
         try {
+            UpdatePaymentInfo()
+
             let cliente;
             if (!pagoCliente.cliente) {
                 cliente = Clientes.find((c) => c.nombre === "General");
@@ -132,18 +130,16 @@ export const ModalPagar = (props: { PagoCliente: CustomerPaymentInformation, han
             if (!error) {
                 props.handleModalOpen(false);
                 setErrorVenta(false);
-                //notify("Venta realizada correctamente");
-                console.log("Venta realizada correctamente");
-
+                handlePrint();
             }
             else {
                 setErrorVenta(true);
-                //notify("Error al realizar la venta");
-                console.log("Error al realizar la venta");
             }
         }
         catch (err) {
             console.log(err);
+            setErrorVenta(true);
+            notifyError("Error al realizar la venta")
         }
     }
 
@@ -168,7 +164,29 @@ export const ModalPagar = (props: { PagoCliente: CustomerPaymentInformation, han
         return TipoCobro.Efectivo.toString();
     }
 
-    //const notify = (msg: string) => toast(msg);
+    const notifyError = (msg: string) => {
+        toast.error(msg, {
+            position: "bottom-right",
+            autoClose: 5000,
+            hideProgressBar: false,
+            closeOnClick: true,
+            pauseOnHover: true,
+            draggable: true,
+            progress: undefined,
+        });
+    }
+
+    const notifySuccess = (msg: string) => {
+        toast.success(msg, {
+            position: "bottom-right",
+            autoClose: 5000,
+            hideProgressBar: false,
+            closeOnClick: true,
+            pauseOnHover: true,
+            draggable: true,
+            progress: undefined,
+        });
+    }
 
     return (
         <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} >
@@ -180,7 +198,6 @@ export const ModalPagar = (props: { PagoCliente: CustomerPaymentInformation, han
                     animate="visible"
                     exit="exit"
                 >
-
                     <div id="receipt-content" className="text-left w-full text-sm p-6 overflow-auto">
                         <div className="grid grid-cols-2">
                             {/* Parte izquierda, datos cliente */}
@@ -264,7 +281,7 @@ export const ModalPagar = (props: { PagoCliente: CustomerPaymentInformation, han
                                     <div className="text-lg">DINERO INSUFICIENTE</div>
                                 </button>
                                 :
-                                <button className="bg-blue-500 hover:bg-blue-600 text-white w-full h-12 hover:shadow-lg rounded-lg flex items-center justify-center" onClick={() => { UpdatePaymentInfo(); handlePrint() }}>
+                                <button className="bg-blue-500 hover:bg-blue-600 text-white w-full h-12 hover:shadow-lg rounded-lg flex items-center justify-center" onClick={async () => { await addSale(PagoDelCliente); }}>
                                     <div className="text-lg">COMPLETAR VENTA</div>
                                 </button>
                             }
