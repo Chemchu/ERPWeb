@@ -10,7 +10,6 @@ import { FetchSalesByTPVDate, FetchTPV } from "../../../utils/fetches";
 import { GetEfectivoTotal, GetTarjetaTotal, GetTotalEnCaja } from "../../../utils/preciosUtils";
 import { ADD_CIERRE } from "../../../utils/querys";
 import { ValidatePositiveFloatingNumber } from "../../../utils/validator";
-import StatsCard from "../../dataDisplay/estadisticas";
 import { Backdrop } from "../backdrop";
 
 const In = {
@@ -36,7 +35,6 @@ const In = {
         }
     }
 }
-
 
 export const CerrarCaja = (props: { setModalOpen: Function, setEmpleadoUsandoTPV: Function }) => {
     const [jwt, setJwt] = useState<JWT>();
