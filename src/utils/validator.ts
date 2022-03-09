@@ -1,5 +1,3 @@
-import { JSONBuffer } from "../tipos/JsonBuffer";
-
 // Aplica un descuento de efectivo (descontar 5€ de una compra por ejemplo)
 export const ApplyDtoCash = (totalValue: number, dto: number): number => {
     totalValue - dto <= 0 ? totalValue = 0 : totalValue = totalValue - dto;
@@ -13,15 +11,6 @@ export const ApplyDtoPercentage = (totalValue: number, dto: number): number => {
 
     if (totalValue <= 0) return 0.00;
     else return totalValue;
-}
-
-export const ConvertBufferToBase64 = (buffer: JSONBuffer): string => {
-    var res = ""
-    if (buffer) {
-        res = Buffer.from(buffer.data).toString('base64');
-    }
-
-    return res;
 }
 
 export const ValidateString = (cadena: string): string | undefined => {

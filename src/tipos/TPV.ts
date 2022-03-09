@@ -1,6 +1,6 @@
 import { Empleado } from "./Empleado";
 
-export type TPV = {
+export type TPVType = {
     _id: string,
     nombre: string,
     enUsoPor: Empleado,

@@ -9,6 +9,7 @@ import { ADD_SALE } from "../../../utils/querys";
 import { Backdrop } from "../backdrop";
 import { Cliente } from "../../../tipos/Cliente";
 import { FetchClientes, FetchEmpleado } from "../../../utils/fetches";
+import { JWT } from "../../../tipos/JWT";
 
 const In = {
     hidden: {
@@ -42,20 +43,25 @@ export const Resumen = (props: {
     const [Clientes, SetClientes] = useState<Cliente[]>([]);
     const [addVentasToDB, { loading, error }] = useMutation(ADD_SALE);
     const { Empleado, SetEmpleado } = useEmpleadoContext();
-    const jwt = useJwt();
+    const [jwt, setJwt] = useState<JWT>();
 
     useEffect(() => {
-        const GetEmpleadoFromDB = async () => {
-            SetEmpleado(await FetchEmpleado(jwt._id));
+        setJwt(useJwt());
+    }, [])
+
+    useEffect(() => {
+        const GetEmpleadoFromDB = async (j: JWT) => {
+            SetEmpleado(await FetchEmpleado(j._id));
         }
 
-        const GetClientesFromDB = async () => {
+        const GetClientesFromDB = async (j: JWT) => {
             SetClientes(await FetchClientes());
         }
 
-        GetEmpleadoFromDB();
-        GetClientesFromDB();
-    }, [])
+        if (!jwt) { return; }
+        GetEmpleadoFromDB(jwt);
+        GetClientesFromDB(jwt);
+    }, [jwt])
 
     const addSale = async () => {
         try {
@@ -81,7 +87,7 @@ export const Resumen = (props: {
                         "modificadoPor": Empleado,
                         "descuentoEfectivo": Number(props.pagoCliente.dtoEfectivo.toFixed(2)) || 0,
                         "descuentoPorcentaje": Number(props.pagoCliente.dtoPorcentaje.toFixed(2)) || 0,
-                        "tpv": jwt.TPV
+                        "tpv": jwt?.TPV
                     }
                 }
             });

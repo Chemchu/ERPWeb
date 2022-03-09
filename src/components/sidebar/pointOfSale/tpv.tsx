@@ -15,24 +15,28 @@ import { Cliente } from "../../../tipos/Cliente";
 import { FetchClientes, FetchEmpleado } from "../../../utils/fetches";
 import useEmpleadoContext from "../../../context/empleadoContext";
 import useJwt from "../../../hooks/jwt";
+import { JWT } from "../../../tipos/JWT";
 
 const TPV = (props: { productos: Producto[], serverOperativo: boolean, empleadoUsandoTPV: boolean, setEmpleadoUsandoTPV: Function, setShowModalCerrar: Function, setShowModalAbrir: Function }) => {
     const [ProductosFiltrados, setProductosFiltrados] = useState<Producto[]>([]);
     const { ProductosEnCarrito, SetProductosEnCarrito } = useProductEnCarritoContext();
     const { SetEmpleado } = useEmpleadoContext()
     const [Familias, setFamilias] = useState<string[]>([]);
-    const jwt = useJwt();
+    const [jwt, setJwt] = useState<JWT>();
+
+    useEffect(() => {
+        setJwt(useJwt());
+    }, [])
 
     useEffect(() => {
         // Actualiza el Empleado
-        const GetData = async () => {
-            if (jwt) {
-                SetEmpleado(await FetchEmpleado(jwt._id));
-            }
+        const GetData = async (j: JWT) => {
+            SetEmpleado(await FetchEmpleado(j._id));
         }
+        if (!jwt) { return; }
 
-        GetData();
-    }, [])
+        GetData(jwt);
+    }, [jwt])
 
     useEffect(() => {
         function uniq_fast(a: Producto[]) {

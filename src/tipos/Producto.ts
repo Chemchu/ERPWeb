@@ -1,5 +1,3 @@
-import { JSONBuffer } from "./JsonBuffer";
-
 export type Producto = {
     _id: string,
     nombre: string,
@@ -11,7 +9,6 @@ export type Producto = {
     margen: number
     ean: string,
     alta: boolean,
-    img: JSONBuffer,
     cantidad: number,
     cantidadRestock: number
     promociones?: string[],

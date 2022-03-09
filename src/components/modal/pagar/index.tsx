@@ -18,6 +18,7 @@ import { InputNumber } from "../../Forms/input/inputDinero";
 import Ticket from "../../ticket";
 import { Backdrop } from "../backdrop";
 import { notifyError, notifySuccess } from "../../../utils/toastify";
+import { JWT } from "../../../tipos/JWT";
 
 const In = {
     hidden: {
@@ -44,7 +45,7 @@ const In = {
 }
 
 export const ModalPagar = (props: { PagoCliente: CustomerPaymentInformation, handleModalOpen: Function }) => {
-    const jwt = useJwt();
+    const [jwt, setJwt] = useState<JWT>();
     const [dineroEntregado, setDineroEntregado] = useState<string>("0");
     const [dineroEntregadoTarjeta, setDineroEntregadoTarjeta] = useState<string>("0");
     const [cambio, setCambio] = useState<number>(props.PagoCliente.cambio);
@@ -63,6 +64,7 @@ export const ModalPagar = (props: { PagoCliente: CustomerPaymentInformation, han
 
     useEffect(() => {
         let isUnmounted = false;
+        setJwt(useJwt());
         FetchClientes().then((r) => {
             if (!isUnmounted) {
                 SetClientes(r)
@@ -132,7 +134,7 @@ export const ModalPagar = (props: { PagoCliente: CustomerPaymentInformation, han
                         "modificadoPor": Empleado,
                         "descuentoEfectivo": Number(pagoCliente.dtoEfectivo.toFixed(2)) || 0,
                         "descuentoPorcentaje": Number(pagoCliente.dtoPorcentaje.toFixed(2)) || 0,
-                        "tpv": jwt.TPV
+                        "tpv": jwt?.TPV
                     }
                 }
             });

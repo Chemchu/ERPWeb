@@ -3,7 +3,8 @@ import { motion } from "framer-motion";
 import Cookies from "js-cookie";
 import { useEffect, useState } from "react";
 import useJwt from "../../../hooks/jwt";
-import { TPV } from "../../../tipos/TPV";
+import { JWT } from "../../../tipos/JWT";
+import { TPVType } from "../../../tipos/TPV";
 import { Venta } from "../../../tipos/Venta";
 import { FetchSalesByTPVDate, FetchTPV } from "../../../utils/fetches";
 import { GetEfectivoTotal, GetTarjetaTotal, GetTotalEnCaja } from "../../../utils/preciosUtils";
@@ -38,9 +39,9 @@ const In = {
 
 
 export const CerrarCaja = (props: { setModalOpen: Function, setEmpleadoUsandoTPV: Function }) => {
-    const jwt = useJwt();
+    const [jwt, setJwt] = useState<JWT>();
     const [Ventas, setVentas] = useState<Venta[]>();
-    const [Tpv, setTPV] = useState<TPV>();
+    const [Tpv, setTPV] = useState<TPVType>();
     const [TotalEfectivo, setTotalEfectivo] = useState<string>();
     const [TotalTarjeta, setTotalTarjeta] = useState<string>();
     const [TotalPrevistoEnCaja, setTotalPrevistoEnCaja] = useState<string>();
@@ -49,7 +50,7 @@ export const CerrarCaja = (props: { setModalOpen: Function, setEmpleadoUsandoTPV
     const [cerrarCaja, { loading, data, error }] = useMutation(ADD_CIERRE, {
         variables: {
             "cierre": {
-                "tpv": jwt.TPV,
+                "tpv": jwt?.TPV,
                 "cajaInicial": Tpv?.cajaInicial,
                 "abiertoPor": {
                     "_id": Tpv?.enUsoPor._id,
@@ -59,11 +60,11 @@ export const CerrarCaja = (props: { setModalOpen: Function, setEmpleadoUsandoTPV
                     "email": Tpv?.enUsoPor.email
                 },
                 "cerradoPor": {
-                    "_id": jwt._id,
-                    "nombre": jwt.nombre,
-                    "apellidos": jwt.apellidos,
-                    "rol": jwt.rol,
-                    "email": jwt.email
+                    "_id": jwt?._id,
+                    "nombre": jwt?.nombre,
+                    "apellidos": jwt?.apellidos,
+                    "rol": jwt?.rol,
+                    "email": jwt?.email
                 },
                 "apertura": Tpv?.updatedAt,
                 "ventasEfectivo": Number(TotalEfectivo),
@@ -79,9 +80,13 @@ export const CerrarCaja = (props: { setModalOpen: Function, setEmpleadoUsandoTPV
     });
 
     useEffect(() => {
-        const GetVentas = async () => {
-            const tpv = await FetchTPV(jwt.TPV);
-            const ventas = await FetchSalesByTPVDate(jwt.TPV, tpv.updatedAt.toString());
+        setJwt(useJwt());
+    }, [])
+
+    useEffect(() => {
+        const GetVentas = async (j: JWT) => {
+            const tpv = await FetchTPV(j.TPV);
+            const ventas = await FetchSalesByTPVDate(j.TPV, tpv.updatedAt.toString());
 
             setVentas(ventas);
             setTPV(tpv);
@@ -90,8 +95,10 @@ export const CerrarCaja = (props: { setModalOpen: Function, setEmpleadoUsandoTPV
             setTotalPrevistoEnCaja(GetTotalEnCaja(ventas, tpv).toString());
         }
 
-        GetVentas();
-    }, [])
+        if (!jwt) { return; }
+
+        GetVentas(jwt);
+    }, [jwt])
 
     useEffect(() => {
         if (data && data.addCierreTPV.successful && !error && !loading) {
