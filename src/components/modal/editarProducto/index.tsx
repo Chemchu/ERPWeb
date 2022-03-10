@@ -30,7 +30,7 @@ export const EditarProducto = (props: { product: Producto, handleClose: Function
     return (
         <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} >
             <Backdrop onClick={(e) => { e.stopPropagation(); props.handleClose() }} >
-                <motion.div className="m-auto py-2 flex flex-col items-center bg-white rounded-2xl"
+                <motion.div className="h-5/6 w-5/6 flex flex-col items-center bg-white rounded-2xl p-4"
                     onClick={(e) => e.stopPropagation()}
                     variants={In}
                     initial="hidden"

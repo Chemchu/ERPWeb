@@ -54,10 +54,11 @@ export const ModalPagar = (props: { PagoCliente: CustomerPaymentInformation, han
     const [Clientes, SetClientes] = useState<Cliente[]>([]);
     const [ClienteActual, SetClienteActual] = useState<string>("General");
     const [PagoDelCliente, SetPagoCliente] = useState<CustomerPaymentInformation>(props.PagoCliente);
+    const [idVenta, setID] = useState<string>("");
     const [errorVenta, setErrorVenta] = useState<boolean>(false);
 
     const { ProductosEnCarrito, SetProductosEnCarrito } = useProductEnCarritoContext();
-    const [addVentasToDB, { error }] = useMutation(ADD_SALE, { errorPolicy: 'all' });
+    const [addVentasToDB, { data, error }] = useMutation(ADD_SALE, { errorPolicy: 'all' });
     const [serverUp, setServerStatus] = useState<boolean>(false);
 
     const componentRef = useRef(null);
@@ -142,6 +143,7 @@ export const ModalPagar = (props: { PagoCliente: CustomerPaymentInformation, han
             if (!error) {
                 props.handleModalOpen(false);
                 setErrorVenta(false);
+                console.log(data);
                 handlePrint();
             }
             else {

@@ -1,9 +1,10 @@
 import React from "react";
 import { CustomerPaymentInformation } from "../../tipos/CustomerPayment";
 import { ProductoVendido } from "../../tipos/ProductoVendido";
+import QRCode from 'qrcode.react';
 
 
-const Ticket = React.forwardRef((props: { pagoCliente: CustomerPaymentInformation, productosVendidos: ProductoVendido[], errorVenta: boolean }, ref: React.LegacyRef<HTMLDivElement>) => {
+const Ticket = React.forwardRef((props: { pagoCliente: CustomerPaymentInformation, productosVendidos: ProductoVendido[], _id?: string, errorVenta: boolean }, ref: React.LegacyRef<HTMLDivElement>) => {
     if (props.errorVenta) {
         return (
             <div className="flex flex-col gap-4 items-center bg-white rounded-2xl w-full h-auto text-xs" ref={ref}>
@@ -84,6 +85,11 @@ const Ticket = React.forwardRef((props: { pagoCliente: CustomerPaymentInformatio
                         Pagado con tarjeta: {props.pagoCliente.pagoEnTarjeta.toFixed(2)}€
                     </div>
                 </div>
+            </div>
+
+            <div className="flex justify-center">
+                {props._id}
+                {/* <QRCode value={props._id} /> */}
             </div>
 
             <div className="flex flex-col pb-2">

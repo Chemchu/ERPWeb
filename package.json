@@ -18,6 +18,7 @@
     "jsbarcode": "^3.11.5",
     "next": "^12.0.10",
     "nextjs-progressbar": "^0.0.13",
+    "qrcode.react": "^2.0.0",
     "react": "17.0.2",
     "react-dom": "17.0.2",
     "react-to-print": "^2.14.4",
@@ -27,6 +28,7 @@
   "devDependencies": {
     "@types/js-cookie": "^3.0.1",
     "@types/node": "16.11.11",
+    "@types/qrcode.react": "^1.0.2",
     "@types/react": "17.0.37",
     "autoprefixer": "^10.4.0",
     "eslint": "8.4.0",

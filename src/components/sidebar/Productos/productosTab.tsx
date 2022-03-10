@@ -1,4 +1,4 @@
-import { motion } from "framer-motion";
+import { AnimatePresence, motion } from "framer-motion";
 import React, { useState } from "react";
 import { Producto } from "../../../tipos/Producto";
 import { CheckBox } from "../../Forms/checkbox";
@@ -220,7 +220,9 @@ const FilaProducto = (props: { listIndex: number, producto: Producto, selectedPr
                     </svg>
                 </button>
             </div>
-            {showModal && <EditarProducto handleClose={CloseModalProducto} product={props.producto} />}
+            <AnimatePresence>
+                {showModal && <EditarProducto handleClose={CloseModalProducto} product={props.producto} />}
+            </AnimatePresence>
         </div>
 
     );

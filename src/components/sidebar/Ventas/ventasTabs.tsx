@@ -1,8 +1,9 @@
-import { motion } from "framer-motion";
+import { AnimatePresence, motion } from "framer-motion";
 import React, { useEffect, useState } from "react";
 import { Cliente } from "../../../tipos/Cliente";
 import { Venta } from "../../../tipos/Venta";
 import { Paginador } from "../../Forms/paginador";
+import EditarVenta from "../../modal/editarVenta";
 import SkeletonCard from "../../Skeletons/skeletonCard";
 
 const variants = {
@@ -31,6 +32,8 @@ const SalesPage = (props: { ventas: Venta[], clientes: Cliente[] }) => {
     if (props.clientes == undefined) throw new Error("Props de clientes en ventasTabs.tsx es undefined");
 
     const [CurrentPage, setCurrentPage] = useState<number>(1);
+    const [CurrentVenta, setCurrentVenta] = useState<Venta>();
+    const [showModalEditarVenta, setShowModal] = useState<boolean>()
 
     const elementsPerPage = 10;
     const numPages = props.ventas.length <= 0 ? 1 : Math.ceil(props.ventas.length / elementsPerPage);
@@ -85,7 +88,7 @@ const SalesPage = (props: { ventas: Venta[], clientes: Cliente[] }) => {
                             :
                             props.ventas.slice((elementsPerPage * (CurrentPage - 1)), CurrentPage * elementsPerPage).map((v) => {
                                 return (
-                                    <div key={`FilaProdTable${v._id}`}>
+                                    <div key={`FilaProdTable${v._id}`} onClick={() => { setCurrentVenta(v); setShowModal(true) }}>
                                         <FilaVenta key={`FilaVenta${v._id}`} venta={v} />
                                     </div>
                                 );
@@ -96,6 +99,9 @@ const SalesPage = (props: { ventas: Venta[], clientes: Cliente[] }) => {
                     <Paginador numPages={numPages} paginaActual={CurrentPage} maxPages={10} cambiarPaginaActual={setPaginaActual} />
                 </div>
             </div>
+            <AnimatePresence initial={false}>
+                {showModalEditarVenta && <EditarVenta venta={CurrentVenta} setModal={setShowModal} />}
+            </AnimatePresence>
         </motion.div>
     );
 }
