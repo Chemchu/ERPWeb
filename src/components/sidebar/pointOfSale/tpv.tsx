@@ -1,5 +1,5 @@
 import { AnimatePresence, motion } from "framer-motion";
-import React, { useCallback, useEffect, useState } from "react";
+import React, { useCallback, useEffect, useRef, useState } from "react";
 import { IsPositiveFloatingNumber, IsPositiveIntegerNumber, ValidatePositiveFloatingNumber, ValidateSearchString } from "../../../utils/validator";
 import { CustomerPaymentInformation } from "../../../tipos/CustomerPayment";
 import { Producto } from "../../../tipos/Producto";
@@ -9,13 +9,15 @@ import { ProductCard, ProductSelectedCard } from "./productCard";
 import useProductEnCarritoContext from "../../../context/productosEnCarritoContext";
 import SkeletonProductCard from "../../Skeletons/skeletonProductCard";
 import ModalPagar from "../../modal/pagar";
-import Resumen from "../../modal/resumen";
 import { AplicarDescuentos, PrecioTotalCarrito } from "../../../utils/preciosUtils";
 import { Cliente } from "../../../tipos/Cliente";
-import { FetchClientes, FetchEmpleado } from "../../../utils/fetches";
+import { AddVenta, FetchClientes, FetchEmpleado } from "../../../utils/fetches";
 import useEmpleadoContext from "../../../context/empleadoContext";
 import useJwt from "../../../hooks/jwt";
 import { JWT } from "../../../tipos/JWT";
+import { notifySuccess } from "../../../utils/toastify";
+import { useReactToPrint } from "react-to-print";
+import Ticket from "../../ticket";
 
 const TPV = (props: { productos: Producto[], serverOperativo: boolean, empleadoUsandoTPV: boolean, setEmpleadoUsandoTPV: Function, setShowModalCerrar: Function, setShowModalAbrir: Function }) => {
     const [ProductosFiltrados, setProductosFiltrados] = useState<Producto[]>([]);
@@ -300,17 +302,59 @@ const SidebarDerecho = React.memo((props: {
     const [dtoPorcentaje, setDtoPorcentaje] = useState<string>("0");
 
     const [showModalPagar, setPagarModal] = useState(false);
-    const [showModalCobro, setCobroModal] = useState(false);
+    const [PagoRapido, setPagoRapido] = useState<CustomerPaymentInformation>();
+    const { Empleado } = useEmpleadoContext();
 
     const [Clientes, SetClientes] = useState<Cliente[]>([]);
+    const [jwt, setJwt] = useState<JWT>();
+    const componentRef = useRef(null);
 
     useEffect(() => {
-        const GetClientesFromDB = async () => {
-            SetClientes(await FetchClientes());
-        }
+        let isUnmounted = false;
 
-        GetClientesFromDB();
-    }, [])
+        setJwt(useJwt());
+        FetchClientes().then((r) => {
+            if (!isUnmounted) {
+                SetClientes(r)
+            }
+        }).catch(() => {
+            console.log("Error gus")
+        });
+
+        return () => {
+            isUnmounted = true;
+        }
+    }, []);
+
+    useEffect(() => {
+        const pagoRapido = {
+            cliente: Clientes.find((c) => c.nombre === "General"),
+            cambio: 0,
+            pagoEnEfectivo: precioTotal,
+            pagoEnTarjeta: 0,
+            precioTotal: precioTotalDescontado,
+            dtoEfectivo: Number(dtoEfectivo),
+            dtoPorcentaje: Number(dtoPorcentaje),
+            tipo: TipoCobro.Rapido
+        } as CustomerPaymentInformation;
+
+        setPagoRapido(pagoRapido);
+    }, [props.productosEnCarrito, Clientes])
+
+    const reactToPrintContent = React.useCallback(() => {
+        return componentRef.current;
+    }, []);
+
+    const onAfterPrintHandler = React.useCallback(() => {
+        props.setProductosCarrito([]);
+        notifySuccess("Venta realizada correctamente")
+    }, []);
+
+    const handlePrint = useReactToPrint({
+        documentTitle: "Ticket de venta",
+        content: reactToPrintContent,
+        onAfterPrint: onAfterPrintHandler
+    });
 
     // Se accede a la lista de productos actualizada usando "functional state update" de react
     // Es para evitar muchos rerenders
@@ -356,19 +400,16 @@ const SidebarDerecho = React.memo((props: {
         })
     }, []);
 
+    const Vender = async (pagoCliente: CustomerPaymentInformation, productosEnCarrito: ProductoVendido[], emp: typeof Empleado, clientes: Cliente[], j: JWT) => {
+        const error = await AddVenta(pagoCliente, productosEnCarrito, emp, clientes, j);
+
+        if (!error) {
+            handlePrint();
+        }
+    }
+
     const precioTotal: number = PrecioTotalCarrito(props.productosEnCarrito);
     const precioTotalDescontado: number = AplicarDescuentos(props.productosEnCarrito, Number(dtoEfectivo), Number(dtoPorcentaje));
-
-    const pagoRapido = {
-        cliente: Clientes.find((c) => c.nombre === "General"),
-        cambio: 0,
-        pagoEnEfectivo: precioTotal,
-        pagoEnTarjeta: 0,
-        precioTotal: precioTotalDescontado,
-        dtoEfectivo: Number(dtoEfectivo),
-        dtoPorcentaje: Number(dtoPorcentaje),
-        tipo: TipoCobro.Rapido
-    } as CustomerPaymentInformation;
 
     const pago = {
         cliente: Clientes.find((c) => c.nombre === "General"),
@@ -381,6 +422,13 @@ const SidebarDerecho = React.memo((props: {
         tipo: TipoCobro.Efectivo
     } as CustomerPaymentInformation;
 
+    if (!PagoRapido?.cliente || !jwt) {
+        return (
+            <div>
+                Cargando...
+            </div>
+        )
+    }
 
     return (
         <div className="h-full p-2">
@@ -503,21 +551,30 @@ const SidebarDerecho = React.memo((props: {
                                             </div>
                                     }
                                 </div>
-
                                 {
                                     props.productosEnCarrito.length > 0 && !isNaN(precioTotal) &&
                                     <div className="grid grid-cols-1 gap-2 h-auto">
                                         <motion.button whileTap={{ scale: 0.9 }} className="bg-blue-500 h-12 shadow rounded-lg hover:shadow-lg hover:bg-blue-600 text-white focus:outline-none" onClick={(e) => { setPagarModal(true) }}>PAGAR</motion.button>
-                                        <motion.button whileTap={{ scale: 0.9 }} className="bg-blue-500 h-12 shadow rounded-lg hover:shadow-lg hover:bg-blue-600 text-white focus:outline-none" onClick={(e) => { setCobroModal(true) }}>COBRO RAPIDO</motion.button>
+                                        <motion.button whileTap={{ scale: 0.9 }} className="bg-blue-500 h-12 shadow rounded-lg hover:shadow-lg hover:bg-blue-600 text-white focus:outline-none"
+                                            onClick={async (e) => { await Vender(PagoRapido, props.productosEnCarrito, Empleado, Clientes, jwt); }}>
+                                            COBRO RAPIDO
+                                        </motion.button>
                                     </div>
                                 }
                             </div>
                         </div>
                 }
+                <div style={{ display: "none" }}>
+                    <Ticket
+                        ref={componentRef}
+                        pagoCliente={PagoRapido}
+                        productosVendidos={props.productosEnCarrito}
+                        errorVenta={false}
+                    />
+                </div>
                 {/* Modal aceptar compra */}
                 <AnimatePresence initial={false} exitBeforeEnter={true}>
                     {showModalPagar && <ModalPagar PagoCliente={pago} handleModalOpen={setPagarModal} />}
-                    {showModalCobro && <Resumen pagoCliente={pagoRapido} handleOpen={setCobroModal} productosVendidos={props.productosEnCarrito} setProductosComprados={props.setProductosCarrito} />}
                 </AnimatePresence>
             </div>
         </div>

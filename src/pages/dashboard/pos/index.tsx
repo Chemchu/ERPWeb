@@ -15,7 +15,7 @@ const PuntoDeVenta = () => {
     const [ServerUp, setServerUp] = useState<boolean>(true);
     const [empleadoUsandoTPV, setEmpleadoUsandoTPV] = useState<boolean>(false);
     const [showModalCerrarCaja, setCerrarCajaModal] = useState<boolean>(false)
-    const [showModalAbrirCaja, setAbrirCajaModal] = useState<boolean>();
+    const [showModalAbrirCaja, setAbrirCajaModal] = useState<boolean>(true);
     const [jwt, setJwt] = useState<JWT>();
 
     useEffect(() => {

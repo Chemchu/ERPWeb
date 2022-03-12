@@ -41,18 +41,29 @@ const AbrirCaja = (props: { setShowModal: Function, setEmpleadoUsandoTPV: Functi
     const [jwt, setJwt] = useState<JWT>();
 
     useEffect(() => {
-        const TpvsAbiertas = async () => {
+        const TpvsAbiertas = async (): Promise<Map<string, string>> => {
             const res = await fetch(`/api/tpv`);
             const Response = await res.json();
 
             if (Response.tpvs) {
                 // Transforma el string en TPV Map<string, string> 
-                setTpvs(new Map(JSON.parse(Response.tpvs)));
-                return;
+                return new Map(JSON.parse(Response.tpvs));
             }
+
+            return new Map();
         }
+
+        let isUnmounted = false;
         setJwt(useJwt());
-        TpvsAbiertas();
+        TpvsAbiertas().then(r => {
+            if (!isUnmounted) {
+                setTpvs(r);
+            }
+        });
+
+        return (() => {
+            isUnmounted = true;
+        })
     }, []);
 
     useEffect(() => {

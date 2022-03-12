@@ -1,6 +1,9 @@
 import { Cliente } from "../tipos/Cliente";
+import { CustomerPaymentInformation } from "../tipos/CustomerPayment";
 import { Empleado } from "../tipos/Empleado";
+import { JWT } from "../tipos/JWT";
 import { Producto } from "../tipos/Producto";
+import { ProductoVendido } from "../tipos/ProductoVendido";
 import { Venta } from "../tipos/Venta";
 import { CreateClientList, CreateEmployee, CreateProductList, CreateSalesList, CreateTPV } from "./typeCreator";
 
@@ -59,7 +62,7 @@ export const FetchClientes = async (): Promise<Cliente[]> => {
 
 export const FetchVentas = async (): Promise<Venta[]> => {
     try {
-        const vRes = await fetch('/api/ventas', {
+        const vRes = await fetch(`/api/ventas/`, {
             headers: { 'Content-type': 'application/json' },
             method: 'POST',
             body: JSON.stringify({ limit: 3000 })
@@ -71,6 +74,39 @@ export const FetchVentas = async (): Promise<Venta[]> => {
     catch (e) {
         console.log(e);
         return [];
+    }
+}
+
+export const AddVenta = async (pagoCliente: CustomerPaymentInformation, productosEnCarrito: ProductoVendido[], empleado: Empleado, clientes: Cliente[], jwt: JWT): Promise<boolean | undefined> => {
+    try {
+        let cliente;
+        if (!pagoCliente.cliente) {
+            cliente = clientes.find((c) => c.nombre === "General");
+        }
+        else {
+            cliente = pagoCliente.cliente;
+        }
+
+        const addventaRespone = await fetch(`/api/ventas/${productosEnCarrito.length}`, {
+            headers: {
+                'Accept': 'application/json',
+                'Content-Type': 'application/json'
+            },
+            method: "POST",
+            body: JSON.stringify({
+                productosEnCarrito: productosEnCarrito,
+                pagoCliente: pagoCliente,
+                cliente: cliente,
+                empleado: empleado,
+                jwt: jwt
+            })
+        });
+
+        const r = addventaRespone.status === 200 ? undefined : true;
+        return r;
+    }
+    catch (err) {
+        return true;
     }
 }
 
