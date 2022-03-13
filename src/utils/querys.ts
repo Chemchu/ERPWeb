@@ -5,6 +5,7 @@ export const ADD_SALE = gql`
         addVenta(fields: $fields) {
             message
             successful
+            _id
         }
     }
 `;

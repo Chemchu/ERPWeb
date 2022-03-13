@@ -77,7 +77,20 @@ export const FetchVentas = async (): Promise<Venta[]> => {
     }
 }
 
-export const AddVenta = async (pagoCliente: CustomerPaymentInformation, productosEnCarrito: ProductoVendido[], empleado: Empleado, clientes: Cliente[], jwt: JWT): Promise<boolean | undefined> => {
+export const FetchVenta = async (id: string): Promise<Venta[]> => {
+    try {
+        const vRes = await fetch(`/api/ventas/${id}`);
+
+        const ventas = await vRes.json();
+        return CreateSalesList([ventas.data.venta]);
+    }
+    catch (e) {
+        console.log(e);
+        return [];
+    }
+}
+
+export const AddVenta = async (pagoCliente: CustomerPaymentInformation, productosEnCarrito: ProductoVendido[], empleado: Empleado, clientes: Cliente[], jwt: JWT): Promise<{ data: any, error: boolean }> => {
     try {
         let cliente;
         if (!pagoCliente.cliente) {
@@ -102,11 +115,13 @@ export const AddVenta = async (pagoCliente: CustomerPaymentInformation, producto
             })
         });
 
-        const r = addventaRespone.status === 200 ? undefined : true;
-        return r;
+        const data = await addventaRespone.json();
+
+        const error = addventaRespone.status === 200 ? false : true;
+        return { data: data.addVenta, error: error };
     }
     catch (err) {
-        return true;
+        return { data: undefined, error: true }
     }
 }
 

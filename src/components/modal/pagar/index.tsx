@@ -1,4 +1,3 @@
-import { useMutation } from "@apollo/client";
 import { motion } from "framer-motion";
 import React, { useEffect, useRef, useState } from "react";
 import { useReactToPrint } from "react-to-print";
@@ -8,9 +7,8 @@ import useJwt from "../../../hooks/jwt";
 import { Cliente } from "../../../tipos/Cliente";
 import { CustomerPaymentInformation } from "../../../tipos/CustomerPayment";
 import { TipoCobro } from "../../../tipos/Enums/TipoCobro";
-import { FetchClientes } from "../../../utils/fetches";
+import { AddVenta, FetchClientes } from "../../../utils/fetches";
 import { CalcularCambio } from "../../../utils/preciosUtils";
-import { ADD_SALE } from "../../../utils/querys";
 import { ValidatePositiveFloatingNumber } from "../../../utils/validator";
 import Dropdown from "../../Forms/dropdown";
 import { Input } from "../../Forms/input/input";
@@ -19,6 +17,7 @@ import Ticket from "../../ticket";
 import { Backdrop } from "../backdrop";
 import { notifyError, notifySuccess } from "../../../utils/toastify";
 import { JWT } from "../../../tipos/JWT";
+import GenerateQrBase64 from "../../../utils/generateQr";
 
 const In = {
     hidden: {
@@ -54,11 +53,9 @@ export const ModalPagar = (props: { PagoCliente: CustomerPaymentInformation, han
     const [Clientes, SetClientes] = useState<Cliente[]>([]);
     const [ClienteActual, SetClienteActual] = useState<string>("General");
     const [PagoDelCliente, SetPagoCliente] = useState<CustomerPaymentInformation>(props.PagoCliente);
-    const [idVenta, setID] = useState<string>("");
-    const [errorVenta, setErrorVenta] = useState<boolean>(false);
+    const [qrImage, setQrImage] = useState<string>();
 
     const { ProductosEnCarrito, SetProductosEnCarrito } = useProductEnCarritoContext();
-    const [addVentasToDB, { error }] = useMutation(ADD_SALE, { errorPolicy: 'all' });
     const [serverUp, setServerStatus] = useState<boolean>(false);
 
     const componentRef = useRef(null);
@@ -112,46 +109,21 @@ export const ModalPagar = (props: { PagoCliente: CustomerPaymentInformation, han
     const AddSale = async (pagoCliente: CustomerPaymentInformation) => {
         try {
             UpdatePaymentInfo();
-
-            let cliente;
-            if (!pagoCliente.cliente) {
-                cliente = Clientes.find((c) => c.nombre === "General");
-            }
-            else {
-                cliente = pagoCliente.cliente;
-            }
-
-            await addVentasToDB({
-                variables: {
-                    "fields": {
-                        "productos": ProductosEnCarrito,
-                        "dineroEntregadoEfectivo": Number(pagoCliente.pagoEnEfectivo.toFixed(2)),
-                        "dineroEntregadoTarjeta": Number(pagoCliente.pagoEnTarjeta.toFixed(2)),
-                        "precioVentaTotal": Number(pagoCliente.precioTotal.toFixed(2)),
-                        "tipo": pagoCliente.tipo,
-                        "cambio": Number(pagoCliente.cambio.toFixed(2)),
-                        "cliente": cliente,
-                        "vendidoPor": Empleado,
-                        "modificadoPor": Empleado,
-                        "descuentoEfectivo": Number(pagoCliente.dtoEfectivo.toFixed(2)) || 0,
-                        "descuentoPorcentaje": Number(pagoCliente.dtoPorcentaje.toFixed(2)) || 0,
-                        "tpv": jwt?.TPV
-                    }
-                }
-            });
+            if (!jwt) { notifyError("Error con la autenticación"); return; }
+            const { data, error } = await AddVenta(pagoCliente, ProductosEnCarrito, Empleado, Clientes, jwt);
 
             if (!error) {
+                setQrImage(await GenerateQrBase64(data._id));
+
                 props.handleModalOpen(false);
-                setErrorVenta(false);
                 handlePrint();
             }
             else {
-                setErrorVenta(true);
+                notifyError("Error al realizar la venta")
             }
         }
         catch (err) {
             console.log(err);
-            setErrorVenta(true);
             notifyError("Error al realizar la venta")
         }
     }
@@ -288,7 +260,7 @@ export const ModalPagar = (props: { PagoCliente: CustomerPaymentInformation, han
                             ref={componentRef}
                             pagoCliente={PagoDelCliente}
                             productosVendidos={ProductosEnCarrito}
-                            errorVenta={errorVenta}
+                            qrImage={qrImage}
                         />
                     </div>
                 </motion.div>

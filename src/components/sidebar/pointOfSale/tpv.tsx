@@ -15,9 +15,10 @@ import { AddVenta, FetchClientes, FetchEmpleado } from "../../../utils/fetches";
 import useEmpleadoContext from "../../../context/empleadoContext";
 import useJwt from "../../../hooks/jwt";
 import { JWT } from "../../../tipos/JWT";
-import { notifySuccess } from "../../../utils/toastify";
+import { notifyError, notifySuccess } from "../../../utils/toastify";
 import { useReactToPrint } from "react-to-print";
 import Ticket from "../../ticket";
+import GenerateQrBase64 from "../../../utils/generateQr";
 
 const TPV = (props: { productos: Producto[], serverOperativo: boolean, empleadoUsandoTPV: boolean, setEmpleadoUsandoTPV: Function, setShowModalCerrar: Function, setShowModalAbrir: Function }) => {
     const [ProductosFiltrados, setProductosFiltrados] = useState<Producto[]>([]);
@@ -304,6 +305,7 @@ const SidebarDerecho = React.memo((props: {
     const [showModalPagar, setPagarModal] = useState(false);
     const [PagoRapido, setPagoRapido] = useState<CustomerPaymentInformation>();
     const { Empleado } = useEmpleadoContext();
+    const [qrImage, setQrImage] = useState<string>();
 
     const [Clientes, SetClientes] = useState<Cliente[]>([]);
     const [jwt, setJwt] = useState<JWT>();
@@ -401,10 +403,14 @@ const SidebarDerecho = React.memo((props: {
     }, []);
 
     const Vender = async (pagoCliente: CustomerPaymentInformation, productosEnCarrito: ProductoVendido[], emp: typeof Empleado, clientes: Cliente[], j: JWT) => {
-        const error = await AddVenta(pagoCliente, productosEnCarrito, emp, clientes, j);
+        const { data, error } = await AddVenta(pagoCliente, productosEnCarrito, emp, clientes, j);
 
         if (!error) {
+            setQrImage(await GenerateQrBase64(data._id));
             handlePrint();
+        }
+        else {
+            notifyError("Error al realizar la venta")
         }
     }
 
@@ -556,7 +562,7 @@ const SidebarDerecho = React.memo((props: {
                                     <div className="grid grid-cols-1 gap-2 h-auto">
                                         <motion.button whileTap={{ scale: 0.9 }} className="bg-blue-500 h-12 shadow rounded-lg hover:shadow-lg hover:bg-blue-600 text-white focus:outline-none" onClick={(e) => { setPagarModal(true) }}>PAGAR</motion.button>
                                         <motion.button whileTap={{ scale: 0.9 }} className="bg-blue-500 h-12 shadow rounded-lg hover:shadow-lg hover:bg-blue-600 text-white focus:outline-none"
-                                            onClick={async (e) => { await Vender(PagoRapido, props.productosEnCarrito, Empleado, Clientes, jwt); }}>
+                                            onClick={async () => { await Vender(PagoRapido, props.productosEnCarrito, Empleado, Clientes, jwt); }}>
                                             COBRO RAPIDO
                                         </motion.button>
                                     </div>
@@ -569,15 +575,16 @@ const SidebarDerecho = React.memo((props: {
                         ref={componentRef}
                         pagoCliente={PagoRapido}
                         productosVendidos={props.productosEnCarrito}
-                        errorVenta={false}
+                        qrImage={qrImage}
                     />
                 </div>
+
                 {/* Modal aceptar compra */}
-                <AnimatePresence initial={false} exitBeforeEnter={true}>
+                < AnimatePresence initial={false} exitBeforeEnter={true}>
                     {showModalPagar && <ModalPagar PagoCliente={pago} handleModalOpen={setPagarModal} />}
                 </AnimatePresence>
             </div>
-        </div>
+        </div >
     );
 });
 

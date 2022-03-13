@@ -35,7 +35,7 @@ const GetSale = async (req: NextApiRequest, res: NextApiResponse) => {
         if (fetchResult.error) {
             return res.status(300).json({ message: `Fallo al buscar la venta` });
         }
-        return res.status(200).json({ message: `Venta encontrada` });
+        return res.status(200).json({ data: fetchResult.data });
     }
     catch (err) {
         console.log(err);
@@ -76,7 +76,7 @@ const AddSale = async (req: NextApiRequest, res: NextApiResponse) => {
         if (fetchResult.errors) {
             return res.status(300).json({ message: `Fallo al buscar la venta` });
         }
-        return res.status(200).json({ message: `Venta encontrada` });
+        return res.status(200).json(fetchResult.data);
     }
     catch (err) {
         console.log(err);

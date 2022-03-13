@@ -1,40 +1,15 @@
 import React from "react";
 import { CustomerPaymentInformation } from "../../tipos/CustomerPayment";
 import { ProductoVendido } from "../../tipos/ProductoVendido";
-import QRCode from 'qrcode.react';
+import Image from "next/image";
 
-
-const Ticket = React.forwardRef((props: { pagoCliente: CustomerPaymentInformation, productosVendidos: ProductoVendido[], _id?: string, errorVenta?: boolean }, ref: React.LegacyRef<HTMLDivElement>) => {
-    if (props.errorVenta) {
-        return (
-            <div className="flex flex-col gap-4 items-center bg-white rounded-2xl w-full h-auto text-xs" ref={ref}>
-                <div className="w-full h-5/6 rounded-3xl bg-white z-10 ">
-                    <div>
-                        <h2 className="text-xl font-semibold text-center ">ERPWeb</h2>
-                        <div className="flex justify-evenly">
-                            <div className="text-left relative ">Cliente: {props.pagoCliente.cliente.nombre} </div>
-                        </div>
-                    </div>
-                    <div id="receipt-content" className="text-left w-full h-5/6 p-4">
-                        <hr />
-                        Error al realizar la venta. Compruebe la conexión a internet o hable con su administrador de sistemas.
-                    </div>
-                </div>
-                <div className="flex flex-col pb-2">
-                    <span>
-                        Lamentamos las molestias
-                    </span>
-                    <hr />
-                </div>
-            </div>
-        );
-    }
-
+const Ticket = React.forwardRef((props: { pagoCliente: CustomerPaymentInformation, productosVendidos: ProductoVendido[], qrImage: string | undefined }, ref: React.LegacyRef<HTMLDivElement>) => {
     return (
         <div className="flex flex-col gap-4 items-center bg-white rounded-2xl w-full h-auto text-xs" ref={ref}>
             <div className="w-full h-5/6 rounded-3xl bg-white z-10 ">
-                <div>
+                <div className="flex flex-col gap-1">
                     <h2 className="text-xl font-semibold text-center ">ERPWeb</h2>
+                    <div className="text-center">Fecha: </div>
                     <div className="flex flex-col text-center">
                         <div>Cliente: {props.pagoCliente.cliente.nombre} </div>
                         {props.pagoCliente.cliente.nif && props.pagoCliente.cliente.nif !== "General" && <div>CIF: {props.pagoCliente.cliente.nif} </div>}
@@ -67,30 +42,29 @@ const Ticket = React.forwardRef((props: { pagoCliente: CustomerPaymentInformatio
                     </div>
                 </div>
             </div>
-            <div className="flex justify-evenly w-full h-auto items-center">
+            <div className="flex flex-col justify-evenly w-full h-auto items-center">
                 <div className="font-semibold">
                     {props.pagoCliente.tipo}
                 </div>
                 <div>
-                    <div>
-                        Precio total: {props.pagoCliente.precioTotal.toFixed(2)}€
-                    </div>
-                    <div>
-                        Cambio: {props.pagoCliente.cambio.toFixed(2)}€
-                    </div>
-                    <div>
-                        Pagado con efectivo: {props.pagoCliente.pagoEnEfectivo.toFixed(2)}€
-                    </div>
-                    <div>
-                        Pagado con tarjeta: {props.pagoCliente.pagoEnTarjeta.toFixed(2)}€
-                    </div>
+                    Precio total: {props.pagoCliente.precioTotal.toFixed(2)}€
+                </div>
+                <div>
+                    Cambio: {props.pagoCliente.cambio.toFixed(2)}€
+                </div>
+                <div>
+                    Pagado con efectivo: {props.pagoCliente.pagoEnEfectivo.toFixed(2)}€
+                </div>
+                <div>
+                    Pagado con tarjeta: {props.pagoCliente.pagoEnTarjeta.toFixed(2)}€
                 </div>
             </div>
-
-            <div className="flex justify-center">
-                {props._id}
-                {/* <QRCode value={props._id} /> */}
-            </div>
+            {
+                props.qrImage &&
+                <div className="flex justify-center">
+                    <Image src={props.qrImage} layout="fixed" width={50} height={50} />
+                </div>
+            }
 
             <div className="flex flex-col pb-2">
                 <span>
@@ -99,8 +73,9 @@ const Ticket = React.forwardRef((props: { pagoCliente: CustomerPaymentInformatio
                 <hr />
             </div>
         </div>
+
     )
-})
+});
 
 export default Ticket
 
