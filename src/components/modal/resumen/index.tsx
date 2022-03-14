@@ -130,8 +130,7 @@ export const Resumen = (props: {
                             <hr />
                             <div className="w-full h-full text-xs">
                                 <div className="flex w-full justify-around">
-                                    <p className="w-1/4 text-left font-semibold">#</p>
-                                    <p className="w-1/4 text-left font-semibold">Producto</p>
+                                    <p className="w-2/4 text-left font-semibold">Producto</p>
                                     <p className="w-1/4 text-center font-semibold">Cantidad</p>
                                     <p className="w-1/4 text-center font-semibold">Total</p>
                                 </div>

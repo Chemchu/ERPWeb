@@ -201,7 +201,7 @@ const FilaProducto = (props: { listIndex: number, producto: Producto, selectedPr
                 </div>
                 <div className="flex pr-6 self-center border-gray-200 text-base">
                     <p className="text-gray-900 whitespace-no-wrap">
-                        {props.producto.precioVenta}€
+                        {props.producto.precioVenta.toFixed(2)}€
                     </p>
                 </div>
                 <div className="flex pr-6 self-center border-gray-200 text-sm">

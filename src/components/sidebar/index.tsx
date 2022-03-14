@@ -153,7 +153,7 @@ const CollapsedSidebar = (props: { setCollapsed: Function }) => {
             className='w-auto h-screen p-2'>
             <div className="grid grid-rows-6 h-full w-full bg-white border-2 rounded-3xl" onClick={() => { props.setCollapsed(false); }}>
 
-                <div className="flex items-center justify-start mx-6">
+                <div className="flex items-center justify-start mx-6 cursor-pointer">
                     <svg xmlns="http://www.w3.org/2000/svg" className="h-8 w-8" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
                     </svg>

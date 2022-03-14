@@ -4,7 +4,7 @@ const ConfiguracionPage = () => {
 
     return (
         <div>
-            Configuracion
+            Configuración
         </div>
     );
 }

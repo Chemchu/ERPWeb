@@ -115,12 +115,12 @@ const EditarVenta = (props: { venta: Venta | undefined, setModal: Function }) =>
                     animate="visible"
                     exit="exit"
                 >
-                    <div className="flex flex-col w-full h-full text-left">
+                    <div className="flex flex-col w-full h-full text-left ">
                         <span className="text-2xl">
                             Venta en: {`${fecha.toLocaleString()}`}
                         </span>
-                        <div className="flex w-full h-full justify-between align-middle py-6">
-                            <span className="font-semibold">
+                        <div className="flex w-full h-5/6 justify-between align-middle py-6">
+                            <span className="font-semibold w-1/2 h-full">
                                 Resumen de la compra
                                 <div className="flex flex-col pt-4 font-normal">
                                     <span>
@@ -172,14 +172,41 @@ const EditarVenta = (props: { venta: Venta | undefined, setModal: Function }) =>
                                     </span>
                                 </div>
                             </span>
-                            <span className="font-semibold">
-                                Lista de productos
-                                <div>
-
+                            <div className="flex flex-col font-semibold text-right w-1/2 h-full gap-2">
+                                <span>
+                                    Lista de productos
+                                </span>
+                                <div className="bg-gray-100 rounded-lg border-2 w-full h-full font-normal overflow-y-scroll">
+                                    <div className="flex w-full justify-around p-2 cursor-default">
+                                        <p className="w-2/4 text-left font-semibold">Producto</p>
+                                        <p className="w-1/4 text-center font-semibold">Cantidad</p>
+                                        <p className="w-1/4 text-center font-semibold">Total</p>
+                                    </div>
+                                    <hr className="border-2 border-gray-300" />
+                                    <div className="flex flex-col gap-2 w-full h-full p-2">
+                                        {
+                                            props.venta.productos.map((prod, index) => {
+                                                if (prod.dto) {
+                                                    return (
+                                                        <div className="hover:bg-gray-200 hover:cursor-pointer">
+                                                            <GenerarFilaProducto key={"modalRes" + prod._id} numFila={index + 1} nombreProducto={prod.nombre} cantidad={Number(prod.cantidadVendida)} precio={Number(prod.precioVenta * (1 - Number(prod.dto) / 100))} />
+                                                        </div>
+                                                    )
+                                                }
+                                                else {
+                                                    return (
+                                                        <div className="hover:bg-gray-200 hover:cursor-pointer">
+                                                            <GenerarFilaProducto key={"modalRes" + prod._id} numFila={index + 1} nombreProducto={prod.nombre} cantidad={Number(prod.cantidadVendida)} precio={prod.precioVenta} />
+                                                        </div>
+                                                    )
+                                                }
+                                            })
+                                        }
+                                    </div>
                                 </div>
-                            </span>
+                            </div>
                         </div>
-                        <div className="flex w-full h-auto justify-around items-end text-white">
+                        <div className="flex w-full h-1/6 justify-around items-end text-white">
                             <button className="w-1/4 h-12 rounded-xl bg-red-500 hover:bg-red-600 shadow-lg" onClick={() => { props.setModal(false) }}>
                                 Cerrar
                             </button>
@@ -191,13 +218,13 @@ const EditarVenta = (props: { venta: Venta | undefined, setModal: Function }) =>
                             </button>
                         </div>
                         {
-                            PagoDelCliente && qrImage &&
+                            PagoDelCliente && qrImage && fecha &&
                             <div style={{ display: "none" }}>
                                 <Ticket
                                     ref={componentRef}
                                     pagoCliente={PagoDelCliente}
                                     productosVendidos={props.venta.productos}
-                                    fecha={fecha.toLocaleString()}
+                                    fecha={props.venta.createdAt}
                                     qrImage={qrImage}
                                 />
                             </div>
@@ -206,6 +233,25 @@ const EditarVenta = (props: { venta: Venta | undefined, setModal: Function }) =>
                 </motion.div>
             </Backdrop>
         </motion.div>
+    );
+}
+
+const GenerarFilaProducto = (props: { numFila: number, nombreProducto: string, cantidad: number, precio: number }) => {
+    return (
+        <>
+            <div className="flex w-full ">
+                <div className="w-2/4 text-left">
+                    {props.nombreProducto}
+                </div>
+                <div className="w-1/4 text-center">
+                    {props.cantidad}
+                </div>
+                <div className="w-1/4 text-center">
+                    {(props.precio * props.cantidad).toFixed(2)}€
+                </div>
+            </div>
+            <hr />
+        </>
     );
 }
 
