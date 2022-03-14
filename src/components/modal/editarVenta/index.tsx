@@ -188,15 +188,15 @@ const EditarVenta = (props: { venta: Venta | undefined, setModal: Function }) =>
                                             props.venta.productos.map((prod, index) => {
                                                 if (prod.dto) {
                                                     return (
-                                                        <div className="hover:bg-gray-200 hover:cursor-pointer">
-                                                            <GenerarFilaProducto key={"modalRes" + prod._id} numFila={index + 1} nombreProducto={prod.nombre} cantidad={Number(prod.cantidadVendida)} precio={Number(prod.precioVenta * (1 - Number(prod.dto) / 100))} />
+                                                        <div key={`editarVenta_${prod._id}_${index}`} className="hover:bg-gray-200 hover:cursor-pointer">
+                                                            <GenerarFilaProducto numFila={index + 1} nombreProducto={prod.nombre} cantidad={Number(prod.cantidadVendida)} precio={Number(prod.precioVenta * (1 - Number(prod.dto) / 100))} />
                                                         </div>
                                                     )
                                                 }
                                                 else {
                                                     return (
-                                                        <div className="hover:bg-gray-200 hover:cursor-pointer">
-                                                            <GenerarFilaProducto key={"modalRes" + prod._id} numFila={index + 1} nombreProducto={prod.nombre} cantidad={Number(prod.cantidadVendida)} precio={prod.precioVenta} />
+                                                        <div key={`editarVenta_${prod._id}_${index}`} className="hover:bg-gray-200 hover:cursor-pointer">
+                                                            <GenerarFilaProducto numFila={index + 1} nombreProducto={prod.nombre} cantidad={Number(prod.cantidadVendida)} precio={prod.precioVenta} />
                                                         </div>
                                                     )
                                                 }

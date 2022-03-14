@@ -241,3 +241,35 @@ export const OCUPY_TPV = gql`
         }
     }
 `;
+
+export const QUERY_CIERRES = gql`
+    query CierresTPVs($limit: Int) {
+        cierresTPVs(limit: $limit) {
+            _id
+            tpv
+            cajaInicial
+            abiertoPor {
+                _id
+                nombre
+                apellidos
+                rol
+                email
+            }
+            cerradoPor {
+                _id
+                nombre
+                apellidos
+                rol
+                email
+            }
+            apertura
+            cierre
+            ventasEfectivo
+            ventasTarjeta
+            ventasTotales
+            dineroRetirado
+            fondoDeCaja
+            beneficio
+        }
+    }
+`;

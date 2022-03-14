@@ -1,3 +1,4 @@
+import { Cierre } from "../tipos/Cierre";
 import { Cliente } from "../tipos/Cliente";
 import { Empleado } from "../tipos/Empleado";
 import { Producto } from "../tipos/Producto";
@@ -100,6 +101,34 @@ function CreateProductoVendido(s: any): ProductoVendido | undefined {
     }
 }
 
+export function CreateCierre(c: any): Cierre | undefined {
+    try {
+        let cierre: Cierre = {
+            _id: c._id,
+            tpv: c.tpv,
+            abiertoPor: CreateEmployee(c.abiertoPor) || c.abiertoPor,
+            cerradoPor: CreateEmployee(c.cerradoPor) || c.cerradoPor,
+            apertura: c.apertura,
+            cierre: c.cierre,
+            cajaInicial: c.cajaInicial,
+            numVentas: c.numVentas,
+            ventasEfectivo: c.ventasEfectivo,
+            ventasTarjeta: c.ventasTarjeta,
+            ventasTotales: c.ventasTotales,
+            dineroEsperadoEnCaja: c.dineroEsperadoEnCaja,
+            dineroRealEnCaja: c.dineroRealEnCaja,
+            dineroRetirado: c.dineroRetirado,
+            fondoDeCaja: c.fondoDeCaja,
+            beneficio: c.beneficio,
+            nota: c.nota
+        }
+        return cierre;
+    }
+    catch (e) {
+        return undefined;
+    }
+}
+
 export function CreateProductList(pList: any[]): Producto[] {
     let res: Producto[] = [];
     pList.forEach((p: any) => {
@@ -174,6 +203,17 @@ export function CreateTPV(tpv: any): TPVType {
         createdAt: tpv.createdAt,
         updatedAt: tpv.updatedAt
     }
+
+    return res;
+}
+
+export function CreateCierreList(cierres: any): Cierre[] {
+    let res: Cierre[] = [];
+    cierres.forEach((c: any) => {
+        const cierre = CreateCierre(c);
+
+        if (cierre) res.push(cierre);
+    });
 
     return res;
 }

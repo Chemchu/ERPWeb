@@ -1,3 +1,4 @@
+import { Cierre } from "../tipos/Cierre";
 import { Cliente } from "../tipos/Cliente";
 import { CustomerPaymentInformation } from "../tipos/CustomerPayment";
 import { Empleado } from "../tipos/Empleado";
@@ -5,7 +6,7 @@ import { JWT } from "../tipos/JWT";
 import { Producto } from "../tipos/Producto";
 import { ProductoVendido } from "../tipos/ProductoVendido";
 import { Venta } from "../tipos/Venta";
-import { CreateClientList, CreateEmployee, CreateProductList, CreateSalesList, CreateTPV } from "./typeCreator";
+import { CreateCierreList, CreateClientList, CreateEmployee, CreateProductList, CreateSalesList, CreateTPV } from "./typeCreator";
 
 export const FetchProductos = async (): Promise<Producto[]> => {
     try {
@@ -158,4 +159,22 @@ export const FetchTPV = async (TPV: string) => {
     const tpvJson = await fetchTPV.json();
 
     return CreateTPV(JSON.parse(tpvJson.tpv));
+}
+
+export const FetchCierres = async (): Promise<Cierre[]> => {
+    try {
+        let cierresRes = [] as Cierre[];
+
+        const crResponse = await fetch('/api/cierres');
+
+        if (crResponse.status > 200) { return []; }
+        const crJson = await crResponse.json();
+
+        cierresRes = CreateCierreList(crJson.cierresTPVs);
+        return cierresRes;
+    }
+    catch (e) {
+        console.log(e);
+        return [];
+    }
 }
