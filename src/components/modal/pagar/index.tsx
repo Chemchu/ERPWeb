@@ -43,7 +43,7 @@ const In = {
     }
 }
 
-export const ModalPagar = (props: { PagoCliente: CustomerPaymentInformation, handleModalOpen: Function }) => {
+export const ModalPagar = (props: { PagoCliente: CustomerPaymentInformation, handleModalOpen: Function, AllClientes?: Cliente[] }) => {
     const [jwt, setJwt] = useState<JWT>();
     const [dineroEntregado, setDineroEntregado] = useState<string>("0");
     const [dineroEntregadoTarjeta, setDineroEntregadoTarjeta] = useState<string>("0");
@@ -54,6 +54,7 @@ export const ModalPagar = (props: { PagoCliente: CustomerPaymentInformation, han
     const [ClienteActual, SetClienteActual] = useState<string>("General");
     const [PagoDelCliente, SetPagoCliente] = useState<CustomerPaymentInformation>(props.PagoCliente);
     const [qrImage, setQrImage] = useState<string>();
+    const [fecha, setFecha] = useState<string>();
 
     const { ProductosEnCarrito, SetProductosEnCarrito } = useProductEnCarritoContext();
     const [serverUp, setServerStatus] = useState<boolean>(false);
@@ -63,19 +64,31 @@ export const ModalPagar = (props: { PagoCliente: CustomerPaymentInformation, han
     useEffect(() => {
         let isUnmounted = false;
         setJwt(useJwt());
-        FetchClientes().then((r) => {
-            if (!isUnmounted) {
-                SetClientes(r)
-                setServerStatus(true);
-            }
-        }).catch(() => {
-            setServerStatus(false);
-        });
+        if (props.AllClientes) {
+            SetClientes(props.AllClientes);
+            setServerStatus(true);
+        }
+        else {
+            FetchClientes().then((r) => {
+                if (!isUnmounted) {
+                    SetClientes(r)
+                    setServerStatus(true);
+                }
+            }).catch(() => {
+                setServerStatus(false);
+            });
+        }
 
         return () => {
             isUnmounted = true;
         }
     }, []);
+
+    useEffect(() => {
+        if (qrImage) {
+            handlePrint();
+        }
+    }, [qrImage]);
 
     const reactToPrintContent = React.useCallback(() => {
         return componentRef.current;
@@ -113,12 +126,13 @@ export const ModalPagar = (props: { PagoCliente: CustomerPaymentInformation, han
             const { data, error } = await AddVenta(pagoCliente, ProductosEnCarrito, Empleado, Clientes, jwt);
 
             if (!error) {
+                setFecha(data.createdAt);
                 setQrImage(await GenerateQrBase64(data._id));
-
                 props.handleModalOpen(false);
-                handlePrint();
             }
             else {
+                setFecha(undefined);
+                setQrImage(undefined);
                 notifyError("Error al realizar la venta")
             }
         }
@@ -255,14 +269,18 @@ export const ModalPagar = (props: { PagoCliente: CustomerPaymentInformation, han
                             }
                         </div>
                     </div>
-                    <div style={{ display: "none" }}>
-                        <Ticket
-                            ref={componentRef}
-                            pagoCliente={PagoDelCliente}
-                            productosVendidos={ProductosEnCarrito}
-                            qrImage={qrImage}
-                        />
-                    </div>
+                    {
+                        qrImage && fecha &&
+                        <div style={{ display: "none" }}>
+                            <Ticket
+                                ref={componentRef}
+                                pagoCliente={PagoDelCliente}
+                                productosVendidos={ProductosEnCarrito}
+                                fecha={fecha}
+                                qrImage={qrImage}
+                            />
+                        </div>
+                    }
                 </motion.div>
             </Backdrop>
         </motion.div>

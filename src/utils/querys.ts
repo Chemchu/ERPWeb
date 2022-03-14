@@ -6,6 +6,7 @@ export const ADD_SALE = gql`
             message
             successful
             _id
+            createdAt
         }
     }
 `;

@@ -304,8 +304,10 @@ const SidebarDerecho = React.memo((props: {
 
     const [showModalPagar, setPagarModal] = useState(false);
     const [PagoRapido, setPagoRapido] = useState<CustomerPaymentInformation>();
+    const [Pago, setPago] = useState<CustomerPaymentInformation>();
     const { Empleado } = useEmpleadoContext();
     const [qrImage, setQrImage] = useState<string>();
+    const [fecha, setFecha] = useState<string>();
 
     const [Clientes, SetClientes] = useState<Cliente[]>([]);
     const [jwt, setJwt] = useState<JWT>();
@@ -329,6 +331,12 @@ const SidebarDerecho = React.memo((props: {
     }, []);
 
     useEffect(() => {
+        if (qrImage) {
+            handlePrint();
+        }
+    }, [qrImage]);
+
+    useEffect(() => {
         const pagoRapido = {
             cliente: Clientes.find((c) => c.nombre === "General"),
             cambio: 0,
@@ -339,8 +347,19 @@ const SidebarDerecho = React.memo((props: {
             dtoPorcentaje: Number(dtoPorcentaje),
             tipo: TipoCobro.Rapido
         } as CustomerPaymentInformation;
-
         setPagoRapido(pagoRapido);
+
+        const pago = {
+            cliente: Clientes.find((c) => c.nombre === "General"),
+            cambio: precioTotal * -1,
+            pagoEnEfectivo: 0,
+            pagoEnTarjeta: 0,
+            precioTotal: precioTotalDescontado,
+            dtoEfectivo: Number(dtoEfectivo),
+            dtoPorcentaje: Number(dtoPorcentaje),
+            tipo: TipoCobro.Efectivo
+        } as CustomerPaymentInformation;
+        setPago(pago);
     }, [props.productosEnCarrito, Clientes])
 
     const reactToPrintContent = React.useCallback(() => {
@@ -406,33 +425,26 @@ const SidebarDerecho = React.memo((props: {
         const { data, error } = await AddVenta(pagoCliente, productosEnCarrito, emp, clientes, j);
 
         if (!error) {
+            setFecha(data.createdAt);
             setQrImage(await GenerateQrBase64(data._id));
-            handlePrint();
         }
         else {
-            notifyError("Error al realizar la venta")
+            setFecha(undefined);
+            setQrImage(undefined);
+            notifyError("Error al realizar la venta");
         }
     }
 
     const precioTotal: number = PrecioTotalCarrito(props.productosEnCarrito);
     const precioTotalDescontado: number = AplicarDescuentos(props.productosEnCarrito, Number(dtoEfectivo), Number(dtoPorcentaje));
 
-    const pago = {
-        cliente: Clientes.find((c) => c.nombre === "General"),
-        cambio: precioTotalDescontado * -1,
-        pagoEnEfectivo: 0,
-        pagoEnTarjeta: 0,
-        precioTotal: precioTotalDescontado,
-        dtoEfectivo: Number(dtoEfectivo),
-        dtoPorcentaje: Number(dtoPorcentaje),
-        tipo: TipoCobro.Efectivo
-    } as CustomerPaymentInformation;
-
     if (!PagoRapido?.cliente || !jwt) {
         return (
-            <div>
-                Cargando...
-            </div>
+            <div className="h-full p-2">
+                <div className="bg-white rounded-3xl shadow h-full resize-x">
+                    Cargando...
+                </div>
+            </div >
         )
     }
 
@@ -570,18 +582,22 @@ const SidebarDerecho = React.memo((props: {
                             </div>
                         </div>
                 }
-                <div style={{ display: "none" }}>
-                    <Ticket
-                        ref={componentRef}
-                        pagoCliente={PagoRapido}
-                        productosVendidos={props.productosEnCarrito}
-                        qrImage={qrImage}
-                    />
-                </div>
+                {
+                    qrImage && fecha &&
+                    <div style={{ display: "none" }}>
+                        <Ticket
+                            ref={componentRef}
+                            pagoCliente={PagoRapido}
+                            productosVendidos={props.productosEnCarrito}
+                            fecha={fecha}
+                            qrImage={qrImage}
+                        />
+                    </div>
+                }
 
                 {/* Modal aceptar compra */}
                 < AnimatePresence initial={false} exitBeforeEnter={true}>
-                    {showModalPagar && <ModalPagar PagoCliente={pago} handleModalOpen={setPagarModal} />}
+                    {showModalPagar && Pago && <ModalPagar PagoCliente={Pago} handleModalOpen={setPagarModal} AllClientes={Clientes} />}
                 </AnimatePresence>
             </div>
         </div >

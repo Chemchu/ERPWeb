@@ -191,12 +191,13 @@ const EditarVenta = (props: { venta: Venta | undefined, setModal: Function }) =>
                             </button>
                         </div>
                         {
-                            PagoDelCliente &&
+                            PagoDelCliente && qrImage &&
                             <div style={{ display: "none" }}>
                                 <Ticket
                                     ref={componentRef}
                                     pagoCliente={PagoDelCliente}
                                     productosVendidos={props.venta.productos}
+                                    fecha={fecha.toLocaleString()}
                                     qrImage={qrImage}
                                 />
                             </div>

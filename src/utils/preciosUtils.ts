@@ -1,6 +1,6 @@
 import { TipoCobro } from "../tipos/Enums/TipoCobro";
 import { ProductoVendido } from "../tipos/ProductoVendido";
-import { TPV } from "../tipos/TPV";
+import { TPVType } from "../tipos/TPV";
 import { Venta } from "../tipos/Venta";
 
 export const AplicarDescuentos = (productos: ProductoVendido[], descuentoEfectivo: number, descuentoPorcentaje: number) => {
@@ -68,7 +68,7 @@ export const GetTarjetaTotal = (Ventas: Venta[]): number => {
 
 }
 
-export const GetTotalEnCaja = (Ventas: Venta[], Tpv: TPV): number => {
+export const GetTotalEnCaja = (Ventas: Venta[], Tpv: TPVType): number => {
     return Tpv.cajaInicial + Ventas.reduce((total: number, v: Venta): number => {
         if (Tpv._id !== v.tpv) {
             return total;

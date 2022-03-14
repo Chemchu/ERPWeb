@@ -3,13 +3,13 @@ import { CustomerPaymentInformation } from "../../tipos/CustomerPayment";
 import { ProductoVendido } from "../../tipos/ProductoVendido";
 import Image from "next/image";
 
-const Ticket = React.forwardRef((props: { pagoCliente: CustomerPaymentInformation, productosVendidos: ProductoVendido[], qrImage: string | undefined }, ref: React.LegacyRef<HTMLDivElement>) => {
+const Ticket = React.forwardRef((props: { pagoCliente: CustomerPaymentInformation, productosVendidos: ProductoVendido[], fecha: string, qrImage: string }, ref: React.LegacyRef<HTMLDivElement>) => {
     return (
         <div className="flex flex-col gap-4 items-center bg-white rounded-2xl w-full h-auto text-xs" ref={ref}>
             <div className="w-full h-5/6 rounded-3xl bg-white z-10 ">
                 <div className="flex flex-col gap-1">
                     <h2 className="text-xl font-semibold text-center ">ERPWeb</h2>
-                    <div className="text-center">Fecha: </div>
+                    <div className="text-center">Fecha: {new Date(Number(props.fecha)).toLocaleString()}</div>
                     <div className="flex flex-col text-center">
                         <div>Cliente: {props.pagoCliente.cliente.nombre} </div>
                         {props.pagoCliente.cliente.nif && props.pagoCliente.cliente.nif !== "General" && <div>CIF: {props.pagoCliente.cliente.nif} </div>}
@@ -21,8 +21,7 @@ const Ticket = React.forwardRef((props: { pagoCliente: CustomerPaymentInformatio
                     <hr />
                     <div className="w-full h-full">
                         <div className="flex w-full justify-around">
-                            <p className="w-1/4 text-left font-semibold">#</p>
-                            <p className="w-1/4 text-left font-semibold">Producto</p>
+                            <p className="w-2/4 text-left font-semibold">Producto</p>
                             <p className="w-1/4 text-center font-semibold">Cantidad</p>
                             <p className="w-1/4 text-center font-semibold">Total</p>
                         </div>
@@ -59,12 +58,9 @@ const Ticket = React.forwardRef((props: { pagoCliente: CustomerPaymentInformatio
                     Pagado con tarjeta: {props.pagoCliente.pagoEnTarjeta.toFixed(2)}€
                 </div>
             </div>
-            {
-                props.qrImage &&
-                <div className="flex justify-center">
-                    <Image src={props.qrImage} layout="fixed" width={50} height={50} />
-                </div>
-            }
+            <div className="flex justify-center">
+                <Image src={props.qrImage} layout="fixed" width={50} height={50} />
+            </div>
 
             <div className="flex flex-col pb-2">
                 <span>
@@ -83,16 +79,13 @@ export default Ticket
 const GenerarFilaProducto = (props: { numFila: number, nombreProducto: string, cantidad: number, precio: number }) => {
     return (
         <div className="flex w-full">
-            <div className="w-1/4 text-left">
-                {props.numFila}
-            </div>
-            <div className="w-1/4 text-left">
+            <div className="w-3/5 text-left">
                 {props.nombreProducto}
             </div>
-            <div className="w-1/4 text-center">
+            <div className="w-1/5 text-center">
                 {props.cantidad}
             </div>
-            <div className="w-1/4 text-center">
+            <div className="w-1/5 text-center">
                 {(props.precio * props.cantidad).toFixed(2)}€
             </div>
         </div>
