@@ -5,6 +5,8 @@ import Sidebar from "../components/sidebar";
 import NextNProgress from "nextjs-progressbar";
 import { ProductCarritoContextProvider } from "../context/productosEnCarritoContext";
 import { EmpleadoContextProvider } from "../context/empleadoContext";
+import { ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 const variants = {
     initial: {
@@ -48,6 +50,16 @@ const DashboardLayout = React.memo(({ children }: { children: React.ReactNode })
                                     {children}
                                 </motion.div>
                             </AnimatePresence>
+                            <ToastContainer
+                                position="bottom-right"
+                                autoClose={3000}
+                                hideProgressBar={false}
+                                newestOnTop={false}
+                                closeOnClick
+                                rtl={false}
+                                draggable
+                                pauseOnHover={false}
+                            />
                         </div>
                     </main >
                 }

@@ -1,25 +1,24 @@
+import { Cierre } from "../tipos/Cierre";
 import { Cliente } from "../tipos/Cliente";
+import { CustomerPaymentInformation } from "../tipos/CustomerPayment";
 import { Empleado } from "../tipos/Empleado";
+import { JWT } from "../tipos/JWT";
 import { Producto } from "../tipos/Producto";
+import { ProductoVendido } from "../tipos/ProductoVendido";
 import { Venta } from "../tipos/Venta";
-import { CreateClientList, CreateEmployee, CreateProductList, CreateSalesList, CreateTPV } from "./typeCreator";
+import { CreateCierreList, CreateClientList, CreateEmployee, CreateProductList, CreateSalesList, CreateTPV } from "./typeCreator";
 
 export const FetchProductos = async (): Promise<Producto[]> => {
     try {
         let prodRes = [] as Producto[];
 
         const pResponse = await fetch('/api/productos', {
-            headers: {
-                'Content-type': 'application/json'
-            },
             method: 'POST',
-            body: JSON.stringify({
-                find: {},
-                limit: 3000,
-                neededValues: ["_id", "nombre", "proveedor", "familia",
-                    "precioVenta", "precioCompra", "iva", "margen",
-                    "ean", "promociones", "cantidad", "cantidadRestock", "alta"]
-            })
+            headers: {
+                'Accept': 'application/json',
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ limit: 3000 })
         });
 
         if (pResponse.status > 200) { return []; }
@@ -64,7 +63,7 @@ export const FetchClientes = async (): Promise<Cliente[]> => {
 
 export const FetchVentas = async (): Promise<Venta[]> => {
     try {
-        const vRes = await fetch('/api/ventas', {
+        const vRes = await fetch(`/api/ventas/`, {
             headers: { 'Content-type': 'application/json' },
             method: 'POST',
             body: JSON.stringify({ limit: 3000 })
@@ -76,6 +75,54 @@ export const FetchVentas = async (): Promise<Venta[]> => {
     catch (e) {
         console.log(e);
         return [];
+    }
+}
+
+export const FetchVenta = async (id: string): Promise<Venta[]> => {
+    try {
+        const vRes = await fetch(`/api/ventas/${id}`);
+
+        const ventas = await vRes.json();
+        return CreateSalesList([ventas.data.venta]);
+    }
+    catch (e) {
+        console.log(e);
+        return [];
+    }
+}
+
+export const AddVenta = async (pagoCliente: CustomerPaymentInformation, productosEnCarrito: ProductoVendido[], empleado: Empleado, clientes: Cliente[], jwt: JWT): Promise<{ data: any, error: boolean }> => {
+    try {
+        let cliente;
+        if (!pagoCliente.cliente) {
+            cliente = clientes.find((c) => c.nombre === "General");
+        }
+        else {
+            cliente = pagoCliente.cliente;
+        }
+
+        const addventaRespone = await fetch(`/api/ventas/${productosEnCarrito.length}`, {
+            headers: {
+                'Accept': 'application/json',
+                'Content-Type': 'application/json'
+            },
+            method: "POST",
+            body: JSON.stringify({
+                productosEnCarrito: productosEnCarrito,
+                pagoCliente: pagoCliente,
+                cliente: cliente,
+                empleado: empleado,
+                jwt: jwt
+            })
+        });
+
+        const data = await addventaRespone.json();
+
+        const error = addventaRespone.status === 200 ? false : true;
+        return { data: data.addVenta, error: error };
+    }
+    catch (err) {
+        return { data: undefined, error: true }
     }
 }
 
@@ -112,4 +159,22 @@ export const FetchTPV = async (TPV: string) => {
     const tpvJson = await fetchTPV.json();
 
     return CreateTPV(JSON.parse(tpvJson.tpv));
+}
+
+export const FetchCierres = async (): Promise<Cierre[]> => {
+    try {
+        let cierresRes = [] as Cierre[];
+
+        const crResponse = await fetch('/api/cierres');
+
+        if (crResponse.status > 200) { return []; }
+        const crJson = await crResponse.json();
+
+        cierresRes = CreateCierreList(crJson.cierresTPVs);
+        return cierresRes;
+    }
+    catch (e) {
+        console.log(e);
+        return [];
+    }
 }

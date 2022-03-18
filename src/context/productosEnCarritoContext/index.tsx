@@ -1,5 +1,6 @@
 import React, { useContext, createContext } from 'react';
 import { ProductoVendido } from '../../tipos/ProductoVendido';
+import { CreateProductoVendidoList } from '../../utils/typeCreator';
 
 type ProductContextualizado = {
     ProductosEnCarrito: ProductoVendido[],
@@ -11,11 +12,16 @@ const AppContext = createContext<ProductContextualizado>({} as ProductContextual
 
 //Provider
 export const ProductCarritoContextProvider = ({ children }: { children: React.ReactNode }) => {
-    const [allProductos, setAllProductos] = React.useState<ProductoVendido[]>([]);
+    const [Productos, setProductos] = React.useState<ProductoVendido[]>([]);
+
+    const SetValidatedSoldProductos = (prodList: ProductoVendido[]) => {
+        const pL = CreateProductoVendidoList(prodList);
+        setProductos(pL);
+    }
 
     const values: ProductContextualizado = {
-        ProductosEnCarrito: allProductos,
-        SetProductosEnCarrito: setAllProductos,
+        ProductosEnCarrito: Productos,
+        SetProductosEnCarrito: setProductos,
     }
 
     // Interface donde será expuesto como proveedor y envolverá la App.

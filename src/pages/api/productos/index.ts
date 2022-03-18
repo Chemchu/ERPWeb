@@ -1,53 +1,55 @@
-import { gql } from "@apollo/client";
 import { NextApiRequest, NextApiResponse } from "next";
+import { QUERY_PRODUCTS } from "../../../utils/querys";
 import GQLFetcher from "../../../utils/serverFetcher";
 
 const handler = async (req: NextApiRequest, res: NextApiResponse) => {
     try {
-        const request = req.body;
         let fetchResult;
+        const find = req.body.find ? req.body.find : null;
+        const limit = req.body.limit ? req.body.limit : 10000;
 
-        if (request.find) {
-            fetchResult = await GQLFetcher.query(
-                {
-                    query: gql`
-                query Productos($limit: Int, $find: ProductosFind) {
-                    productos(limit: $limit, find: $find) {
-                        ${request.neededValues.map((p: string) => { return p })}
-                    }
-                }
-                `,
+        switch (req.method) {
+            case 'GET':
+                fetchResult = await GQLFetcher.query({
+                    query: QUERY_PRODUCTS,
                     variables: {
-                        "find": {
-                            "_ids": request.find._ids,
-                            "nombre": request.find.nombre,
-                            "familia": request.find.familia,
-                            "proveedor": request.find.proveedor
-                        },
-                        "limit": request.limit
+                        "find": find,
                     }
+                });
+
+                if (fetchResult.errors) {
+                    return res.status(300).json({ message: `Fallo al pedir la lista de productos: ${fetchResult.errors[0]}` });
                 }
-            );
-        }
-        else {
-            fetchResult = await GQLFetcher.query(
-                {
-                    query: gql`
-                query Productos($limit: Int) {
-                    productos(limit: $limit) {
-                        ${request.neededValues.map((p: string) => { return p })}
+
+                if (fetchResult.data) {
+                    return res.status(200).json(fetchResult.data);
+                }
+
+                return res.status(300).json({ message: `Fallo al pedir la lista de productos` });
+
+            case 'POST':
+                fetchResult = await GQLFetcher.query({
+                    query: QUERY_PRODUCTS,
+                    variables: {
+                        "find": find,
+                        "limit": limit
                     }
-                }
-                `
-                }
-            );
-        }
+                });
 
-        if (!fetchResult.error) {
-            return res.status(200).json(fetchResult.data);
-        }
+                if (fetchResult.errors) {
+                    return res.status(300).json({ message: `Fallo al pedir la lista de productos: ${fetchResult.errors[0]}` });
+                }
 
-        return res.status(300).json({ message: `Fallo al pedir la lista de productos` });
+                if (fetchResult.data) {
+                    return res.status(200).json(fetchResult.data);
+                }
+
+                return res.status(300).json({ message: `Fallo al pedir la lista de productos` });
+                break;
+
+            default:
+                return res.status(400).json({ message: `Solo se puede hacer un GET / POST en productos` });
+        }
     }
     catch (err) {
         console.log(err);

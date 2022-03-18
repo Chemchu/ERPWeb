@@ -3,13 +3,13 @@ import { motion } from "framer-motion";
 import Cookies from "js-cookie";
 import { useEffect, useState } from "react";
 import useJwt from "../../../hooks/jwt";
-import { TPV } from "../../../tipos/TPV";
+import { JWT } from "../../../tipos/JWT";
+import { TPVType } from "../../../tipos/TPV";
 import { Venta } from "../../../tipos/Venta";
 import { FetchSalesByTPVDate, FetchTPV } from "../../../utils/fetches";
 import { GetEfectivoTotal, GetTarjetaTotal, GetTotalEnCaja } from "../../../utils/preciosUtils";
 import { ADD_CIERRE } from "../../../utils/querys";
 import { ValidatePositiveFloatingNumber } from "../../../utils/validator";
-import StatsCard from "../../dataDisplay/estadisticas";
 import { Backdrop } from "../backdrop";
 
 const In = {
@@ -36,11 +36,10 @@ const In = {
     }
 }
 
-
 export const CerrarCaja = (props: { setModalOpen: Function, setEmpleadoUsandoTPV: Function }) => {
-    const jwt = useJwt();
+    const [jwt, setJwt] = useState<JWT>();
     const [Ventas, setVentas] = useState<Venta[]>();
-    const [Tpv, setTPV] = useState<TPV>();
+    const [Tpv, setTPV] = useState<TPVType>();
     const [TotalEfectivo, setTotalEfectivo] = useState<string>();
     const [TotalTarjeta, setTotalTarjeta] = useState<string>();
     const [TotalPrevistoEnCaja, setTotalPrevistoEnCaja] = useState<string>();
@@ -49,7 +48,7 @@ export const CerrarCaja = (props: { setModalOpen: Function, setEmpleadoUsandoTPV
     const [cerrarCaja, { loading, data, error }] = useMutation(ADD_CIERRE, {
         variables: {
             "cierre": {
-                "tpv": jwt.TPV,
+                "tpv": jwt?.TPV,
                 "cajaInicial": Tpv?.cajaInicial,
                 "abiertoPor": {
                     "_id": Tpv?.enUsoPor._id,
@@ -59,26 +58,33 @@ export const CerrarCaja = (props: { setModalOpen: Function, setEmpleadoUsandoTPV
                     "email": Tpv?.enUsoPor.email
                 },
                 "cerradoPor": {
-                    "_id": jwt._id,
-                    "nombre": jwt.nombre,
-                    "apellidos": jwt.apellidos,
-                    "rol": jwt.rol,
-                    "email": jwt.email
+                    "_id": jwt?._id,
+                    "nombre": jwt?.nombre,
+                    "apellidos": jwt?.apellidos,
+                    "rol": jwt?.rol,
+                    "email": jwt?.email
                 },
                 "apertura": Tpv?.updatedAt,
                 "ventasEfectivo": Number(TotalEfectivo),
                 "ventasTarjeta": Number(TotalTarjeta),
                 "ventasTotales": Number(TotalEfectivo) + Number(TotalTarjeta),
                 "dineroRetirado": Number(DineroRetirado),
-                "fondoDeCaja": Number(TotalRealEnCaja) - Number(DineroRetirado)
+                "fondoDeCaja": Number(TotalRealEnCaja) - Number(DineroRetirado),
+                "numVentas": Ventas?.length || 0,
+                "dineroEsperadoEnCaja": Number(TotalPrevistoEnCaja),
+                "dineroRealEnCaja": Number(TotalRealEnCaja)
             }
         }
     });
 
     useEffect(() => {
-        const GetVentas = async () => {
-            const tpv = await FetchTPV(jwt.TPV);
-            const ventas = await FetchSalesByTPVDate(jwt.TPV, tpv.updatedAt.toString());
+        setJwt(useJwt());
+    }, [])
+
+    useEffect(() => {
+        const GetVentas = async (j: JWT) => {
+            const tpv = await FetchTPV(j.TPV);
+            const ventas = await FetchSalesByTPVDate(j.TPV, tpv.updatedAt.toString());
 
             setVentas(ventas);
             setTPV(tpv);
@@ -87,8 +93,10 @@ export const CerrarCaja = (props: { setModalOpen: Function, setEmpleadoUsandoTPV
             setTotalPrevistoEnCaja(GetTotalEnCaja(ventas, tpv).toString());
         }
 
-        GetVentas();
-    }, [])
+        if (!jwt) { return; }
+
+        GetVentas(jwt);
+    }, [jwt])
 
     useEffect(() => {
         if (data && data.addCierreTPV.successful && !error && !loading) {
@@ -141,6 +149,11 @@ export const CerrarCaja = (props: { setModalOpen: Function, setEmpleadoUsandoTPV
                                 </div>
 
                                 <div className="flex gap-2">
+                                    <p>Ventas totales: </p>
+                                    <p>{(Number(TotalEfectivo) + Number(TotalTarjeta)).toFixed(2)}€</p>
+                                </div>
+
+                                <div className="flex gap-2">
                                     <p>Ventas en efectivo: </p>
                                     <p>{Number(TotalEfectivo).toFixed(2)}€</p>
                                 </div>
@@ -174,18 +187,27 @@ export const CerrarCaja = (props: { setModalOpen: Function, setEmpleadoUsandoTPV
                         </div>
 
                         <div className="flex gap-4 h-auto w-full mb-auto text-white">
-                            <div className="flex h-10 w-2/3 m-auto bg-red-500 hover:bg-red-600 rounded-2xl cursor-pointer items-center justify-center shadow-lg"
+                            <div className="flex h-10 w-2/3 m-auto bg-red-500 hover:bg-red-600 rounded-lg cursor-pointer items-center justify-center shadow-lg"
                                 onClick={() => { props.setModalOpen(false) }}>
                                 <div>
                                     Cancelar
                                 </div>
                             </div>
-                            <div className="flex h-10 w-2/3 m-auto bg-blue-500 hover:bg-blue-600 rounded-2xl cursor-pointer items-center justify-center shadow-lg"
-                                onClick={() => { Number(TotalRealEnCaja) > 0 ? cerrarCaja() : undefined }}>
-                                <div>
-                                    Cerrar TPV
-                                </div>
-                            </div>
+                            {
+                                Number(TotalRealEnCaja) > 0 && Number(TotalRealEnCaja) - Number(DineroRetirado) >= 0 ?
+                                    <div className={`flex h-10 w-2/3 m-auto bg-blue-500 hover:bg-blue-600 rounded-lg cursor-pointer items-center justify-center shadow-lg`}
+                                        onClick={() => { cerrarCaja() }}>
+                                        <div>
+                                            Cerrar TPV
+                                        </div>
+                                    </div>
+                                    :
+                                    <div className={`flex h-10 w-2/3 m-auto bg-blue-400 hover:bg-blue-400 rounded-lg cursor-default items-center justify-center shadow-lg`}>
+                                        <div>
+                                            Cerrar TPV
+                                        </div>
+                                    </div>
+                            }
                         </div>
                     </div>
                 </motion.div>

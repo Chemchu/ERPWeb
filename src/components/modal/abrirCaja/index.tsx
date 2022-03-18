@@ -1,9 +1,9 @@
 import { useMutation } from "@apollo/client";
 import { motion } from "framer-motion";
 import Cookies from "js-cookie";
-import Router from "next/router";
 import { useEffect, useState } from "react";
 import useJwt from "../../../hooks/jwt";
+import { JWT } from "../../../tipos/JWT";
 import { OCUPY_TPV } from "../../../utils/querys";
 import { ValidatePositiveFloatingNumber } from "../../../utils/validator";
 import Dropdown from "../../Forms/dropdown";
@@ -38,21 +38,32 @@ const AbrirCaja = (props: { setShowModal: Function, setEmpleadoUsandoTPV: Functi
     const [currentTpv, setCurrentTpv] = useState<string>();
     const [cajaInicial, setCajaInicial] = useState<string>('0');
     const [ocuparTpv, { data, error }] = useMutation(OCUPY_TPV);
-    const jwt = useJwt();
+    const [jwt, setJwt] = useState<JWT>();
 
     useEffect(() => {
-        const TpvsAbiertas = async () => {
+        const TpvsAbiertas = async (): Promise<Map<string, string>> => {
             const res = await fetch(`/api/tpv`);
-
             const Response = await res.json();
 
             if (Response.tpvs) {
                 // Transforma el string en TPV Map<string, string> 
-                setTpvs(new Map(JSON.parse(Response.tpvs)));
-                return;
+                return new Map(JSON.parse(Response.tpvs));
             }
+
+            return new Map();
         }
-        TpvsAbiertas();
+
+        let isUnmounted = false;
+        setJwt(useJwt());
+        TpvsAbiertas().then(r => {
+            if (!isUnmounted) {
+                setTpvs(r);
+            }
+        });
+
+        return (() => {
+            isUnmounted = true;
+        })
     }, []);
 
     useEffect(() => {
@@ -80,7 +91,7 @@ const AbrirCaja = (props: { setShowModal: Function, setEmpleadoUsandoTPV: Functi
         const cInicial: number = parseFloat(Number(cajaInicial).toFixed(2))
         ocuparTpv({
             variables: {
-                "idEmpleado": jwt._id,
+                "idEmpleado": jwt?._id,
                 "idTpv": tpvID,
                 "cajaInicial": cInicial
             }

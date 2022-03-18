@@ -1,18 +1,23 @@
-import { AnimatePresence, motion } from "framer-motion";
-import React, { MouseEventHandler, useEffect, useState } from "react";
+import { motion } from "framer-motion";
+import React, { useEffect, useRef, useState } from "react";
+import { useReactToPrint } from "react-to-print";
+import useEmpleadoContext from "../../../context/empleadoContext";
+import useProductEnCarritoContext from "../../../context/productosEnCarritoContext";
+import useJwt from "../../../hooks/jwt";
 import { Cliente } from "../../../tipos/Cliente";
 import { CustomerPaymentInformation } from "../../../tipos/CustomerPayment";
 import { TipoCobro } from "../../../tipos/Enums/TipoCobro";
-import { ProductoVendido } from "../../../tipos/ProductoVendido";
-import { FetchClientes } from "../../../utils/fetches";
+import { AddVenta, FetchClientes } from "../../../utils/fetches";
 import { CalcularCambio } from "../../../utils/preciosUtils";
 import { ValidatePositiveFloatingNumber } from "../../../utils/validator";
-import AutoComplete from "../../Forms/autocomplete/autocomplete";
 import Dropdown from "../../Forms/dropdown";
 import { Input } from "../../Forms/input/input";
 import { InputNumber } from "../../Forms/input/inputDinero";
+import Ticket from "../../ticket";
 import { Backdrop } from "../backdrop";
-import Resumen from "../resumen";
+import { notifyError, notifySuccess } from "../../../utils/toastify";
+import { JWT } from "../../../tipos/JWT";
+import GenerateQrBase64 from "../../../utils/generateQr";
 
 const In = {
     hidden: {
@@ -38,26 +43,67 @@ const In = {
     }
 }
 
-export const ModalPagar = (props: {
-    productosComprados: ProductoVendido[], setProductosComprados: Function, PagoCliente: CustomerPaymentInformation,
-    handleModalOpen: Function,
-}) => {
+export const ModalPagar = (props: { PagoCliente: CustomerPaymentInformation, handleModalOpen: Function, AllClientes?: Cliente[] }) => {
+    const [jwt, setJwt] = useState<JWT>();
     const [dineroEntregado, setDineroEntregado] = useState<string>("0");
     const [dineroEntregadoTarjeta, setDineroEntregadoTarjeta] = useState<string>("0");
     const [cambio, setCambio] = useState<number>(props.PagoCliente.cambio);
-    const [showModalResumen, setModalResumen] = useState<boolean>(false);
+    const { Empleado } = useEmpleadoContext();
 
     const [Clientes, SetClientes] = useState<Cliente[]>([]);
     const [ClienteActual, SetClienteActual] = useState<string>("General");
     const [PagoDelCliente, SetPagoCliente] = useState<CustomerPaymentInformation>(props.PagoCliente);
+    const [qrImage, setQrImage] = useState<string>();
+    const [fecha, setFecha] = useState<string>();
+
+    const { ProductosEnCarrito, SetProductosEnCarrito } = useProductEnCarritoContext();
+    const [serverUp, setServerStatus] = useState<boolean>(false);
+
+    const componentRef = useRef(null);
 
     useEffect(() => {
-        const GetClientesFromDB = async () => {
-            SetClientes(await FetchClientes());
+        let isUnmounted = false;
+        setJwt(useJwt());
+        if (props.AllClientes) {
+            SetClientes(props.AllClientes);
+            setServerStatus(true);
+        }
+        else {
+            FetchClientes().then((r) => {
+                if (!isUnmounted) {
+                    SetClientes(r)
+                    setServerStatus(true);
+                }
+            }).catch(() => {
+                setServerStatus(false);
+            });
         }
 
-        GetClientesFromDB();
-    }, [])
+        return () => {
+            isUnmounted = true;
+        }
+    }, []);
+
+    useEffect(() => {
+        if (qrImage) {
+            handlePrint();
+        }
+    }, [qrImage]);
+
+    const reactToPrintContent = React.useCallback(() => {
+        return componentRef.current;
+    }, []);
+
+    const onAfterPrintHandler = React.useCallback(() => {
+        SetProductosEnCarrito([]);
+        notifySuccess("Venta realizada correctamente")
+    }, []);
+
+    const handlePrint = useReactToPrint({
+        documentTitle: "Ticket de venta",
+        content: reactToPrintContent,
+        onAfterPrint: onAfterPrintHandler
+    });
 
     const SetDineroClienteEfectivo = (dineroDelCliente: string) => {
         const dinero = ValidatePositiveFloatingNumber(dineroDelCliente);
@@ -73,7 +119,30 @@ export const ModalPagar = (props: {
         setCambio(CalcularCambio(PagoDelCliente.precioTotal, Number(dineroEntregado), Number(dinero)))
     }
 
-    const OpenResumen = () => {
+    const AddSale = async (pagoCliente: CustomerPaymentInformation) => {
+        try {
+            UpdatePaymentInfo();
+            if (!jwt) { notifyError("Error con la autenticación"); return; }
+            const { data, error } = await AddVenta(pagoCliente, ProductosEnCarrito, Empleado, Clientes, jwt);
+
+            if (!error) {
+                setFecha(data.createdAt);
+                setQrImage(await GenerateQrBase64(data._id));
+                props.handleModalOpen(false);
+            }
+            else {
+                setFecha(undefined);
+                setQrImage(undefined);
+                notifyError("Error al realizar la venta")
+            }
+        }
+        catch (err) {
+            console.log(err);
+            notifyError("Error al realizar la venta")
+        }
+    }
+
+    const UpdatePaymentInfo = () => {
         let p = PagoDelCliente;
         p.tipo = GetFormaDePago();
 
@@ -85,8 +154,7 @@ export const ModalPagar = (props: {
         if (!cliente) { p.cliente = Clientes[0] }
         else { p.cliente = cliente }
 
-        SetPagoCliente(p);
-        setModalResumen(true);
+        SetPagoCliente([p][0]);
     }
 
     const GetFormaDePago = (): string => {
@@ -105,7 +173,6 @@ export const ModalPagar = (props: {
                     animate="visible"
                     exit="exit"
                 >
-
                     <div id="receipt-content" className="text-left w-full text-sm p-6 overflow-auto">
                         <div className="grid grid-cols-2">
                             {/* Parte izquierda, datos cliente */}
@@ -176,7 +243,6 @@ export const ModalPagar = (props: {
                                         <div className={`text-4xl font-semibold ${cambio < 0 ? "text-red-500" : "text-green-500"}`}>{cambio.toFixed(2)}€</div>
                                     </div>
                                 </div>
-
                             </div>
                         </div>
 
@@ -185,21 +251,36 @@ export const ModalPagar = (props: {
                             <button className="bg-red-500 hover:bg-red-600 text-white w-full h-12 hover:shadow-lg rounded-lg flex items-center justify-center" onClick={() => props.handleModalOpen(false)}>
                                 <div className="text-lg">CANCELAR</div>
                             </button>
-                            {cambio < 0 ?
-                                <button className="bg-blue-400 text-white w-full h-12 cursor-default rounded-lg flex items-center justify-center">
-                                    <div className="text-lg">DINERO INSUFICIENTE</div>
-                                </button>
-                                :
-                                <button className="bg-blue-500 hover:bg-blue-600 text-white w-full h-12 hover:shadow-lg rounded-lg flex items-center justify-center" onClick={OpenResumen}>
-                                    <div className="text-lg">COMPLETAR VENTA</div>
-                                </button>
+                            {
+                                serverUp ?
+                                    cambio >= 0 ?
+                                        <button className="bg-blue-500 hover:bg-blue-600 text-white w-full h-12 hover:shadow-lg rounded-lg flex items-center justify-center" onClick={async () => { await AddSale(PagoDelCliente); }} >
+                                            <div className="text-lg">COMPLETAR VENTA</div>
+                                        </button>
+                                        :
+                                        <button className="bg-blue-400 text-white w-full h-12 cursor-default rounded-lg flex items-center justify-center">
+                                            <div className="text-lg">DINERO INSUFICIENTE</div>
+                                        </button>
+
+                                    :
+                                    <button className="bg-slate-500 hover:bg-slate-500 cursor-pointer text-white w-full h-12 hover:shadow-lg rounded-lg flex items-center justify-center">
+                                        <div className="text-lg">CARGANDO CLIENTES...</div>
+                                    </button>
                             }
                         </div>
-                        <AnimatePresence>
-                            {showModalResumen && <Resumen pagoCliente={PagoDelCliente} productosVendidos={props.productosComprados} handleOpen={setModalResumen} handleOpenPagarModal={props.handleModalOpen} setProductosComprados={props.setProductosComprados} />}
-                        </AnimatePresence>
                     </div>
-
+                    {
+                        qrImage && fecha &&
+                        <div style={{ display: "none" }}>
+                            <Ticket
+                                ref={componentRef}
+                                pagoCliente={PagoDelCliente}
+                                productosVendidos={ProductosEnCarrito}
+                                fecha={fecha}
+                                qrImage={qrImage}
+                            />
+                        </div>
+                    }
                 </motion.div>
             </Backdrop>
         </motion.div>

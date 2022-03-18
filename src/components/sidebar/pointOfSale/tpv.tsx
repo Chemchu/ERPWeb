@@ -1,5 +1,5 @@
 import { AnimatePresence, motion } from "framer-motion";
-import React, { useCallback, useEffect, useState } from "react";
+import React, { useCallback, useEffect, useRef, useState } from "react";
 import { IsPositiveFloatingNumber, IsPositiveIntegerNumber, ValidatePositiveFloatingNumber, ValidateSearchString } from "../../../utils/validator";
 import { CustomerPaymentInformation } from "../../../tipos/CustomerPayment";
 import { Producto } from "../../../tipos/Producto";
@@ -9,15 +9,37 @@ import { ProductCard, ProductSelectedCard } from "./productCard";
 import useProductEnCarritoContext from "../../../context/productosEnCarritoContext";
 import SkeletonProductCard from "../../Skeletons/skeletonProductCard";
 import ModalPagar from "../../modal/pagar";
-import Resumen from "../../modal/resumen";
 import { AplicarDescuentos, PrecioTotalCarrito } from "../../../utils/preciosUtils";
 import { Cliente } from "../../../tipos/Cliente";
-import { FetchClientes } from "../../../utils/fetches";
+import { AddVenta, FetchClientes, FetchEmpleado } from "../../../utils/fetches";
+import useEmpleadoContext from "../../../context/empleadoContext";
+import useJwt from "../../../hooks/jwt";
+import { JWT } from "../../../tipos/JWT";
+import { notifyError, notifySuccess } from "../../../utils/toastify";
+import { useReactToPrint } from "react-to-print";
+import Ticket from "../../ticket";
+import GenerateQrBase64 from "../../../utils/generateQr";
 
 const TPV = (props: { productos: Producto[], serverOperativo: boolean, empleadoUsandoTPV: boolean, setEmpleadoUsandoTPV: Function, setShowModalCerrar: Function, setShowModalAbrir: Function }) => {
     const [ProductosFiltrados, setProductosFiltrados] = useState<Producto[]>([]);
     const { ProductosEnCarrito, SetProductosEnCarrito } = useProductEnCarritoContext();
+    const { SetEmpleado } = useEmpleadoContext()
     const [Familias, setFamilias] = useState<string[]>([]);
+    const [jwt, setJwt] = useState<JWT>();
+
+    useEffect(() => {
+        setJwt(useJwt());
+    }, [])
+
+    useEffect(() => {
+        // Actualiza el Empleado
+        const GetData = async (j: JWT) => {
+            SetEmpleado(await FetchEmpleado(j._id));
+        }
+        if (!jwt) { return; }
+
+        GetData(jwt);
+    }, [jwt])
 
     useEffect(() => {
         function uniq_fast(a: Producto[]) {
@@ -139,7 +161,6 @@ const TPV = (props: { productos: Producto[], serverOperativo: boolean, empleadoU
                                     }
                                 </div>
                         }
-
                         <div className="h-full overflow-hidden">
                             <ListaProductos productos={props.productos} productosFiltrados={ProductosFiltrados} ServerUp={props.serverOperativo} />
                         </div>
@@ -149,7 +170,6 @@ const TPV = (props: { productos: Producto[], serverOperativo: boolean, empleadoU
                 <div className="h-screen">
                     <SidebarDerecho todosProductos={props.productos} productosEnCarrito={ProductosEnCarrito} setProductosCarrito={SetProductosEnCarrito} empleadoUsandoTPV={props.empleadoUsandoTPV} setShowModalAbrir={props.setShowModalAbrir} setShowModalCerrar={props.setShowModalCerrar} />
                 </div>
-
             </div>
         </div>
     );
@@ -283,17 +303,79 @@ const SidebarDerecho = React.memo((props: {
     const [dtoPorcentaje, setDtoPorcentaje] = useState<string>("0");
 
     const [showModalPagar, setPagarModal] = useState(false);
-    const [showModalCobro, setCobroModal] = useState(false);
+    const [PagoRapido, setPagoRapido] = useState<CustomerPaymentInformation>();
+    const [Pago, setPago] = useState<CustomerPaymentInformation>();
+    const { Empleado } = useEmpleadoContext();
+    const [qrImage, setQrImage] = useState<string>();
+    const [fecha, setFecha] = useState<string>();
 
     const [Clientes, SetClientes] = useState<Cliente[]>([]);
+    const [jwt, setJwt] = useState<JWT>();
+    const componentRef = useRef(null);
 
     useEffect(() => {
-        const GetClientesFromDB = async () => {
-            SetClientes(await FetchClientes());
-        }
+        let isUnmounted = false;
 
-        GetClientesFromDB();
-    }, [])
+        setJwt(useJwt());
+        FetchClientes().then((r) => {
+            if (!isUnmounted) {
+                SetClientes(r)
+            }
+        }).catch(() => {
+            console.log("Error gus")
+        });
+
+        return () => {
+            isUnmounted = true;
+        }
+    }, []);
+
+    useEffect(() => {
+        if (qrImage) {
+            handlePrint();
+        }
+    }, [qrImage]);
+
+    useEffect(() => {
+        const pagoRapido = {
+            cliente: Clientes.find((c) => c.nombre === "General"),
+            cambio: 0,
+            pagoEnEfectivo: precioTotal,
+            pagoEnTarjeta: 0,
+            precioTotal: precioTotalDescontado,
+            dtoEfectivo: Number(dtoEfectivo),
+            dtoPorcentaje: Number(dtoPorcentaje),
+            tipo: TipoCobro.Rapido
+        } as CustomerPaymentInformation;
+        setPagoRapido(pagoRapido);
+
+        const pago = {
+            cliente: Clientes.find((c) => c.nombre === "General"),
+            cambio: precioTotal * -1,
+            pagoEnEfectivo: 0,
+            pagoEnTarjeta: 0,
+            precioTotal: precioTotalDescontado,
+            dtoEfectivo: Number(dtoEfectivo),
+            dtoPorcentaje: Number(dtoPorcentaje),
+            tipo: TipoCobro.Efectivo
+        } as CustomerPaymentInformation;
+        setPago(pago);
+    }, [props.productosEnCarrito, Clientes])
+
+    const reactToPrintContent = React.useCallback(() => {
+        return componentRef.current;
+    }, []);
+
+    const onAfterPrintHandler = React.useCallback(() => {
+        props.setProductosCarrito([]);
+        notifySuccess("Venta realizada correctamente")
+    }, []);
+
+    const handlePrint = useReactToPrint({
+        documentTitle: "Ticket de venta",
+        content: reactToPrintContent,
+        onAfterPrint: onAfterPrintHandler
+    });
 
     // Se accede a la lista de productos actualizada usando "functional state update" de react
     // Es para evitar muchos rerenders
@@ -318,7 +400,7 @@ const SidebarDerecho = React.memo((props: {
                         nombre: prodEnCarrito.nombre,
                         familia: prodEnCarrito.familia,
                         proveedor: prodEnCarrito.proveedor,
-                        cantidadVendida: cantidad,
+                        cantidadVendida: Number(cantidad),
                         ean: prodEnCarrito.ean,
                         iva: prodEnCarrito.iva,
                         margen: prodEnCarrito.margen,
@@ -339,31 +421,32 @@ const SidebarDerecho = React.memo((props: {
         })
     }, []);
 
+    const Vender = async (pagoCliente: CustomerPaymentInformation, productosEnCarrito: ProductoVendido[], emp: typeof Empleado, clientes: Cliente[], j: JWT) => {
+        const { data, error } = await AddVenta(pagoCliente, productosEnCarrito, emp, clientes, j);
+
+        if (!error) {
+            setFecha(data.createdAt);
+            setQrImage(await GenerateQrBase64(data._id));
+        }
+        else {
+            setFecha(undefined);
+            setQrImage(undefined);
+            notifyError("Error al realizar la venta");
+        }
+    }
+
     const precioTotal: number = PrecioTotalCarrito(props.productosEnCarrito);
     const precioTotalDescontado: number = AplicarDescuentos(props.productosEnCarrito, Number(dtoEfectivo), Number(dtoPorcentaje));
 
-    const pagoRapido = {
-        cliente: Clientes.find((c) => c.nombre === "General"),
-        cambio: 0,
-        pagoEnEfectivo: precioTotal,
-        pagoEnTarjeta: 0,
-        precioTotal: precioTotalDescontado,
-        dtoEfectivo: Number(dtoEfectivo),
-        dtoPorcentaje: Number(dtoPorcentaje),
-        tipo: TipoCobro.Rapido
-    } as CustomerPaymentInformation;
-
-    const pago = {
-        cliente: Clientes.find((c) => c.nombre === "General"),
-        cambio: precioTotalDescontado * -1,
-        pagoEnEfectivo: 0,
-        pagoEnTarjeta: 0,
-        precioTotal: precioTotalDescontado,
-        dtoEfectivo: Number(dtoEfectivo),
-        dtoPorcentaje: Number(dtoPorcentaje),
-        tipo: TipoCobro.Efectivo
-    } as CustomerPaymentInformation;
-
+    if (!PagoRapido?.cliente || !jwt) {
+        return (
+            <div className="h-full p-2">
+                <div className="bg-white rounded-3xl shadow h-full resize-x">
+                    Cargando...
+                </div>
+            </div >
+        )
+    }
 
     return (
         <div className="h-full p-2">
@@ -486,24 +569,38 @@ const SidebarDerecho = React.memo((props: {
                                             </div>
                                     }
                                 </div>
-
                                 {
                                     props.productosEnCarrito.length > 0 && !isNaN(precioTotal) &&
                                     <div className="grid grid-cols-1 gap-2 h-auto">
                                         <motion.button whileTap={{ scale: 0.9 }} className="bg-blue-500 h-12 shadow rounded-lg hover:shadow-lg hover:bg-blue-600 text-white focus:outline-none" onClick={(e) => { setPagarModal(true) }}>PAGAR</motion.button>
-                                        <motion.button whileTap={{ scale: 0.9 }} className="bg-blue-500 h-12 shadow rounded-lg hover:shadow-lg hover:bg-blue-600 text-white focus:outline-none" onClick={(e) => { setCobroModal(true) }}>COBRO RAPIDO</motion.button>
+                                        <motion.button whileTap={{ scale: 0.9 }} className="bg-blue-500 h-12 shadow rounded-lg hover:shadow-lg hover:bg-blue-600 text-white focus:outline-none"
+                                            onClick={async () => { await Vender(PagoRapido, props.productosEnCarrito, Empleado, Clientes, jwt); }}>
+                                            COBRO RAPIDO
+                                        </motion.button>
                                     </div>
                                 }
                             </div>
                         </div>
                 }
+                {
+                    qrImage && fecha &&
+                    <div style={{ display: "none" }}>
+                        <Ticket
+                            ref={componentRef}
+                            pagoCliente={PagoRapido}
+                            productosVendidos={props.productosEnCarrito}
+                            fecha={fecha}
+                            qrImage={qrImage}
+                        />
+                    </div>
+                }
+
                 {/* Modal aceptar compra */}
-                <AnimatePresence initial={false} exitBeforeEnter={true}>
-                    {showModalPagar && <ModalPagar productosComprados={props.productosEnCarrito} setProductosComprados={props.setProductosCarrito} PagoCliente={pago} handleModalOpen={setPagarModal} />}
-                    {showModalCobro && <Resumen pagoCliente={pagoRapido} handleOpen={setCobroModal} productosVendidos={props.productosEnCarrito} setProductosComprados={props.setProductosCarrito} />}
+                < AnimatePresence initial={false} exitBeforeEnter={true}>
+                    {showModalPagar && Pago && <ModalPagar PagoCliente={Pago} handleModalOpen={setPagarModal} AllClientes={Clientes} />}
                 </AnimatePresence>
             </div>
-        </div>
+        </div >
     );
 });
 

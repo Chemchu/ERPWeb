@@ -1,8 +1,11 @@
-import { motion } from "framer-motion";
+import { AnimatePresence, motion } from "framer-motion";
 import React, { useEffect, useState } from "react";
 import { Cliente } from "../../../tipos/Cliente";
 import { Venta } from "../../../tipos/Venta";
+import { FetchVenta, FetchVentas } from "../../../utils/fetches";
+import { notifyWarn } from "../../../utils/toastify";
 import { Paginador } from "../../Forms/paginador";
+import EditarVenta from "../../modal/editarVenta";
 import SkeletonCard from "../../Skeletons/skeletonCard";
 
 const variants = {
@@ -31,10 +34,20 @@ const SalesPage = (props: { ventas: Venta[], clientes: Cliente[] }) => {
     if (props.clientes == undefined) throw new Error("Props de clientes en ventasTabs.tsx es undefined");
 
     const [CurrentPage, setCurrentPage] = useState<number>(1);
+    const [CurrentVenta, setCurrentVenta] = useState<Venta>();
+    const [showModalEditarVenta, setShowModal] = useState<boolean>();
+    const [VentasFiltradas, setVentasFiltradas] = useState<Venta[] | undefined>();
+    const [filtro, setFiltro] = useState<string>("");
+
+    useEffect(() => {
+        if (!filtro) {
+            setVentasFiltradas(undefined);
+        }
+    }, [filtro])
+
 
     const elementsPerPage = 10;
     const numPages = props.ventas.length <= 0 ? 1 : Math.ceil(props.ventas.length / elementsPerPage);
-
     const arrayNum = [...Array(8)];
 
     const setPaginaActual = (page: number) => {
@@ -42,6 +55,13 @@ const SalesPage = (props: { ventas: Venta[], clientes: Cliente[] }) => {
         if (page > numPages) { return; }
 
         setCurrentPage(page);
+    }
+
+    const Filtrar = async (f: string) => {
+        if (f === "") { setVentasFiltradas(undefined); return; }
+        if (!f.match('^[0-9a-fA-F]{24}$')) { notifyWarn("Introduce un ID de venta válido"); return; }
+
+        setVentasFiltradas(await FetchVenta(f));
     }
 
     return (
@@ -53,12 +73,21 @@ const SalesPage = (props: { ventas: Venta[], clientes: Cliente[] }) => {
                     </h2>
                     <div className="text-end">
                         <form className="flex flex-col md:flex-row w-3/4 md:w-full max-w-sm md:space-x-3 space-y-3 md:space-y-0 justify-center">
-                            <div className=" relative ">
-                                <input type="text" id="&quot;form-subscribe-Filter" className=" rounded-lg border-transparent flex-1 appearance-none border border-gray-300 w-full py-2 px-4 bg-white text-gray-700 placeholder-gray-400 shadow-sm text-base focus:outline-none focus:ring-2 focus:ring-purple-600 focus:border-transparent" placeholder="Venta a buscar..." />
+                            <div className="relative">
+                                <input autoFocus={true} className="rounded-lg border-transparent flex-1 appearance-none border border-gray-300 w-full py-2 px-4 bg-white text-gray-700 placeholder-gray-400 shadow-sm text-base focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-transparent" placeholder="ID de la venta..."
+                                    onChange={(e) => { setFiltro(e.target.value); }} onKeyPress={async (e) => { }} />
                             </div>
-                            <button className="flex-shrink-0 px-4 py-2 text-base font-semibold text-white bg-blue-600 rounded-lg shadow-md hover:bg-purple-700 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:ring-offset-2 focus:ring-offset-purple-200" type="submit">
-                                Filtrar
-                            </button>
+                            {
+                                filtro ?
+                                    <button className="flex-shrink-0 px-4 py-2 text-base font-semibold text-white bg-blue-500 rounded-lg shadow-md hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-400 focus:ring-offset-2 focus:ring-offset-purple-200"
+                                        onClick={async (e) => { e.preventDefault(); await Filtrar(filtro) }}>
+                                        Filtrar
+                                    </button>
+                                    :
+                                    <button disabled className="flex-shrink-0 px-4 py-2 text-base font-semibold text-white bg-blue-300 rounded-lg shadow-md cursor-default">
+                                        Filtrar
+                                    </button>
+                            }
                         </form>
                     </div>
                 </div>
@@ -83,19 +112,32 @@ const SalesPage = (props: { ventas: Venta[], clientes: Cliente[] }) => {
                         props.ventas.length <= 0 ?
                             arrayNum.map((e, i) => <SkeletonCard key={`skeletonprops.ventas-${i}`} />)
                             :
-                            props.ventas.slice((elementsPerPage * (CurrentPage - 1)), CurrentPage * elementsPerPage).map((v) => {
-                                return (
-                                    <div key={`FilaProdTable${v._id}`}>
-                                        <FilaVenta key={`FilaVenta${v._id}`} venta={v} />
-                                    </div>
-                                );
-                            })
+                            VentasFiltradas && filtro ?
+                                VentasFiltradas.slice((elementsPerPage * (CurrentPage - 1)), CurrentPage * elementsPerPage).map((v) => {
+                                    return (
+                                        <div key={`FilaProdTable${v._id}`} onClick={() => { setCurrentVenta(v); setShowModal(true) }}>
+                                            <FilaVenta key={`FilaVenta${v._id}`} venta={v} />
+                                        </div>
+                                    );
+                                })
+                                :
+                                props.ventas.slice((elementsPerPage * (CurrentPage - 1)), CurrentPage * elementsPerPage).map((v) => {
+                                    return (
+                                        <div className="hover:bg-gray-200 cursor-pointer"
+                                            key={`FilaProdTable${v._id}`} onClick={() => { setCurrentVenta(v); setShowModal(true) }}>
+                                            <FilaVenta key={`FilaVenta${v._id}`} venta={v} />
+                                        </div>
+                                    );
+                                })
                     }
                 </div>
                 <div className="bg-white flex flex-row p-5 items-center justify-center rounded-b-xl shadow-lg">
                     <Paginador numPages={numPages} paginaActual={CurrentPage} maxPages={10} cambiarPaginaActual={setPaginaActual} />
                 </div>
             </div>
+            <AnimatePresence initial={false}>
+                {showModalEditarVenta && <EditarVenta venta={CurrentVenta} setModal={setShowModal} />}
+            </AnimatePresence>
         </motion.div>
     );
 }

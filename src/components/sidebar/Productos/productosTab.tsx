@@ -1,4 +1,4 @@
-import { motion } from "framer-motion";
+import { AnimatePresence, motion } from "framer-motion";
 import React, { useState } from "react";
 import { Producto } from "../../../tipos/Producto";
 import { CheckBox } from "../../Forms/checkbox";
@@ -201,7 +201,7 @@ const FilaProducto = (props: { listIndex: number, producto: Producto, selectedPr
                 </div>
                 <div className="flex pr-6 self-center border-gray-200 text-base">
                     <p className="text-gray-900 whitespace-no-wrap">
-                        {props.producto.precioVenta}€
+                        {props.producto.precioVenta.toFixed(2)}€
                     </p>
                 </div>
                 <div className="flex pr-6 self-center border-gray-200 text-sm">
@@ -220,7 +220,9 @@ const FilaProducto = (props: { listIndex: number, producto: Producto, selectedPr
                     </svg>
                 </button>
             </div>
-            {showModal && <EditarProducto handleClose={CloseModalProducto} product={props.producto} />}
+            <AnimatePresence>
+                {showModal && <EditarProducto handleClose={CloseModalProducto} product={props.producto} />}
+            </AnimatePresence>
         </div>
 
     );

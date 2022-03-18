@@ -16,11 +16,12 @@ const UploadFile = (props: { tipoDocumento: TipoDocumento }) => {
 
             const text = await f.text();
 
-            await fetch(`/api/${props.tipoDocumento}/${f.name}`, {
+            await fetch(`/api/${props.tipoDocumento}/file`, {
                 headers: { 'Content-Type': 'application/json' },
                 method: 'POST',
                 body: JSON.stringify(text)
             })
+
         }
         catch (e) {
             console.log(e);
