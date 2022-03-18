@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import UploadFile from "../../components/Forms/uploadFile";
-import useJwt from "../../hooks/jwt";
+import getJwt from "../../hooks/jwt";
 import DashboardLayout from "../../layout";
 import { TipoDocumento } from "../../tipos/Enums/TipoDocumentos";
 import { JWT } from "../../tipos/JWT";
@@ -11,7 +11,7 @@ const Home = () => {
 
   useEffect(() => {
     let unmounted = false;
-    setJwt(useJwt());
+    setJwt(getJwt());
 
     return () => {
       unmounted

@@ -2,7 +2,7 @@ import { useMutation } from "@apollo/client";
 import { motion } from "framer-motion";
 import Cookies from "js-cookie";
 import { useEffect, useState } from "react";
-import useJwt from "../../../hooks/jwt";
+import getJwt from "../../../hooks/jwt";
 import { JWT } from "../../../tipos/JWT";
 import { OCUPY_TPV } from "../../../utils/querys";
 import { ValidatePositiveFloatingNumber } from "../../../utils/validator";
@@ -54,7 +54,7 @@ const AbrirCaja = (props: { setShowModal: Function, setEmpleadoUsandoTPV: Functi
         }
 
         let isUnmounted = false;
-        setJwt(useJwt());
+        setJwt(getJwt());
         TpvsAbiertas().then(r => {
             if (!isUnmounted) {
                 setTpvs(r);

@@ -1,6 +1,6 @@
 import Cookies from "js-cookie";
 
-const useJwt = () => {
+const getJwt = () => {
     const authCookie = Cookies.get("authorization");
     if (!authCookie) { throw "Token de autorización inválido o inexistente"; }
     //if (!authCookie) { console.log("Token inexistente en este momento"); return undefined; }
@@ -12,4 +12,4 @@ const useJwt = () => {
     return jsonPayload;
 }
 
-export default useJwt;
+export default getJwt;

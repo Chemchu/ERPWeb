@@ -2,7 +2,7 @@ import { useMutation } from "@apollo/client";
 import { motion } from "framer-motion";
 import Cookies from "js-cookie";
 import { useEffect, useState } from "react";
-import useJwt from "../../../hooks/jwt";
+import getJwt from "../../../hooks/jwt";
 import { JWT } from "../../../tipos/JWT";
 import { TPVType } from "../../../tipos/TPV";
 import { Venta } from "../../../tipos/Venta";
@@ -78,7 +78,7 @@ export const CerrarCaja = (props: { setModalOpen: Function, setEmpleadoUsandoTPV
     });
 
     useEffect(() => {
-        setJwt(useJwt());
+        setJwt(getJwt());
     }, [])
 
     useEffect(() => {

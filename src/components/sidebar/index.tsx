@@ -243,4 +243,5 @@ const CollapsedSidebar = (props: { setCollapsed: Function }) => {
     );
 }
 
+Sidebar.displayName = 'Sidebar';
 export default Sidebar;

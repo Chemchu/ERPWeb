@@ -73,7 +73,9 @@ const Ticket = React.forwardRef((props: { pagoCliente: CustomerPaymentInformatio
     )
 });
 
-export default Ticket
+Ticket.displayName = 'Ticket';
+
+export default Ticket;
 
 
 const GenerarFilaProducto = (props: { numFila: number, nombreProducto: string, cantidad: number, precio: number }) => {

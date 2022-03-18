@@ -1,7 +1,7 @@
 import { useMutation } from "@apollo/client";
 import { motion } from "framer-motion";
 import { useEffect, useState } from "react";
-import useJwt from "../../../hooks/jwt";
+import getJwt from "../../../hooks/jwt";
 import useEmpleadoContext from "../../../context/empleadoContext";
 import { CustomerPaymentInformation } from "../../../tipos/CustomerPayment";
 import { ProductoVendido } from "../../../tipos/ProductoVendido";
@@ -46,7 +46,7 @@ export const Resumen = (props: {
     const [jwt, setJwt] = useState<JWT>();
 
     useEffect(() => {
-        setJwt(useJwt());
+        setJwt(getJwt());
     }, [])
 
     useEffect(() => {

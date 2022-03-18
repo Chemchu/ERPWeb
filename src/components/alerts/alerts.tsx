@@ -33,7 +33,7 @@ export const AlertInformationCard = (props: any) => {
             <div className="w-full h-full text-center">
                 <div className="flex h-full flex-col justify-between">
                     <svg className="h-12 w-12 mt-4 m-auto text-green-500" stroke="currentColor" fill="none" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 13l4 4L19 7">
                         </path>
                     </svg>
                     <p className="text-gray-600 dark:text-gray-100 text-md py-2 px-6">

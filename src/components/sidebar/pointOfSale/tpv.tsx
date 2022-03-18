@@ -5,7 +5,7 @@ import { CustomerPaymentInformation } from "../../../tipos/CustomerPayment";
 import { Producto } from "../../../tipos/Producto";
 import { TipoCobro } from "../../../tipos/Enums/TipoCobro";
 import { ProductoVendido } from "../../../tipos/ProductoVendido";
-import { ProductCard, ProductSelectedCard } from "./productCard";
+import ProductCard, { ProductSelectedCard } from "./productCard";
 import useProductEnCarritoContext from "../../../context/productosEnCarritoContext";
 import SkeletonProductCard from "../../Skeletons/skeletonProductCard";
 import ModalPagar from "../../modal/pagar";
@@ -13,7 +13,7 @@ import { AplicarDescuentos, PrecioTotalCarrito } from "../../../utils/preciosUti
 import { Cliente } from "../../../tipos/Cliente";
 import { AddVenta, FetchClientes, FetchEmpleado } from "../../../utils/fetches";
 import useEmpleadoContext from "../../../context/empleadoContext";
-import useJwt from "../../../hooks/jwt";
+import getJwt from "../../../hooks/jwt";
 import { JWT } from "../../../tipos/JWT";
 import { notifyError, notifySuccess } from "../../../utils/toastify";
 import { useReactToPrint } from "react-to-print";
@@ -28,7 +28,7 @@ const TPV = (props: { productos: Producto[], serverOperativo: boolean, empleadoU
     const [jwt, setJwt] = useState<JWT>();
 
     useEffect(() => {
-        setJwt(useJwt());
+        setJwt(getJwt());
     }, [])
 
     useEffect(() => {
@@ -316,7 +316,7 @@ const SidebarDerecho = React.memo((props: {
     useEffect(() => {
         let isUnmounted = false;
 
-        setJwt(useJwt());
+        setJwt(getJwt());
         FetchClientes().then((r) => {
             if (!isUnmounted) {
                 SetClientes(r)
@@ -604,6 +604,8 @@ const SidebarDerecho = React.memo((props: {
     );
 });
 
+SidebarDerecho.displayName = 'SidebarDerecho';
+
 const GenerarProductList = React.memo((props: { productosEnCarrito: ProductoVendido[], setPropiedadProducto: Function }) => {
     return (
         <>
@@ -617,5 +619,7 @@ const GenerarProductList = React.memo((props: { productosEnCarrito: ProductoVend
         </>
     );
 });
+
+GenerarProductList.displayName = 'GenerarProductList';
 
 export default TPV;
