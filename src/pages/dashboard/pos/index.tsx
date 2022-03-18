@@ -7,7 +7,7 @@ import AbrirCaja from "../../../components/modal/abrirCaja";
 import { FetchProductos } from "../../../utils/fetches";
 import CerrarCaja from "../../../components/modal/cerrarCaja";
 import { JWT } from "../../../tipos/JWT";
-import useJwt from "../../../hooks/jwt";
+import getJwt from "../../../hooks/jwt";
 
 
 const PuntoDeVenta = () => {
@@ -23,7 +23,7 @@ const PuntoDeVenta = () => {
             SetProductos(await FetchProductos());
         }
 
-        setJwt(useJwt());
+        setJwt(getJwt());
         GetProd();
     }, []);
 

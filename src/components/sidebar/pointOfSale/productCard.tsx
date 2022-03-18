@@ -5,7 +5,7 @@ import { ProductoVendido } from '../../../tipos/ProductoVendido';
 import { ValidatePositiveFloatingNumber } from '../../../utils/validator';
 
 
-export const ProductCard = React.memo((props: { Prod: Producto }) => {
+const ProductCard = React.memo((props: { Prod: Producto }) => {
     return (
         <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.9 }}
             className="flex flex-col shadow-lg h-40 w-full rounded-xl p-2 mx-1 my-3 cursor-pointer border 
@@ -17,6 +17,9 @@ export const ProductCard = React.memo((props: { Prod: Producto }) => {
         </motion.div>
     );
 });
+
+ProductCard.displayName = 'ProductCard';
+export default ProductCard;
 
 export const ProductSelectedCard = React.memo((props: { producto: ProductoVendido, setPropiedadProd: Function }) => {
     const [isOpen, setOpen] = useState<boolean>(false);
@@ -111,3 +114,5 @@ export const ProductSelectedCard = React.memo((props: { producto: ProductoVendid
         </div >
     );
 });
+
+ProductSelectedCard.displayName = 'ProductSelectedCard';

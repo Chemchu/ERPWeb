@@ -3,7 +3,7 @@ import React, { useEffect, useRef, useState } from "react";
 import { useReactToPrint } from "react-to-print";
 import useEmpleadoContext from "../../../context/empleadoContext";
 import useProductEnCarritoContext from "../../../context/productosEnCarritoContext";
-import useJwt from "../../../hooks/jwt";
+import getJwt from "../../../hooks/jwt";
 import { Cliente } from "../../../tipos/Cliente";
 import { CustomerPaymentInformation } from "../../../tipos/CustomerPayment";
 import { TipoCobro } from "../../../tipos/Enums/TipoCobro";
@@ -63,7 +63,7 @@ export const ModalPagar = (props: { PagoCliente: CustomerPaymentInformation, han
 
     useEffect(() => {
         let isUnmounted = false;
-        setJwt(useJwt());
+        setJwt(getJwt());
         if (props.AllClientes) {
             SetClientes(props.AllClientes);
             setServerStatus(true);
