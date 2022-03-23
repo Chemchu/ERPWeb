@@ -7,6 +7,7 @@ import { JWT } from "../../../tipos/JWT";
 import { OCUPY_TPV } from "../../../utils/querys";
 import { ValidatePositiveFloatingNumber } from "../../../utils/validator";
 import Dropdown from "../../Forms/dropdown";
+import Droplist from "../../Forms/droplist";
 import { Backdrop } from "../backdrop";
 
 const In = {
@@ -112,8 +113,9 @@ const AbrirCaja = (props: { setShowModal: Function, setEmpleadoUsandoTPV: Functi
                             <div className="self-center ">
                                 Selecciona la TPV
                             </div>
-                            <div className="self-center justify-end">
-                                <Dropdown selectedElemento={tpvs ? tpvs.values().next().value : "Cargando..."} elementos={Array.from(tpvs.values())} setElemento={setCurrentTpv} />
+                            <div className="w-full self-center justify-end">
+                                {/* <Dropdown selectedElemento={tpvs ? tpvs.values().next().value : "Cargando..."} elementos={Array.from(tpvs.values())} setElemento={setCurrentTpv} /> */}
+                                <Droplist selectedElemento={tpvs ? tpvs.values().next().value : "Cargando..."} elementos={Array.from(tpvs.values())} setElemento={setCurrentTpv} />
                             </div>
                         </div>
 
@@ -123,7 +125,7 @@ const AbrirCaja = (props: { setShowModal: Function, setEmpleadoUsandoTPV: Functi
                             </div>
                             <div className="flex gap-2 self-center justify-end ml-auto">
                                 <input type="text" inputMode="numeric" name="cajaInicial" id="cajaInicial" placeholder=" Por ejemplo 350.50"
-                                    className="text-right border border-gray-500 rounded-md justify-self-end w-60 appearance-none outline-blue-500"
+                                    className="text-right border border-gray-500 rounded-md justify-self-end w-60  outline-blue-500 "
                                     onChange={(e) => { setCajaInicial(ValidatePositiveFloatingNumber(e.target.value)) }} value={cajaInicial} />
                                 €
 

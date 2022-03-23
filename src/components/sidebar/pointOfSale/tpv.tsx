@@ -298,6 +298,7 @@ const SidebarDerecho = React.memo((props: {
     setProductosCarrito: React.Dispatch<React.SetStateAction<ProductoVendido[]>>, empleadoUsandoTPV: boolean,
     setShowModalCerrar: Function, setShowModalAbrir: Function
 }) => {
+    const { Empleado } = useEmpleadoContext();
     const [descuentoOpen, setDescuentoPupup] = useState<boolean>(false);
     const [dtoEfectivo, setDtoEfectivo] = useState<string>("0");
     const [dtoPorcentaje, setDtoPorcentaje] = useState<string>("0");
@@ -305,7 +306,6 @@ const SidebarDerecho = React.memo((props: {
     const [showModalPagar, setPagarModal] = useState(false);
     const [PagoRapido, setPagoRapido] = useState<CustomerPaymentInformation>();
     const [Pago, setPago] = useState<CustomerPaymentInformation>();
-    const { Empleado } = useEmpleadoContext();
     const [qrImage, setQrImage] = useState<string>();
     const [fecha, setFecha] = useState<string>();
 
@@ -441,10 +441,19 @@ const SidebarDerecho = React.memo((props: {
     if (!PagoRapido?.cliente || !jwt) {
         return (
             <div className="h-full p-2">
-                <div className="bg-white rounded-3xl shadow h-full resize-x">
-                    Cargando...
+                <div className="bg-white rounded-3xl shadow h-full">
+                    <div className="flex flex-col gap-2 h-full justify-center opacity-25">
+                        <div className="flex justify-center animate-bounce">
+                            <svg xmlns="http://www.w3.org/2000/svg" className="h-10 w-10" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                                <path strokeLinecap="round" strokeLinejoin="round" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
+                            </svg>
+                        </div>
+                        <p className="text-center">
+                            CARGANDO...
+                        </p>
+                    </div>
                 </div>
-            </div >
+            </div>
         )
     }
 
@@ -455,15 +464,16 @@ const SidebarDerecho = React.memo((props: {
                 {
                     props.productosEnCarrito.length <= 0 ?
                         <div className="grid grid-rows-2 grid-cols-1 h-full">
-                            <div className="grid grid-rows-2 grid-cols-1 justify-items-center justify-self-center opacity-25 self-end">
-                                <svg xmlns="http://www.w3.org/2000/svg" className="h-16" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z" />
-                                </svg>
+                            <div className="flex flex-col gap-2 justify-items-center justify-self-center opacity-25 self-end">
+                                <div className="flex justify-center animate-bounce">
+                                    <svg xmlns="http://www.w3.org/2000/svg" className="h-16" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z" />
+                                    </svg>
+                                </div>
                                 <p className="self-center">
                                     CARRITO VACÍO
                                 </p>
                             </div>
-
                             {
                                 props.empleadoUsandoTPV ?
                                     <button className="flex gap-2 justify-center self-end pb-4" onClick={() => { props.setShowModalCerrar(true) }}>

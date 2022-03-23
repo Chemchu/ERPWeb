@@ -1,6 +1,6 @@
 import { gql } from "@apollo/client";
 import { NextApiRequest, NextApiResponse } from "next";
-import { QUERY_SALES } from "../../../utils/querys";
+import { ADD_SALE, QUERY_SALES } from "../../../utils/querys";
 import GQLFetcher from "../../../utils/serverFetcher";
 
 const handler = async (req: NextApiRequest, res: NextApiResponse) => {
@@ -10,22 +10,78 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
     // }
 
     try {
-        const body = req.body;
-        const fetchResult = await GQLFetcher.query(
+
+        switch (req.method) {
+            case 'GET':
+                return await GetSales(req, res);
+
+            case 'POST':
+                return await AddSale(req, res);
+
+            default:
+                res.setHeader('Allow', ['GET', 'POST']);
+                res.status(405).end(`Method ${req.method} Not Allowed`);
+        }
+
+    }
+    catch (err) {
+        console.log(err);
+        return res.status(500).json({ message: `Error: ${err}` });
+    }
+}
+
+const GetSales = async (req: NextApiRequest, res: NextApiResponse) => {
+    const fetchResult = await GQLFetcher.query(
+        {
+            query: QUERY_SALES,
+            variables: {
+                "limit": 3000,
+            }
+        }
+    );
+
+    if (fetchResult) {
+        let vParsed = fetchResult.data.ventas;
+        return res.status(200).json({ message: `Lista de clientes encontrada`, data: JSON.stringify(vParsed) });
+    }
+
+    return res.status(300).json({ message: `Fallo al pedir la lista de clientes` });
+}
+
+const AddSale = async (req: NextApiRequest, res: NextApiResponse) => {
+    try {
+        const productosEnCarrito = req.body.productosEnCarrito;
+        const pagoCliente = req.body.pagoCliente;
+        const cliente = req.body.cliente;
+        const empleado = req.body.empleado;
+        const jwt = req.body.jwt;
+
+        const fetchResult = await GQLFetcher.mutate(
             {
-                query: QUERY_SALES,
+                mutation: ADD_SALE,
                 variables: {
-                    "limit": body.limit,
+                    "fields": {
+                        "productos": productosEnCarrito,
+                        "dineroEntregadoEfectivo": Number(pagoCliente.pagoEnEfectivo.toFixed(2)),
+                        "dineroEntregadoTarjeta": Number(pagoCliente.pagoEnTarjeta.toFixed(2)),
+                        "precioVentaTotal": Number(pagoCliente.precioTotal.toFixed(2)),
+                        "tipo": pagoCliente.tipo,
+                        "cambio": Number(pagoCliente.cambio.toFixed(2)),
+                        "cliente": cliente,
+                        "vendidoPor": empleado,
+                        "modificadoPor": empleado,
+                        "descuentoEfectivo": Number(pagoCliente.dtoEfectivo.toFixed(2)) || 0,
+                        "descuentoPorcentaje": Number(pagoCliente.dtoPorcentaje.toFixed(2)) || 0,
+                        "tpv": jwt.TPV
+                    }
                 }
             }
         );
 
-        if (fetchResult) {
-            let vParsed = fetchResult.data.ventas;
-            return res.status(200).json({ message: `Lista de clientes encontrada`, data: JSON.stringify(vParsed) });
+        if (fetchResult.errors) {
+            return res.status(300).json({ message: `Fallo al buscar la venta` });
         }
-
-        return res.status(300).json({ message: `Fallo al pedir la lista de clientes` });
+        return res.status(200).json(fetchResult.data);
     }
     catch (err) {
         console.log(err);

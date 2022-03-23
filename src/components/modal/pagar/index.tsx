@@ -183,6 +183,8 @@ export const ModalPagar = (props: { PagoCliente: CustomerPaymentInformation, han
                                     <div className="flex flex-col justify-between mt-4 px-2 text-lg text-center">
                                         <label className="text-left">Seleccionar cliente</label>
                                         <Dropdown elementos={Clientes.map((c) => { return c.nombre })} selectedElemento={ClienteActual} setElemento={SetClienteActual} />
+
+                                        {/* <Dropwdown2 elementos={Clientes.map((c) => { return c.nombre })} selectedElemento={ClienteActual} setElemento={SetClienteActual} /> */}
                                     </div>
                                 </div>
                                 <div className="flex flex-col px-2 pt-6 justify-items-start w-full">

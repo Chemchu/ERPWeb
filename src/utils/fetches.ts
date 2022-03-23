@@ -65,8 +65,8 @@ export const FetchVentas = async (): Promise<Venta[]> => {
     try {
         const vRes = await fetch(`/api/ventas/`, {
             headers: { 'Content-type': 'application/json' },
-            method: 'POST',
-            body: JSON.stringify({ limit: 3000 })
+            method: 'GET',
+            //body: JSON.stringify({ limit: 3000 })
         });
 
         const ventas = await vRes.json();
@@ -101,7 +101,7 @@ export const AddVenta = async (pagoCliente: CustomerPaymentInformation, producto
             cliente = pagoCliente.cliente;
         }
 
-        const addventaRespone = await fetch(`/api/ventas/${productosEnCarrito.length}`, {
+        const addventaRespone = await fetch(`/api/ventas/`, {
             headers: {
                 'Accept': 'application/json',
                 'Content-Type': 'application/json'

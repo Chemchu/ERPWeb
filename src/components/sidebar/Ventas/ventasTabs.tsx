@@ -65,7 +65,7 @@ const SalesPage = (props: { ventas: Venta[], clientes: Cliente[] }) => {
     }
 
     return (
-        <motion.div className="flex flex-col h-screen antialiased mx-8 py-8" initial={variants.initial} animate={variants.animate} exit={variants.exit}>
+        <motion.div className="flex flex-col h-full w-full antialiased m-2" initial={variants.initial} animate={variants.animate} exit={variants.exit}>
             <div className="text-center">
                 <div className="flex mb-1 sm:mb-0 justify-between w-full">
                     <h2 className="text-2xl leading-tight">
@@ -92,7 +92,7 @@ const SalesPage = (props: { ventas: Venta[], clientes: Cliente[] }) => {
                     </div>
                 </div>
             </div>
-            <div className="flex flex-col h-full mt-4 pb-10">
+            <div className="flex flex-col h-full w-full mt-4 pb-10">
                 <div className="bg-white grid grid-cols-4 justify-evenly  border-b-2 rounded-t-xl ">
                     <div className="px-5 py-3 border-gray-200 text-gray-800 text-left text-sm font-semibold">
                         Cliente
