@@ -2,14 +2,14 @@ import { AnimatePresence } from "framer-motion";
 import React, { useEffect, useState } from "react";
 import { Cliente } from "../../../tipos/Cliente";
 import { Venta } from "../../../tipos/Venta";
-import { FetchVenta, FetchVentas } from "../../../utils/fetches";
+import { FetchVenta } from "../../../utils/fetches";
 import { notifyWarn } from "../../../utils/toastify";
 import DateRange from "../../Forms/dateRange";
 import { Paginador } from "../../Forms/paginador";
 import EditarVenta from "../../modal/editarVenta";
 import SkeletonCard from "../../Skeletons/skeletonCard";
 
-const SalesPage = (props: { ventas: Venta[], clientes: Cliente[] }) => {
+const ReembolsoPage = (props: { ventas: Venta[], clientes: Cliente[] }) => {
     if (props.ventas == undefined) throw new Error("Props de ventas en ventasTabs.tsx es undefined");
     if (props.clientes == undefined) throw new Error("Props de clientes en ventasTabs.tsx es undefined");
 
@@ -50,7 +50,7 @@ const SalesPage = (props: { ventas: Venta[], clientes: Cliente[] }) => {
                 <DateRange />
 
                 <div className="flex gap-2">
-                    <input autoFocus={true} className="rounded-lg border appearance-none shadow-lg w-72 xl:w-96 h-full py-2 px-4 bg-white text-gray-700 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-600" placeholder="ID de la venta..."
+                    <input autoFocus={true} className="rounded-lg border appearance-none shadow-lg w-72 xl:w-96 h-full py-2 px-4 bg-white text-gray-700 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-600" placeholder="ID del reembolso..."
                         onChange={(e) => { setFiltro(e.target.value); }} onKeyPress={async (e) => { }} />
 
                     {
@@ -74,10 +74,10 @@ const SalesPage = (props: { ventas: Venta[], clientes: Cliente[] }) => {
                     Fecha de compra
                 </div>
                 <div className="py-3 border-gray-200 text-gray-800 text-left text-sm font-semibold">
-                    Método de pago
+                    Fecha de reembolso
                 </div>
                 <div className="py-3 border-gray-200 text-gray-800 text-left text-sm font-semibold">
-                    Valor total
+                    Total devuelto
                 </div>
             </div>
             <div className="h-full w-full pb-4 border overflow-y-scroll">
@@ -125,22 +125,22 @@ const FilaVenta = (props: { venta: Venta }) => {
     return (
         <div className="grid grid-cols-4 w-full justify-evenly gap-x-6 border-t">
             <div className="px-5 py-3 border-gray-200 text-sm">
-                <p>
+                <p className="text-gray-900">
                     {props.venta.cliente.nombre}
                 </p>
             </div>
             <div className="py-3 border-gray-200 text-sm">
-                <p className="whitespace-no-wrap">
+                <p className="text-gray-900 whitespace-no-wrap">
                     {fecha.toLocaleString()}
                 </p>
             </div>
             <div className="py-3 border-gray-200 text-sm">
-                <p className="whitespace-no-wrap">
+                <p className="text-gray-900 whitespace-no-wrap">
                     {props.venta.tipo}
                 </p>
             </div>
             <div className="py-3 border-gray-200 text-lg">
-                <p className="whitespace-no-wrap">
+                <p className="text-gray-900 whitespace-no-wrap">
                     {props.venta.precioVentaTotal.toFixed(2)}€
                 </p>
             </div>
@@ -148,4 +148,4 @@ const FilaVenta = (props: { venta: Venta }) => {
     );
 }
 
-export default SalesPage;
+export default ReembolsoPage;

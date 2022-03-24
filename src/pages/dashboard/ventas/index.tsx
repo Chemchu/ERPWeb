@@ -1,5 +1,6 @@
 import { Tab } from '@headlessui/react';
 import { useEffect, useState } from 'react';
+import ReembolsoPage from '../../../components/sidebar/Ventas/reembolsoTab';
 import SalesPage from '../../../components/sidebar/Ventas/ventasTabs'
 import DashboardLayout from '../../../layout';
 import { Cliente } from '../../../tipos/Cliente';
@@ -20,7 +21,7 @@ const Ventas = () => {
 
     return (
         <Tab.Group as="div" className="flex flex-col w-full h-full pt-3">
-            <Tab.List className="flex gap-2 h-10">
+            <Tab.List className="flex gap-1 h-10">
                 <Tab
                     key={"Ventas"}
                     className={({ selected }) =>
@@ -33,7 +34,9 @@ const Ventas = () => {
                         )
                     }
                 >
-                    {"Ventas"}
+                    <span className='text-xl'>
+                        Ventas
+                    </span>
                 </Tab>
                 <Tab
                     key={"Reembolsos"}
@@ -47,7 +50,9 @@ const Ventas = () => {
                         )
                     }
                 >
-                    {"Reembolsos"}
+                    <span className='text-xl'>
+                        Reembolsos
+                    </span>
                 </Tab>
             </Tab.List>
             <Tab.Panels className="flex flex-col h-90v w-full pr-2">
@@ -64,11 +69,11 @@ const Ventas = () => {
                 <Tab.Panel
                     key={"Reembolsos"}
                     className={classNames(
-                        'bg-white rounded-2xl p-2 h-full w-full',
-                        'focus:outline-none focus:ring-2 ring-offset-2 ring-offset-blue-400 ring-white ring-opacity-60'
+                        'pb-3 h-full w-full',
+                        'focus:outline-none ring-white ring-opacity-60'
                     )}
                 >
-                    Reembolsos Page
+                    <ReembolsoPage ventas={Ventas} clientes={Clientes} />
                 </Tab.Panel>
             </Tab.Panels>
         </Tab.Group >
