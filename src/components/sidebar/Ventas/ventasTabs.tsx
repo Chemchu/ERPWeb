@@ -1,4 +1,4 @@
-import { AnimatePresence, motion } from "framer-motion";
+import { AnimatePresence } from "framer-motion";
 import React, { useEffect, useState } from "react";
 import { Cliente } from "../../../tipos/Cliente";
 import { Venta } from "../../../tipos/Venta";
@@ -65,35 +65,25 @@ const SalesPage = (props: { ventas: Venta[], clientes: Cliente[] }) => {
     }
 
     return (
-        <motion.div className="flex flex-col h-full w-full antialiased m-2" initial={variants.initial} animate={variants.animate} exit={variants.exit}>
-            <div className="text-center">
-                <div className="flex mb-1 sm:mb-0 justify-between w-full">
-                    <h2 className="text-2xl leading-tight">
-                        Ventas
-                    </h2>
-                    <div className="text-end">
-                        <form className="flex flex-col md:flex-row w-3/4 md:w-full max-w-sm md:space-x-3 space-y-3 md:space-y-0 justify-center">
-                            <div className="relative">
-                                <input autoFocus={true} className="rounded-lg border-transparent flex-1 appearance-none border border-gray-300 w-full py-2 px-4 bg-white text-gray-700 placeholder-gray-400 shadow-sm text-base focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-transparent" placeholder="ID de la venta..."
-                                    onChange={(e) => { setFiltro(e.target.value); }} onKeyPress={async (e) => { }} />
-                            </div>
-                            {
-                                filtro ?
-                                    <button className="flex-shrink-0 px-4 py-2 text-base font-semibold text-white bg-blue-500 rounded-lg shadow-md hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-400 focus:ring-offset-2 focus:ring-offset-purple-200"
-                                        onClick={async (e) => { e.preventDefault(); await Filtrar(filtro) }}>
-                                        Filtrar
-                                    </button>
-                                    :
-                                    <button disabled className="flex-shrink-0 px-4 py-2 text-base font-semibold text-white bg-blue-300 rounded-lg shadow-md cursor-default">
-                                        Filtrar
-                                    </button>
-                            }
-                        </form>
-                    </div>
-                </div>
+        <div className="flex flex-col h-96 w-full bg-white rounded-b-2xl rounded-r-2xl p-4 shadow-lg border-x">
+            <div className="flex gap-4 h-1/3 w-5/12 self-end">
+                <input autoFocus={true} className="rounded-lg border-transparent appearance-none shadow-lg w-full h-full py-2 px-4 bg-white text-gray-700 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-600" placeholder="ID de la venta..."
+                    onChange={(e) => { setFiltro(e.target.value); }} onKeyPress={async (e) => { }} />
+
+                {
+                    filtro ?
+                        <button className="px-4 py-2 font-semibold text-white bg-blue-500 rounded-lg shadow-md hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-400 focus:ring-offset-2 focus:ring-offset-purple-200"
+                            onClick={async (e) => { e.preventDefault(); await Filtrar(filtro) }}>
+                            Filtrar
+                        </button>
+                        :
+                        <button disabled className="px-4 py-2 font-semibold text-white bg-blue-300 rounded-lg shadow-md cursor-default">
+                            Filtrar
+                        </button>
+                }
             </div>
-            <div className="flex flex-col h-full w-full mt-4 pb-10">
-                <div className="bg-white grid grid-cols-4 justify-evenly  border-b-2 rounded-t-xl ">
+            <div className="bg-red-500 flex flex-col h-full w-full mt-4 pb-10">
+                <div className="bg-white grid grid-cols-4 justify-evenly">
                     <div className="px-5 py-3 border-gray-200 text-gray-800 text-left text-sm font-semibold">
                         Cliente
                     </div>
@@ -107,7 +97,7 @@ const SalesPage = (props: { ventas: Venta[], clientes: Cliente[] }) => {
                         Valor total
                     </div>
                 </div>
-                <div className="bg-white flex flex-col border-b-4 overflow-scroll overflow-x-hidden">
+                <div className="bg-cyan-500 flex flex-col grow-0 overflow-scroll overflow-x-hidden">
                     {
                         props.ventas.length <= 0 ?
                             arrayNum.map((e, i) => <SkeletonCard key={`skeletonprops.ventas-${i}`} />)
@@ -131,14 +121,14 @@ const SalesPage = (props: { ventas: Venta[], clientes: Cliente[] }) => {
                                 })
                     }
                 </div>
-                <div className="bg-white flex flex-row p-5 items-center justify-center rounded-b-xl shadow-lg">
-                    <Paginador numPages={numPages} paginaActual={CurrentPage} maxPages={10} cambiarPaginaActual={setPaginaActual} />
-                </div>
+            </div>
+            <div className="flex flex-row pt-2 items-center justify-center">
+                <Paginador numPages={numPages} paginaActual={CurrentPage} maxPages={10} cambiarPaginaActual={setPaginaActual} />
             </div>
             <AnimatePresence initial={false}>
                 {showModalEditarVenta && <EditarVenta venta={CurrentVenta} setModal={setShowModal} />}
             </AnimatePresence>
-        </motion.div>
+        </div>
     );
 }
 

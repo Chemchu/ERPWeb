@@ -19,17 +19,17 @@ const Ventas = () => {
     }, []);
 
     return (
-        <Tab.Group as="div" className="h-screen w-full bg-red-500 p-2">
-            <Tab.List className="flex p-1 rounded-2xl">
+        <Tab.Group as="div" className="flex flex-col w-full h-screen pt-3">
+            <Tab.List className="flex gap-2">
                 <Tab
                     key={"Ventas"}
                     className={({ selected }) =>
                         classNames(
-                            'w-full py-2 text-sm leading-5 font-medium rounded-lg',
-                            'focus:outline-none focus:ring-2 ring-offset-2 ring-offset-blue-400 ring-white ring-opacity-60',
+                            'w-1/4 h-10 text-sm rounded-t-2xl border-t border-x',
+                            'focus:outline-none ring-white ring-opacity-60',
                             selected
-                                ? 'bg-white shadow-md'
-                                : ' hover:bg-blue-300 hover:text-white'
+                                ? 'bg-white shadow-lg'
+                                : 'bg-gray-200 hover:bg-blue-400 hover:text-white'
                         )
                     }
                 >
@@ -39,23 +39,23 @@ const Ventas = () => {
                     key={"Reembolsos"}
                     className={({ selected }) =>
                         classNames(
-                            'w-full text-sm leading-5 font-medium rounded-lg',
-                            'focus:outline-none focus:ring-2 ring-offset-2 ring-offset-blue-400 ring-white ring-opacity-60',
+                            'w-1/4 h-10 text-sm rounded-t-2xl border-t border-x',
+                            'focus:outline-none  ring-white ring-opacity-60',
                             selected
                                 ? 'bg-white shadow-md'
-                                : 'hover:bg-blue-300 hover:text-white'
+                                : 'bg-gray-200 hover:bg-blue-400 hover:text-white'
                         )
                     }
                 >
                     {"Reembolsos"}
                 </Tab>
             </Tab.List>
-            <Tab.Panels className="flex flex-col h-full w-full p-2 bg-blue-500">
+            <Tab.Panels className="flex flex-col h-full w-full pr-2">
                 <Tab.Panel
                     key={"Ventas"}
                     className={classNames(
-                        'bg-white rounded-2xl p-3 shadow-md',
-                        'focus:outline-none focus:ring-2 ring-offset-2 ring-offset-blue-400 ring-white ring-opacity-60'
+                        'pb-3  h-full w-full',
+                        'focus:outline-none ring-white ring-opacity-60'
                     )}
                 >
                     <SalesPage ventas={Ventas} clientes={Clientes} />
@@ -64,7 +64,7 @@ const Ventas = () => {
                 <Tab.Panel
                     key={"Reembolsos"}
                     className={classNames(
-                        'bg-white rounded-2xl p-3 shadow-md',
+                        'bg-white rounded-2xl p-2 h-full w-full',
                         'focus:outline-none focus:ring-2 ring-offset-2 ring-offset-blue-400 ring-white ring-opacity-60'
                     )}
                 >

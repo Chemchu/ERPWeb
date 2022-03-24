@@ -6,7 +6,6 @@ const SkeletonCard = () => {
                 <div className="w-full h-8 bg-gray-300 rounded-lg" />
             </div>
         </div>
-
     );
 }
 
