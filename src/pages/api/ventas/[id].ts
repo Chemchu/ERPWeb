@@ -1,6 +1,7 @@
 import { NextApiRequest, NextApiResponse } from "next"
-import { ADD_SALE, QUERY_SALE } from "../../../utils/querys";
+import { QUERY_SALE, QUERY_SALES } from "../../../utils/querys";
 import GQLFetcher from "../../../utils/serverFetcher";
+import queryString from 'query-string';
 
 const handler = async (req: NextApiRequest, res: NextApiResponse) => {
     // const session = await getSession({ req })
@@ -20,19 +21,37 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
 
 const GetSale = async (req: NextApiRequest, res: NextApiResponse) => {
     try {
-        const fetchResult = await GQLFetcher.query(
-            {
-                query: QUERY_SALE,
-                variables: {
-                    "id": req.query.id
-                }
-            }
-        );
+        const query = queryString.parse(req.query.id.toString());
+        let fetchResult;
 
-        if (fetchResult.error) {
-            return res.status(300).json({ message: `Fallo al buscar la venta` });
+        if (query.id) {
+            fetchResult = await GQLFetcher.query(
+                {
+                    query: QUERY_SALE,
+                    variables: {
+                        "id": query.id
+                    }
+                }
+            );
         }
-        return res.status(200).json({ data: fetchResult.data });
+        if (query.fechaInicial && query.fechaFinal) {
+            fetchResult = await GQLFetcher.query(
+                {
+                    query: QUERY_SALES,
+                    variables: {
+                        "find": {
+                            "fechaInicial": query.fechaInicial,
+                            "fechaFinal": query.fechaFinal
+                        }
+                    }
+                }
+            );
+        }
+
+        if (!fetchResult?.error) {
+            return res.status(200).json({ data: fetchResult?.data });
+        }
+        return res.status(300).json({ message: `Fallo al buscar la venta` });
     }
     catch (err) {
         console.log(err);

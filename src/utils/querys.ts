@@ -137,6 +137,7 @@ export const QUERY_SALE = gql`
             email
         }
         tipo
+        tpv
         descuentoEfectivo
         descuentoPorcentaje
         updatedAt

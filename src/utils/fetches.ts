@@ -7,6 +7,7 @@ import { Producto } from "../tipos/Producto";
 import { ProductoVendido } from "../tipos/ProductoVendido";
 import { Venta } from "../tipos/Venta";
 import { CreateCierreList, CreateClientList, CreateEmployee, CreateProductList, CreateSalesList, CreateTPV } from "./typeCreator";
+import queryString from 'query-string';
 
 export const FetchProductos = async (): Promise<Producto[]> => {
     try {
@@ -78,9 +79,35 @@ export const FetchVentas = async (): Promise<Venta[]> => {
     }
 }
 
+export const FetchVentasByDateRange = async (fechaIni: Date, fechaFin: Date): Promise<Venta[]> => {
+    try {
+        let fechas: any = new Object;
+        fechas.fechaInicial = fechaIni.valueOf();
+        fechas.fechaFinal = fechaFin.valueOf();
+
+        const f = queryString.stringify(fechas);
+
+        const vRes = await fetch(`/api/ventas/${f}`, {
+            headers: { 'Content-type': 'application/json' },
+            method: 'GET',
+        });
+
+        const ventas = await vRes.json();
+        return CreateSalesList(ventas.data.ventas);
+    }
+    catch (e) {
+        console.log(e);
+        return [];
+    }
+}
+
 export const FetchVenta = async (id: string): Promise<Venta[]> => {
     try {
-        const vRes = await fetch(`/api/ventas/${id}`);
+        let query: any = new Object;
+        query.id = id;
+        const idVenta = queryString.stringify(query);
+
+        const vRes = await fetch(`/api/ventas/${idVenta}`);
 
         const ventas = await vRes.json();
         return CreateSalesList([ventas.data.venta]);
@@ -134,7 +161,7 @@ export const FetchEmpleado = async (_id: string): Promise<Empleado> => {
     return CreateEmployee(empleadoJson.empleado);
 }
 
-export const FetchSalesByTPV = async (TPV: string): Promise<Venta[]> => {
+export const FetchVentasByTPV = async (TPV: string): Promise<Venta[]> => {
     if (!TPV) { throw "ID de la TPV no puede ser undefined"; }
 
     const fetchVentas = await fetch(`/api/ventas/tpv/${TPV}`);
@@ -143,7 +170,7 @@ export const FetchSalesByTPV = async (TPV: string): Promise<Venta[]> => {
     return CreateSalesList(JSON.parse(ventasJson.ventas));
 }
 
-export const FetchSalesByTPVDate = async (TPV: string, fecha: string): Promise<Venta[]> => {
+export const FetchVentasByTPVDate = async (TPV: string, fecha: string): Promise<Venta[]> => {
     if (!TPV) { throw "ID de la TPV no puede ser undefined"; }
 
     const fetchVentasTPVPorFecha = await fetch(`/api/ventas/tpv/fecha/${TPV}/${fecha}`);

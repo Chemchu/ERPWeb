@@ -33,7 +33,7 @@ const In = {
     }
 }
 
-const EditarVenta = (props: { venta: Venta | undefined, setModal: Function }) => {
+const Reembolso = (props: { venta: Venta | undefined, setModal: Function }) => {
     const [tpv, setTpv] = useState<TPVType>();
     const componentRef = useRef(null);
     const [PagoDelCliente, setPago] = useState<CustomerPaymentInformation>();
@@ -54,25 +54,22 @@ const EditarVenta = (props: { venta: Venta | undefined, setModal: Function }) =>
                 return;
             }
 
-            try {
-                const pago = {
-                    cambio: props.venta.cambio,
-                    cliente: props.venta.cliente,
-                    dtoEfectivo: props.venta.descuentoEfectivo,
-                    dtoPorcentaje: props.venta.descuentoPorcentaje,
-                    pagoEnEfectivo: props.venta.dineroEntregadoEfectivo,
-                    pagoEnTarjeta: props.venta.dineroEntregadoTarjeta,
-                    precioTotal: props.venta.precioVentaTotal,
-                    tipo: props.venta.tipo
-                } as CustomerPaymentInformation
+            const pago = {
+                cambio: props.venta.cambio,
+                cliente: props.venta.cliente,
+                dtoEfectivo: props.venta.descuentoEfectivo,
+                dtoPorcentaje: props.venta.descuentoPorcentaje,
+                pagoEnEfectivo: props.venta.dineroEntregadoEfectivo,
+                pagoEnTarjeta: props.venta.dineroEntregadoTarjeta,
+                precioTotal: props.venta.precioVentaTotal,
+                tipo: props.venta.tipo
+            } as CustomerPaymentInformation
 
-                const tpvRes = await FetchTPV(props.venta.tpv);
-                const qr = await GenerateQrBase64(props.venta._id);
-                setQrImage(qr);
-                setTpv(tpvRes);
-                setPago(pago);
-            }
-            catch (e) { console.log(e) }
+            const tpvRes = await FetchTPV(props.venta.tpv);
+            const qr = await GenerateQrBase64(props.venta._id);
+            setQrImage(qr);
+            setTpv(tpvRes);
+            setPago(pago);
         }
         let isUnmounted = false;
         fetchData();
@@ -258,4 +255,4 @@ const GenerarFilaProducto = (props: { numFila: number, nombreProducto: string, c
     );
 }
 
-export default EditarVenta;
+export default Reembolso;

@@ -6,7 +6,7 @@ import { FetchVenta } from "../../../utils/fetches";
 import { notifyWarn } from "../../../utils/toastify";
 import DateRange from "../../Forms/dateRange";
 import { Paginador } from "../../Forms/paginador";
-import EditarVenta from "../../modal/editarVenta";
+import Reembolso from "../../modal/reembolso";
 import SkeletonCard from "../../Skeletons/skeletonCard";
 
 const ReembolsoPage = (props: { ventas: Venta[], clientes: Cliente[] }) => {
@@ -18,6 +18,8 @@ const ReembolsoPage = (props: { ventas: Venta[], clientes: Cliente[] }) => {
     const [showModalEditarVenta, setShowModal] = useState<boolean>();
     const [VentasFiltradas, setVentasFiltradas] = useState<Venta[] | undefined>();
     const [filtro, setFiltro] = useState<string>("");
+    const [dateRange, setDateRange] = useState([null, null]);
+    const [startDate, endDate] = dateRange;
 
     useEffect(() => {
         if (!filtro) {
@@ -47,7 +49,7 @@ const ReembolsoPage = (props: { ventas: Venta[], clientes: Cliente[] }) => {
     return (
         <div className="flex flex-col h-full w-full bg-white rounded-b-2xl rounded-r-2xl p-4 shadow-lg border-x">
             <div className="flex w-full pb-4 gap-10 justify-end">
-                <DateRange />
+                <DateRange dateRange={dateRange} setDateRange={setDateRange} endDate={endDate} startDate={startDate} />
 
                 <div className="flex gap-2">
                     <input autoFocus={true} className="rounded-lg border appearance-none shadow-lg w-72 xl:w-96 h-full py-2 px-4 bg-white text-gray-700 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-600" placeholder="ID del reembolso..."
@@ -77,7 +79,7 @@ const ReembolsoPage = (props: { ventas: Venta[], clientes: Cliente[] }) => {
                     Fecha de reembolso
                 </div>
                 <div className="py-3 border-gray-200 text-gray-800 text-left text-sm font-semibold">
-                    Total devuelto
+                    Dinero devuelto
                 </div>
             </div>
             <div className="h-full w-full pb-4 border overflow-y-scroll">
@@ -89,7 +91,7 @@ const ReembolsoPage = (props: { ventas: Venta[], clientes: Cliente[] }) => {
                             VentasFiltradas.slice((elementsPerPage * (CurrentPage - 1)), CurrentPage * elementsPerPage).map((v) => {
                                 return (
                                     <div key={`FilaProdTable${v._id}`} onClick={() => { setCurrentVenta(v); setShowModal(true) }}>
-                                        <FilaVenta key={`FilaVenta${v._id}`} venta={v} />
+                                        <FilaReembolso key={`FilaReembolso${v._id}`} venta={v} />
                                     </div>
                                 );
                             })
@@ -98,7 +100,7 @@ const ReembolsoPage = (props: { ventas: Venta[], clientes: Cliente[] }) => {
                                 return (
                                     <div className="hover:bg-gray-200 cursor-pointer"
                                         key={`FilaProdTable${v._id}`} onClick={() => { setCurrentVenta(v); setShowModal(true) }}>
-                                        <FilaVenta key={`FilaVenta${v._id}`} venta={v} />
+                                        <FilaReembolso key={`FilaReembolso${v._id}`} venta={v} />
                                     </div>
                                 );
                             })
@@ -110,7 +112,7 @@ const ReembolsoPage = (props: { ventas: Venta[], clientes: Cliente[] }) => {
             <AnimatePresence initial={false}>
                 {showModalEditarVenta &&
                     <div>
-                        <EditarVenta venta={CurrentVenta} setModal={setShowModal} />
+                        <Reembolso venta={CurrentVenta} setModal={setShowModal} />
                     </div>
                 }
             </AnimatePresence>
@@ -118,9 +120,9 @@ const ReembolsoPage = (props: { ventas: Venta[], clientes: Cliente[] }) => {
     );
 }
 
-const FilaVenta = (props: { venta: Venta }) => {
-    let fecha = new Date(0);
-    fecha.setUTCMilliseconds(Number(props.venta.createdAt));
+const FilaReembolso = (props: { venta: Venta }) => {
+    const fecha = new Date(Number(props.venta.createdAt));
+    const fechaReembolso = new Date(Number(props.venta.updatedAt));
 
     return (
         <div className="grid grid-cols-4 w-full justify-evenly gap-x-6 border-t">
@@ -136,11 +138,11 @@ const FilaVenta = (props: { venta: Venta }) => {
             </div>
             <div className="py-3 border-gray-200 text-sm">
                 <p className="text-gray-900 whitespace-no-wrap">
-                    {props.venta.tipo}
+                    {fechaReembolso.toLocaleString()}
                 </p>
             </div>
             <div className="py-3 border-gray-200 text-lg">
-                <p className="text-gray-900 whitespace-no-wrap">
+                <p className="text-red-500 whitespace-no-wrap">
                     {props.venta.precioVentaTotal.toFixed(2)}€
                 </p>
             </div>

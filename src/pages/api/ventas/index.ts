@@ -1,4 +1,3 @@
-import { gql } from "@apollo/client";
 import { NextApiRequest, NextApiResponse } from "next";
 import { ADD_SALE, QUERY_SALES } from "../../../utils/querys";
 import GQLFetcher from "../../../utils/serverFetcher";

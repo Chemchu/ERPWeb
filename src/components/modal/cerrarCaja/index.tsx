@@ -6,7 +6,7 @@ import getJwt from "../../../hooks/jwt";
 import { JWT } from "../../../tipos/JWT";
 import { TPVType } from "../../../tipos/TPV";
 import { Venta } from "../../../tipos/Venta";
-import { FetchSalesByTPVDate, FetchTPV } from "../../../utils/fetches";
+import { FetchVentasByTPVDate, FetchTPV } from "../../../utils/fetches";
 import { GetEfectivoTotal, GetTarjetaTotal, GetTotalEnCaja } from "../../../utils/preciosUtils";
 import { ADD_CIERRE } from "../../../utils/querys";
 import { ValidatePositiveFloatingNumber } from "../../../utils/validator";
@@ -84,7 +84,7 @@ export const CerrarCaja = (props: { setModalOpen: Function, setEmpleadoUsandoTPV
     useEffect(() => {
         const GetVentas = async (j: JWT) => {
             const tpv = await FetchTPV(j.TPV);
-            const ventas = await FetchSalesByTPVDate(j.TPV, tpv.updatedAt.toString());
+            const ventas = await FetchVentasByTPVDate(j.TPV, tpv.updatedAt.toString());
 
             setVentas(ventas);
             setTPV(tpv);

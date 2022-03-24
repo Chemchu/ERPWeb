@@ -48,14 +48,20 @@ const Ticket = React.forwardRef((props: { pagoCliente: CustomerPaymentInformatio
                 <div>
                     Precio total: {props.pagoCliente.precioTotal.toFixed(2)}€
                 </div>
+                {
+                    props.pagoCliente.pagoEnEfectivo > 0 &&
+                    <div>
+                        Pagado con efectivo: {props.pagoCliente.pagoEnEfectivo.toFixed(2)}€
+                    </div>
+                }
+                {
+                    props.pagoCliente.pagoEnTarjeta > 0 &&
+                    <div>
+                        Pagado con tarjeta: {props.pagoCliente.pagoEnTarjeta.toFixed(2)}€
+                    </div>
+                }
                 <div>
                     Cambio: {props.pagoCliente.cambio.toFixed(2)}€
-                </div>
-                <div>
-                    Pagado con efectivo: {props.pagoCliente.pagoEnEfectivo.toFixed(2)}€
-                </div>
-                <div>
-                    Pagado con tarjeta: {props.pagoCliente.pagoEnTarjeta.toFixed(2)}€
                 </div>
             </div>
             <div className="flex justify-center">

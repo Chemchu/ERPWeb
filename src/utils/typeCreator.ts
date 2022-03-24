@@ -156,14 +156,21 @@ export function CreateClientList(cList: any[]): Cliente[] {
 export function CreateSalesList(sList: any[]): Venta[] {
     if (sList === undefined) { return [] as Venta[]; }
 
-    let res: Venta[] = [];
-    sList.forEach((c: any) => {
-        const venta = CreateSale(c);
+    try {
+        let res: Venta[] = [];
+        sList.forEach((c: any) => {
+            const venta = CreateSale(c);
 
-        if (venta) res.push(venta);
-    });
+            if (venta) res.push(venta);
+        });
 
-    return res;
+        return res;
+    }
+    catch (e) {
+        console.log(e);
+        return []
+    }
+
 }
 
 export function CreateProductoVendidoList(pList: any[]): ProductoVendido[] {

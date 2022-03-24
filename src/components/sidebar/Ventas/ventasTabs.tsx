@@ -2,7 +2,7 @@ import { AnimatePresence } from "framer-motion";
 import React, { useEffect, useState } from "react";
 import { Cliente } from "../../../tipos/Cliente";
 import { Venta } from "../../../tipos/Venta";
-import { FetchVenta, FetchVentas } from "../../../utils/fetches";
+import { FetchVenta, FetchVentasByDateRange } from "../../../utils/fetches";
 import { notifyWarn } from "../../../utils/toastify";
 import DateRange from "../../Forms/dateRange";
 import { Paginador } from "../../Forms/paginador";
@@ -18,6 +18,8 @@ const SalesPage = (props: { ventas: Venta[], clientes: Cliente[] }) => {
     const [showModalEditarVenta, setShowModal] = useState<boolean>();
     const [VentasFiltradas, setVentasFiltradas] = useState<Venta[] | undefined>();
     const [filtro, setFiltro] = useState<string>("");
+    const [dateRange, setDateRange] = useState([null, null]);
+    const [startDate, endDate] = dateRange;
 
     useEffect(() => {
         if (!filtro) {
@@ -25,8 +27,20 @@ const SalesPage = (props: { ventas: Venta[], clientes: Cliente[] }) => {
         }
     }, [filtro])
 
+    useEffect(() => {
+        const GetVentasByDate = async () => {
+            if (dateRange[0] === null || dateRange[1] === null) {
+                setVentasFiltradas(undefined);
+                return;
+            }
+            setVentasFiltradas(await FetchVentasByDateRange(dateRange[0], dateRange[1]));
+        }
 
-    const elementsPerPage = 20;
+        GetVentasByDate();
+    }, [dateRange])
+
+
+    const elementsPerPage = 30;
     const numPages = props.ventas.length <= 0 ? 1 : Math.ceil(props.ventas.length / elementsPerPage);
     const arrayNum = [...Array(8)];
 
@@ -47,7 +61,7 @@ const SalesPage = (props: { ventas: Venta[], clientes: Cliente[] }) => {
     return (
         <div className="flex flex-col h-full w-full bg-white rounded-b-2xl rounded-r-2xl p-4 shadow-lg border-x">
             <div className="flex w-full pb-4 gap-10 justify-end">
-                <DateRange />
+                <DateRange dateRange={dateRange} setDateRange={setDateRange} endDate={endDate} startDate={startDate} />
 
                 <div className="flex gap-2">
                     <input autoFocus={true} className="rounded-lg border appearance-none shadow-lg w-72 xl:w-96 h-full py-2 px-4 bg-white text-gray-700 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-600" placeholder="ID de la venta..."
@@ -85,10 +99,10 @@ const SalesPage = (props: { ventas: Venta[], clientes: Cliente[] }) => {
                     props.ventas.length <= 0 ?
                         arrayNum.map((e, i) => <SkeletonCard key={`skeletonprops.ventas-${i}`} />)
                         :
-                        VentasFiltradas && filtro ?
+                        VentasFiltradas && (filtro || dateRange) ?
                             VentasFiltradas.slice((elementsPerPage * (CurrentPage - 1)), CurrentPage * elementsPerPage).map((v) => {
                                 return (
-                                    <div key={`FilaProdTable${v._id}`} onClick={() => { setCurrentVenta(v); setShowModal(true) }}>
+                                    <div className="hover:bg-blue-200 cursor-pointer" key={`FilaProdTable${v._id}`} onClick={() => { setCurrentVenta(v); setShowModal(true) }}>
                                         <FilaVenta key={`FilaVenta${v._id}`} venta={v} />
                                     </div>
                                 );
@@ -96,7 +110,7 @@ const SalesPage = (props: { ventas: Venta[], clientes: Cliente[] }) => {
                             :
                             props.ventas.slice((elementsPerPage * (CurrentPage - 1)), CurrentPage * elementsPerPage).map((v) => {
                                 return (
-                                    <div className="hover:bg-gray-200 cursor-pointer"
+                                    <div className="hover:bg-blue-200 cursor-pointer"
                                         key={`FilaProdTable${v._id}`} onClick={() => { setCurrentVenta(v); setShowModal(true) }}>
                                         <FilaVenta key={`FilaVenta${v._id}`} venta={v} />
                                     </div>

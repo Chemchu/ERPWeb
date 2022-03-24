@@ -9,11 +9,15 @@ import { FetchVentas } from '../../../utils/fetches';
 
 const Ventas = () => {
     const [Ventas, setVentas] = useState<Venta[]>([]);
+    const [Reembolsos, setReembolsos] = useState<Venta[]>([]);
     const [Clientes,] = useState<Cliente[]>([]);
 
     useEffect(() => {
         const GetAllData = async () => {
-            setVentas(await FetchVentas());
+            const ventas = await FetchVentas();
+            const reembolsos = ventas.filter((venta) => { return venta.precioVentaTotal < 0 });
+            setVentas(ventas);
+            setReembolsos(reembolsos);
         }
 
         GetAllData();
@@ -73,7 +77,7 @@ const Ventas = () => {
                         'focus:outline-none ring-white ring-opacity-60'
                     )}
                 >
-                    <ReembolsoPage ventas={Ventas} clientes={Clientes} />
+                    <ReembolsoPage ventas={Reembolsos} clientes={Clientes} />
                 </Tab.Panel>
             </Tab.Panels>
         </Tab.Group >
