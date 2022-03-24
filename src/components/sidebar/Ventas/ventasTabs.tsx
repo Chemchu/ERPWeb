@@ -65,9 +65,9 @@ const SalesPage = (props: { ventas: Venta[], clientes: Cliente[] }) => {
     }
 
     return (
-        <div className="flex flex-col h-96 w-full bg-white rounded-b-2xl rounded-r-2xl p-4 shadow-lg border-x">
-            <div className="flex gap-4 h-1/3 w-5/12 self-end">
-                <input autoFocus={true} className="rounded-lg border-transparent appearance-none shadow-lg w-full h-full py-2 px-4 bg-white text-gray-700 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-600" placeholder="ID de la venta..."
+        <div className="flex flex-col h-full w-full bg-white rounded-b-2xl rounded-r-2xl p-4 shadow-lg border-x">
+            <div className="flex gap-4 w-72 xl:w-96 self-end pb-4">
+                <input autoFocus={true} className="rounded-lg border appearance-none shadow-lg w-full h-full py-2 px-4 bg-white text-gray-700 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-600" placeholder="ID de la venta..."
                     onChange={(e) => { setFiltro(e.target.value); }} onKeyPress={async (e) => { }} />
 
                 {
@@ -82,51 +82,53 @@ const SalesPage = (props: { ventas: Venta[], clientes: Cliente[] }) => {
                         </button>
                 }
             </div>
-            <div className="bg-red-500 flex flex-col h-full w-full mt-4 pb-10">
-                <div className="bg-white grid grid-cols-4 justify-evenly">
-                    <div className="px-5 py-3 border-gray-200 text-gray-800 text-left text-sm font-semibold">
-                        Cliente
-                    </div>
-                    <div className="py-3 border-gray-200 text-gray-800 text-left text-sm font-semibold">
-                        Fecha de compra
-                    </div>
-                    <div className="py-3 border-gray-200 text-gray-800 text-left text-sm font-semibold">
-                        Método de pago
-                    </div>
-                    <div className="py-3 border-gray-200 text-gray-800 text-left text-sm font-semibold">
-                        Valor total
-                    </div>
+            <div className="grid grid-cols-4 justify-evenly border-t border-x rounded-t-2xl">
+                <div className="px-5 py-3 border-gray-200 text-gray-800 text-left text-sm font-semibold">
+                    Cliente
                 </div>
-                <div className="bg-cyan-500 flex flex-col grow-0 overflow-scroll overflow-x-hidden">
-                    {
-                        props.ventas.length <= 0 ?
-                            arrayNum.map((e, i) => <SkeletonCard key={`skeletonprops.ventas-${i}`} />)
-                            :
-                            VentasFiltradas && filtro ?
-                                VentasFiltradas.slice((elementsPerPage * (CurrentPage - 1)), CurrentPage * elementsPerPage).map((v) => {
-                                    return (
-                                        <div key={`FilaProdTable${v._id}`} onClick={() => { setCurrentVenta(v); setShowModal(true) }}>
-                                            <FilaVenta key={`FilaVenta${v._id}`} venta={v} />
-                                        </div>
-                                    );
-                                })
-                                :
-                                props.ventas.slice((elementsPerPage * (CurrentPage - 1)), CurrentPage * elementsPerPage).map((v) => {
-                                    return (
-                                        <div className="hover:bg-gray-200 cursor-pointer"
-                                            key={`FilaProdTable${v._id}`} onClick={() => { setCurrentVenta(v); setShowModal(true) }}>
-                                            <FilaVenta key={`FilaVenta${v._id}`} venta={v} />
-                                        </div>
-                                    );
-                                })
-                    }
+                <div className="py-3 border-gray-200 text-gray-800 text-left text-sm font-semibold">
+                    Fecha de compra
+                </div>
+                <div className="py-3 border-gray-200 text-gray-800 text-left text-sm font-semibold">
+                    Método de pago
+                </div>
+                <div className="py-3 border-gray-200 text-gray-800 text-left text-sm font-semibold">
+                    Valor total
                 </div>
             </div>
-            <div className="flex flex-row pt-2 items-center justify-center">
+            <div className="h-full w-full pb-4 border overflow-y-scroll">
+                {
+                    props.ventas.length <= 0 ?
+                        arrayNum.map((e, i) => <SkeletonCard key={`skeletonprops.ventas-${i}`} />)
+                        :
+                        VentasFiltradas && filtro ?
+                            VentasFiltradas.slice((elementsPerPage * (CurrentPage - 1)), CurrentPage * elementsPerPage).map((v) => {
+                                return (
+                                    <div key={`FilaProdTable${v._id}`} onClick={() => { setCurrentVenta(v); setShowModal(true) }}>
+                                        <FilaVenta key={`FilaVenta${v._id}`} venta={v} />
+                                    </div>
+                                );
+                            })
+                            :
+                            props.ventas.slice((elementsPerPage * (CurrentPage - 1)), CurrentPage * elementsPerPage).map((v) => {
+                                return (
+                                    <div className="hover:bg-gray-200 cursor-pointer"
+                                        key={`FilaProdTable${v._id}`} onClick={() => { setCurrentVenta(v); setShowModal(true) }}>
+                                        <FilaVenta key={`FilaVenta${v._id}`} venta={v} />
+                                    </div>
+                                );
+                            })
+                }
+            </div>
+            <div className="flex pt-2 items-center justify-center">
                 <Paginador numPages={numPages} paginaActual={CurrentPage} maxPages={10} cambiarPaginaActual={setPaginaActual} />
             </div>
             <AnimatePresence initial={false}>
-                {showModalEditarVenta && <EditarVenta venta={CurrentVenta} setModal={setShowModal} />}
+                {showModalEditarVenta &&
+                    <div>
+                        <EditarVenta venta={CurrentVenta} setModal={setShowModal} />
+                    </div>
+                }
             </AnimatePresence>
         </div>
     );

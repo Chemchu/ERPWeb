@@ -19,13 +19,13 @@ const Ventas = () => {
     }, []);
 
     return (
-        <Tab.Group as="div" className="flex flex-col w-full h-screen pt-3">
-            <Tab.List className="flex gap-2">
+        <Tab.Group as="div" className="flex flex-col w-full h-full pt-3">
+            <Tab.List className="flex gap-2 h-10">
                 <Tab
                     key={"Ventas"}
                     className={({ selected }) =>
                         classNames(
-                            'w-1/4 h-10 text-sm rounded-t-2xl border-t border-x',
+                            'w-1/4 h-full text-sm rounded-t-2xl border-t border-x',
                             'focus:outline-none ring-white ring-opacity-60',
                             selected
                                 ? 'bg-white shadow-lg'
@@ -39,7 +39,7 @@ const Ventas = () => {
                     key={"Reembolsos"}
                     className={({ selected }) =>
                         classNames(
-                            'w-1/4 h-10 text-sm rounded-t-2xl border-t border-x',
+                            'w-1/4 h-full text-sm rounded-t-2xl border-t border-x',
                             'focus:outline-none  ring-white ring-opacity-60',
                             selected
                                 ? 'bg-white shadow-md'
@@ -50,11 +50,11 @@ const Ventas = () => {
                     {"Reembolsos"}
                 </Tab>
             </Tab.List>
-            <Tab.Panels className="flex flex-col h-full w-full pr-2">
+            <Tab.Panels className="flex flex-col h-90v w-full pr-2">
                 <Tab.Panel
                     key={"Ventas"}
                     className={classNames(
-                        'pb-3  h-full w-full',
+                        'pb-3 h-full w-full',
                         'focus:outline-none ring-white ring-opacity-60'
                     )}
                 >
