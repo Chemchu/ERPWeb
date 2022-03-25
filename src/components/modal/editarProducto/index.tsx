@@ -26,10 +26,10 @@ const In = {
     }
 }
 
-export const EditarProducto = (props: { product: Producto, handleClose: Function }) => {
+export const EditarProducto = (props: { product: Producto, showModal: Function }) => {
     return (
         <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} >
-            <Backdrop onClick={(e) => { e.stopPropagation(); props.handleClose() }} >
+            <Backdrop onClick={(e) => { e.stopPropagation(); props.showModal(false) }} >
                 <motion.div className="h-5/6 w-5/6 flex flex-col items-center bg-white rounded-2xl p-4"
                     onClick={(e) => e.stopPropagation()}
                     variants={In}

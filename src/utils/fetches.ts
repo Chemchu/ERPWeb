@@ -36,6 +36,33 @@ export const FetchProductos = async (): Promise<Producto[]> => {
 
 }
 
+export const FetchProductoByQuery = async (query: string): Promise<Producto[]> => {
+    try {
+        let prodRes = [] as Producto[];
+
+        const pResponse = await fetch(`/api/productos/${query}`, {
+            // method: 'POST',
+            // headers: {
+            //     'Accept': 'application/json',
+            //     'Content-Type': 'application/json'
+            // },
+            // body: JSON.stringify({ limit: 3000 })
+        });
+
+        if (pResponse.status > 200) { return []; }
+
+        const pJson = await pResponse.json();
+
+        prodRes = CreateProductList(pJson.productos);
+        return prodRes.filter((p) => { return p.alta === true });
+    }
+    catch (e) {
+        console.log(e);
+        return [];
+    }
+
+}
+
 export const FetchClientes = async (): Promise<Cliente[]> => {
     try {
         const cResponse = await fetch('/api/clientes', {

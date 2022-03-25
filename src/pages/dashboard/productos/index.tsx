@@ -18,7 +18,7 @@ const Productos = () => {
 
     return (
         <Tab.Group as="div" className="flex flex-col w-full h-full pt-3 pr-2">
-            <Tab.List className="flex gap-1 h-10">
+            <Tab.List className="flex gap-1 h-10 pr-10">
                 <Tab
                     key={"Productos"}
                     className={({ selected }) =>
