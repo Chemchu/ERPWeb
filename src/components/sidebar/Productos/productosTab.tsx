@@ -14,7 +14,7 @@ const ProductPage = (props: { productos: Producto[], serverUp: boolean }) => {
     const [filtro, setFiltro] = useState<string>("");
     const [ProductosFiltrados, setProductosFiltradas] = useState<Producto[] | undefined>();
 
-    const elementsPerPage = 30;
+    const elementsPerPage = 50;
     const numPages = Math.ceil(props.productos.length / elementsPerPage);
 
     const setPaginaActual = (page: number) => {
