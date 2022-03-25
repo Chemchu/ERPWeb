@@ -214,7 +214,7 @@ const EditarVenta = (props: { venta: Venta | undefined, setModal: Function }) =>
                                 Cerrar
                             </button>
                             <button className="w-1/4 h-12 rounded-xl bg-orange-500 hover:bg-orange-600 shadow-lg">
-                                Reembolsar
+                                Devolver
                             </button>
                             <button className="w-1/4 h-12 rounded-xl bg-blue-500 hover:bg-blue-600 shadow-lg" onClick={() => { handlePrint() }}>
                                 Imprimir

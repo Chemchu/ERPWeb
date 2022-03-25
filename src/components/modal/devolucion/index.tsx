@@ -33,7 +33,7 @@ const In = {
     }
 }
 
-const Reembolso = (props: { venta: Venta | undefined, setModal: Function }) => {
+const Devolucion = (props: { venta: Venta | undefined, setModal: Function }) => {
     const [tpv, setTpv] = useState<TPVType>();
     const componentRef = useRef(null);
     const [PagoDelCliente, setPago] = useState<CustomerPaymentInformation>();
@@ -255,4 +255,4 @@ const GenerarFilaProducto = (props: { numFila: number, nombreProducto: string, c
     );
 }
 
-export default Reembolso;
+export default Devolucion;

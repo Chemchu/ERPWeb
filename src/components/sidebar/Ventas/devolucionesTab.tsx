@@ -6,10 +6,10 @@ import { FetchVenta } from "../../../utils/fetches";
 import { notifyWarn } from "../../../utils/toastify";
 import DateRange from "../../Forms/dateRange";
 import { Paginador } from "../../Forms/paginador";
-import Reembolso from "../../modal/reembolso";
+import Devolucion from "../../modal/devolucion";
 import SkeletonCard from "../../Skeletons/skeletonCard";
 
-const ReembolsoPage = (props: { ventas: Venta[], clientes: Cliente[] }) => {
+const DevolucionesPage = (props: { ventas: Venta[], clientes: Cliente[] }) => {
     if (props.ventas == undefined) throw new Error("Props de ventas en ventasTabs.tsx es undefined");
     if (props.clientes == undefined) throw new Error("Props de clientes en ventasTabs.tsx es undefined");
 
@@ -112,7 +112,7 @@ const ReembolsoPage = (props: { ventas: Venta[], clientes: Cliente[] }) => {
             <AnimatePresence initial={false}>
                 {showModalEditarVenta &&
                     <div>
-                        <Reembolso venta={CurrentVenta} setModal={setShowModal} />
+                        <Devolucion venta={CurrentVenta} setModal={setShowModal} />
                     </div>
                 }
             </AnimatePresence>
@@ -150,4 +150,4 @@ const FilaReembolso = (props: { venta: Venta }) => {
     );
 }
 
-export default ReembolsoPage;
+export default DevolucionesPage;

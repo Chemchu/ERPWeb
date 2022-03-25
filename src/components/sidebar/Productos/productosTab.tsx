@@ -76,9 +76,6 @@ const ProductPage = (props: { productos: Producto[], serverUp: boolean }) => {
 
     return (
         <div className="flex flex-col h-screen w-full antialiased px-8 py-8" >
-            <h2 className="text-2xl leading-tight">
-                Productos
-            </h2>
             <div className="flex mb-1 sm:mb-0 justify-between w-full pt-4">
                 <div className="flex gap-4 self-center">
                     <button className="flex flex-shrink-0 gap-2 px-4 py-2 text-base font-semibold text-white bg-green-500 rounded-lg shadow-md hover:bg-green-600 focus:outline-none focus:ring-2 focus:ring-green-600 focus:ring-offset-2 focus:ring-offset-blue-200">

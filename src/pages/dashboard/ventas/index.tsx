@@ -1,7 +1,7 @@
 import { Tab } from '@headlessui/react';
 import { useEffect, useState } from 'react';
-import ReembolsoPage from '../../../components/sidebar/Ventas/reembolsoTab';
-import SalesPage from '../../../components/sidebar/Ventas/ventasTabs'
+import DevolucionesPage from '../../../components/sidebar/Ventas/devolucionesTab';
+import SalesPage from '../../../components/sidebar/Ventas/ventasTab'
 import DashboardLayout from '../../../layout';
 import { Cliente } from '../../../tipos/Cliente';
 import { Venta } from '../../../tipos/Venta';
@@ -9,7 +9,7 @@ import { FetchVentas } from '../../../utils/fetches';
 
 const Ventas = () => {
     const [Ventas, setVentas] = useState<Venta[]>([]);
-    const [Reembolsos, setReembolsos] = useState<Venta[]>([]);
+    const [Devoluciones, setDevoluciones] = useState<Venta[]>([]); // ---> Una devolución no es más que una venta con precioTotal en negativo
     const [Clientes,] = useState<Cliente[]>([]);
 
     useEffect(() => {
@@ -17,14 +17,14 @@ const Ventas = () => {
             const ventas = await FetchVentas();
             const reembolsos = ventas.filter((venta) => { return venta.precioVentaTotal < 0 });
             setVentas(ventas);
-            setReembolsos(reembolsos);
+            setDevoluciones(reembolsos);
         }
 
         GetAllData();
     }, []);
 
     return (
-        <Tab.Group as="div" className="flex flex-col w-full h-full pt-3">
+        <Tab.Group as="div" className="flex flex-col w-full h-full pt-3 pr-2">
             <Tab.List className="flex gap-1 h-10">
                 <Tab
                     key={"Ventas"}
@@ -43,7 +43,7 @@ const Ventas = () => {
                     </span>
                 </Tab>
                 <Tab
-                    key={"Reembolsos"}
+                    key={"Devoluciones"}
                     className={({ selected }) =>
                         classNames(
                             'w-1/4 h-full text-sm rounded-t-2xl border-t border-x',
@@ -55,7 +55,7 @@ const Ventas = () => {
                     }
                 >
                     <span className='text-xl'>
-                        Reembolsos
+                        Devoluciones
                     </span>
                 </Tab>
             </Tab.List>
@@ -71,13 +71,13 @@ const Ventas = () => {
                 </Tab.Panel>
 
                 <Tab.Panel
-                    key={"Reembolsos"}
+                    key={"Devoluciones"}
                     className={classNames(
                         'pb-3 h-full w-full',
                         'focus:outline-none ring-white ring-opacity-60'
                     )}
                 >
-                    <ReembolsoPage ventas={Reembolsos} clientes={Clientes} />
+                    <DevolucionesPage ventas={Devoluciones} clientes={Clientes} />
                 </Tab.Panel>
             </Tab.Panels>
         </Tab.Group >
