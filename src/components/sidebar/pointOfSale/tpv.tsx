@@ -198,8 +198,8 @@ const ListaProductos = (props: { productos: Producto[], productosFiltrados: Prod
 
         if (props.productosFiltrados.length > 0 && props.productos.length > 0) {
             return (
-                <div className="h-full overflow-y-auto overflow-x-hidden px-2">
-                    <div className="grid gap-4 pb-3 sm:grid-cols-1 sm:gap-2 md:grid-cols-2 lg:grid-cols-3 lg:gap-3 xl:grid-cols-4 2xl:grid-cols-5 text-xs">
+                <div className="h-full overflow-y-auto overflow-x-hidden px-3 pt-2">
+                    <div className="grid gap-4 sm:grid-cols-1 sm:gap-2 md:grid-cols-2 lg:grid-cols-3 lg:gap-3 xl:grid-cols-4 2xl:grid-cols-5 text-xs">
                         {
                             props.productosFiltrados.slice(0, maxItems).map((prod: Producto) => {
                                 return (

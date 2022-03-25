@@ -39,7 +39,6 @@ const Home = () => {
       <h1 className="text-4xl">
         {`${saludos[Math.floor(Math.random() * (saludos.length - 0))]}, ${userName}`}
       </h1>
-      <UploadFile tipoDocumento={TipoDocumento.Productos} />
     </div>
   )
 }

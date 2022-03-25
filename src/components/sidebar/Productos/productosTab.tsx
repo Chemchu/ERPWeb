@@ -6,6 +6,8 @@ import SkeletonCard from "../../Skeletons/skeletonCard";
 import EditarProducto from "../../modal/editarProducto";
 import { notifyWarn } from "../../../utils/toastify";
 import { FetchProductoByQuery } from "../../../utils/fetches";
+import UploadFile from "../../Forms/uploadFile";
+import { TipoDocumento } from "../../../tipos/Enums/TipoDocumentos";
 
 const ProductPage = (props: { productos: Producto[], serverUp: boolean }) => {
     const [currentPage, setCurrentPage] = useState<number>(1);
@@ -33,19 +35,16 @@ const ProductPage = (props: { productos: Producto[], serverUp: boolean }) => {
 
     return (
         <div className="flex flex-col h-full w-full bg-white rounded-b-2xl rounded-r-2xl p-4 shadow-lg border-x">
-            <div className="flex w-full pb-4 gap-10 justify-end">
-                <button className="flex flex-shrink-0 gap-2 px-4 py-2 text-base font-semibold text-white bg-green-500 rounded-lg shadow-md hover:bg-green-600 focus:outline-none focus:ring-2 focus:ring-green-600 focus:ring-offset-2 focus:ring-offset-blue-200">
-                    Nuevo
-                    <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v3m0 0v3m0-3h3m-3 0H9m12 0a9 9 0 11-18 0 9 9 0 0118 0z" />
-                    </svg>
-                </button>
-                <button className="flex flex-shrink-0 gap-2 px-4 py-2 text-base font-semibold text-white bg-amber-500 rounded-lg shadow-md hover:bg-amber-600 focus:outline-none focus:ring-2 focus:ring-amber-600 focus:ring-offset-2 focus:ring-offset-blue-200">
-                    Importar
-                    <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v3m0 0v3m0-3h3m-3 0H9m12 0a9 9 0 11-18 0 9 9 0 0118 0z" />
-                    </svg>
-                </button>
+            <div className="flex w-full h-auto py-4 gap-10 justify-end">
+                <div className="flex gap-4 w-full h-full">
+                    <button className="flex flex-shrink-0 gap-2 px-4 py-2 text-base font-semibold text-white bg-green-500 rounded-lg shadow-md hover:bg-green-600 focus:outline-none focus:ring-2 focus:ring-green-600 focus:ring-offset-2 focus:ring-offset-blue-200">
+                        Nuevo
+                        <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v3m0 0v3m0-3h3m-3 0H9m12 0a9 9 0 11-18 0 9 9 0 0118 0z" />
+                        </svg>
+                    </button>
+                    <UploadFile tipoDocumento={TipoDocumento.Productos} />
+                </div>
                 <div className="flex gap-2">
                     <input autoFocus={true} className="rounded-lg border appearance-none shadow-lg w-72 xl:w-96 h-full py-2 px-4 bg-white text-gray-700 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-600" placeholder="Producto a buscar"
                         onChange={(e) => { setFiltro(e.target.value); }} onKeyPress={async (e) => { }} />
@@ -118,12 +117,8 @@ const FilaProducto = (props: { producto: Producto }) => {
                     {props.producto.precioVenta.toFixed(2)}€
                 </div>
                 <div className="w-1/4 text-sm text-right">
-                    <span className={`relative inline-block px-3 py-1 ${props.producto.cantidad > 0 ? " text-green-900" : "text-red-900"} leading-tight`}>
-                        <span aria-hidden="true" className={`absolute inset-0 ${props.producto.cantidad > 0 ? "bg-green-300" : "bg-red-300"} opacity-50 rounded-full`}>
-                        </span>
-                        <span className="relative">
-                            {props.producto.cantidad ? props.producto.cantidad : 0}
-                        </span>
+                    <span className={`w-full px-3 py-1 rounded-full ${props.producto.cantidad > 0 ? " text-green-900 bg-green-300" : "text-red-900 bg-red-300"}`}>
+                        {props.producto.cantidad ? props.producto.cantidad : 0}
                     </span>
                 </div>
             </div>
