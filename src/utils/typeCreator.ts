@@ -59,6 +59,7 @@ function CreateSale(s: any): Venta | undefined {
             productos: CreateProductoVendidoList(s.productos),
             dineroEntregadoEfectivo: s.dineroEntregadoEfectivo,
             dineroEntregadoTarjeta: s.dineroEntregadoTarjeta,
+            precioVentaTotalSinDto: s.preprecioVentaTotalSinDto,
             precioVentaTotal: s.precioVentaTotal,
             cambio: s.cambio,
             cliente: CreateClient(s.cliente) || s.client,
@@ -69,7 +70,7 @@ function CreateSale(s: any): Venta | undefined {
             descuentoPorcentaje: s.descuentoPorcentaje || 0,
             tpv: s.tpv,
             createdAt: s.createdAt,
-            updatedAt: s.updatedAt
+            updatedAt: s.updatedAt,
         }
 
         return venta;

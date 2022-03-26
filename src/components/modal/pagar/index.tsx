@@ -109,14 +109,14 @@ export const ModalPagar = (props: { PagoCliente: CustomerPaymentInformation, han
         const dinero = ValidatePositiveFloatingNumber(dineroDelCliente);
 
         setDineroEntregado(dinero);
-        setCambio(CalcularCambio(PagoDelCliente.precioTotal, Number(dinero), Number(dineroEntregadoTarjeta)))
+        setCambio(CalcularCambio(PagoDelCliente.precioTotalFinal, Number(dinero), Number(dineroEntregadoTarjeta)))
     }
 
     const SetDineroClienteTarjeta = (dineroDelCliente: string) => {
         const dinero = ValidatePositiveFloatingNumber(dineroDelCliente);
 
         setDineroEntregadoTarjeta(dinero);
-        setCambio(CalcularCambio(PagoDelCliente.precioTotal, Number(dineroEntregado), Number(dinero)))
+        setCambio(CalcularCambio(PagoDelCliente.precioTotalFinal, Number(dineroEntregado), Number(dinero)))
     }
 
     const AddSale = async (pagoCliente: CustomerPaymentInformation) => {
@@ -183,8 +183,6 @@ export const ModalPagar = (props: { PagoCliente: CustomerPaymentInformation, han
                                     <div className="flex flex-col justify-between mt-4 px-2 text-lg text-center">
                                         <label className="text-left">Seleccionar cliente</label>
                                         <Dropdown elementos={Clientes.map((c) => { return c.nombre })} selectedElemento={ClienteActual} setElemento={SetClienteActual} />
-
-                                        {/* <Dropwdown2 elementos={Clientes.map((c) => { return c.nombre })} selectedElemento={ClienteActual} setElemento={SetClienteActual} /> */}
                                     </div>
                                 </div>
                                 <div className="flex flex-col px-2 pt-6 justify-items-start w-full">
@@ -234,14 +232,14 @@ export const ModalPagar = (props: { PagoCliente: CustomerPaymentInformation, han
                                 <div className="grid grid-cols-3 text-lg text-center justify-center">
                                     <div>
                                         <div>Total a pagar</div>
-                                        <div className="text-4xl font-semibold">{PagoDelCliente.precioTotal.toFixed(2)}€</div>
+                                        <div className="text-4xl font-semibold">{PagoDelCliente.precioTotalFinal.toFixed(2)}€</div>
                                     </div>
                                     <div>
                                         <div>Entregado</div>
                                         <div className="text-4xl font-semibold">{isNaN(Number(dineroEntregado) + Number(dineroEntregadoTarjeta)) ? "0.00" : (Number(dineroEntregado) + Number(dineroEntregadoTarjeta)).toFixed(2)}€</div>
                                     </div>
                                     <div>
-                                        <div>{cambio < 0 ? 'Pendiente' : 'Cambio'}</div>
+                                        <div>{Number(cambio.toFixed(2)) < 0 ? 'Pendiente' : 'Cambio'}</div>
                                         <div className={`text-4xl font-semibold ${cambio < 0 ? "text-red-500" : "text-green-500"}`}>{cambio.toFixed(2)}€</div>
                                     </div>
                                 </div>
@@ -255,7 +253,7 @@ export const ModalPagar = (props: { PagoCliente: CustomerPaymentInformation, han
                             </button>
                             {
                                 serverUp ?
-                                    cambio >= 0 ?
+                                    Number(cambio.toFixed(2)) >= 0 ?
                                         <button className="bg-blue-500 hover:bg-blue-600 text-white w-full h-12 hover:shadow-lg rounded-lg flex items-center justify-center" onClick={async () => { await AddSale(PagoDelCliente); }} >
                                             <div className="text-lg">COMPLETAR VENTA</div>
                                         </button>

@@ -4,6 +4,7 @@ export type CustomerPaymentInformation = {
     cliente: Cliente,
     tipo: string,
     precioTotal: number,
+    precioTotalFinal: number,
     pagoEnEfectivo: number,
     pagoEnTarjeta: number,
     dtoEfectivo: number,

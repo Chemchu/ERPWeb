@@ -1,4 +1,8 @@
 import { NextApiRequest, NextApiResponse } from "next";
+import { Cliente } from "../../../tipos/Cliente";
+import { CustomerPaymentInformation } from "../../../tipos/CustomerPayment";
+import { Empleado } from "../../../tipos/Empleado";
+import { Producto } from "../../../tipos/Producto";
 import { ADD_SALE, QUERY_SALES } from "../../../utils/querys";
 import GQLFetcher from "../../../utils/serverFetcher";
 
@@ -49,10 +53,10 @@ const GetSales = async (req: NextApiRequest, res: NextApiResponse) => {
 
 const AddSale = async (req: NextApiRequest, res: NextApiResponse) => {
     try {
-        const productosEnCarrito = req.body.productosEnCarrito;
-        const pagoCliente = req.body.pagoCliente;
-        const cliente = req.body.cliente;
-        const empleado = req.body.empleado;
+        const productosEnCarrito: Producto[] = req.body.productosEnCarrito;
+        const pagoCliente: CustomerPaymentInformation = req.body.pagoCliente;
+        const cliente: Cliente = req.body.cliente;
+        const empleado: Empleado = req.body.empleado;
         const jwt = req.body.jwt;
 
         const fetchResult = await GQLFetcher.mutate(
@@ -63,7 +67,8 @@ const AddSale = async (req: NextApiRequest, res: NextApiResponse) => {
                         "productos": productosEnCarrito,
                         "dineroEntregadoEfectivo": Number(pagoCliente.pagoEnEfectivo.toFixed(2)),
                         "dineroEntregadoTarjeta": Number(pagoCliente.pagoEnTarjeta.toFixed(2)),
-                        "precioVentaTotal": Number(pagoCliente.precioTotal.toFixed(2)),
+                        "precioVentaTotalSinDto": Number(pagoCliente.precioTotal.toFixed(2)),
+                        "precioVentaTotal": Number(pagoCliente.precioTotalFinal.toFixed(2)),
                         "tipo": pagoCliente.tipo,
                         "cambio": Number(pagoCliente.cambio.toFixed(2)),
                         "cliente": cliente,

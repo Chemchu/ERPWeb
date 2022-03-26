@@ -84,6 +84,8 @@ export const CerrarCaja = (props: { setModalOpen: Function, setEmpleadoUsandoTPV
     useEffect(() => {
         const GetVentas = async (j: JWT) => {
             const tpv = await FetchTPV(j.TPV);
+            if (!tpv) { return; }
+
             const ventas = await FetchVentasByTPVDate(j.TPV, tpv.updatedAt.toString());
 
             setVentas(ventas);

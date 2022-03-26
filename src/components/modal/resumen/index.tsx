@@ -51,7 +51,9 @@ export const Resumen = (props: {
 
     useEffect(() => {
         const GetEmpleadoFromDB = async (j: JWT) => {
-            SetEmpleado(await FetchEmpleado(j._id));
+            const emp = await FetchEmpleado(j._id);
+            if (!emp) { return; }
+            SetEmpleado(emp);
         }
 
         const GetClientesFromDB = async (j: JWT) => {

@@ -34,7 +34,9 @@ const TPV = (props: { productos: Producto[], serverOperativo: boolean, empleadoU
     useEffect(() => {
         // Actualiza el Empleado
         const GetData = async (j: JWT) => {
-            SetEmpleado(await FetchEmpleado(j._id));
+            const emp = await FetchEmpleado(j._id);
+            if (!emp) { return; }
+            SetEmpleado(emp);
         }
         if (!jwt) { return; }
 
@@ -166,10 +168,7 @@ const TPV = (props: { productos: Producto[], serverOperativo: boolean, empleadoU
                         </div>
                     </div>
                 </div>
-                {/* Sidebar derecho */}
-                <div className="h-screen">
-                    <SidebarDerecho todosProductos={props.productos} productosEnCarrito={ProductosEnCarrito} setProductosCarrito={SetProductosEnCarrito} empleadoUsandoTPV={props.empleadoUsandoTPV} setShowModalAbrir={props.setShowModalAbrir} setShowModalCerrar={props.setShowModalCerrar} />
-                </div>
+                <SidebarDerecho todosProductos={props.productos} productosEnCarrito={ProductosEnCarrito} setProductosCarrito={SetProductosEnCarrito} empleadoUsandoTPV={props.empleadoUsandoTPV} setShowModalAbrir={props.setShowModalAbrir} setShowModalCerrar={props.setShowModalCerrar} />
             </div>
         </div>
     );
@@ -299,15 +298,17 @@ const SidebarDerecho = React.memo((props: {
     setShowModalCerrar: Function, setShowModalAbrir: Function
 }) => {
     const { Empleado } = useEmpleadoContext();
-    const [descuentoOpen, setDescuentoPupup] = useState<boolean>(false);
-    const [dtoEfectivo, setDtoEfectivo] = useState<string>("0");
-    const [dtoPorcentaje, setDtoPorcentaje] = useState<string>("0");
+    const [DescuentoOpen, setDescuentoPupup] = useState<boolean>(false);
+    const [DtoEfectivo, setDtoEfectivo] = useState<string>("0");
+    const [DtoPorcentaje, setDtoPorcentaje] = useState<string>("0");
+    const [PrecioTotal, setPrecioTotal] = useState<number>(PrecioTotalCarrito(props.productosEnCarrito));
+    const [PrecioTotalFinal, setPrecioTotalFinal] = useState<number>(AplicarDescuentos(props.productosEnCarrito, Number(DtoEfectivo), Number(DtoPorcentaje)));
 
     const [showModalPagar, setPagarModal] = useState(false);
     const [PagoRapido, setPagoRapido] = useState<CustomerPaymentInformation>();
     const [Pago, setPago] = useState<CustomerPaymentInformation>();
     const [qrImage, setQrImage] = useState<string>();
-    const [fecha, setFecha] = useState<string>();
+    const [Fecha, setFecha] = useState<string>();
 
     const [Clientes, SetClientes] = useState<Cliente[]>([]);
     const [jwt, setJwt] = useState<JWT>();
@@ -337,30 +338,37 @@ const SidebarDerecho = React.memo((props: {
     }, [qrImage]);
 
     useEffect(() => {
+        setPrecioTotal(PrecioTotalCarrito(props.productosEnCarrito));
+        setPrecioTotalFinal(AplicarDescuentos(props.productosEnCarrito, Number(DtoEfectivo), Number(DtoPorcentaje)));
+    }, [props.productosEnCarrito])
+
+    useEffect(() => {
         const pagoRapido = {
             cliente: Clientes.find((c) => c.nombre === "General"),
             cambio: 0,
-            pagoEnEfectivo: precioTotal,
+            pagoEnEfectivo: PrecioTotalFinal,
             pagoEnTarjeta: 0,
-            precioTotal: precioTotalDescontado,
-            dtoEfectivo: Number(dtoEfectivo),
-            dtoPorcentaje: Number(dtoPorcentaje),
+            precioTotal: PrecioTotal,
+            precioTotalFinal: PrecioTotalFinal,
+            dtoEfectivo: Number(DtoEfectivo),
+            dtoPorcentaje: Number(DtoPorcentaje),
             tipo: TipoCobro.Rapido
         } as CustomerPaymentInformation;
         setPagoRapido(pagoRapido);
 
         const pago = {
             cliente: Clientes.find((c) => c.nombre === "General"),
-            cambio: precioTotal * -1,
+            cambio: PrecioTotalFinal * -1,
             pagoEnEfectivo: 0,
             pagoEnTarjeta: 0,
-            precioTotal: precioTotalDescontado,
-            dtoEfectivo: Number(dtoEfectivo),
-            dtoPorcentaje: Number(dtoPorcentaje),
+            precioTotal: PrecioTotal,
+            precioTotalFinal: PrecioTotalFinal,
+            dtoEfectivo: Number(DtoEfectivo),
+            dtoPorcentaje: Number(DtoPorcentaje),
             tipo: TipoCobro.Efectivo
         } as CustomerPaymentInformation;
         setPago(pago);
-    }, [props.productosEnCarrito, Clientes])
+    }, [Clientes, PrecioTotalFinal])
 
     const reactToPrintContent = React.useCallback(() => {
         return componentRef.current;
@@ -434,9 +442,6 @@ const SidebarDerecho = React.memo((props: {
             notifyError("Error al realizar la venta");
         }
     }
-
-    const precioTotal: number = PrecioTotalCarrito(props.productosEnCarrito);
-    const precioTotalDescontado: number = AplicarDescuentos(props.productosEnCarrito, Number(dtoEfectivo), Number(dtoPorcentaje));
 
     if (!PagoRapido?.cliente || !jwt) {
         return (
@@ -521,7 +526,7 @@ const SidebarDerecho = React.memo((props: {
                             </div>
                             <div className="text-center p-4 mb-4">
                                 <div>
-                                    {descuentoOpen &&
+                                    {DescuentoOpen &&
                                         <div className="h-auto border-t-2 border-2 p-2 border-blue-400 rounded-xl">
                                             <div className="flex text-left text-sm">
                                                 <div className="flex self-center gap-4">
@@ -529,7 +534,7 @@ const SidebarDerecho = React.memo((props: {
                                                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 9V7a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2m2 4h10a2 2 0 002-2v-6a2 2 0 00-2-2H9a2 2 0 00-2 2v6a2 2 0 002 2zm7-5a2 2 0 11-4 0 2 2 0 014 0z" />
                                                     </svg>
                                                     <div>
-                                                        <input type="text" inputMode="numeric" className="text-xs text-center rounded-lg w-1/2 h-6 shadow" name="DtoEfectivo" value={dtoEfectivo}
+                                                        <input type="text" inputMode="numeric" className="text-xs text-center rounded-lg w-1/2 h-6 shadow" name="DtoEfectivo" value={DtoEfectivo}
                                                             onChange={(e) => {
                                                                 setDtoEfectivo(ValidatePositiveFloatingNumber(e.target.value));
                                                             }}
@@ -543,7 +548,7 @@ const SidebarDerecho = React.memo((props: {
                                                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z" />
                                                     </svg>
                                                     <div>
-                                                        <input type="text" inputMode="numeric" className="text-xs text-center rounded-lg w-1/2 h-6 shadow" name="DtoPorcentaje" value={dtoPorcentaje}
+                                                        <input type="text" inputMode="numeric" className="text-xs text-center rounded-lg w-1/2 h-6 shadow" name="DtoPorcentaje" value={DtoPorcentaje}
                                                             onChange={(e) => {
                                                                 setDtoPorcentaje(ValidatePositiveFloatingNumber(e.target.value));
                                                             }}
@@ -554,33 +559,33 @@ const SidebarDerecho = React.memo((props: {
                                             </div>
                                         </div>
                                     }
-                                    <div className="flex flex-col text-left text-lg font-semibold hover:text-blue-500 underline cursor-pointer" onClick={() => setDescuentoPupup(!descuentoOpen)}>
+                                    <div className="flex flex-col text-left text-lg font-semibold hover:text-blue-500 underline cursor-pointer" onClick={() => setDescuentoPupup(!DescuentoOpen)}>
                                         Descuento
                                     </div>
                                 </div>
                                 <div className="flex mb-3 text-lg font-semibold">
                                     <div>Total</div>
                                     {
-                                        precioTotal !== precioTotalDescontado ?
+                                        PrecioTotal !== PrecioTotalFinal ?
                                             <div className="flex gap-2 justify-end ml-auto">
                                                 <div className="text-right w-full text-red-500 line-through">
                                                     {/*Cambiar en caso de que la cesta tenga productos y calcular el valor total*/}
-                                                    {props.productosEnCarrito.length <= 0 ? 0.00 : precioTotal.toFixed(2)} €
+                                                    {props.productosEnCarrito.length <= 0 ? 0.00 : PrecioTotal.toFixed(2)} €
                                                 </div>
                                                 <div className="text-right w-full">
                                                     {/*Cambiar en caso de que la cesta tenga productos y calcular el valor total*/}
-                                                    {props.productosEnCarrito.length <= 0 ? 0.00 : precioTotalDescontado.toFixed(2)} €
+                                                    {props.productosEnCarrito.length <= 0 ? 0.00 : PrecioTotalFinal.toFixed(2)} €
                                                 </div>
                                             </div>
                                             :
                                             <div className="text-right w-full">
                                                 {/*Cambiar en caso de que la cesta tenga productos y calcular el valor total*/}
-                                                {props.productosEnCarrito.length <= 0 ? 0.00 : precioTotal.toFixed(2)} €
+                                                {props.productosEnCarrito.length <= 0 ? 0.00 : PrecioTotal.toFixed(2)} €
                                             </div>
                                     }
                                 </div>
                                 {
-                                    props.productosEnCarrito.length > 0 && !isNaN(precioTotal) &&
+                                    props.productosEnCarrito.length > 0 && !isNaN(PrecioTotal) &&
                                     <div className="grid grid-cols-1 gap-2 h-auto">
                                         <motion.button whileTap={{ scale: 0.9 }} className="bg-blue-500 h-12 shadow rounded-lg hover:shadow-lg hover:bg-blue-600 text-white focus:outline-none" onClick={(e) => { setPagarModal(true) }}>PAGAR</motion.button>
                                         <motion.button whileTap={{ scale: 0.9 }} className="bg-blue-500 h-12 shadow rounded-lg hover:shadow-lg hover:bg-blue-600 text-white focus:outline-none"
@@ -593,13 +598,13 @@ const SidebarDerecho = React.memo((props: {
                         </div>
                 }
                 {
-                    qrImage && fecha &&
+                    qrImage && Fecha &&
                     <div style={{ display: "none" }}>
                         <Ticket
                             ref={componentRef}
                             pagoCliente={PagoRapido}
                             productosVendidos={props.productosEnCarrito}
-                            fecha={fecha}
+                            fecha={Fecha}
                             qrImage={qrImage}
                         />
                     </div>
