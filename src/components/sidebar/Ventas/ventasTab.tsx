@@ -122,7 +122,8 @@ const SalesPage = (props: { ventas: Venta[], clientes: Cliente[] }) => {
                 <Paginador numPages={numPages} paginaActual={CurrentPage} maxPages={elementsPerPage} cambiarPaginaActual={setPaginaActual} />
             </div>
             <AnimatePresence initial={false}>
-                {showModalEditarVenta &&
+                {
+                    showModalEditarVenta &&
                     <div>
                         <EditarVenta venta={CurrentVenta} setModal={setShowModal} />
                     </div>

@@ -152,6 +152,8 @@ export const QUERY_SALES = gql`
             _id
             dineroEntregadoEfectivo
             dineroEntregadoTarjeta
+            descuentoEfectivo
+            descuentoPorcentaje
             precioVentaTotal
             cambio
             tipo
