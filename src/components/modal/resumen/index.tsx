@@ -81,7 +81,7 @@ export const Resumen = (props: {
                         "productos": props.productosVendidos,
                         "dineroEntregadoEfectivo": Number(props.pagoCliente.pagoEnEfectivo.toFixed(2)),
                         "dineroEntregadoTarjeta": Number(props.pagoCliente.pagoEnTarjeta.toFixed(2)),
-                        "precioVentaTotal": Number(props.pagoCliente.precioTotal.toFixed(2)),
+                        "precioVentaTotal": Number(props.pagoCliente.precioTotalSinDto.toFixed(2)),
                         "tipo": props.pagoCliente.tipo,
                         "cambio": Number(props.pagoCliente.cambio.toFixed(2)),
                         "cliente": cliente,
@@ -158,7 +158,7 @@ export const Resumen = (props: {
                         </div>
                         <div className="text-sm">
                             <div>
-                                Total: {props.pagoCliente.precioTotal.toFixed(2)}€
+                                Total: {props.pagoCliente.precioTotalSinDto.toFixed(2)}€
                             </div>
                             <div>
                                 Cambio: {props.pagoCliente.cambio.toFixed(2)}€

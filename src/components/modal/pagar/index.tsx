@@ -56,7 +56,7 @@ export const ModalPagar = (props: { PagoCliente: CustomerPaymentInformation, han
     const [qrImage, setQrImage] = useState<string>();
     const [fecha, setFecha] = useState<string>();
 
-    const { ProductosEnCarrito, SetProductosEnCarrito } = useProductEnCarritoContext();
+    const { ProductosEnCarrito, SetProductosEnCarrito, SetDtoEfectivo, SetDtoPorcentaje } = useProductEnCarritoContext();
     const [serverUp, setServerStatus] = useState<boolean>(false);
 
     const componentRef = useRef(null);
@@ -96,6 +96,8 @@ export const ModalPagar = (props: { PagoCliente: CustomerPaymentInformation, han
 
     const onAfterPrintHandler = React.useCallback(() => {
         SetProductosEnCarrito([]);
+        SetDtoEfectivo("0");
+        SetDtoPorcentaje("0");
         notifySuccess("Venta realizada correctamente")
     }, []);
 
@@ -109,14 +111,14 @@ export const ModalPagar = (props: { PagoCliente: CustomerPaymentInformation, han
         const dinero = ValidatePositiveFloatingNumber(dineroDelCliente);
 
         setDineroEntregado(dinero);
-        setCambio(CalcularCambio(PagoDelCliente.precioTotalFinal, Number(dinero), Number(dineroEntregadoTarjeta)))
+        setCambio(CalcularCambio(PagoDelCliente.precioTotal, Number(dinero), Number(dineroEntregadoTarjeta)))
     }
 
     const SetDineroClienteTarjeta = (dineroDelCliente: string) => {
         const dinero = ValidatePositiveFloatingNumber(dineroDelCliente);
 
         setDineroEntregadoTarjeta(dinero);
-        setCambio(CalcularCambio(PagoDelCliente.precioTotalFinal, Number(dineroEntregado), Number(dinero)))
+        setCambio(CalcularCambio(PagoDelCliente.precioTotal, Number(dineroEntregado), Number(dinero)))
     }
 
     const AddSale = async (pagoCliente: CustomerPaymentInformation) => {
@@ -232,7 +234,7 @@ export const ModalPagar = (props: { PagoCliente: CustomerPaymentInformation, han
                                 <div className="grid grid-cols-3 text-lg text-center justify-center">
                                     <div>
                                         <div>Total a pagar</div>
-                                        <div className="text-4xl font-semibold">{PagoDelCliente.precioTotalFinal.toFixed(2)}€</div>
+                                        <div className="text-4xl font-semibold">{PagoDelCliente.precioTotal.toFixed(2)}€</div>
                                     </div>
                                     <div>
                                         <div>Entregado</div>

@@ -3,8 +3,8 @@ import { Cliente } from "./Cliente";
 export type CustomerPaymentInformation = {
     cliente: Cliente,
     tipo: string,
+    precioTotalSinDto: number,
     precioTotal: number,
-    precioTotalFinal: number,
     pagoEnEfectivo: number,
     pagoEnTarjeta: number,
     dtoEfectivo: number,

@@ -46,7 +46,7 @@ const Ticket = React.forwardRef((props: { pagoCliente: CustomerPaymentInformatio
                     {props.pagoCliente.tipo}
                 </div>
                 <div>
-                    Precio total: {props.pagoCliente.precioTotalFinal.toFixed(2)}€
+                    Precio total: {props.pagoCliente.precioTotal.toFixed(2)}€
                 </div>
                 {
                     props.pagoCliente.pagoEnEfectivo > 0 &&

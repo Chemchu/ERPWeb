@@ -62,7 +62,7 @@ const EditarVenta = (props: { venta: Venta | undefined, setModal: Function }) =>
                     dtoPorcentaje: props.venta.descuentoPorcentaje,
                     pagoEnEfectivo: props.venta.dineroEntregadoEfectivo,
                     pagoEnTarjeta: props.venta.dineroEntregadoTarjeta,
-                    precioTotalFinal: props.venta.precioVentaTotal,
+                    precioTotal: props.venta.precioVentaTotal,
                     tipo: props.venta.tipo
                 } as CustomerPaymentInformation
 

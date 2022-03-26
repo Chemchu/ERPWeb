@@ -61,8 +61,8 @@ const Devolucion = (props: { venta: Venta | undefined, setModal: Function }) => 
                 dtoPorcentaje: props.venta.descuentoPorcentaje,
                 pagoEnEfectivo: props.venta.dineroEntregadoEfectivo,
                 pagoEnTarjeta: props.venta.dineroEntregadoTarjeta,
-                precioTotal: props.venta.precioVentaTotalSinDto,
-                precioTotalFinal: props.venta.precioVentaTotal,
+                precioTotalSinDto: props.venta.precioVentaTotalSinDto,
+                precioTotal: props.venta.precioVentaTotal,
                 tipo: props.venta.tipo
             } as CustomerPaymentInformation
 

@@ -203,48 +203,7 @@ const ListaProductos = (props: { productos: Producto[], productosFiltrados: Prod
                             props.productosFiltrados.slice(0, maxItems).map((prod: Producto) => {
                                 return (
                                     <button key={prod._id} id={prod._id}
-                                        onClick={() => {
-                                            const prodEnCarrito = ProductosEnCarrito.find(p => p._id == prod._id);
-
-                                            if (prodEnCarrito) {
-                                                const prodIndex = ProductosEnCarrito.indexOf(prodEnCarrito);
-                                                const prodAlCarrito = {
-                                                    _id: prodEnCarrito._id,
-                                                    nombre: prodEnCarrito.nombre,
-                                                    familia: prodEnCarrito.familia,
-                                                    proveedor: prodEnCarrito.proveedor || "Desconocido",
-                                                    cantidadVendida: prodEnCarrito.cantidadVendida + 1,
-                                                    ean: prodEnCarrito.ean,
-                                                    iva: prodEnCarrito.iva,
-                                                    margen: prodEnCarrito.margen || 0,
-                                                    precioCompra: prodEnCarrito.precioCompra,
-                                                    precioVenta: prodEnCarrito.precioVenta,
-                                                    dto: 0
-                                                } as unknown as ProductoVendido;
-
-                                                let ProductosEnCarritoUpdated = ProductosEnCarrito;
-                                                ProductosEnCarritoUpdated[prodIndex] = prodAlCarrito;
-
-                                                SetProductosEnCarrito([...ProductosEnCarritoUpdated]);
-                                            }
-                                            else {
-                                                const prodAlCarrito = {
-                                                    _id: prod._id,
-                                                    nombre: prod.nombre,
-                                                    familia: prod.familia,
-                                                    proveedor: prod.proveedor || "Desconocido",
-                                                    cantidadVendida: 1,
-                                                    ean: prod.ean,
-                                                    iva: prod.iva,
-                                                    margen: prod.margen || 0,
-                                                    precioCompra: prod.precioCompra,
-                                                    precioVenta: prod.precioVenta,
-                                                    dto: 0
-                                                } as unknown as ProductoVendido
-
-                                                SetProductosEnCarrito([...ProductosEnCarrito, prodAlCarrito]);
-                                            }
-                                        }}>
+                                        onClick={() => { AddProductoToCarrito(prod, ProductosEnCarrito, SetProductosEnCarrito) }}>
                                         <ProductCard Prod={prod} />
                                     </button>
                                 );
@@ -299,8 +258,7 @@ const SidebarDerecho = React.memo((props: {
 }) => {
     const { Empleado } = useEmpleadoContext();
     const [DescuentoOpen, setDescuentoPupup] = useState<boolean>(false);
-    const [DtoEfectivo, setDtoEfectivo] = useState<string>("0");
-    const [DtoPorcentaje, setDtoPorcentaje] = useState<string>("0");
+    const { DtoEfectivo, SetDtoEfectivo, DtoPorcentaje, SetDtoPorcentaje } = useProductEnCarritoContext()
     const [PrecioTotal, setPrecioTotal] = useState<number>(PrecioTotalCarrito(props.productosEnCarrito));
     const [PrecioTotalFinal, setPrecioTotalFinal] = useState<number>(AplicarDescuentos(props.productosEnCarrito, Number(DtoEfectivo), Number(DtoPorcentaje)));
 
@@ -340,7 +298,7 @@ const SidebarDerecho = React.memo((props: {
     useEffect(() => {
         setPrecioTotal(PrecioTotalCarrito(props.productosEnCarrito));
         setPrecioTotalFinal(AplicarDescuentos(props.productosEnCarrito, Number(DtoEfectivo), Number(DtoPorcentaje)));
-    }, [props.productosEnCarrito])
+    }, [props.productosEnCarrito, DtoEfectivo, DtoPorcentaje])
 
     useEffect(() => {
         const pagoRapido = {
@@ -348,8 +306,8 @@ const SidebarDerecho = React.memo((props: {
             cambio: 0,
             pagoEnEfectivo: PrecioTotalFinal,
             pagoEnTarjeta: 0,
-            precioTotal: PrecioTotal,
-            precioTotalFinal: PrecioTotalFinal,
+            precioTotalSinDto: PrecioTotal,
+            precioTotal: PrecioTotalFinal,
             dtoEfectivo: Number(DtoEfectivo),
             dtoPorcentaje: Number(DtoPorcentaje),
             tipo: TipoCobro.Rapido
@@ -361,8 +319,8 @@ const SidebarDerecho = React.memo((props: {
             cambio: PrecioTotalFinal * -1,
             pagoEnEfectivo: 0,
             pagoEnTarjeta: 0,
-            precioTotal: PrecioTotal,
-            precioTotalFinal: PrecioTotalFinal,
+            precioTotalSinDto: PrecioTotal,
+            precioTotal: PrecioTotalFinal,
             dtoEfectivo: Number(DtoEfectivo),
             dtoPorcentaje: Number(DtoPorcentaje),
             tipo: TipoCobro.Efectivo
@@ -536,7 +494,7 @@ const SidebarDerecho = React.memo((props: {
                                                     <div>
                                                         <input type="text" inputMode="numeric" className="text-xs text-center rounded-lg w-1/2 h-6 shadow" name="DtoEfectivo" value={DtoEfectivo}
                                                             onChange={(e) => {
-                                                                setDtoEfectivo(ValidatePositiveFloatingNumber(e.target.value));
+                                                                SetDtoEfectivo(ValidatePositiveFloatingNumber(e.target.value));
                                                             }}
                                                         />
                                                         €
@@ -550,7 +508,7 @@ const SidebarDerecho = React.memo((props: {
                                                     <div>
                                                         <input type="text" inputMode="numeric" className="text-xs text-center rounded-lg w-1/2 h-6 shadow" name="DtoPorcentaje" value={DtoPorcentaje}
                                                             onChange={(e) => {
-                                                                setDtoPorcentaje(ValidatePositiveFloatingNumber(e.target.value));
+                                                                SetDtoPorcentaje(ValidatePositiveFloatingNumber(e.target.value));
                                                             }}
                                                         />
                                                         %
@@ -638,3 +596,46 @@ const GenerarProductList = React.memo((props: { productosEnCarrito: ProductoVend
 GenerarProductList.displayName = 'GenerarProductList';
 
 export default TPV;
+
+const AddProductoToCarrito = (prod: Producto, productosEnCarrito: ProductoVendido[], setProductoList: Function) => {
+    const prodEnCarrito = productosEnCarrito.find(p => p._id == prod._id);
+
+    if (prodEnCarrito) {
+        const prodIndex = productosEnCarrito.indexOf(prodEnCarrito);
+        const prodAlCarrito = {
+            _id: prodEnCarrito._id,
+            nombre: prodEnCarrito.nombre,
+            familia: prodEnCarrito.familia,
+            proveedor: prodEnCarrito.proveedor || "Desconocido",
+            cantidadVendida: prodEnCarrito.cantidadVendida + 1,
+            ean: prodEnCarrito.ean,
+            iva: prodEnCarrito.iva,
+            margen: prodEnCarrito.margen || 0,
+            precioCompra: prodEnCarrito.precioCompra,
+            precioVenta: prodEnCarrito.precioVenta,
+            dto: 0
+        } as unknown as ProductoVendido;
+
+        let ProductosEnCarritoUpdated = productosEnCarrito;
+        ProductosEnCarritoUpdated[prodIndex] = prodAlCarrito;
+
+        setProductoList([...ProductosEnCarritoUpdated]);
+    }
+    else {
+        const prodAlCarrito = {
+            _id: prod._id,
+            nombre: prod.nombre,
+            familia: prod.familia,
+            proveedor: prod.proveedor || "Desconocido",
+            cantidadVendida: 1,
+            ean: prod.ean,
+            iva: prod.iva,
+            margen: prod.margen || 0,
+            precioCompra: prod.precioCompra,
+            precioVenta: prod.precioVenta,
+            dto: 0
+        } as unknown as ProductoVendido
+
+        setProductoList([...productosEnCarrito, prodAlCarrito]);
+    }
+}
