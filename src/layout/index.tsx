@@ -41,7 +41,7 @@ const DashboardLayout = React.memo(({ children }: { children: React.ReactNode })
         <EmpleadoContextProvider>
             <ProductCarritoContextProvider>
                 {
-                    <main className="bg-gray-100 dark:bg-gray-800 h-full w-full overflow-hidden" >
+                    <main className="dark:bg-gray-800 h-full w-full overflow-hidden bg_food" >
                         <NextNProgress />
                         <div className="flex items-start w-full h-full justify-start">
                             <Sidebar isCollapsed={isSidebarCollapsed} setCollapsed={setSidebarCollapsed} IndexSeleccionado={IndexSidebar} setIndex={setSidebarIndex} />
