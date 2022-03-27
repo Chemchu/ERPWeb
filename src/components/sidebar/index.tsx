@@ -1,4 +1,5 @@
 import { motion } from 'framer-motion';
+import Cookies from 'js-cookie';
 import Link from 'next/link';
 import React from 'react';
 
@@ -20,7 +21,7 @@ const OpenedSidebar = (props: { setCollapsed: Function }) => {
                     </span>
                 </div>
 
-                <div className="flex flex-col h-full gap-10 px-5 row-span-4">
+                <div className="flex flex-col h-full gap-10 px-5 row-span-4 ">
                     <Link href="/dashboard">
                         <div className="hover:text-gray-800 hover:bg-gray-100 flex items-center transition-colors dark:hover:text-white dark:hover:bg-gray-600 duration-200
                         text-gray-600 dark:text-gray-400 rounded-lg cursor-pointer" onClick={(e) => { e.stopPropagation(); }}>
@@ -48,7 +49,7 @@ const OpenedSidebar = (props: { setCollapsed: Function }) => {
                     </Link>
 
                     <Link href="/dashboard/productos">
-                        <div onClick={(e) => e.stopPropagation()} className="hover:text-gray-800 hover:bg-gray-100 flex items-center cursor-pointer transition-colors dark:hover:text-white dark:hover:bg-gray-600 duration-200  text-gray-600 dark:text-gray-100 rounded-lg dark:bg-gray-600">
+                        <div onClick={(e) => e.stopPropagation()} className="bg-gray-100 hover:text-gray-800 hover:bg-gray-100 flex items-center cursor-pointer transition-colors dark:hover:text-white dark:hover:bg-gray-600 duration-200  text-gray-600 dark:text-gray-100 rounded-lg dark:bg-gray-600">
                             <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4" />
                             </svg>
@@ -128,21 +129,18 @@ const OpenedSidebar = (props: { setCollapsed: Function }) => {
                         </div>
                     </Link>
 
-                    <Link href="/dashboard/ayuda">
-                        <div onClick={(e) => e.stopPropagation()} className="hover:text-gray-800 hover:bg-gray-100 flex items-center cursor-pointer transition-colors dark:hover:text-white dark:hover:bg-gray-600 duration-200  text-gray-600 dark:text-gray-400 rounded-lg " >
-                            <svg width="20" fill="currentColor" height="20" className="h-5 w-5" viewBox="0 0 1792 1792" xmlns="http://www.w3.org/2000/svg">
-                                <path d="M1088 1256v240q0 16-12 28t-28 12h-240q-16 0-28-12t-12-28v-240q0-16 12-28t28-12h240q16 0 28 12t12 28zm316-600q0 54-15.5 101t-35 76.5-55 59.5-57.5 43.5-61 35.5q-41 23-68.5 65t-27.5 67q0 17-12 32.5t-28 15.5h-240q-15 0-25.5-18.5t-10.5-37.5v-45q0-83 65-156.5t143-108.5q59-27 84-56t25-76q0-42-46.5-74t-107.5-32q-65 0-108 29-35 25-107 115-13 16-31 16-12 0-25-8l-164-125q-13-10-15.5-25t5.5-28q160-266 464-266 80 0 161 31t146 83 106 127.5 41 158.5z">
-                                </path>
+                    <Link href="/">
+                        <div onClick={(e) => { e.stopPropagation(); Cookies.remove("authorization"); }} className="hover:text-gray-800 hover:bg-gray-100 flex items-center cursor-pointer transition-colors dark:hover:text-white dark:hover:bg-gray-600 duration-200  text-gray-600 dark:text-gray-400 rounded-lg " >
+                            <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                                <path strokeLinecap="round" strokeLinejoin="round" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
                             </svg>
                             <span className="mx-4">
-                                Ayuda
+                                Cerrar sesión
                             </span>
                         </div>
                     </Link>
                 </div>
-
             </div>
-
         </motion.div >
     );
 }
@@ -228,17 +226,15 @@ const CollapsedSidebar = (props: { setCollapsed: Function }) => {
                         </div>
                     </Link>
 
-                    <Link href="/dashboard/ayuda">
-                        <div onClick={(e) => e.stopPropagation()} className="hover:text-gray-800 hover:bg-gray-100 flex items-center cursor-pointer transition-colors dark:hover:text-white dark:hover:bg-gray-600 duration-200  text-gray-600 dark:text-gray-400 rounded-lg " >
-                            <svg width="20" fill="currentColor" height="20" className="h-5 w-5" viewBox="0 0 1792 1792" xmlns="http://www.w3.org/2000/svg">
-                                <path d="M1088 1256v240q0 16-12 28t-28 12h-240q-16 0-28-12t-12-28v-240q0-16 12-28t28-12h240q16 0 28 12t12 28zm316-600q0 54-15.5 101t-35 76.5-55 59.5-57.5 43.5-61 35.5q-41 23-68.5 65t-27.5 67q0 17-12 32.5t-28 15.5h-240q-15 0-25.5-18.5t-10.5-37.5v-45q0-83 65-156.5t143-108.5q59-27 84-56t25-76q0-42-46.5-74t-107.5-32q-65 0-108 29-35 25-107 115-13 16-31 16-12 0-25-8l-164-125q-13-10-15.5-25t5.5-28q160-266 464-266 80 0 161 31t146 83 106 127.5 41 158.5z">
-                                </path>
+                    <Link href="/">
+                        <div onClick={(e) => { e.stopPropagation(); Cookies.remove("authorization"); }} className="hover:text-gray-800 hover:bg-gray-100 flex items-center cursor-pointer transition-colors dark:hover:text-white dark:hover:bg-gray-600 duration-200  text-gray-600 dark:text-gray-400 rounded-lg " >
+                            <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                                <path strokeLinecap="round" strokeLinejoin="round" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
                             </svg>
                         </div>
                     </Link>
                 </div>
             </div>
-
         </motion.div>
     );
 }
