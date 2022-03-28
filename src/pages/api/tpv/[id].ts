@@ -23,12 +23,13 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
             );
         }
         else {
+            const tpvId: string = String(query.TPVId);
             fetchResult = await GQLFetcher.query(
                 {
                     query: QUERY_TPV,
                     variables: {
                         "find": {
-                            "_id": req.query.id
+                            "_id": tpvId
                         },
                         "limit": 3000
                     }

@@ -296,7 +296,8 @@ export const FetchTPV = async (TPVId: string): Promise<TPVType | undefined> => {
     if (!TPVId) { throw "ID de la TPV no puede ser undefined"; }
 
     try {
-        const fetchTPV = await fetch(`/api/tpv/${TPVId}`);
+        const f = queryString.stringify({ TPVId: TPVId });
+        const fetchTPV = await fetch(`/api/tpv/${f}`);
 
         if (!fetchTPV.ok) { notifyError("Error al buscar la TPV"); return undefined; }
 
