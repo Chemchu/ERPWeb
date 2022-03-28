@@ -41,7 +41,7 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
             return res.status(300).json({ message: `Fallo al buscar TPV: error GraphQL server` });
         }
 
-        return res.status(200).json(JSON.stringify({ message: `Éxito al buscar la TPV`, tpv: JSON.stringify(fetchResult.data.tpvs) }));
+        return res.status(200).json(JSON.stringify({ message: `Éxito al buscar la TPV`, tpv: JSON.stringify(fetchResult.data.tpvs || fetchResult.data.tpv) }));
     }
     catch (err) {
         console.log(err);

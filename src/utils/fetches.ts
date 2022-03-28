@@ -302,6 +302,7 @@ export const FetchTPV = async (TPVId: string): Promise<TPVType | undefined> => {
         if (!fetchTPV.ok) { notifyError("Error al buscar la TPV"); return undefined; }
 
         const tpvJson = await fetchTPV.json();
+
         return CreateTPV(JSON.parse(tpvJson.tpv));
     }
     catch (e) {
