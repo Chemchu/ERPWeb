@@ -4,6 +4,7 @@ import { Cierre } from "../../../tipos/Cierre";
 import { TipoDocumento } from "../../../tipos/Enums/TipoDocumentos";
 import { TPVType } from "../../../tipos/TPV";
 import { notifyWarn } from "../../../utils/toastify";
+import DateRange from "../../Forms/dateRange";
 import { Paginador } from "../../Forms/paginador";
 import UploadFile from "../../Forms/uploadFile";
 import SkeletonCard from "../../Skeletons/skeletonCard";
@@ -14,6 +15,8 @@ const CierrePage = (props: { cierres: Cierre[], tpvs: TPVType[] }) => {
     const [currentPage, setCurrentPage] = useState<number>(1);
     const [filtro, setFiltro] = useState<string>("");
     const [CierresFiltrados, setCierresFiltradas] = useState<Cierre[] | undefined>();
+    const [dateRange, setDateRange] = useState([null, null]);
+    const [startDate, endDate] = dateRange;
 
     const elementsPerPage = 50;
     const numPages = Math.ceil(props.cierres.length / elementsPerPage);
@@ -35,11 +38,11 @@ const CierrePage = (props: { cierres: Cierre[], tpvs: TPVType[] }) => {
     return (
         <div className="flex flex-col h-full w-full bg-white rounded-b-2xl rounded-r-2xl p-4 shadow-lg border-x">
             <div className="flex w-full h-auto py-4 gap-10 justify-end">
-                <div className="flex gap-4 w-full h-full">
-                    <UploadFile tipoDocumento={TipoDocumento.Cierres} />
-                </div>
                 <div className="flex gap-2">
-                    <input autoFocus={true} className="rounded-lg border appearance-none shadow-lg w-72 xl:w-96 h-full py-2 px-4 bg-white text-gray-700 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-600" placeholder="ID del cierre a buscar"
+                    <div className="flex gap-4 w-full h-full">
+                        <DateRange dateRange={dateRange} setDateRange={setDateRange} endDate={endDate} startDate={startDate} />
+                    </div>
+                    <input autoFocus={true} className="rounded-lg border appearance-none shadow-lg w-72 xl:w-96 h-full py-2 px-4 bg-white text-gray-700 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-600" placeholder="ID del cierre"
                         onChange={(e) => { setFiltro(e.target.value); }} onKeyPress={async (e) => { }} />
 
                     {
@@ -56,17 +59,17 @@ const CierrePage = (props: { cierres: Cierre[], tpvs: TPVType[] }) => {
                 </div>
             </div>
             <div className="flex justify-between border-t-2 border-x-2 rounded-t-2xl px-5 py-2">
-                <div className="text-left text-sm font-semibold w-1/5">
+                <div className="text-left text-sm font-semibold w-1/4">
                     TPV
                 </div>
 
-                <div className="text-left text-sm font-semibold w-2/5">
+                <div className="text-left text-sm font-semibold w-1/4">
                     Fecha
                 </div>
-                <div className="text-left text-sm font-semibold w-1/5 ">
+                <div className="text-right text-sm font-semibold w-1/4 ">
                     Trabajador
                 </div>
-                <div className="text-right text-sm font-semibold w-1/5">
+                <div className="text-right text-sm font-semibold w-1/4">
                     Ventas totales
                 </div>
             </div>
@@ -103,16 +106,16 @@ const FilaCierre = (props: { cierre: Cierre, tpvs: TPVType[] }) => {
     return (
         <div className="hover:bg-blue-200">
             <div className="flex justify-between border-b px-5 py-2 cursor-pointer" onClick={() => { setModal(true) }}>
-                <div className="w-1/5 text-sm text-left">
+                <div className="w-1/4 text-sm text-left">
                     {props.tpvs.find((t) => { return t._id === props.cierre.tpv })?.nombre}
                 </div>
-                <div className="w-2/5 text-sm text-left">
+                <div className="w-1/4 text-sm text-left">
                     {new Date(Number(props.cierre.cierre)).toLocaleString()}
                 </div>
-                <div className="w-1/5 text-base text-left">
+                <div className="w-1/4 text-base text-right">
                     {props.cierre.cerradoPor.nombre}
                 </div>
-                <div className="w-1/5 text-sm text-right">
+                <div className="w-1/4 text-sm text-right">
                     {props.cierre.ventasTotales.toFixed(2)}€
                 </div>
             </div>
