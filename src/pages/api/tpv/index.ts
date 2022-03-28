@@ -8,20 +8,14 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
             {
                 query: QUERY_TPVS,
                 variables: {
-                    "find": {
-                        "libre": false
-                    }
+                    "limit": 3000,
+                    "find": null
                 }
             }
         );
 
-        if (!fetchResult.error) {
-            let tpvsDisponibles: Map<string, string> = new Map();
-            for (let i = 0; i < fetchResult.data.tpvs.length; i++) {
-                tpvsDisponibles.set(fetchResult.data.tpvs[i]._id, fetchResult.data.tpvs[i].nombre);
-            }
-
-            return res.status(200).json(JSON.stringify({ message: `Éxito al iniciar sesión`, tpvs: JSON.stringify(Array.from(tpvsDisponibles.entries())) }));
+        if (!fetchResult.errors) {
+            return res.status(200).json(JSON.stringify({ message: `Éxito al iniciar sesión`, tpvs: JSON.stringify(fetchResult.data.tpvs) }));
         }
         return res.status(300).json({ message: `Fallo al buscar TPV: error GraphQL server` });
     }

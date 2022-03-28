@@ -6,7 +6,7 @@ import { JWT } from "../tipos/JWT";
 import { Producto } from "../tipos/Producto";
 import { ProductoVendido } from "../tipos/ProductoVendido";
 import { Venta } from "../tipos/Venta";
-import { CreateCierreList, CreateClientList, CreateDevolucionList, CreateEmployee, CreateProductList, CreateSalesList, CreateTPV } from "./typeCreator";
+import { CreateCierreList, CreateClientList, CreateDevolucionList, CreateEmployee, CreateProductList, CreateSalesList, CreateTPV, CreateTPVsList } from "./typeCreator";
 import queryString from 'query-string';
 import { notifyError } from "./toastify";
 import { TPVType } from "../tipos/TPV";
@@ -307,6 +307,39 @@ export const FetchTPV = async (TPVId: string): Promise<TPVType | undefined> => {
         console.error(e);
         notifyError("Error de conexión");
         return undefined;
+    }
+}
+
+export const FetchTPVs = async (): Promise<TPVType[]> => {
+    try {
+        const fetchTPV = await fetch(`/api/tpv/`);
+
+        if (!fetchTPV.ok) { notifyError("Error al buscar la TPV"); return []; }
+
+        const tpvJson = await fetchTPV.json();
+        return CreateTPVsList(JSON.parse(tpvJson.tpvs));
+    }
+    catch (e) {
+        console.error(e);
+        notifyError("Error de conexión");
+        return [];
+    }
+}
+
+export const FetchTPVsByDisponibilidad = async (isTpvFree: boolean): Promise<TPVType[]> => {
+    try {
+        const f = queryString.stringify({ isTpvFree: isTpvFree });
+        const fetchTPV = await fetch(`/api/tpv/${f}`);
+
+        if (!fetchTPV.ok) { notifyError("Error al buscar la TPV"); return []; }
+
+        const tpvJson = await fetchTPV.json();
+        return CreateTPVsList(JSON.parse(tpvJson.tpv));
+    }
+    catch (e) {
+        console.error(e);
+        notifyError("Error de conexión");
+        return [];
     }
 }
 

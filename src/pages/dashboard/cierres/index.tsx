@@ -1,23 +1,27 @@
 import { Tab } from "@headlessui/react";
 import { useEffect, useState } from "react";
+import CierrePage from "../../../components/sidebar/Cierres";
 import DashboardLayout from "../../../layout";
 import { Cierre } from "../../../tipos/Cierre";
-import { FetchCierres } from "../../../utils/fetches";
+import { TPVType } from "../../../tipos/TPV";
+import { FetchCierres, FetchTPVs } from "../../../utils/fetches";
 
-const CierresPage = () => {
-    const [Cierres, SetCierres] = useState<Cierre[]>([]);
+const Cierres = () => {
+    const [CierresList, SetCierres] = useState<Cierre[]>([]);
+    const [tpvs, SetTpvs] = useState<TPVType[]>([]);
 
     useEffect(() => {
         const GetAllData = async () => {
             SetCierres(await FetchCierres());
+            SetTpvs(await FetchTPVs());
         }
         GetAllData();
     }, []);
 
-    if (Cierres.length <= 0) {
+    if (CierresList.length <= 0) {
         return (
             <div>
-                Yey
+                Cargando..
             </div>
         )
     }
@@ -50,16 +54,16 @@ const CierresPage = () => {
                         'focus:outline-none ring-white ring-opacity-60'
                     )}
                 >
-                    <div>Cierres page</div>
+                    <CierrePage cierres={CierresList} tpvs={tpvs} />
                 </Tab.Panel>
             </Tab.Panels>
         </Tab.Group >
     );
 }
 
-CierresPage.PageLayout = DashboardLayout;
+Cierres.PageLayout = DashboardLayout;
 
-export default CierresPage;
+export default Cierres;
 
 function classNames(...classes: any) {
     return classes.filter(Boolean).join(' ')

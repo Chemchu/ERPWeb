@@ -216,6 +216,17 @@ export function CreateTPV(tpv: any): TPVType {
     return res;
 }
 
+export function CreateTPVsList(tpvs: any): TPVType[] {
+    let res: TPVType[] = [];
+    tpvs.forEach((t: any) => {
+        const tpv = CreateTPV(t);
+
+        if (tpv) res.push(tpv);
+    });
+
+    return res;
+}
+
 export function CreateCierreList(cierres: any): Cierre[] {
     let res: Cierre[] = [];
     cierres.forEach((c: any) => {

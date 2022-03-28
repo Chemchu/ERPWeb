@@ -4,9 +4,10 @@ import Cookies from "js-cookie";
 import { useEffect, useState } from "react";
 import getJwt from "../../../hooks/jwt";
 import { JWT } from "../../../tipos/JWT";
+import { TPVType } from "../../../tipos/TPV";
+import { FetchTPVsByDisponibilidad } from "../../../utils/fetches";
 import { OCUPY_TPV } from "../../../utils/querys";
 import { ValidatePositiveFloatingNumber } from "../../../utils/validator";
-import Dropdown from "../../Forms/dropdown";
 import Droplist from "../../Forms/droplist";
 import { Backdrop } from "../backdrop";
 
@@ -35,32 +36,20 @@ const In = {
 }
 
 const AbrirCaja = (props: { setShowModal: Function, setEmpleadoUsandoTPV: Function }) => {
-    const [tpvs, setTpvs] = useState<Map<string, string>>(new Map());
-    const [currentTpv, setCurrentTpv] = useState<string>();
+    const [tpvs, setTpvs] = useState<TPVType[]>([]);
+    const [currentTpvName, setCurrentTpvName] = useState<string>();
     const [cajaInicial, setCajaInicial] = useState<string>('0');
     const [ocuparTpv, { data, error }] = useMutation(OCUPY_TPV);
     const [jwt, setJwt] = useState<JWT>();
 
     useEffect(() => {
-        const TpvsAbiertas = async (): Promise<Map<string, string>> => {
-            const res = await fetch(`/api/tpv`);
-            const Response = await res.json();
-
-            if (Response.tpvs) {
-                // Transforma el string en TPV Map<string, string> 
-                return new Map(JSON.parse(Response.tpvs));
-            }
-
-            return new Map();
+        const TpvsAbiertas = async () => {
+            setTpvs(await FetchTPVsByDisponibilidad(true));
         }
 
         let isUnmounted = false;
         setJwt(getJwt());
-        TpvsAbiertas().then(r => {
-            if (!isUnmounted) {
-                setTpvs(r);
-            }
-        });
+        TpvsAbiertas();
 
         return (() => {
             isUnmounted = true;
@@ -69,7 +58,9 @@ const AbrirCaja = (props: { setShowModal: Function, setEmpleadoUsandoTPV: Functi
 
     useEffect(() => {
         // Selecciona el primer TPV libre
-        setCurrentTpv(tpvs.values().next().value)
+        if (tpvs.length > 0) {
+            setCurrentTpvName(tpvs[0].nombre)
+        }
     }, [tpvs]);
 
     useEffect(() => {
@@ -82,18 +73,15 @@ const AbrirCaja = (props: { setShowModal: Function, setEmpleadoUsandoTPV: Functi
     }, [data])
 
     const AbrirTPV = async () => {
-        let tpvID: string = "undefined";
-        tpvs.forEach((value: string, key: string) => {
-            if (value === currentTpv) {
-                tpvID = key;
-            }
+        const tpv: TPVType | undefined = tpvs.find((t) => {
+            return t.nombre === currentTpvName
         });
 
         const cInicial: number = parseFloat(Number(cajaInicial).toFixed(2))
         ocuparTpv({
             variables: {
                 "idEmpleado": jwt?._id,
-                "idTpv": tpvID,
+                "idTpv": tpv?._id,
                 "cajaInicial": cInicial
             }
         });
@@ -115,7 +103,7 @@ const AbrirCaja = (props: { setShowModal: Function, setEmpleadoUsandoTPV: Functi
                             </div>
                             <div className="w-full self-center justify-end">
                                 {/* <Dropdown selectedElemento={tpvs ? tpvs.values().next().value : "Cargando..."} elementos={Array.from(tpvs.values())} setElemento={setCurrentTpv} /> */}
-                                <Droplist selectedElemento={tpvs ? tpvs.values().next().value : "Cargando..."} elementos={Array.from(tpvs.values())} setElemento={setCurrentTpv} />
+                                <Droplist selectedElemento={tpvs.length > 0 ? tpvs[0].nombre : "Cargando..."} elementos={tpvs.map((a) => { return a.nombre; })} setElemento={setCurrentTpvName} />
                             </div>
                         </div>
 
@@ -141,7 +129,7 @@ const AbrirCaja = (props: { setShowModal: Function, setEmpleadoUsandoTPV: Functi
                             </div>
                         </div>
                         {
-                            Number(cajaInicial) > 0 && currentTpv && tpvs ?
+                            Number(cajaInicial) > 0 && currentTpvName && tpvs ?
                                 <div className="flex h-10 w-32 m-auto bg-blue-500 hover:bg-blue-600 rounded-2xl cursor-pointer items-center justify-center shadow-lg"
                                     onClick={AbrirTPV}>
                                     <div>
