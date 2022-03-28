@@ -1,4 +1,5 @@
 import { TipoDocumento } from "../../../tipos/Enums/TipoDocumentos";
+import { notifyError, notifyPromise, notifySuccess } from "../../../utils/toastify";
 
 const UploadFile = (props: { tipoDocumento: TipoDocumento }) => {
     const TIPOS_PERMITIDOS: string[] = ["csv", "xlsx", "xls"];
@@ -16,15 +17,25 @@ const UploadFile = (props: { tipoDocumento: TipoDocumento }) => {
 
             const text = await f.text();
 
-            await fetch(`/api/${props.tipoDocumento}/file`, {
-                headers: { 'Content-Type': 'application/json' },
-                method: 'POST',
-                body: JSON.stringify(text)
-            })
+            const res = new Promise(async (resolve) => {
+                const response = await fetch(`/api/${props.tipoDocumento}/file`, {
+                    headers: { 'Content-Type': 'application/json' },
+                    method: 'POST',
+                    body: JSON.stringify(text)
+                });
+                const json = await response.json();
+                resolve(json.message)
+            });
 
+            notifyPromise(res, "Añadiendo productos...");
         }
         catch (e) {
             console.log(e);
+            notifyError("Problemas al subir el documento");
+        }
+        finally {
+            // Esta línea de código asegura que se pueda volver a subir el mismo archivo otra vez
+            e.target.value = ''
         }
     };
 

@@ -35,3 +35,21 @@ export const notifyWarn = (msg: string) => {
         progress: undefined,
     });
 }
+
+export const notifyPromise = (promise: Promise<any>, msgInicial: string, msgExito?: string, msgError?: string) => {
+    toast.promise(promise,
+        {
+            pending: msgInicial,
+            success: {
+                render({ data }) {
+                    return `${data || msgExito}`
+                },
+            },
+            error: {
+                render({ data }) {
+                    return `${data || msgError}`;
+                }
+            }
+        }
+    );
+}

@@ -39,18 +39,20 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
                     });
                 }
 
+                if (response.data.addProductosFile.successful) {
+                    return res.status(200).json({ message: response.data.addProductosFile.message });
+                }
+
                 if (response.errors) {
-                    res.status(300).json({ message: `Fallo al añadir el producto: ${response.errors[0]}` });
-                    return;
+                    return res.status(300).json({ message: `Fallo al añadir el producto: ${response.errors[0]}` });
                 }
 
-                if (response.data.successful) {
-                    res.status(200).json({ message: response.data.message });
-                    return;
-                }
+                // if (response.data.successful) {
+                //     res.status(200).json({ message: response.data.message });
+                //     return;
+                // }
 
-                res.status(300).json({ message: `Fallo al añadir el producto: ${response.data.message}` });
-                return;
+                return res.status(300).json({ message: `Fallo al añadir el producto: ${response.data.message}` });
 
             case 'GET':
                 fetchResult = await GQLFetcher.query(

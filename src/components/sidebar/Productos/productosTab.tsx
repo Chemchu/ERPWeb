@@ -106,7 +106,7 @@ const FilaProducto = (props: { producto: Producto }) => {
     const [showModal, setModal] = useState<boolean>(false);
 
     return (
-        <div className="hover:bg-gray-200">
+        <div className="hover:bg-blue-200">
             <div className="flex justify-between border-b px-5 py-2 cursor-pointer" onClick={() => { setModal(true) }}>
                 <div className="w-2/5 text-sm text-left">
                     {props.producto.nombre}
