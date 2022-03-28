@@ -6,10 +6,11 @@ import { JWT } from "../tipos/JWT";
 import { Producto } from "../tipos/Producto";
 import { ProductoVendido } from "../tipos/ProductoVendido";
 import { Venta } from "../tipos/Venta";
-import { CreateCierreList, CreateClientList, CreateEmployee, CreateProductList, CreateSalesList, CreateTPV } from "./typeCreator";
+import { CreateCierreList, CreateClientList, CreateDevolucionList, CreateEmployee, CreateProductList, CreateSalesList, CreateTPV } from "./typeCreator";
 import queryString from 'query-string';
 import { notifyError } from "./toastify";
 import { TPVType } from "../tipos/TPV";
+import { Devolucion } from "../tipos/Devolucion";
 
 export const FetchProductos = async (): Promise<Producto[]> => {
     try {
@@ -100,6 +101,45 @@ export const FetchVentas = async (): Promise<Venta[]> => {
 
         const ventas = await vRes.json();
         return CreateSalesList(JSON.parse(ventas.data));
+    }
+    catch (e) {
+        console.error(e);
+        notifyError("Error de conexión");
+        return [];
+    }
+}
+
+export const FetchDevoluciones = async (): Promise<Devolucion[]> => {
+    try {
+        const vRes = await fetch(`/api/devoluciones/`);
+
+        if (!vRes.ok) {
+            notifyError("Error al buscar las devoluciones");
+            return [];
+        }
+
+        const devoluciones = await vRes.json();
+        return CreateDevolucionList(JSON.parse(devoluciones.data));
+    }
+    catch (e) {
+        console.error(e);
+        notifyError("Error de conexión");
+        return [];
+    }
+}
+
+// TODO: que busque por query
+export const FetchDevolucionesByQuery = async (query: string): Promise<Devolucion[]> => {
+    try {
+        const vRes = await fetch(`/api/devoluciones/`);
+
+        if (!vRes.ok) {
+            notifyError("Error al buscar las devoluciones");
+            return [];
+        }
+
+        const devoluciones = await vRes.json();
+        return CreateDevolucionList(JSON.parse(devoluciones.data));
     }
     catch (e) {
         console.error(e);

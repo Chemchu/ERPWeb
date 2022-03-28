@@ -1,29 +1,29 @@
 import { AnimatePresence } from "framer-motion";
 import React, { useEffect, useState } from "react";
 import { Cliente } from "../../../tipos/Cliente";
-import { Venta } from "../../../tipos/Venta";
-import { FetchVenta } from "../../../utils/fetches";
+import { Devolucion } from "../../../tipos/Devolucion";
+import { FetchDevolucionesByQuery } from "../../../utils/fetches";
 import { notifyWarn } from "../../../utils/toastify";
 import DateRange from "../../Forms/dateRange";
 import { Paginador } from "../../Forms/paginador";
-import Devolucion from "../../modal/devolucion";
+import DevolucionModal from "../../modal/devolucionModal";
 import SkeletonCard from "../../Skeletons/skeletonCard";
 
-const DevolucionesPage = (props: { ventas: Venta[], clientes: Cliente[] }) => {
+const DevolucionesPage = (props: { ventas: Devolucion[], clientes: Cliente[] }) => {
     if (props.ventas == undefined) throw new Error("Props de ventas en ventasTabs.tsx es undefined");
     if (props.clientes == undefined) throw new Error("Props de clientes en ventasTabs.tsx es undefined");
 
     const [CurrentPage, setCurrentPage] = useState<number>(1);
-    const [CurrentVenta, setCurrentVenta] = useState<Venta>();
+    const [CurrentDevolucion, setCurrentDevolucion] = useState<Devolucion>();
     const [showModalEditarVenta, setShowModal] = useState<boolean>();
-    const [VentasFiltradas, setVentasFiltradas] = useState<Venta[] | undefined>();
+    const [DevolucionesFiltradas, setDevolucionesFiltradas] = useState<Devolucion[] | undefined>();
     const [filtro, setFiltro] = useState<string>("");
     const [dateRange, setDateRange] = useState([null, null]);
     const [startDate, endDate] = dateRange;
 
     useEffect(() => {
         if (!filtro) {
-            setVentasFiltradas(undefined);
+            setDevolucionesFiltradas(undefined);
         }
     }, [filtro])
 
@@ -40,10 +40,10 @@ const DevolucionesPage = (props: { ventas: Venta[], clientes: Cliente[] }) => {
     }
 
     const Filtrar = async (f: string) => {
-        if (f === "") { setVentasFiltradas(undefined); return; }
+        if (f === "") { setDevolucionesFiltradas(undefined); return; }
         if (!f.match('^[0-9a-fA-F]{24}$')) { notifyWarn("Introduce un ID de venta válido"); return; }
 
-        setVentasFiltradas(await FetchVenta(f));
+        setDevolucionesFiltradas(await FetchDevolucionesByQuery(f));
     }
 
     return (
@@ -87,11 +87,11 @@ const DevolucionesPage = (props: { ventas: Venta[], clientes: Cliente[] }) => {
                     props.ventas.length <= 0 ?
                         arrayNum.map((e, i) => <SkeletonCard key={`skeletonprops.ventas-${i}`} />)
                         :
-                        VentasFiltradas && filtro ?
-                            VentasFiltradas.slice((elementsPerPage * (CurrentPage - 1)), CurrentPage * elementsPerPage).map((v) => {
+                        DevolucionesFiltradas && filtro ?
+                            DevolucionesFiltradas.slice((elementsPerPage * (CurrentPage - 1)), CurrentPage * elementsPerPage).map((v) => {
                                 return (
-                                    <div key={`FilaProdTable${v._id}`} onClick={() => { setCurrentVenta(v); setShowModal(true) }}>
-                                        <FilaReembolso key={`FilaReembolso${v._id}`} venta={v} />
+                                    <div key={`FilaProdTable${v._id}`} onClick={() => { setCurrentDevolucion(v); setShowModal(true) }}>
+                                        <FilaReembolso key={`FilaReembolso${v._id}`} devolucion={v} />
                                     </div>
                                 );
                             })
@@ -99,8 +99,8 @@ const DevolucionesPage = (props: { ventas: Venta[], clientes: Cliente[] }) => {
                             props.ventas.slice((elementsPerPage * (CurrentPage - 1)), CurrentPage * elementsPerPage).map((v) => {
                                 return (
                                     <div className="hover:bg-gray-200 cursor-pointer"
-                                        key={`FilaProdTable${v._id}`} onClick={() => { setCurrentVenta(v); setShowModal(true) }}>
-                                        <FilaReembolso key={`FilaReembolso${v._id}`} venta={v} />
+                                        key={`FilaProdTable${v._id}`} onClick={() => { setCurrentDevolucion(v); setShowModal(true) }}>
+                                        <FilaReembolso key={`FilaReembolso${v._id}`} devolucion={v} />
                                     </div>
                                 );
                             })
@@ -112,7 +112,7 @@ const DevolucionesPage = (props: { ventas: Venta[], clientes: Cliente[] }) => {
             <AnimatePresence initial={false}>
                 {showModalEditarVenta &&
                     <div>
-                        <Devolucion venta={CurrentVenta} setModal={setShowModal} />
+                        <DevolucionModal devolucion={CurrentDevolucion} setModal={setShowModal} />
                     </div>
                 }
             </AnimatePresence>
@@ -120,15 +120,15 @@ const DevolucionesPage = (props: { ventas: Venta[], clientes: Cliente[] }) => {
     );
 }
 
-const FilaReembolso = (props: { venta: Venta }) => {
-    const fecha = new Date(Number(props.venta.createdAt));
-    const fechaReembolso = new Date(Number(props.venta.updatedAt));
+const FilaReembolso = (props: { devolucion: Devolucion }) => {
+    const fecha = new Date(Number(props.devolucion.createdAt));
+    const fechaReembolso = new Date(Number(props.devolucion.updatedAt));
 
     return (
         <div className="grid grid-cols-4 w-full justify-evenly gap-x-6 border-t">
             <div className="px-5 py-3 border-gray-200 text-sm">
                 <p className="text-gray-900">
-                    {props.venta.cliente.nombre}
+                    {props.devolucion.cliente.nombre}
                 </p>
             </div>
             <div className="py-3 border-gray-200 text-sm">
@@ -143,7 +143,7 @@ const FilaReembolso = (props: { venta: Venta }) => {
             </div>
             <div className="py-3 border-gray-200 text-lg">
                 <p className="text-red-500 whitespace-no-wrap">
-                    {props.venta.precioVentaTotal.toFixed(2)}€
+                    {props.devolucion.productosDevueltos.length}
                 </p>
             </div>
         </div>

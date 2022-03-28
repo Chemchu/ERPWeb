@@ -9,6 +9,8 @@ import { FetchProductoByQuery } from "../../../utils/fetches";
 import UploadFile from "../../Forms/uploadFile";
 import { TipoDocumento } from "../../../tipos/Enums/TipoDocumentos";
 
+const arrayNum = [...Array(8)];
+
 const ProductPage = (props: { productos: Producto[], serverUp: boolean }) => {
     const [currentPage, setCurrentPage] = useState<number>(1);
     const [filtro, setFiltro] = useState<string>("");
@@ -30,8 +32,6 @@ const ProductPage = (props: { productos: Producto[], serverUp: boolean }) => {
 
         setProductosFiltradas(await FetchProductoByQuery(f));
     }
-
-    const arrayNum = [...Array(8)];
 
     return (
         <div className="flex flex-col h-full w-full bg-white rounded-b-2xl rounded-r-2xl p-4 shadow-lg border-x">
@@ -62,21 +62,22 @@ const ProductPage = (props: { productos: Producto[], serverUp: boolean }) => {
                     }
                 </div>
             </div>
-            <div className="flex justify-between border-t border-x rounded-t-2xl px-5 py-2">
-                <div className="text-left text-sm font-semibold w-1/4">
+            <div className="flex justify-between border-t-2 border-x-2 rounded-t-2xl px-5 py-2">
+                <div className="text-left text-sm font-semibold w-2/5">
                     Nombre
                 </div>
-                <div className="text-right text-sm font-semibold w-1/4">
-                    Familia
-                </div>
-                <div className="text-right text-sm font-semibold w-1/4">
+
+                <div className="text-left text-sm font-semibold w-1/5">
                     Precio
                 </div>
-                <div className="text-right text-sm font-semibold w-1/4">
+                <div className="text-left text-sm font-semibold w-1/5 ">
+                    Familia
+                </div>
+                <div className="text-right text-sm font-semibold w-1/5">
                     Cantidad
                 </div>
             </div>
-            <div className="h-full w-full border overflow-y-scroll">
+            <div className="h-full w-full border-2 rounded-b overflow-y-scroll">
                 {
                     props.productos.length <= 0 ?
                         arrayNum.map((n, i) => {
@@ -107,16 +108,16 @@ const FilaProducto = (props: { producto: Producto }) => {
     return (
         <div className="hover:bg-gray-200">
             <div className="flex justify-between border-b px-5 py-2 cursor-pointer" onClick={() => { setModal(true) }}>
-                <div className="w-1/4 text-sm text-left">
+                <div className="w-2/5 text-sm text-left">
                     {props.producto.nombre}
                 </div>
-                <div className="w-1/4 text-sm text-right">
-                    {props.producto.familia}
-                </div>
-                <div className="w-1/4 text-base text-right">
+                <div className="w-1/5 text-sm text-left">
                     {props.producto.precioVenta.toFixed(2)}€
                 </div>
-                <div className="w-1/4 text-sm text-right">
+                <div className="w-1/5 text-base text-left">
+                    {props.producto.familia}
+                </div>
+                <div className="w-1/5 text-sm text-right">
                     <span className={`w-full px-3 py-1 rounded-full ${props.producto.cantidad > 0 ? " text-green-900 bg-green-300" : "text-red-900 bg-red-300"}`}>
                         {props.producto.cantidad ? props.producto.cantidad : 0}
                     </span>

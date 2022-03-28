@@ -24,6 +24,22 @@ const ConfiguracionPage = () => {
                     </span>
                 </Tab>
                 <Tab
+                    key={"TPV"}
+                    className={({ selected }) =>
+                        classNames(
+                            'w-1/4 h-full text-sm rounded-t-2xl border-t border-x',
+                            'focus:outline-none  ring-white ring-opacity-60',
+                            selected
+                                ? 'bg-white shadow-md'
+                                : 'bg-gray-200 hover:bg-blue-400 hover:text-white'
+                        )
+                    }
+                >
+                    <span className='text-xl'>
+                        TPVs
+                    </span>
+                </Tab>
+                <Tab
                     key={"Ayuda"}
                     className={({ selected }) =>
                         classNames(
@@ -50,6 +66,18 @@ const ConfiguracionPage = () => {
                 >
                     <div>
                         Configuración
+                    </div>
+                </Tab.Panel>
+
+                <Tab.Panel
+                    key={"TPV"}
+                    className={classNames(
+                        'pb-3 h-full w-full',
+                        'focus:outline-none ring-white ring-opacity-60'
+                    )}
+                >
+                    <div>
+                        TPVs config page
                     </div>
                 </Tab.Panel>
 

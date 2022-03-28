@@ -2,10 +2,11 @@ import { motion } from "framer-motion";
 import React, { useEffect, useRef, useState } from "react";
 import { useReactToPrint } from "react-to-print";
 import { CustomerPaymentInformation } from "../../../tipos/CustomerPayment";
+import { Devolucion } from "../../../tipos/Devolucion";
 import { TPVType } from "../../../tipos/TPV";
-import { Venta } from "../../../tipos/Venta";
 import { FetchTPV } from "../../../utils/fetches";
 import GenerateQrBase64 from "../../../utils/generateQr";
+import DevolucionTicket from "../../devolucionTicket";
 import Ticket from "../../ticket";
 import { Backdrop } from "../backdrop";
 
@@ -33,44 +34,30 @@ const In = {
     }
 }
 
-const Devolucion = (props: { venta: Venta | undefined, setModal: Function }) => {
+const DevolucionModal = (props: { devolucion: Devolucion | undefined, setModal: Function }) => {
     const [tpv, setTpv] = useState<TPVType>();
-    const componentRef = useRef(null);
-    const [PagoDelCliente, setPago] = useState<CustomerPaymentInformation>();
     const [qrImage, setQrImage] = useState<string>();
+    const componentRef = useRef(null);
 
     const reactToPrintContent = React.useCallback(() => {
         return componentRef.current;
     }, []);
 
     const handlePrint = useReactToPrint({
-        documentTitle: "Ticket de venta",
+        documentTitle: "Ticket de devolución",
         content: reactToPrintContent,
     });
 
     useEffect(() => {
         const fetchData = async () => {
-            if (!props.venta) {
+            if (!props.devolucion) {
                 return;
             }
 
-            const pago = {
-                cambio: props.venta.cambio,
-                cliente: props.venta.cliente,
-                dtoEfectivo: props.venta.descuentoEfectivo,
-                dtoPorcentaje: props.venta.descuentoPorcentaje,
-                pagoEnEfectivo: props.venta.dineroEntregadoEfectivo,
-                pagoEnTarjeta: props.venta.dineroEntregadoTarjeta,
-                precioTotalSinDto: props.venta.precioVentaTotalSinDto,
-                precioTotal: props.venta.precioVentaTotal,
-                tipo: props.venta.tipo
-            } as CustomerPaymentInformation
-
-            const tpvRes = await FetchTPV(props.venta.tpv);
-            const qr = await GenerateQrBase64(props.venta._id);
+            const tpvRes = await FetchTPV(props.devolucion.tpv);
+            const qr = await GenerateQrBase64(props.devolucion._id);
             setQrImage(qr);
             setTpv(tpvRes);
-            setPago(pago);
         }
         let isUnmounted = false;
         fetchData();
@@ -81,7 +68,7 @@ const Devolucion = (props: { venta: Venta | undefined, setModal: Function }) => 
     }, [])
 
 
-    if (!props.venta) {
+    if (!props.devolucion) {
         return (
             <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
                 className="h-full w-full ">
@@ -102,8 +89,8 @@ const Devolucion = (props: { venta: Venta | undefined, setModal: Function }) => 
 
     let fecha = new Date(0);
     let fechaActualizada = new Date(0);
-    fecha.setUTCMilliseconds(Number(props.venta.createdAt));
-    fechaActualizada.setUTCMilliseconds(Number(props.venta.updatedAt));
+    fecha.setUTCMilliseconds(Number(props.devolucion.createdAt));
+    fechaActualizada.setUTCMilliseconds(Number(props.devolucion.updatedAt));
 
     return (
         <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
@@ -124,53 +111,7 @@ const Devolucion = (props: { venta: Venta | undefined, setModal: Function }) => 
                             <span className="font-semibold w-1/2 h-full">
                                 Resumen de la compra
                                 <div className="flex flex-col pt-4 font-normal">
-                                    <span>
-                                        Cliente: {props.venta.cliente.nombre === "General" ? props.venta.cliente.nombre : `${props.venta.cliente.nombre} (${props.venta.cliente.nif})`}
-                                    </span>
-                                    <span>
-                                        Tipo de venta: {props.venta.tipo}
-                                    </span>
-                                    <span>
-                                        Valor total: {props.venta.precioVentaTotal}€
-                                    </span>
-                                    <span>
-                                        Cantidad pagada con efectivo: {props.venta.dineroEntregadoEfectivo}€
-                                    </span>
-                                    <span>
-                                        Cantidad pagada con tarjeta: {props.venta.dineroEntregadoTarjeta}€
-                                    </span>
-                                    <span>
-                                        Cambio: {props.venta.cambio}€
-                                    </span>
-                                    <span>
-                                        TPV: {`${tpv?.nombre || `Cargando...`}`}
-                                    </span>
-                                    <span>
-                                        Fecha: {fecha.toLocaleString()}
-                                    </span>
-                                    <span>
-                                        Vendedor: {`${props.venta.vendidoPor.nombre} ${props.venta.vendidoPor.apellidos} (${props.venta.vendidoPor.email})`}
-                                    </span>
-                                    {
-                                        props.venta.createdAt !== props.venta.updatedAt &&
-                                        <>
-                                            <span>
-                                                Venta actualizada: {fechaActualizada.toLocaleString()}
-                                            </span>
-                                            <span>
-                                                Venta modificada por: {`${props.venta.modificadoPor.nombre} ${props.venta.modificadoPor.apellidos} (${props.venta.modificadoPor.email})`}
-                                            </span>
-                                        </>
-                                    }
-                                    <span>
-                                        Descuento en efectivo aplicado: {props.venta.descuentoEfectivo}€
-                                    </span>
-                                    <span>
-                                        Porcentaje de descuento aplicado: {props.venta.descuentoPorcentaje}%
-                                    </span>
-                                    <span>
-                                        ID: {props.venta._id}
-                                    </span>
+                                    {/* Detalles de la deovlución */}
                                 </div>
                             </span>
                             <div className="flex flex-col font-semibold text-right w-1/2 h-full gap-2">
@@ -186,7 +127,7 @@ const Devolucion = (props: { venta: Venta | undefined, setModal: Function }) => 
                                     <hr className="border-2 border-gray-300" />
                                     <div className="flex flex-col gap-2 w-full h-full p-2">
                                         {
-                                            props.venta.productos.map((prod, index) => {
+                                            props.devolucion.productosDevueltos.map((prod, index) => {
                                                 if (prod.dto) {
                                                     return (
                                                         <div key={`editarVenta_${prod._id}_${index}`} className="hover:bg-gray-200 hover:cursor-pointer">
@@ -219,13 +160,12 @@ const Devolucion = (props: { venta: Venta | undefined, setModal: Function }) => 
                             </button>
                         </div>
                         {
-                            PagoDelCliente && qrImage && fecha &&
+                            qrImage && fecha &&
                             <div style={{ display: "none" }}>
-                                <Ticket
+                                <DevolucionTicket
                                     ref={componentRef}
-                                    pagoCliente={PagoDelCliente}
-                                    productosVendidos={props.venta.productos}
-                                    fecha={props.venta.createdAt}
+                                    devolucion={props.devolucion}
+                                    fecha={props.devolucion.createdAt}
                                     qrImage={qrImage}
                                 />
                             </div>
@@ -256,4 +196,4 @@ const GenerarFilaProducto = (props: { numFila: number, nombreProducto: string, c
     );
 }
 
-export default Devolucion;
+export default DevolucionModal;

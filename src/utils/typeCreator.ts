@@ -1,5 +1,6 @@
 import { Cierre } from "../tipos/Cierre";
 import { Cliente } from "../tipos/Cliente";
+import { Devolucion } from "../tipos/Devolucion";
 import { Empleado } from "../tipos/Empleado";
 import { Producto } from "../tipos/Producto";
 import { ProductoVendido } from "../tipos/ProductoVendido";
@@ -224,4 +225,50 @@ export function CreateCierreList(cierres: any): Cierre[] {
     });
 
     return res;
+}
+
+export function CreateDevolucionList(dList: any[]): Devolucion[] {
+    if (dList === undefined) { return [] as Devolucion[]; }
+
+    try {
+        let res: Devolucion[] = [];
+        dList.forEach((d: any) => {
+            const dev = CreateDevolucion(d);
+
+            if (dev) res.push(dev);
+        });
+
+        return res;
+    }
+    catch (e) {
+        console.log(e);
+        return []
+    }
+
+}
+
+function CreateDevolucion(s: any): Devolucion | undefined {
+    try {
+        const vOriginal = CreateSale(s.ventaOriginal);
+        if (!vOriginal) { return undefined; }
+
+        let dev: Devolucion = {
+            _id: s._id,
+            productosDevueltos: CreateProductoVendidoList(s.productos),
+            dineroDevuelto: s.dineroDevuelto,
+            cliente: CreateClient(s.cliente) || s.client,
+            trabajador: CreateEmployee(s.trabajador),
+            modificadoPor: CreateEmployee(s.modificadoPor),
+            ventaId: s.ventaId,
+            ventaOriginal: vOriginal,
+            tpv: s.tpv,
+            createdAt: s.createdAt,
+            updatedAt: s.updatedAt,
+        }
+
+        return dev;
+    }
+    catch (e) {
+        return undefined;
+    }
 }
