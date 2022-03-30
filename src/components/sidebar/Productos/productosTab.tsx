@@ -124,7 +124,7 @@ const FilaProducto = (props: { producto: Producto }) => {
                 </div>
             </div>
             <AnimatePresence>
-                {showModal && <EditarProducto showModal={setModal} product={props.producto} />}
+                {showModal && <EditarProducto showModal={setModal} producto={props.producto} />}
             </AnimatePresence>
         </div>
 

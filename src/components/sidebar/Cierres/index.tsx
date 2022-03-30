@@ -107,7 +107,7 @@ const FilaCierre = (props: { cierre: Cierre, tpvs: TPVType[] }) => {
         <div className="hover:bg-blue-200">
             <div className="flex justify-between border-b px-5 py-2 cursor-pointer" onClick={() => { setModal(true) }}>
                 <div className="w-1/4 text-sm text-left">
-                    {props.tpvs.find((t) => { return t._id === props.cierre.tpv })?.nombre}
+                    {props.tpvs.find((t) => { return t._id === props.cierre.tpv })?.nombre || 'Cargando...'}
                 </div>
                 <div className="w-1/4 text-sm text-left">
                     {new Date(Number(props.cierre.cierre)).toLocaleString()}

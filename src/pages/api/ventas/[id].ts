@@ -30,7 +30,8 @@ const GetSale = async (req: NextApiRequest, res: NextApiResponse) => {
                     query: QUERY_SALE,
                     variables: {
                         "id": query.id
-                    }
+                    },
+                    fetchPolicy: "no-cache"
                 }
             );
         }
@@ -43,7 +44,8 @@ const GetSale = async (req: NextApiRequest, res: NextApiResponse) => {
                             "fechaInicial": query.fechaInicial,
                             "fechaFinal": query.fechaFinal
                         }
-                    }
+                    },
+                    fetchPolicy: "no-cache"
                 }
             );
         }

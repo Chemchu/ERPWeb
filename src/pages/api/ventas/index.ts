@@ -39,7 +39,8 @@ const GetSales = async (req: NextApiRequest, res: NextApiResponse) => {
             query: QUERY_SALES,
             variables: {
                 "limit": 3000,
-            }
+            },
+            fetchPolicy: "no-cache"
         }
     );
 
@@ -78,7 +79,8 @@ const AddSale = async (req: NextApiRequest, res: NextApiResponse) => {
                         "descuentoPorcentaje": Number(pagoCliente.dtoPorcentaje.toFixed(2)) || 0,
                         "tpv": jwt.TPV
                     }
-                }
+                },
+                fetchPolicy: "no-cache"
             }
         );
 
