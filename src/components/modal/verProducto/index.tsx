@@ -1,7 +1,8 @@
-import { motion } from "framer-motion";
+import { AnimatePresence, motion } from "framer-motion";
 import { useState } from "react";
 import { Producto } from "../../../tipos/Producto";
 import { Backdrop } from "../backdrop";
+import EditarProducto from "../editarProducto";
 
 const In = {
     hidden: {
@@ -27,8 +28,9 @@ const In = {
     }
 }
 
-export const EditarProducto = (props: { producto: Producto, showModal: Function }) => {
+export const VerProducto = (props: { producto: Producto, showModal: Function }) => {
     const [ProductoModificado, setProductoModif] = useState<Producto>(props.producto);
+    const [showEditarProducto, setModal] = useState<boolean>(false);
 
     return (
         <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} >
@@ -89,19 +91,20 @@ export const EditarProducto = (props: { producto: Producto, showModal: Function 
                         <button className="h-12 w-full rounded-xl bg-red-500 hover:bg-red-600 shadow-lg" onClick={() => { props.showModal(false) }}>
                             Cerrar
                         </button>
-                        <button className="h-12 w-full rounded-xl bg-orange-500 hover:bg-orange-600 shadow-lg">
+                        <button className="h-12 w-full rounded-xl bg-orange-500 hover:bg-orange-600 shadow-lg"
+                            onClick={() => { setModal(true) }}>
                             Modificar
                         </button>
                     </div>
-                    {
-                        <div>
-                            ey
-                        </div>
-                    }
+                    <AnimatePresence >
+                        {
+                            showEditarProducto && <EditarProducto producto={ProductoModificado} showModal={setModal} />
+                        }
+                    </AnimatePresence>
                 </motion.div>
             </Backdrop>
         </motion.div>
     );
 }
 
-export default EditarProducto;
+export default VerProducto;

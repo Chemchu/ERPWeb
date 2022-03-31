@@ -3,7 +3,7 @@ import React, { useEffect, useState } from "react";
 import { Producto } from "../../../tipos/Producto";
 import { Paginador } from "../../Forms/paginador";
 import SkeletonCard from "../../Skeletons/skeletonCard";
-import EditarProducto from "../../modal/editarProducto";
+import VerProducto from "../../modal/verProducto";
 import { notifyWarn } from "../../../utils/toastify";
 import { FetchProductoByQuery } from "../../../utils/fetches";
 import UploadFile from "../../Forms/uploadFile";
@@ -124,7 +124,7 @@ const FilaProducto = (props: { producto: Producto }) => {
                 </div>
             </div>
             <AnimatePresence>
-                {showModal && <EditarProducto showModal={setModal} producto={props.producto} />}
+                {showModal && <VerProducto showModal={setModal} producto={props.producto} />}
             </AnimatePresence>
         </div>
 
