@@ -15,7 +15,6 @@ const Sidebar = React.memo((props: { isCollapsed: boolean, setCollapsed: Functio
             if (!Empleado._id) {
                 const e = await FetchCurrentUser();
                 SetEmpleado(e);
-                notifySuccess("Sesión iniciada correctamente");
             }
         }
         GetData();
