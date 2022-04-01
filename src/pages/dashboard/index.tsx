@@ -1,32 +1,34 @@
+import { GetServerSideProps } from "next";
 import React, { useEffect, useState } from "react";
-import UploadFile from "../../components/Forms/uploadFile";
-import getJwt from "../../hooks/jwt";
+import useEmpleadoContext from "../../context/empleadoContext";
 import DashboardLayout from "../../layout";
-import { TipoDocumento } from "../../tipos/Enums/TipoDocumentos";
+import { Empleado } from "../../tipos/Empleado";
 import { JWT } from "../../tipos/JWT";
+import { FetchCurrentUser } from "../../utils/fetches";
 
-const Home = () => {
-  const [jwt, setJwt] = useState<JWT>();
-  const [userName, setUserName] = useState<string>();
+const Home = (props: { empleado: Empleado }) => {
+  const [saludo, setSaludo] = useState<string>();
+  const { Empleado } = useEmpleadoContext();
+
+  // useEffect(() => {
+  //   let unmounted = false;
+  //   //setJwt(getJwt());
+
+  //   return () => {
+  //     unmounted
+  //   }
+  // }, []);
 
   useEffect(() => {
-    let unmounted = false;
-    setJwt(getJwt());
-
-    return () => {
-      unmounted
+    const GetData = async () => {
+      setSaludo(`${saludos[Math.floor(Math.random() * (saludos.length - 0))]}`);
     }
+    GetData()
   }, []);
-
-  useEffect(() => {
-    if (!jwt) { return; }
-    setUserName(jwt.nombre.charAt(0).toUpperCase() + jwt.nombre.slice(1));
-
-  }, [jwt]);
 
   const saludos = ['Bienvenido otra vez', 'Hola', 'Saludos'];
 
-  if (!jwt) {
+  if (!Empleado) {
     return (
       <div>
         Cargando...
@@ -37,12 +39,11 @@ const Home = () => {
   return (
     <div className="flex flex-col p-2 text-gray-700">
       <h1 className="text-4xl">
-        {`${saludos[Math.floor(Math.random() * (saludos.length - 0))]}, ${userName}`}
+        {/* {`${saludo},  ${Empleado.nombre.charAt(0).toUpperCase() + Empleado.nombre.slice(1)}`} */}
       </h1>
     </div>
   )
 }
 
 Home.PageLayout = DashboardLayout;
-
 export default Home;

@@ -11,37 +11,27 @@ import SkeletonProductCard from "../../Skeletons/skeletonProductCard";
 import ModalPagar from "../../modal/pagar";
 import { AplicarDescuentos, PrecioTotalCarrito } from "../../../utils/preciosUtils";
 import { Cliente } from "../../../tipos/Cliente";
-import { AddVenta, FetchClientes, FetchEmpleado } from "../../../utils/fetches";
+import { AddVenta, FetchClientes, FetchCurrentUser } from "../../../utils/fetches";
 import useEmpleadoContext from "../../../context/empleadoContext";
-import getJwt from "../../../hooks/jwt";
-import { JWT } from "../../../tipos/JWT";
 import { notifyError, notifySuccess } from "../../../utils/toastify";
 import { useReactToPrint } from "react-to-print";
 import Ticket from "../../ticket";
 import GenerateQrBase64 from "../../../utils/generateQr";
+import { Empleado } from "../../../tipos/Empleado";
 
 const TPV = (props: { productos: Producto[], serverOperativo: boolean, empleadoUsandoTPV: boolean, setEmpleadoUsandoTPV: Function, setShowModalCerrar: Function, setShowModalAbrir: Function }) => {
     const [ProductosFiltrados, setProductosFiltrados] = useState<Producto[]>([]);
     const { ProductosEnCarrito, SetProductosEnCarrito } = useProductEnCarritoContext();
     const { SetEmpleado } = useEmpleadoContext()
     const [Familias, setFamilias] = useState<string[]>([]);
-    const [jwt, setJwt] = useState<JWT>();
 
     useEffect(() => {
-        setJwt(getJwt());
-    }, [])
-
-    useEffect(() => {
-        // Actualiza el Empleado
-        const GetData = async (j: JWT) => {
-            const emp = await FetchEmpleado(j._id);
-            if (!emp) { return; }
-            SetEmpleado(emp);
+        const GetData = async () => {
+            SetEmpleado(await FetchCurrentUser());
         }
-        if (!jwt) { return; }
 
-        GetData(jwt);
-    }, [jwt])
+        GetData();
+    }, []);
 
     useEffect(() => {
         function uniq_fast(a: Producto[]) {
@@ -269,13 +259,11 @@ const SidebarDerecho = React.memo((props: {
     const [Fecha, setFecha] = useState<string>();
 
     const [Clientes, SetClientes] = useState<Cliente[]>([]);
-    const [jwt, setJwt] = useState<JWT>();
     const componentRef = useRef(null);
 
     useEffect(() => {
         let isUnmounted = false;
 
-        setJwt(getJwt());
         FetchClientes().then((r) => {
             if (!isUnmounted) {
                 SetClientes(r)
@@ -387,8 +375,8 @@ const SidebarDerecho = React.memo((props: {
         })
     }, []);
 
-    const Vender = async (pagoCliente: CustomerPaymentInformation, productosEnCarrito: ProductoVendido[], emp: typeof Empleado, clientes: Cliente[], j: JWT) => {
-        const { data, error } = await AddVenta(pagoCliente, productosEnCarrito, emp, clientes, j);
+    const Vender = async (pagoCliente: CustomerPaymentInformation, productosEnCarrito: ProductoVendido[], emp: Empleado, clientes: Cliente[]) => {
+        const { data, error } = await AddVenta(pagoCliente, productosEnCarrito, emp, clientes);
 
         if (!error) {
             setFecha(data.createdAt);
@@ -401,7 +389,7 @@ const SidebarDerecho = React.memo((props: {
         }
     }
 
-    if (!PagoRapido?.cliente || !jwt) {
+    if (!PagoRapido?.cliente || !Empleado) {
         return (
             <div className="h-full p-2">
                 <div className="bg-white rounded-3xl shadow h-full">
@@ -547,7 +535,7 @@ const SidebarDerecho = React.memo((props: {
                                     <div className="grid grid-cols-1 gap-2 h-auto">
                                         <motion.button whileTap={{ scale: 0.9 }} className="bg-blue-500 h-12 shadow rounded-lg hover:shadow-lg hover:bg-blue-600 text-white focus:outline-none" onClick={(e) => { setPagarModal(true) }}>PAGAR</motion.button>
                                         <motion.button whileTap={{ scale: 0.9 }} className="bg-blue-500 h-12 shadow rounded-lg hover:shadow-lg hover:bg-blue-600 text-white focus:outline-none"
-                                            onClick={async () => { await Vender(PagoRapido, props.productosEnCarrito, Empleado, Clientes, jwt); }}>
+                                            onClick={async () => { await Vender(PagoRapido, props.productosEnCarrito, Empleado, Clientes); }}>
                                             COBRO RAPIDO
                                         </motion.button>
                                     </div>

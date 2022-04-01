@@ -1,4 +1,5 @@
 import { NextApiRequest, NextApiResponse } from "next";
+import { getJwtFromString } from "../../../hooks/jwt";
 import { Cliente } from "../../../tipos/Cliente";
 import { CustomerPaymentInformation } from "../../../tipos/CustomerPayment";
 import { Empleado } from "../../../tipos/Empleado";
@@ -58,7 +59,7 @@ const AddSale = async (req: NextApiRequest, res: NextApiResponse) => {
         const pagoCliente: CustomerPaymentInformation = req.body.pagoCliente;
         const cliente: Cliente = req.body.cliente;
         const empleado: Empleado = req.body.empleado;
-        const jwt = req.body.jwt;
+        const jwt = getJwtFromString(req.cookies.authorization);
 
         const fetchResult = await GQLFetcher.mutate(
             {

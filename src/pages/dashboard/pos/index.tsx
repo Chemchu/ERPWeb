@@ -4,10 +4,8 @@ import DashboardLayout from "../../../layout";
 import { AnimatePresence, motion } from "framer-motion";
 import { Producto } from "../../../tipos/Producto";
 import AbrirCaja from "../../../components/modal/abrirCaja";
-import { FetchProductos } from "../../../utils/fetches";
+import { FetchCurrentUserUsingTPV, FetchProductos } from "../../../utils/fetches";
 import CerrarCaja from "../../../components/modal/cerrarCaja";
-import { JWT } from "../../../tipos/JWT";
-import getJwt from "../../../hooks/jwt";
 
 
 const PuntoDeVenta = () => {
@@ -16,22 +14,16 @@ const PuntoDeVenta = () => {
     const [empleadoUsandoTPV, setEmpleadoUsandoTPV] = useState<boolean>(false);
     const [showModalCerrarCaja, setCerrarCajaModal] = useState<boolean>(false)
     const [showModalAbrirCaja, setAbrirCajaModal] = useState<boolean>(true);
-    const [jwt, setJwt] = useState<JWT>();
 
     useEffect(() => {
         const GetProd = async () => {
             SetProductos(await FetchProductos());
+            const tpnEnUso = FetchCurrentUserUsingTPV();
+            setEmpleadoUsandoTPV(!!tpnEnUso)
+            setAbrirCajaModal(!tpnEnUso)
         }
-
-        setJwt(getJwt());
         GetProd();
     }, []);
-
-    useEffect(() => {
-        setEmpleadoUsandoTPV(!!jwt?.TPV)
-        setAbrirCajaModal(!jwt?.TPV)
-    }, [jwt])
-
 
     return (
         <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}>

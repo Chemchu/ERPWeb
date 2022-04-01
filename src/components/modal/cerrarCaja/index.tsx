@@ -2,7 +2,8 @@ import { useMutation } from "@apollo/client";
 import { motion } from "framer-motion";
 import Cookies from "js-cookie";
 import { useEffect, useState } from "react";
-import getJwt from "../../../hooks/jwt";
+import useEmpleadoContext from "../../../context/empleadoContext";
+import { SesionEmpleado } from "../../../tipos/Empleado";
 import { JWT } from "../../../tipos/JWT";
 import { TPVType } from "../../../tipos/TPV";
 import { Venta } from "../../../tipos/Venta";
@@ -37,7 +38,6 @@ const In = {
 }
 
 export const CerrarCaja = (props: { setModalOpen: Function, setEmpleadoUsandoTPV: Function }) => {
-    const [jwt, setJwt] = useState<JWT>();
     const [Ventas, setVentas] = useState<Venta[]>();
     const [Tpv, setTPV] = useState<TPVType>();
     const [TotalEfectivo, setTotalEfectivo] = useState<string>();
@@ -45,10 +45,12 @@ export const CerrarCaja = (props: { setModalOpen: Function, setEmpleadoUsandoTPV
     const [TotalPrevistoEnCaja, setTotalPrevistoEnCaja] = useState<string>();
     const [TotalRealEnCaja, setTotalRealEnCaja] = useState<string>("0");
     const [DineroRetirado, setDineroRetirado] = useState<string>("0");
+    const { Empleado } = useEmpleadoContext();
+
     const [cerrarCaja, { loading, data, error }] = useMutation(ADD_CIERRE, {
         variables: {
             "cierre": {
-                "tpv": jwt?.TPV,
+                "tpv": Empleado?.TPV,
                 "cajaInicial": Tpv?.cajaInicial,
                 "abiertoPor": {
                     "_id": Tpv?.enUsoPor._id,
@@ -58,11 +60,11 @@ export const CerrarCaja = (props: { setModalOpen: Function, setEmpleadoUsandoTPV
                     "email": Tpv?.enUsoPor.email
                 },
                 "cerradoPor": {
-                    "_id": jwt?._id,
-                    "nombre": jwt?.nombre,
-                    "apellidos": jwt?.apellidos,
-                    "rol": jwt?.rol,
-                    "email": jwt?.email
+                    "_id": Empleado?._id,
+                    "nombre": Empleado?.nombre,
+                    "apellidos": Empleado?.apellidos,
+                    "rol": Empleado?.rol,
+                    "email": Empleado?.email
                 },
                 "apertura": Tpv?.updatedAt,
                 "ventasEfectivo": Number(TotalEfectivo),
@@ -78,11 +80,9 @@ export const CerrarCaja = (props: { setModalOpen: Function, setEmpleadoUsandoTPV
     });
 
     useEffect(() => {
-        setJwt(getJwt());
-    }, [])
+        const GetVentas = async (j: SesionEmpleado) => {
+            if (!j.TPV) { return; }
 
-    useEffect(() => {
-        const GetVentas = async (j: JWT) => {
             const tpv = await FetchTPV(j.TPV);
             if (!tpv) { return; }
 
@@ -95,10 +95,8 @@ export const CerrarCaja = (props: { setModalOpen: Function, setEmpleadoUsandoTPV
             setTotalPrevistoEnCaja(GetTotalEnCaja(ventas, tpv).toString());
         }
 
-        if (!jwt) { return; }
-
-        GetVentas(jwt);
-    }, [jwt])
+        GetVentas(Empleado);
+    }, [])
 
     useEffect(() => {
         if (data && data.addCierreTPV.successful && !error && !loading) {

@@ -8,5 +8,13 @@ export type Empleado = {
     email: string,
     horasPorSemana?: number,
     fechaAlta?: string,
+}
 
+export type SesionEmpleado = {
+    _id: string,
+    nombre: string,
+    apellidos: string,
+    rol: string,
+    email: string,
+    TPV?: string
 }

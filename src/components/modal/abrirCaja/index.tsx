@@ -2,7 +2,7 @@ import { useMutation } from "@apollo/client";
 import { motion } from "framer-motion";
 import Cookies from "js-cookie";
 import { useEffect, useState } from "react";
-import getJwt from "../../../hooks/jwt";
+import useEmpleadoContext from "../../../context/empleadoContext";
 import { JWT } from "../../../tipos/JWT";
 import { TPVType } from "../../../tipos/TPV";
 import { FetchTPVsByDisponibilidad } from "../../../utils/fetches";
@@ -40,7 +40,7 @@ const AbrirCaja = (props: { setShowModal: Function, setEmpleadoUsandoTPV: Functi
     const [currentTpvName, setCurrentTpvName] = useState<string>();
     const [cajaInicial, setCajaInicial] = useState<string>('0');
     const [ocuparTpv, { data, error }] = useMutation(OCUPY_TPV);
-    const [jwt, setJwt] = useState<JWT>();
+    const { Empleado } = useEmpleadoContext();
 
     useEffect(() => {
         const TpvsAbiertas = async () => {
@@ -48,7 +48,6 @@ const AbrirCaja = (props: { setShowModal: Function, setEmpleadoUsandoTPV: Functi
         }
 
         let isUnmounted = false;
-        setJwt(getJwt());
         TpvsAbiertas();
 
         return (() => {
@@ -80,7 +79,7 @@ const AbrirCaja = (props: { setShowModal: Function, setEmpleadoUsandoTPV: Functi
         const cInicial: number = parseFloat(Number(cajaInicial).toFixed(2))
         ocuparTpv({
             variables: {
-                "idEmpleado": jwt?._id,
+                "idEmpleado": Empleado._id,
                 "idTpv": tpv?._id,
                 "cajaInicial": cInicial
             }

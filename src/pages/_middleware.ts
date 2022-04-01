@@ -13,6 +13,7 @@ export async function middleware(req: NextRequest, ev: NextFetchEvent) {
         }
 
         const authCookie = req.cookies.authorization.split(" ")[1];
+
         if (IsJwtExpired(authCookie)) {
             url.pathname = "/login";
             return NextResponse.rewrite(url).clearCookie("authorization");

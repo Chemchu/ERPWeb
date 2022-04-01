@@ -7,7 +7,6 @@ import { ProductCarritoContextProvider } from "../context/productosEnCarritoCont
 import { EmpleadoContextProvider } from "../context/empleadoContext";
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
-
 const variants = {
     initial: {
         opacity: 0

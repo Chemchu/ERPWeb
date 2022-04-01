@@ -1,9 +1,27 @@
 import { motion } from 'framer-motion';
 import Cookies from 'js-cookie';
 import Link from 'next/link';
-import React from 'react';
+import React, { useEffect } from 'react';
+import useEmpleadoContext from '../../context/empleadoContext';
+import { FetchCurrentUser } from '../../utils/fetches';
+import { notifySuccess } from '../../utils/toastify';
 
 const Sidebar = React.memo((props: { isCollapsed: boolean, setCollapsed: Function, IndexSeleccionado: number, setIndex: Function }) => {
+    const { Empleado, SetEmpleado } = useEmpleadoContext();
+
+    useEffect(() => {
+        const GetData = async () => {
+            if (Empleado._id) {
+                const e = await FetchCurrentUser();
+                SetEmpleado(e);
+                notifySuccess("Sesión iniciada correctamente");
+            }
+        }
+        GetData();
+
+    }, [])
+
+
     return (
         props.isCollapsed ?
             <CollapsedSidebar setCollapsed={props.setCollapsed} IndexSeleccionado={props.IndexSeleccionado} setIndex={props.setIndex} />

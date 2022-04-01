@@ -1,8 +1,7 @@
-import { AnimatePresence, motion } from "framer-motion";
+import { motion } from "framer-motion";
 import { useState } from "react";
 import { Producto } from "../../../tipos/Producto";
 import { Backdrop } from "../backdrop";
-import EditarProducto from "../editarProducto";
 
 const In = {
     hidden: {
@@ -96,11 +95,6 @@ export const VerProducto = (props: { producto: Producto, showModal: Function }) 
                             Modificar
                         </button>
                     </div>
-                    <AnimatePresence >
-                        {
-                            showEditarProducto && <EditarProducto producto={ProductoModificado} showModal={setModal} />
-                        }
-                    </AnimatePresence>
                 </motion.div>
             </Backdrop>
         </motion.div>

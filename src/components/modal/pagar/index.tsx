@@ -3,7 +3,6 @@ import React, { useEffect, useRef, useState } from "react";
 import { useReactToPrint } from "react-to-print";
 import useEmpleadoContext from "../../../context/empleadoContext";
 import useProductEnCarritoContext from "../../../context/productosEnCarritoContext";
-import getJwt from "../../../hooks/jwt";
 import { Cliente } from "../../../tipos/Cliente";
 import { CustomerPaymentInformation } from "../../../tipos/CustomerPayment";
 import { TipoCobro } from "../../../tipos/Enums/TipoCobro";
@@ -44,7 +43,6 @@ const In = {
 }
 
 export const ModalPagar = (props: { PagoCliente: CustomerPaymentInformation, handleModalOpen: Function, AllClientes?: Cliente[] }) => {
-    const [jwt, setJwt] = useState<JWT>();
     const [dineroEntregado, setDineroEntregado] = useState<string>("0");
     const [dineroEntregadoTarjeta, setDineroEntregadoTarjeta] = useState<string>("0");
     const [cambio, setCambio] = useState<number>(props.PagoCliente.cambio);
@@ -63,13 +61,13 @@ export const ModalPagar = (props: { PagoCliente: CustomerPaymentInformation, han
 
     useEffect(() => {
         let isUnmounted = false;
-        setJwt(getJwt());
         if (props.AllClientes) {
             SetClientes(props.AllClientes);
             setServerStatus(true);
         }
         else {
             FetchClientes().then((r) => {
+
                 if (!isUnmounted) {
                     SetClientes(r)
                     setServerStatus(true);
@@ -124,8 +122,8 @@ export const ModalPagar = (props: { PagoCliente: CustomerPaymentInformation, han
     const AddSale = async (pagoCliente: CustomerPaymentInformation) => {
         try {
             UpdatePaymentInfo();
-            if (!jwt) { notifyError("Error con la autenticación"); return; }
-            const { data, error } = await AddVenta(pagoCliente, ProductosEnCarrito, Empleado, Clientes, jwt);
+            if (!Empleado) { notifyError("Error con la autenticación"); return; }
+            const { data, error } = await AddVenta(pagoCliente, ProductosEnCarrito, Empleado, Clientes);
 
             if (!error) {
                 setFecha(data.createdAt);

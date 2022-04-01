@@ -11,6 +11,7 @@ import queryString from 'query-string';
 import { notifyError } from "./toastify";
 import { TPVType } from "../tipos/TPV";
 import { Devolucion } from "../tipos/Devolucion";
+import { getJwtFromString } from "../hooks/jwt";
 
 export const FetchProductos = async (): Promise<Producto[]> => {
     try {
@@ -194,7 +195,7 @@ export const FetchVenta = async (id: string): Promise<Venta[]> => {
     }
 }
 
-export const AddVenta = async (pagoCliente: CustomerPaymentInformation, productosEnCarrito: ProductoVendido[], empleado: Empleado, clientes: Cliente[], jwt: JWT): Promise<{ data: any, error: boolean }> => {
+export const AddVenta = async (pagoCliente: CustomerPaymentInformation, productosEnCarrito: ProductoVendido[], empleado: Empleado, clientes: Cliente[]): Promise<{ data: any, error: boolean }> => {
     try {
         let cliente;
         if (!pagoCliente.cliente) {
@@ -214,8 +215,7 @@ export const AddVenta = async (pagoCliente: CustomerPaymentInformation, producto
                 productosEnCarrito: productosEnCarrito,
                 pagoCliente: pagoCliente,
                 cliente: cliente,
-                empleado: empleado,
-                jwt: jwt
+                empleado: empleado
             })
         });
 
@@ -362,4 +362,44 @@ export const FetchCierres = async (): Promise<Cierre[]> => {
         notifyError("Error de conexión");
         return [];
     }
+}
+
+export const FetchCurrentUser = async (): Promise<Empleado> => {
+    try {
+        const fetchRes = await fetch(`/api/currentUserToken`);
+        const empleadoJson = await fetchRes.json();
+
+        if (!fetchRes.ok) { notifyError(empleadoJson.message); return {} as Empleado; }
+
+        const empJwt = getJwtFromString(empleadoJson.token);
+
+        return CreateEmployee(empJwt);
+    }
+    catch (e) {
+        console.error(e);
+        notifyError("Error de conexión");
+
+        return {} as Empleado;
+    }
+
+}
+
+export const FetchCurrentUserUsingTPV = async (): Promise<boolean> => {
+    try {
+        const fetchRes = await fetch(`/api/currentUserToken`);
+        const empleadoJson = await fetchRes.json();
+
+        if (!fetchRes.ok) { notifyError(empleadoJson.message); return false; }
+
+        const empJwt = getJwtFromString(empleadoJson.token);
+
+        return !!empJwt.TPV;
+    }
+    catch (e) {
+        console.error(e);
+        notifyError("Error de conexión");
+
+        return false;
+    }
+
 }
