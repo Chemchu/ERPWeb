@@ -1,5 +1,6 @@
 import { motion } from 'framer-motion';
 import Cookies from 'js-cookie';
+import { GetServerSideProps } from 'next';
 import Link from 'next/link';
 import React, { useEffect } from 'react';
 import useEmpleadoContext from '../../context/empleadoContext';
@@ -11,7 +12,7 @@ const Sidebar = React.memo((props: { isCollapsed: boolean, setCollapsed: Functio
 
     useEffect(() => {
         const GetData = async () => {
-            if (Empleado._id) {
+            if (!Empleado._id) {
                 const e = await FetchCurrentUser();
                 SetEmpleado(e);
                 notifySuccess("Sesión iniciada correctamente");
@@ -20,7 +21,6 @@ const Sidebar = React.memo((props: { isCollapsed: boolean, setCollapsed: Functio
         GetData();
 
     }, [])
-
 
     return (
         props.isCollapsed ?
@@ -264,3 +264,11 @@ const CollapsedSidebar = (props: { setCollapsed: Function, IndexSeleccionado: nu
 
 Sidebar.displayName = 'Sidebar';
 export default Sidebar;
+
+export const getServerSideProps: GetServerSideProps = async (context) => {
+    console.log("context");
+
+    return {
+        props: {}, // will be passed to the page component as props
+    }
+}

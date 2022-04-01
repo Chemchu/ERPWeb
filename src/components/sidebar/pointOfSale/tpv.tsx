@@ -22,16 +22,7 @@ import { Empleado } from "../../../tipos/Empleado";
 const TPV = (props: { productos: Producto[], serverOperativo: boolean, empleadoUsandoTPV: boolean, setEmpleadoUsandoTPV: Function, setShowModalCerrar: Function, setShowModalAbrir: Function }) => {
     const [ProductosFiltrados, setProductosFiltrados] = useState<Producto[]>([]);
     const { ProductosEnCarrito, SetProductosEnCarrito } = useProductEnCarritoContext();
-    const { SetEmpleado } = useEmpleadoContext()
     const [Familias, setFamilias] = useState<string[]>([]);
-
-    useEffect(() => {
-        const GetData = async () => {
-            SetEmpleado(await FetchCurrentUser());
-        }
-
-        GetData();
-    }, []);
 
     useEffect(() => {
         function uniq_fast(a: Producto[]) {
