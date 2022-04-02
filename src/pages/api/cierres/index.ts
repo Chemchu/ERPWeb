@@ -1,27 +1,78 @@
 import { NextApiRequest, NextApiResponse } from "next";
-import { QUERY_CIERRES } from "../../../utils/querys";
+import { ADD_CIERRE, QUERY_CIERRES } from "../../../utils/querys";
 import GQLFetcher from "../../../utils/serverFetcher";
 
 const handler = async (req: NextApiRequest, res: NextApiResponse) => {
     try {
-        let fetchResult;
+        switch (req.method) {
+            case 'GET':
+                return await GetCierres(req, res);
 
-        fetchResult = await GQLFetcher.query({
-            query: QUERY_CIERRES, variables: {
-                "limit": 3000
-            }
-        });
+            case 'POST':
+                return await AddCierre(req, res);
 
-        if (!fetchResult.error) {
-            return res.status(200).json(fetchResult.data);
+            default:
+                res.setHeader('Allow', ['GET', 'POST']);
+                res.status(405).end(`Method ${req.method} Not Allowed`);
         }
 
-        return res.status(300).json({ message: `Fallo al pedir la lista de cierres` });
+
     }
     catch (err) {
         console.log(err);
         return res.status(500).json({ message: `Error: ${err}` });
     }
+}
+
+const GetCierres = async (req: NextApiRequest, res: NextApiResponse) => {
+    let fetchResult;
+
+    fetchResult = await GQLFetcher.query({
+        query: QUERY_CIERRES, variables: {
+            "limit": 3000
+        }
+    });
+
+    if (!fetchResult.error) {
+        return res.status(200).json(fetchResult.data);
+    }
+
+    return res.status(300).json({ message: `Fallo al pedir la lista de cierres` });
+}
+
+const AddCierre = async (req: NextApiRequest, res: NextApiResponse) => {
+    GQLFetcher.mutate({
+        mutation: ADD_CIERRE,
+        // variables: {
+        //     "cierre": {
+        //         "tpv": Empleado?.TPV,
+        //         "cajaInicial": Tpv?.cajaInicial,
+        //         "abiertoPor": {
+        //             "_id": Tpv?.enUsoPor._id,
+        //             "nombre": Tpv?.enUsoPor.nombre,
+        //             "apellidos": Tpv?.enUsoPor.apellidos,
+        //             "rol": Tpv?.enUsoPor.rol,
+        //             "email": Tpv?.enUsoPor.email
+        //         },
+        //         "cerradoPor": {
+        //             "_id": Empleado?._id,
+        //             "nombre": Empleado?.nombre,
+        //             "apellidos": Empleado?.apellidos,
+        //             "rol": Empleado?.rol,
+        //             "email": Empleado?.email
+        //         },
+        //         "apertura": Tpv?.updatedAt,
+        //         "ventasEfectivo": Number(TotalEfectivo),
+        //         "ventasTarjeta": Number(TotalTarjeta),
+        //         "ventasTotales": Number(TotalEfectivo) + Number(TotalTarjeta),
+        //         "dineroRetirado": Number(DineroRetirado),
+        //         "fondoDeCaja": Number(TotalRealEnCaja) - Number(DineroRetirado),
+        //         "numVentas": Ventas?.length || 0,
+        //         "dineroEsperadoEnCaja": Number(TotalPrevistoEnCaja),
+        //         "dineroRealEnCaja": Number(TotalRealEnCaja)
+        //     }
+        // }
+    })
 }
 
 export default handler;
