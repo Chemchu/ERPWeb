@@ -1,4 +1,6 @@
 import { NextApiRequest, NextApiResponse } from "next";
+import getJwtFromString from "../../../hooks/jwt";
+import { FetchTPV } from "../../../utils/fetches";
 import { ADD_CIERRE, QUERY_CIERRES } from "../../../utils/querys";
 import GQLFetcher from "../../../utils/serverFetcher";
 
@@ -41,37 +43,46 @@ const GetCierres = async (req: NextApiRequest, res: NextApiResponse) => {
 }
 
 const AddCierre = async (req: NextApiRequest, res: NextApiResponse) => {
+    const Tpv = await FetchTPV(getJwtFromString(req.cookies.authorization).TPV);
+    const Empleado = req.body.Empleado;
+    const TotalEfectivo = req.body.TotalEfectivo;
+    const TotalTarjeta = req.body.TotalTarjeta;
+    const DineroRetirado = req.body.DineroRetirado;
+    const TotalPrevistoEnCaja = req.body.TotalPrevistoEnCaja;
+    const TotalRealEnCaja = req.body.TotalRealEnCaja;
+    const Ventas = req.body.Ventas;
+
     GQLFetcher.mutate({
         mutation: ADD_CIERRE,
-        // variables: {
-        //     "cierre": {
-        //         "tpv": Empleado?.TPV,
-        //         "cajaInicial": Tpv?.cajaInicial,
-        //         "abiertoPor": {
-        //             "_id": Tpv?.enUsoPor._id,
-        //             "nombre": Tpv?.enUsoPor.nombre,
-        //             "apellidos": Tpv?.enUsoPor.apellidos,
-        //             "rol": Tpv?.enUsoPor.rol,
-        //             "email": Tpv?.enUsoPor.email
-        //         },
-        //         "cerradoPor": {
-        //             "_id": Empleado?._id,
-        //             "nombre": Empleado?.nombre,
-        //             "apellidos": Empleado?.apellidos,
-        //             "rol": Empleado?.rol,
-        //             "email": Empleado?.email
-        //         },
-        //         "apertura": Tpv?.updatedAt,
-        //         "ventasEfectivo": Number(TotalEfectivo),
-        //         "ventasTarjeta": Number(TotalTarjeta),
-        //         "ventasTotales": Number(TotalEfectivo) + Number(TotalTarjeta),
-        //         "dineroRetirado": Number(DineroRetirado),
-        //         "fondoDeCaja": Number(TotalRealEnCaja) - Number(DineroRetirado),
-        //         "numVentas": Ventas?.length || 0,
-        //         "dineroEsperadoEnCaja": Number(TotalPrevistoEnCaja),
-        //         "dineroRealEnCaja": Number(TotalRealEnCaja)
-        //     }
-        // }
+        variables: {
+            "cierre": {
+                "tpv": Empleado?.TPV,
+                "cajaInicial": Tpv?.cajaInicial,
+                "abiertoPor": {
+                    "_id": Tpv?.enUsoPor._id,
+                    "nombre": Tpv?.enUsoPor.nombre,
+                    "apellidos": Tpv?.enUsoPor.apellidos,
+                    "rol": Tpv?.enUsoPor.rol,
+                    "email": Tpv?.enUsoPor.email
+                },
+                "cerradoPor": {
+                    "_id": Empleado?._id,
+                    "nombre": Empleado?.nombre,
+                    "apellidos": Empleado?.apellidos,
+                    "rol": Empleado?.rol,
+                    "email": Empleado?.email
+                },
+                "apertura": Tpv?.updatedAt,
+                "ventasEfectivo": Number(TotalEfectivo),
+                "ventasTarjeta": Number(TotalTarjeta),
+                "ventasTotales": Number(TotalEfectivo) + Number(TotalTarjeta),
+                "dineroRetirado": Number(DineroRetirado),
+                "fondoDeCaja": Number(TotalRealEnCaja) - Number(DineroRetirado),
+                "numVentas": Ventas?.length || 0,
+                "dineroEsperadoEnCaja": Number(TotalPrevistoEnCaja),
+                "dineroRealEnCaja": Number(TotalRealEnCaja)
+            }
+        }
     })
 }
 

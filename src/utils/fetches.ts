@@ -393,9 +393,6 @@ export const FetchCurrentUserUsingTPV = async (): Promise<boolean> => {
 
         const empJwt = getJwtFromString(empleadoJson.token);
 
-        //console.log(empJwt);
-
-
         return !!empJwt.TPV;
     }
     catch (e) {

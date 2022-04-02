@@ -4,20 +4,20 @@ import { GetServerSideProps } from 'next';
 import Link from 'next/link';
 import React, { useEffect } from 'react';
 import useEmpleadoContext from '../../context/empleadoContext';
+import getJwtFromString from '../../hooks/jwt';
+import { SesionEmpleado } from '../../tipos/Empleado';
 import { FetchCurrentUser } from '../../utils/fetches';
 import { notifySuccess } from '../../utils/toastify';
 
-const Sidebar = React.memo((props: { isCollapsed: boolean, setCollapsed: Function, IndexSeleccionado: number, setIndex: Function }) => {
+const Sidebar = React.memo((props: { isCollapsed: boolean, setCollapsed: Function, IndexSeleccionado: number, setIndex: Function, EmpleadoSesion?: SesionEmpleado }) => {
     const { Empleado, SetEmpleado } = useEmpleadoContext();
 
     useEffect(() => {
-        const GetData = async () => {
-            if (!Empleado._id) {
-                const e = await FetchCurrentUser();
-                SetEmpleado(e);
-            }
+        console.log(props.EmpleadoSesion);
+
+        if (props.EmpleadoSesion) {
+            SetEmpleado(props.EmpleadoSesion)
         }
-        GetData();
 
     }, [])
 
@@ -263,11 +263,3 @@ const CollapsedSidebar = (props: { setCollapsed: Function, IndexSeleccionado: nu
 
 Sidebar.displayName = 'Sidebar';
 export default Sidebar;
-
-export const getServerSideProps: GetServerSideProps = async (context) => {
-    console.log("context");
-
-    return {
-        props: {}, // will be passed to the page component as props
-    }
-}

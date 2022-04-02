@@ -1,16 +1,24 @@
 import { Tab } from "@headlessui/react";
+import { GetServerSideProps } from "next";
 import { useEffect, useState } from "react";
 import CierrePage from "../../../components/sidebar/Cierres";
+import useEmpleadoContext from "../../../context/empleadoContext";
+import getJwtFromString from "../../../hooks/jwt";
 import DashboardLayout from "../../../layout";
 import { Cierre } from "../../../tipos/Cierre";
+import { SesionEmpleado } from "../../../tipos/Empleado";
 import { TPVType } from "../../../tipos/TPV";
 import { FetchCierres, FetchTPVs } from "../../../utils/fetches";
 
-const Cierres = () => {
+const Cierres = (props: { EmpleadoSesion: SesionEmpleado }) => {
     const [CierresList, SetCierres] = useState<Cierre[]>([]);
     const [tpvs, SetTpvs] = useState<TPVType[]>([]);
+    const { Empleado, SetEmpleado } = useEmpleadoContext();
 
     useEffect(() => {
+        if (Object.keys(Empleado).length === 0) {
+            SetEmpleado(props.EmpleadoSesion)
+        }
         const GetAllData = async () => {
             SetCierres(await FetchCierres());
             SetTpvs(await FetchTPVs());
@@ -62,6 +70,24 @@ const Cierres = () => {
 }
 
 Cierres.PageLayout = DashboardLayout;
+
+export const getServerSideProps: GetServerSideProps = async (context) => {
+    const jwt = getJwtFromString(context.req.cookies.authorization);
+    const emp: SesionEmpleado = {
+        _id: jwt._id,
+        apellidos: jwt.apellidos,
+        email: jwt.email,
+        nombre: jwt.nombre,
+        rol: jwt.rol,
+        TPV: jwt.TPV
+    }
+
+    return {
+        props: {
+            EmpleadoSesion: emp
+        }
+    }
+}
 
 export default Cierres;
 

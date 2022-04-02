@@ -47,6 +47,7 @@ const EditableNumberLabel = (props: {
                 >
                     <input
                         className="placeholder:text-gray-400 placeholder:italic p-2 border rounded-lg w-full h-full focus:outline-none focus:ring-2 focus:ring-blue-600"
+                        autoFocus
                         type="text"
                         name="task"
                         placeholder={props.placeholder}

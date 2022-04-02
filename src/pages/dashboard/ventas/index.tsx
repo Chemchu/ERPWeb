@@ -1,26 +1,35 @@
 import { Tab } from '@headlessui/react';
+import { GetServerSideProps } from 'next';
 import { useEffect, useState } from 'react';
 import DevolucionesPage from '../../../components/sidebar/Ventas/devolucionesTab';
 import SalesPage from '../../../components/sidebar/Ventas/ventasTab'
+import useEmpleadoContext from '../../../context/empleadoContext';
+import getJwtFromString from '../../../hooks/jwt';
 import DashboardLayout from '../../../layout';
 import { Cliente } from '../../../tipos/Cliente';
+import { Devolucion } from '../../../tipos/Devolucion';
+import { SesionEmpleado } from '../../../tipos/Empleado';
 import { Venta } from '../../../tipos/Venta';
 import { FetchVentas } from '../../../utils/fetches';
 
-const Ventas = () => {
+const Ventas = (props: { EmpleadoSesion: SesionEmpleado }) => {
     const [Ventas, setVentas] = useState<Venta[]>([]);
-    const [Devoluciones, setDevoluciones] = useState<Venta[]>([]); // ---> Una devolución no es más que una venta con precioTotal en negativo
+    const [Devoluciones, setDevoluciones] = useState<Devolucion[]>([]); // ---> Una devolución no es más que una venta con precioTotal en negativo
     const [Clientes,] = useState<Cliente[]>([]);
+    const { Empleado, SetEmpleado } = useEmpleadoContext();
 
     useEffect(() => {
-        const GetAllData = async () => {
-            const ventas = await FetchVentas();
-            const reembolsos = ventas.filter((venta) => { return venta.precioVentaTotal < 0 });
-            setVentas(ventas);
-            setDevoluciones(reembolsos);
+        if (Object.keys(Empleado).length === 0) {
+            SetEmpleado(props.EmpleadoSesion)
         }
+        // const GetAllData = async () => {
+        //     const ventas = await FetchVentas();
+        //     const reembolsos = ventas.filter((venta) => { return venta.precioVentaTotal < 0 });
+        //     setVentas(ventas);
+        //     setDevoluciones(reembolsos);
+        // }
 
-        GetAllData();
+        // GetAllData();
     }, []);
 
     return (
@@ -82,6 +91,24 @@ const Ventas = () => {
             </Tab.Panels>
         </Tab.Group >
     );
+}
+
+export const getServerSideProps: GetServerSideProps = async (context) => {
+    const jwt = getJwtFromString(context.req.cookies.authorization);
+    const emp: SesionEmpleado = {
+        _id: jwt._id,
+        apellidos: jwt.apellidos,
+        email: jwt.email,
+        nombre: jwt.nombre,
+        rol: jwt.rol,
+        TPV: jwt.TPV
+    }
+
+    return {
+        props: {
+            EmpleadoSesion: emp
+        }
+    }
 }
 
 Ventas.PageLayout = DashboardLayout;

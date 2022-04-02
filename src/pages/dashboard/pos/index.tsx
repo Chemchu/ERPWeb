@@ -8,17 +8,23 @@ import { FetchProductos } from "../../../utils/fetches";
 import CerrarCaja from "../../../components/modal/cerrarCaja";
 import { GetServerSideProps } from "next";
 import getJwtFromString from "../../../hooks/jwt";
+import { SesionEmpleado } from "../../../tipos/Empleado";
+import useEmpleadoContext from "../../../context/empleadoContext";
 
 
-const PuntoDeVenta = (props: { isEmpleadoUsingTPV: boolean }) => {
+const PuntoDeVenta = (props: { isEmpleadoUsingTPV: boolean, EmpleadoSesion: SesionEmpleado }) => {
     const [Productos, SetProductos] = useState<Producto[]>([]);
     const [ServerUp, setServerUp] = useState<boolean>(true);
     const [showModalCerrarCaja, setCerrarCajaModal] = useState<boolean>(false);
 
     const [empleadoUsandoTpv, setEmpleadoUsandoTPV] = useState<boolean>(props.isEmpleadoUsingTPV);
     const [showModalAbrirCaja, setAbrirCajaModal] = useState<boolean>(!props.isEmpleadoUsingTPV);
+    const { Empleado, SetEmpleado } = useEmpleadoContext();
 
     useEffect(() => {
+        if (Object.keys(Empleado).length === 0) {
+            SetEmpleado(props.EmpleadoSesion)
+        }
         const GetProd = async () => {
             SetProductos(await FetchProductos());
         }
@@ -40,10 +46,18 @@ PuntoDeVenta.PageLayout = DashboardLayout;
 
 export const getServerSideProps: GetServerSideProps = async (ctx) => {
     const jwt = getJwtFromString(ctx.req.cookies.authorization);
-
+    const emp: SesionEmpleado = {
+        _id: jwt._id,
+        apellidos: jwt.apellidos,
+        email: jwt.email,
+        nombre: jwt.nombre,
+        rol: jwt.rol,
+        TPV: jwt.TPV
+    }
     return {
         props: {
-            isEmpleadoUsingTPV: Boolean(jwt.TPV)
+            isEmpleadoUsingTPV: Boolean(jwt.TPV),
+            EmpleadoSesion: emp
         }
     }
 }

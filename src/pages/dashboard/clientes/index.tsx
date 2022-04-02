@@ -1,14 +1,22 @@
 import { Tab } from "@headlessui/react";
+import { GetServerSideProps } from "next";
 import { useEffect, useState } from "react";
 import ClientesPage from "../../../components/sidebar/Clientes";
+import useEmpleadoContext from "../../../context/empleadoContext";
+import getJwtFromString from "../../../hooks/jwt";
 import DashboardLayout from "../../../layout";
 import { Cliente } from "../../../tipos/Cliente";
+import { SesionEmpleado } from "../../../tipos/Empleado";
 import { FetchClientes } from "../../../utils/fetches";
 
-const Clientes = () => {
+const Clientes = (props: { EmpleadoSesion: SesionEmpleado }) => {
     const [Clientes, SetClientes] = useState<Cliente[]>([]);
+    const { Empleado, SetEmpleado } = useEmpleadoContext();
 
     useEffect(() => {
+        if (Object.keys(Empleado).length === 0) {
+            SetEmpleado(props.EmpleadoSesion)
+        }
         const GetAllData = async () => {
             SetClientes(await FetchClientes());
         }
@@ -80,6 +88,24 @@ const Clientes = () => {
 }
 
 Clientes.PageLayout = DashboardLayout;
+
+export const getServerSideProps: GetServerSideProps = async (context) => {
+    const jwt = getJwtFromString(context.req.cookies.authorization);
+    const emp: SesionEmpleado = {
+        _id: jwt._id,
+        apellidos: jwt.apellidos,
+        email: jwt.email,
+        nombre: jwt.nombre,
+        rol: jwt.rol,
+        TPV: jwt.TPV
+    }
+
+    return {
+        props: {
+            EmpleadoSesion: emp
+        }
+    }
+}
 
 export default Clientes;
 

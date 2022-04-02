@@ -1,13 +1,18 @@
+import { GetServerSideProps } from "next";
 import React, { useEffect, useState } from "react";
 import useEmpleadoContext from "../../context/empleadoContext";
+import getJwtFromString from "../../hooks/jwt";
 import DashboardLayout from "../../layout";
-import { Empleado } from "../../tipos/Empleado";
+import { SesionEmpleado } from "../../tipos/Empleado";
 
-const Home = (props: { empleado: Empleado }) => {
+const Home = (props: { EmpleadoSesion: SesionEmpleado }) => {
   const [saludo, setSaludo] = useState<string>();
-  const { Empleado } = useEmpleadoContext();
+  const { Empleado, SetEmpleado } = useEmpleadoContext();
 
   useEffect(() => {
+    if (Object.keys(Empleado).length === 0) {
+      SetEmpleado(props.EmpleadoSesion);
+    }
     const GetData = async () => {
       setSaludo(`${saludos[Math.floor(Math.random() * (saludos.length - 0))]}`);
     }
@@ -34,4 +39,23 @@ const Home = (props: { empleado: Empleado }) => {
 }
 
 Home.PageLayout = DashboardLayout;
+
+export const getServerSideProps: GetServerSideProps = async (context) => {
+  const jwt = getJwtFromString(context.req.cookies.authorization);
+  const emp: SesionEmpleado = {
+    _id: jwt._id,
+    apellidos: jwt.apellidos,
+    email: jwt.email,
+    nombre: jwt.nombre,
+    rol: jwt.rol,
+    TPV: jwt.TPV
+  }
+
+  return {
+    props: {
+      EmpleadoSesion: emp
+    }
+  }
+}
+
 export default Home;

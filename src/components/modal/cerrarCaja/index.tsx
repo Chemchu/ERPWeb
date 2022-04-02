@@ -37,7 +37,7 @@ const In = {
     }
 }
 
-export const CerrarCaja = (props: { setModalOpen: Function, setEmpleadoUsandoTPV: Function }) => {
+export const CerrarCaja = (props: { Empleado?: SesionEmpleado, setModalOpen: Function, setEmpleadoUsandoTPV: Function }) => {
     const [Ventas, setVentas] = useState<Venta[]>();
     const [Tpv, setTPV] = useState<TPVType>();
     const [TotalEfectivo, setTotalEfectivo] = useState<string>();

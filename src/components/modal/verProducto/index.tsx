@@ -66,7 +66,7 @@ export const VerProducto = (props: { producto: Producto, showModal: Function }) 
                     animate="visible"
                     exit="exit"
                 >
-                    <div className="self-start font-semibold text-xl w-1/2">
+                    <div className="self-start font-semibold text-xl w-1/2 xl:text-3xl">
                         <EditableLabel
                             text={Nombre}
                             setText={setNombre}
@@ -75,7 +75,7 @@ export const VerProducto = (props: { producto: Producto, showModal: Function }) 
                             type="input"
                         />
                     </div>
-                    <div className="flex flex-col gap-2 h-full w-1/2 cursor-default self-start">
+                    <div className="flex flex-col gap-2 h-full w-1/2 cursor-default self-start xl:text-xl">
                         <span>
                             ID: {props.producto._id}
                         </span>
