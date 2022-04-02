@@ -3,23 +3,8 @@ import Cookies from 'js-cookie';
 import { GetServerSideProps } from 'next';
 import Link from 'next/link';
 import React, { useEffect } from 'react';
-import useEmpleadoContext from '../../context/empleadoContext';
-import getJwtFromString from '../../hooks/jwt';
-import { SesionEmpleado } from '../../tipos/Empleado';
-import { FetchCurrentUser } from '../../utils/fetches';
-import { notifySuccess } from '../../utils/toastify';
 
-const Sidebar = React.memo((props: { isCollapsed: boolean, setCollapsed: Function, IndexSeleccionado: number, setIndex: Function, EmpleadoSesion?: SesionEmpleado }) => {
-    const { Empleado, SetEmpleado } = useEmpleadoContext();
-
-    useEffect(() => {
-        console.log(props.EmpleadoSesion);
-
-        if (props.EmpleadoSesion) {
-            SetEmpleado(props.EmpleadoSesion)
-        }
-
-    }, [])
+const Sidebar = React.memo((props: { isCollapsed: boolean, setCollapsed: Function, IndexSeleccionado: number, setIndex: Function }) => {
 
     return (
         props.isCollapsed ?

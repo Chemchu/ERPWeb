@@ -14,7 +14,7 @@ import { FetchVentas } from '../../../utils/fetches';
 
 const Ventas = (props: { EmpleadoSesion: SesionEmpleado }) => {
     const [Ventas, setVentas] = useState<Venta[]>([]);
-    const [Devoluciones, setDevoluciones] = useState<Devolucion[]>([]); // ---> Una devolución no es más que una venta con precioTotal en negativo
+    const [Devoluciones, setDevoluciones] = useState<Devolucion[]>([]);
     const [Clientes,] = useState<Cliente[]>([]);
     const { Empleado, SetEmpleado } = useEmpleadoContext();
 
@@ -22,14 +22,14 @@ const Ventas = (props: { EmpleadoSesion: SesionEmpleado }) => {
         if (Object.keys(Empleado).length === 0) {
             SetEmpleado(props.EmpleadoSesion)
         }
-        // const GetAllData = async () => {
-        //     const ventas = await FetchVentas();
-        //     const reembolsos = ventas.filter((venta) => { return venta.precioVentaTotal < 0 });
-        //     setVentas(ventas);
-        //     setDevoluciones(reembolsos);
-        // }
+        const GetAllData = async () => {
+            const ventas = await FetchVentas();
+            //const reembolsos: Devolucion[] = ventas.filter((venta) => { return venta.precioVentaTotal < 0 });
+            setVentas(ventas);
+            //setDevoluciones(reembolsos);
+        }
 
-        // GetAllData();
+        GetAllData();
     }, []);
 
     return (
