@@ -11,13 +11,13 @@ import SkeletonProductCard from "../../Skeletons/skeletonProductCard";
 import ModalPagar from "../../modal/pagar";
 import { AplicarDescuentos, PrecioTotalCarrito } from "../../../utils/preciosUtils";
 import { Cliente } from "../../../tipos/Cliente";
-import { AddVenta, FetchClientes, FetchCurrentUser } from "../../../utils/fetches";
+import { AddVenta, FetchClientes } from "../../../utils/fetches";
 import useEmpleadoContext from "../../../context/empleadoContext";
 import { notifyError, notifySuccess } from "../../../utils/toastify";
 import { useReactToPrint } from "react-to-print";
 import Ticket from "../../ticket";
 import GenerateQrBase64 from "../../../utils/generateQr";
-import { Empleado } from "../../../tipos/Empleado";
+import { Empleado, SesionEmpleado } from "../../../tipos/Empleado";
 
 const TPV = (props: { productos: Producto[], serverOperativo: boolean, empleadoUsandoTPV: boolean, setEmpleadoUsandoTPV: Function, setShowModalCerrar: Function, setShowModalAbrir: Function }) => {
     const [ProductosFiltrados, setProductosFiltrados] = useState<Producto[]>([]);
@@ -366,8 +366,12 @@ const SidebarDerecho = React.memo((props: {
         })
     }, []);
 
-    const Vender = async (pagoCliente: CustomerPaymentInformation, productosEnCarrito: ProductoVendido[], emp: Empleado, clientes: Cliente[]) => {
-        const { data, error } = await AddVenta(pagoCliente, productosEnCarrito, emp, clientes);
+    const Vender = async (pagoCliente: CustomerPaymentInformation, productosEnCarrito: ProductoVendido[], emp: SesionEmpleado, clientes: Cliente[]) => {
+        if (!emp.TPV) {
+            throw "Error en la autenticación y el uso de la TPV";
+        }
+
+        const { data, error } = await AddVenta(pagoCliente, productosEnCarrito, emp, clientes, emp.TPV);
 
         if (!error) {
             setFecha(data.createdAt);
@@ -522,7 +526,8 @@ const SidebarDerecho = React.memo((props: {
                                     }
                                 </div>
                                 {
-                                    props.productosEnCarrito.length > 0 && !isNaN(PrecioTotal) &&
+                                    props.productosEnCarrito.length > 0 &&
+                                    !isNaN(PrecioTotal) &&
                                     <div className="grid grid-cols-1 gap-2 h-auto">
                                         <motion.button whileTap={{ scale: 0.9 }} className="bg-blue-500 h-12 shadow rounded-lg hover:shadow-lg hover:bg-blue-600 text-white focus:outline-none" onClick={(e) => { setPagarModal(true) }}>PAGAR</motion.button>
                                         <motion.button whileTap={{ scale: 0.9 }} className="bg-blue-500 h-12 shadow rounded-lg hover:shadow-lg hover:bg-blue-600 text-white focus:outline-none"

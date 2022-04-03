@@ -58,12 +58,3 @@ export const IsPositiveIntegerNumber = (input: string): boolean => {
 
     return res;
 }
-
-// export const IsValidEANCode = (ean: string): boolean => {
-//     const _gtinRegex: RegExp = new RegExp("^(\\d{8}|\\d{12,14})$");
-
-//     if (!ean.match(_gtinRegex)) return false;
-//     ean = ean.PadLeft(14, '0');
-//     int sum = ean.Select((c, i) => (c - '0') * ((i % 2 == 0) ? 3 : 1)).Sum();
-//     return (sum % 10) == 0;
-// }

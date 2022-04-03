@@ -1,7 +1,7 @@
 import { Cierre } from "../tipos/Cierre";
 import { Cliente } from "../tipos/Cliente";
 import { CustomerPaymentInformation } from "../tipos/CustomerPayment";
-import { Empleado } from "../tipos/Empleado";
+import { Empleado, SesionEmpleado } from "../tipos/Empleado";
 import { JWT } from "../tipos/JWT";
 import { Producto } from "../tipos/Producto";
 import { ProductoVendido } from "../tipos/ProductoVendido";
@@ -195,7 +195,7 @@ export const FetchVenta = async (id: string): Promise<Venta[]> => {
     }
 }
 
-export const AddVenta = async (pagoCliente: CustomerPaymentInformation, productosEnCarrito: ProductoVendido[], empleado: Empleado, clientes: Cliente[]): Promise<{ data: any, error: boolean }> => {
+export const AddVenta = async (pagoCliente: CustomerPaymentInformation, productosEnCarrito: ProductoVendido[], empleado: SesionEmpleado, clientes: Cliente[], tpv: string): Promise<{ data: any, error: boolean }> => {
     try {
         let cliente;
         if (!pagoCliente.cliente) {
@@ -215,7 +215,8 @@ export const AddVenta = async (pagoCliente: CustomerPaymentInformation, producto
                 productosEnCarrito: productosEnCarrito,
                 pagoCliente: pagoCliente,
                 cliente: cliente,
-                empleado: empleado
+                empleado: CreateEmployee(empleado),
+                tpv: tpv
             })
         });
 

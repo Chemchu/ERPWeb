@@ -4,7 +4,6 @@ import Cookies from "js-cookie";
 import { useEffect, useState } from "react";
 import useEmpleadoContext from "../../../context/empleadoContext";
 import { SesionEmpleado } from "../../../tipos/Empleado";
-import { JWT } from "../../../tipos/JWT";
 import { TPVType } from "../../../tipos/TPV";
 import { Venta } from "../../../tipos/Venta";
 import { FetchVentasByTPVDate, FetchTPV } from "../../../utils/fetches";

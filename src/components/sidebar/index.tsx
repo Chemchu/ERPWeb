@@ -2,6 +2,7 @@ import { motion } from 'framer-motion';
 import Cookies from 'js-cookie';
 import { GetServerSideProps } from 'next';
 import Link from 'next/link';
+import { resolve } from 'path';
 import React, { useEffect } from 'react';
 
 const Sidebar = React.memo((props: { isCollapsed: boolean, setCollapsed: Function, IndexSeleccionado: number, setIndex: Function }) => {
@@ -134,7 +135,7 @@ const OpenedSidebar = (props: { setCollapsed: Function, IndexSeleccionado: numbe
                     </Link>
 
                     <Link href="/">
-                        <div onClick={(e) => { props.setIndex(0); e.stopPropagation(); Cookies.remove("authorization"); }} className={`${props.IndexSeleccionado === 8 && "bg-gray-100"} hover:text-gray-800 hover:bg-gray-100 gap-4 flex items-center transition-colors dark:hover:text-white dark:hover:bg-gray-600 duration-200
+                        <div onClick={async (e) => { props.setIndex(0); e.stopPropagation(); await fetch('/api/logout') }} className={`${props.IndexSeleccionado === 8 && "bg-gray-100"} hover:text-gray-800 hover:bg-gray-100 gap-4 flex items-center transition-colors dark:hover:text-white dark:hover:bg-gray-600 duration-200
                         text-gray-600 dark:text-gray-400 rounded-lg cursor-pointer`} >
                             <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
                                 <path strokeLinecap="round" strokeLinejoin="round" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
@@ -234,7 +235,7 @@ const CollapsedSidebar = (props: { setCollapsed: Function, IndexSeleccionado: nu
                     </Link>
 
                     <Link href="/">
-                        <div onClick={(e) => { props.setIndex(0); e.stopPropagation(); Cookies.remove("authorization"); }} className={`${props.IndexSeleccionado === 8 && "bg-gray-100"} hover:text-gray-800 hover:bg-gray-100 cursor-pointer dark:hover:text-white dark:hover:bg-gray-600 duration-200 text-gray-600 dark:text-gray-400 rounded-lg `} >
+                        <div onClick={async (e) => { props.setIndex(0); e.stopPropagation(); await fetch('/api/logout'); }} className={`${props.IndexSeleccionado === 8 && "bg-gray-100"} hover:text-gray-800 hover:bg-gray-100 cursor-pointer dark:hover:text-white dark:hover:bg-gray-600 duration-200 text-gray-600 dark:text-gray-400 rounded-lg `} >
                             <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
                                 <path strokeLinecap="round" strokeLinejoin="round" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
                             </svg>

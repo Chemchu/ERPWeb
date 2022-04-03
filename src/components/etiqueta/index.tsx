@@ -1,6 +1,6 @@
 import JsBarcode from "jsbarcode";
-import React, { useEffect, useState } from "react";
-import { notifyError } from "../../utils/toastify";
+import React, { useEffect } from "react";
+import { notifyWarn } from "../../utils/toastify";
 
 const Etiqueta = React.forwardRef((props: { nombre: string, ean: string, precio: number }, ref: React.LegacyRef<HTMLDivElement>) => {
     useEffect(() => {
@@ -8,7 +8,7 @@ const Etiqueta = React.forwardRef((props: { nombre: string, ean: string, precio:
             JsBarcode("#ean-13", props.ean, { format: "ean13", background: "#ffffff", height: 20, displayValue: true });
         }
         catch (e) {
-            notifyError("El código EAN de este producto es inválido. No se mostrará el código de barras en la etiqueta")
+            notifyWarn("EAN inválido. El código de barras no estará en la etiqueta");
         }
 
     }, [])

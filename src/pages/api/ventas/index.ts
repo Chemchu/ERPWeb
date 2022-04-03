@@ -59,7 +59,7 @@ const AddSale = async (req: NextApiRequest, res: NextApiResponse) => {
         const pagoCliente: CustomerPaymentInformation = req.body.pagoCliente;
         const cliente: Cliente = req.body.cliente;
         const empleado: Empleado = req.body.empleado;
-        const jwt = getJwtFromString(req.cookies.authorization);
+        const tpv = req.body.tpv;
 
         const fetchResult = await GQLFetcher.mutate(
             {
@@ -78,7 +78,7 @@ const AddSale = async (req: NextApiRequest, res: NextApiResponse) => {
                         "modificadoPor": empleado,
                         "descuentoEfectivo": Number(pagoCliente.dtoEfectivo.toFixed(2)) || 0,
                         "descuentoPorcentaje": Number(pagoCliente.dtoPorcentaje.toFixed(2)) || 0,
-                        "tpv": jwt.TPV
+                        "tpv": tpv
                     }
                 },
                 fetchPolicy: "no-cache"
@@ -86,6 +86,8 @@ const AddSale = async (req: NextApiRequest, res: NextApiResponse) => {
         );
 
         if (fetchResult.errors) {
+            console.log(fetchResult.errors);
+
             return res.status(300).json({ message: `Fallo al buscar la venta` });
         }
         return res.status(200).json(fetchResult.data);

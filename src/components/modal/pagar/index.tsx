@@ -49,7 +49,7 @@ export const ModalPagar = (props: { PagoCliente: CustomerPaymentInformation, han
     const { Empleado } = useEmpleadoContext();
 
     const [Clientes, SetClientes] = useState<Cliente[]>([]);
-    const [ClienteActual, SetClienteActual] = useState<Cliente>();
+    const [ClienteActual, SetClienteActual] = useState<Cliente>(props.PagoCliente.cliente);
     const [NombreClienteActual, SetNombreClienteActual] = useState<string>("General");
     const [PagoDelCliente, SetPagoCliente] = useState<CustomerPaymentInformation>(props.PagoCliente);
     const [qrImage, setQrImage] = useState<string>();
@@ -130,11 +130,11 @@ export const ModalPagar = (props: { PagoCliente: CustomerPaymentInformation, han
         setCambio(CalcularCambio(PagoDelCliente.precioTotal, Number(dineroEntregado), Number(dinero)))
     }
 
-    const AddSale = async (pagoCliente: CustomerPaymentInformation) => {
+    const RealizarVenta = async (pagoCliente: CustomerPaymentInformation) => {
         try {
             UpdatePaymentInfo();
-            if (!Empleado) { notifyError("Error con la autenticación"); return; }
-            const { data, error } = await AddVenta(pagoCliente, ProductosEnCarrito, Empleado, Clientes);
+            if (!Empleado || !Empleado.TPV) { notifyError("Error con la autenticación"); return; }
+            const { data, error } = await AddVenta(pagoCliente, ProductosEnCarrito, Empleado, Clientes, Empleado.TPV);
 
             if (!error) {
                 setFecha(data.createdAt);
@@ -265,7 +265,7 @@ export const ModalPagar = (props: { PagoCliente: CustomerPaymentInformation, han
                             {
                                 serverUp ?
                                     Number(cambio.toFixed(2)) >= 0 ?
-                                        <button className="bg-blue-500 hover:bg-blue-600 text-white w-full h-12 hover:shadow-lg rounded-lg flex items-center justify-center" onClick={async () => { await AddSale(PagoDelCliente); }} >
+                                        <button className="bg-blue-500 hover:bg-blue-600 text-white w-full h-12 hover:shadow-lg rounded-lg flex items-center justify-center" onClick={async () => { await RealizarVenta(PagoDelCliente); }} >
                                             <div className="text-lg">COMPLETAR VENTA</div>
                                         </button>
                                         :
