@@ -8,6 +8,7 @@ import { notifyWarn } from "../../../utils/toastify";
 import { FetchProductoByQuery } from "../../../utils/fetches";
 import UploadFile from "../../Forms/uploadFile";
 import { TipoDocumento } from "../../../tipos/Enums/TipoDocumentos";
+import DownloadFile from "../../Forms/downloadFile";
 
 const arrayNum = [...Array(8)];
 
@@ -35,8 +36,8 @@ const ProductPage = (props: { productos: Producto[], serverUp: boolean }) => {
 
     return (
         <div className="flex flex-col h-full w-full bg-white rounded-b-2xl rounded-r-2xl p-4 shadow-lg border-x">
-            <div className="flex w-full h-auto py-4 gap-10 justify-end">
-                <div className="flex gap-4 w-full h-full">
+            <div className="flex w-full h-auto py-4">
+                <div className="flex gap-4 w-full h-full justify-start">
                     <button className="flex flex-shrink-0 gap-2 px-4 py-2 text-base font-semibold text-white bg-green-500 rounded-lg shadow-md hover:bg-green-600 focus:outline-none focus:ring-2 focus:ring-green-600 focus:ring-offset-2 focus:ring-offset-blue-200">
                         Nuevo
                         <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -44,6 +45,7 @@ const ProductPage = (props: { productos: Producto[], serverUp: boolean }) => {
                         </svg>
                     </button>
                     <UploadFile tipoDocumento={TipoDocumento.Productos} />
+                    <DownloadFile tipoDocumento={TipoDocumento.Productos} />
                 </div>
                 <div className="flex gap-2">
                     <input autoFocus={true} className="rounded-lg border appearance-none shadow-lg w-72 xl:w-96 h-full py-2 px-4 bg-white text-gray-700 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-600" placeholder="Producto a buscar"

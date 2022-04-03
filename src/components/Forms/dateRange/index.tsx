@@ -11,7 +11,7 @@ const DateRange = (props: { startDate: Date | null, endDate: Date | null, dateRa
                 Fecha
             </span>
             <DatePicker
-                className="rounded-lg border shadow-lg py-2 px-4 bg-white text-gray-700 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-600"
+                className="w-40 xl:w-60 rounded-lg border shadow-lg py-2 px-4 bg-white text-gray-700 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-600"
                 selectsRange={true}
                 dateFormat="dd/MM/yyyy"
                 startDate={props.startDate}

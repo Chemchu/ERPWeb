@@ -1,11 +1,14 @@
 import { AnimatePresence } from "framer-motion";
 import React, { useEffect, useState } from "react";
 import { Cliente } from "../../../tipos/Cliente";
+import { TipoDocumento } from "../../../tipos/Enums/TipoDocumentos";
 import { Venta } from "../../../tipos/Venta";
 import { FetchVenta, FetchVentasByDateRange } from "../../../utils/fetches";
 import { notifyWarn } from "../../../utils/toastify";
 import DateRange from "../../Forms/dateRange";
+import DownloadFile from "../../Forms/downloadFile";
 import { Paginador } from "../../Forms/paginador";
+import UploadFile from "../../Forms/uploadFile";
 import EditarVenta from "../../modal/editarVenta";
 import SkeletonCard from "../../Skeletons/skeletonCard";
 
@@ -60,24 +63,29 @@ const SalesPage = (props: { ventas: Venta[], clientes: Cliente[] }) => {
 
     return (
         <div className="flex flex-col h-full w-full bg-white rounded-b-2xl rounded-r-2xl p-4 shadow-lg border-x">
-            <div className="flex w-full pb-4 gap-10 justify-end">
-                <DateRange dateRange={dateRange} setDateRange={setDateRange} endDate={endDate} startDate={startDate} />
+            <div className="flex w-full h-auto py-4">
+                <div className="flex justify-start w-1/3 h-full gap-4 items-start">
+                    <UploadFile tipoDocumento={TipoDocumento.Ventas} />
+                    <DownloadFile tipoDocumento={TipoDocumento.Ventas} />
+                </div>
+                <div className="flex w-2/3 gap-4 justify-end">
+                    <DateRange dateRange={dateRange} setDateRange={setDateRange} endDate={endDate} startDate={startDate} />
+                    <div className="flex gap-2">
+                        <input autoFocus={true} className="rounded-lg border appearance-none shadow-lg w-40 xl:w-96 h-full py-2 px-4 bg-white text-gray-700 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-600" placeholder="ID de la venta..."
+                            onChange={(e) => { setFiltro(e.target.value); }} onKeyPress={async (e) => { }} />
 
-                <div className="flex gap-2">
-                    <input autoFocus={true} className="rounded-lg border appearance-none shadow-lg w-72 xl:w-96 h-full py-2 px-4 bg-white text-gray-700 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-600" placeholder="ID de la venta..."
-                        onChange={(e) => { setFiltro(e.target.value); }} onKeyPress={async (e) => { }} />
-
-                    {
-                        filtro ?
-                            <button className="px-4 py-2 font-semibold text-white bg-blue-500 rounded-lg shadow-md hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-400 focus:ring-offset-2 focus:ring-offset-purple-200"
-                                onClick={async (e) => { e.preventDefault(); await Filtrar(filtro) }}>
-                                Filtrar
-                            </button>
-                            :
-                            <button disabled className="px-4 py-2 font-semibold text-white bg-blue-300 rounded-lg shadow-md cursor-default">
-                                Filtrar
-                            </button>
-                    }
+                        {
+                            filtro ?
+                                <button className="px-4 py-2 font-semibold text-white bg-blue-500 rounded-lg shadow-md hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-400 focus:ring-offset-2 focus:ring-offset-purple-200"
+                                    onClick={async (e) => { e.preventDefault(); await Filtrar(filtro) }}>
+                                    Filtrar
+                                </button>
+                                :
+                                <button disabled className="px-4 py-2 font-semibold text-white bg-blue-300 rounded-lg shadow-md cursor-default">
+                                    Filtrar
+                                </button>
+                        }
+                    </div>
                 </div>
             </div>
             <div className="grid grid-cols-4 justify-evenly border-t border-x rounded-t-2xl">
