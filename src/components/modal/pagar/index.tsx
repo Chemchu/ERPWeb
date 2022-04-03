@@ -49,7 +49,8 @@ export const ModalPagar = (props: { PagoCliente: CustomerPaymentInformation, han
     const { Empleado } = useEmpleadoContext();
 
     const [Clientes, SetClientes] = useState<Cliente[]>([]);
-    const [ClienteActual, SetClienteActual] = useState<string>("General");
+    const [ClienteActual, SetClienteActual] = useState<Cliente>();
+    const [NombreClienteActual, SetNombreClienteActual] = useState<string>("General");
     const [PagoDelCliente, SetPagoCliente] = useState<CustomerPaymentInformation>(props.PagoCliente);
     const [qrImage, setQrImage] = useState<string>();
     const [fecha, setFecha] = useState<string>();
@@ -88,10 +89,20 @@ export const ModalPagar = (props: { PagoCliente: CustomerPaymentInformation, han
         }
     }, [qrImage]);
 
+    useEffect(() => {
+        const cliente = Clientes.find((c) => {
+            return c.nombre === NombreClienteActual
+        })
+        if (cliente) {
+            SetClienteActual(cliente)
+        }
+    }, [NombreClienteActual])
+
     const reactToPrintContent = React.useCallback(() => {
         return componentRef.current;
     }, []);
 
+    // Se encarga de limpiar el carrito y los descuentos
     const onAfterPrintHandler = React.useCallback(() => {
         SetProductosEnCarrito([]);
         SetDtoEfectivo("0");
@@ -150,7 +161,7 @@ export const ModalPagar = (props: { PagoCliente: CustomerPaymentInformation, han
         p.pagoEnTarjeta = Number(dineroEntregadoTarjeta);
         p.cambio = cambio;
 
-        const cliente = Clientes.find((c) => c.nombre == ClienteActual);
+        const cliente = Clientes.find((c) => c.nombre == NombreClienteActual);
         if (!cliente) { p.cliente = Clientes[0] }
         else { p.cliente = cliente }
 
@@ -181,26 +192,26 @@ export const ModalPagar = (props: { PagoCliente: CustomerPaymentInformation, han
                                     <div className="text-2xl font-semibold">Datos cliente</div>
                                     <hr />
                                     <div className="flex flex-col justify-between mt-4 px-2 text-lg text-center">
-                                        <label className="text-left">Seleccionar cliente</label>
-                                        <Dropdown elementos={Clientes.map((c) => { return c.nombre })} selectedElemento={ClienteActual} setElemento={SetClienteActual} />
+                                        <label className="text-left font-semibold">Buscar cliente</label>
+                                        <Dropdown elementos={Clientes.map((c) => { return c.nombre })} selectedElemento={NombreClienteActual} setElemento={SetNombreClienteActual} />
                                     </div>
                                 </div>
-                                <div className="flex flex-col px-2 pt-6 justify-items-start w-full">
+                                <div className="flex flex-col gap-2 px-2 pt-6 justify-items-start w-full">
                                     <div className="text-left">
-                                        <h1 className="text-lg">Nombre completo</h1>
-                                        <Input placeholder="Nombre del cliente" />
+                                        <h1 className="text-lg font-semibold">Nombre completo</h1>
+                                        <label className="text-base" htmlFor="NombreCompleto">{ClienteActual?.nombre}</label>
                                     </div>
                                     <div className="text-left">
-                                        <h1 className="text-lg">Dirección</h1>
-                                        <Input placeholder="Ejem.: Calle Alcalá 14" />
+                                        <h1 className="text-lg font-semibold">Dirección </h1>
+                                        <label className="text-base" htmlFor="NombreCompleto">{ClienteActual?.calle}</label>
                                     </div>
                                     <div className="text-left">
-                                        <h1 className="text-lg">NIF</h1>
-                                        <Input placeholder="Número de identificación fiscal" />
+                                        <h1 className="text-lg font-semibold">CIF </h1>
+                                        <label className="text-base" htmlFor="NombreCompleto">{ClienteActual?.nif}</label>
                                     </div>
                                     <div className="text-left">
-                                        <h1 className="text-lg">Código postal</h1>
-                                        <Input placeholder="Ejem.: 46006" />
+                                        <h1 className="text-lg font-semibold">Código postal </h1>
+                                        <label className="text-base" htmlFor="NombreCompleto">{ClienteActual?.cp}</label>
                                     </div>
                                 </div>
                             </div>
