@@ -1,8 +1,5 @@
 import { motion } from 'framer-motion';
-import Cookies from 'js-cookie';
-import { GetServerSideProps } from 'next';
 import Link from 'next/link';
-import { resolve } from 'path';
 import React, { useEffect } from 'react';
 
 const Sidebar = React.memo((props: { isCollapsed: boolean, setCollapsed: Function, IndexSeleccionado: number, setIndex: Function }) => {

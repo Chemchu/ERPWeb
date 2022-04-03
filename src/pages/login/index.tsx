@@ -1,8 +1,7 @@
 import { motion } from 'framer-motion';
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import { SplitLetters } from '../../components/compAnimados/SplitText';
 import Router from 'next/router';
-import Cookies from 'js-cookie';
 import { notifySuccess } from '../../utils/toastify';
 
 const container = {

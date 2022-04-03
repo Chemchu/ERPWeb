@@ -1,6 +1,5 @@
 import { useMutation } from "@apollo/client";
 import { motion } from "framer-motion";
-import Cookies from "js-cookie";
 import { useEffect, useState } from "react";
 import useEmpleadoContext from "../../../context/empleadoContext";
 import { SesionEmpleado } from "../../../tipos/Empleado";
@@ -99,7 +98,7 @@ export const CerrarCaja = (props: { Empleado?: SesionEmpleado, setModalOpen: Fun
 
     useEffect(() => {
         if (data && data.addCierreTPV.successful && !error && !loading) {
-            Cookies.set("authorization", data.addCierreTPV.token)
+            // Cookies.set("authorization", data.addCierreTPV.token) --> Arreglar esto
             props.setModalOpen(false);
             props.setEmpleadoUsandoTPV(false);
         }

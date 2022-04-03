@@ -1,6 +1,5 @@
 import { useMutation } from "@apollo/client";
 import { motion } from "framer-motion";
-import Cookies from "js-cookie";
 import { useEffect, useState } from "react";
 import useEmpleadoContext from "../../../context/empleadoContext";
 import { JWT } from "../../../tipos/JWT";
@@ -64,7 +63,7 @@ const AbrirCaja = (props: { setShowModal: Function, setEmpleadoUsandoTPV: Functi
 
     useEffect(() => {
         if (!error && data) {
-            Cookies.set("authorization", data.ocupyTPV.token)
+            //Cookies.set("authorization", data.ocupyTPV.token) --> Arreglar esto
             props.setShowModal(false);
             props.setEmpleadoUsandoTPV(true);
         }
