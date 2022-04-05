@@ -132,6 +132,8 @@ export function CreateCierre(c: any): Cierre | undefined {
 }
 
 export function CreateProductList(pList: any[]): Producto[] {
+    if (!pList) { throw "Lista de productos indefinida"; }
+
     let res: Producto[] = [];
     pList.forEach((p: any) => {
         const prod = CreateProduct(p);

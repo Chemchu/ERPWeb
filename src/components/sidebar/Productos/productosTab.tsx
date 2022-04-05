@@ -29,7 +29,7 @@ const ProductPage = (props: { productos: Producto[], serverUp: boolean }) => {
 
     const Filtrar = async (f: string) => {
         if (f === "") { setProductosFiltradas(undefined); return; }
-        if (!f.match('^[0-9a-fA-F]{24}$')) { notifyWarn("Producto inválido"); return; }
+        if (!f.match('^[-_a-zA-Z0-9.\s ]*$')) { notifyWarn("Producto inválido"); return; }
 
         setProductosFiltradas(await FetchProductoByQuery(f));
     }
