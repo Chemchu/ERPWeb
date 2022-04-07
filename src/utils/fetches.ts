@@ -2,13 +2,12 @@ import { Cierre } from "../tipos/Cierre";
 import { Cliente } from "../tipos/Cliente";
 import { CustomerPaymentInformation } from "../tipos/CustomerPayment";
 import { Empleado, SesionEmpleado } from "../tipos/Empleado";
-import { JWT } from "../tipos/JWT";
 import { Producto } from "../tipos/Producto";
 import { ProductoVendido } from "../tipos/ProductoVendido";
 import { Venta } from "../tipos/Venta";
 import { CreateCierreList, CreateClientList, CreateDevolucionList, CreateEmployee, CreateProductList, CreateSalesList, CreateTPV, CreateTPVsList } from "./typeCreator";
 import queryString from 'query-string';
-import { notifyError } from "./toastify";
+import { notifyError, notifySuccess } from "./toastify";
 import { TPVType } from "../tipos/TPV";
 import { Devolucion } from "../tipos/Devolucion";
 import { getJwtFromString } from "../hooks/jwt";
@@ -41,9 +40,13 @@ export const FetchProductos = async (): Promise<Producto[]> => {
 
 }
 
-export const FetchProductoByQuery = async (query: string): Promise<Producto[]> => {
+export const FetchProductoByQuery = async (userQuery: string): Promise<Producto[]> => {
     try {
         let prodRes = [] as Producto[];
+        let id: any = new Object;
+        id.query = userQuery.valueOf();
+
+        const query = queryString.stringify(id);
 
         const pResponse = await fetch(`/api/productos/${query}`);
 
@@ -60,6 +63,29 @@ export const FetchProductoByQuery = async (query: string): Promise<Producto[]> =
         return [];
     }
 
+}
+
+export const UpdateProducto = async (producto: Producto): Promise<Boolean> => {
+    try {
+        const pResponse = await fetch(`/api/productos/${producto._id}`, {
+            method: 'PUT',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(producto)
+        });
+
+        const msg = await pResponse.json();
+
+        if (!pResponse.ok) { notifyError(msg.message); return false; }
+        else { notifySuccess(msg.message); return msg.successful; }
+
+    }
+    catch (e) {
+        console.log(e);
+        notifyError("Error de conexión");
+        return false;
+    }
 }
 
 export const FetchClientes = async (): Promise<Cliente[]> => {

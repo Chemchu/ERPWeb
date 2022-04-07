@@ -1,10 +1,13 @@
 import { NextApiRequest, NextApiResponse } from "next"
-import { ADD_PRODUCT, ADD_PRODUCTOS_FILE, QUERY_PRODUCT } from "../../../utils/querys";
+import { ADD_PRODUCT, ADD_PRODUCTOS_FILE, QUERY_PRODUCT, QUERY_PRODUCTS, UPDATE_PRODUCT } from "../../../utils/querys";
 import GQLFetcher from "../../../utils/serverFetcher";
+import queryString from 'query-string';
+import { Producto } from "../../../tipos/Producto";
 
 const handler = async (req: NextApiRequest, res: NextApiResponse) => {
     try {
         const method = req.method;
+        const query = queryString.parse(req.query.id.toString());
 
         switch (method) {
             case 'POST':
@@ -16,11 +19,13 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
                 }
 
             case 'GET':
-                await GetProductoFromId(req, res);
+                if (query.query) await GetProductosFromQuery(query, res);
+                else await GetProductoFromId(req, res);
+
+            case 'PUT':
+                await UpdateProducto(req, res);
         }
 
-        res.status(300).json({ message: `Fallo en la consulta` });
-        return;
     }
     catch (err) {
         console.log(err);
@@ -29,7 +34,7 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
 }
 
 const GetProductoFromId = async (req: NextApiRequest, res: NextApiResponse) => {
-    let fetchResult = await GQLFetcher.query(
+    const fetchResult = await GQLFetcher.query(
         {
             query: QUERY_PRODUCT,
             variables: {
@@ -40,13 +45,32 @@ const GetProductoFromId = async (req: NextApiRequest, res: NextApiResponse) => {
         }
     );
 
-    if (fetchResult.data.Producto) {
-        res.status(200).json({ message: `Producto encontrado`, producto: fetchResult.data.Producto });
-        return;
+    if (fetchResult.data.producto) {
+        return res.status(200).json({ message: `Producto encontrado`, producto: fetchResult.data.producto });
     }
 
-    res.status(300).json({ message: `Fallo al añadir el producto` });
-    return;
+    return res.status(300).json({ message: `Fallo al realizar la búsqueda` });
+}
+
+const GetProductosFromQuery = async (userQuery: queryString.ParsedQuery<string>, res: NextApiResponse) => {
+    if (!userQuery.query) { res.status(300).json({ message: `La query no puede estar vacía` }); }
+
+    const fetchResult = await GQLFetcher.query(
+        {
+            query: QUERY_PRODUCTS,
+            variables: {
+                "find": {
+                    "query": userQuery.query
+                }
+            }
+        }
+    );
+
+    if (fetchResult.data.productos) {
+        return res.status(200).json({ message: `Productos encontrados`, productos: fetchResult.data.productos });
+    }
+
+    return res.status(300).json({ message: `Fallo al realizar la búsqueda` });
 }
 
 const AddProductosFromFile = async (req: NextApiRequest, res: NextApiResponse) => {
@@ -86,6 +110,43 @@ const AddProducto = async (req: NextApiRequest, res: NextApiResponse) => {
         return res.status(200).json({ message: response.data.addProducto.message });
     }
     return res.status(300).json({ message: `Fallo al añadir el producto: ${response.data.message}` });
+}
+
+const UpdateProducto = async (req: NextApiRequest, res: NextApiResponse) => {
+    try {
+        const prod: Producto = req.body;
+
+        const response = await GQLFetcher.mutate({
+            mutation: UPDATE_PRODUCT,
+            variables: {
+                "producto": {
+                    "_id": prod._id,
+                    "nombre": prod.nombre,
+                    "proveedor": prod.proveedor,
+                    "familia": prod.familia,
+                    "precioVenta": prod.precioVenta,
+                    "precioCompra": prod.precioCompra,
+                    "iva": prod.iva,
+                    "margen": prod.margen,
+                    "promociones": prod.promociones,
+                    "ean": prod.ean,
+                    "cantidad": prod.cantidad,
+                    "cantidadRestock": prod.cantidadRestock,
+                    "alta": prod.alta
+                }
+            }
+        });
+
+        if (response.data.updateProducto.successful) {
+            return res.status(200).json({ message: response.data.updateProducto.message, successful: response.data.updateProducto.successful });
+        }
+
+        return res.status(300).json({ message: `Fallo al actualizar el producto: ${response.data.message}`, successful: false });
+    }
+    catch (e) {
+        console.log(e);
+        return res.status(500).json({ message: `Error interno: respuesta no válida por parte del servidor.`, successful: false });
+    }
 }
 
 export default handler;

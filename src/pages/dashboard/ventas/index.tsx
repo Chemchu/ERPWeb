@@ -95,14 +95,14 @@ const Ventas = (props: { EmpleadoSesion: SesionEmpleado }) => {
 
 export const getServerSideProps: GetServerSideProps = async (context) => {
     const jwt = getJwtFromString(context.req.cookies.authorization);
-    const emp: SesionEmpleado = {
+    let emp: SesionEmpleado = {
         _id: jwt._id,
         apellidos: jwt.apellidos,
         email: jwt.email,
         nombre: jwt.nombre,
         rol: jwt.rol,
-        TPV: jwt.TPV
     }
+    jwt.TPV ? emp.TPV = jwt.TPV : null;
 
     return {
         props: {

@@ -3,6 +3,7 @@ import React from "react";
 import { useRef, useState } from "react";
 import { useReactToPrint } from "react-to-print";
 import { Producto } from "../../../tipos/Producto";
+import { UpdateProducto } from "../../../utils/fetches";
 import Etiqueta from "../../etiqueta";
 import EditableLabel from "../../Forms/editableLabel";
 import EditableNumberLabel from "../../Forms/editableNumberLabel";
@@ -32,7 +33,7 @@ const In = {
     }
 }
 
-export const VerProducto = (props: { producto: Producto, showModal: Function }) => {
+export const VerProducto = (props: { producto: Producto, setProducto: Function, showModal: Function }) => {
     const [Nombre, setNombre] = useState<string>(props.producto.nombre);
     const [Familia, setFamilia] = useState<string>(props.producto.familia);
     const [Proveedor, setProveedor] = useState<string>(props.producto.proveedor);
@@ -43,6 +44,7 @@ export const VerProducto = (props: { producto: Producto, showModal: Function }) 
     const [Margen, setMargen] = useState<number>(props.producto.margen);
     const [PrecioCompra, setPrecioCompra] = useState<number>(props.producto.precioCompra);
     const [PrecioVenta, setPrecioVenta] = useState<number>(props.producto.precioVenta);
+    const [Alta, setAlta] = useState<boolean>(props.producto.alta);
     const [hayCambios, setHayCambios] = useState<boolean>(false);
 
     const componentRef = useRef(null);
@@ -55,6 +57,28 @@ export const VerProducto = (props: { producto: Producto, showModal: Function }) 
         documentTitle: "Etiqueta de producto",
         content: reactToPrintContent,
     });
+
+    const GuardarCambios = async () => {
+        const p: Producto = {
+            _id: props.producto._id,
+            alta: Alta,
+            cantidad: Cantidad,
+            cantidadRestock: CantidadRestock,
+            ean: String(Ean),
+            familia: Familia,
+            iva: Iva,
+            margen: Margen,
+            nombre: Nombre,
+            precioCompra: PrecioCompra,
+            precioVenta: PrecioVenta,
+            proveedor: Proveedor
+        }
+
+        const updatedCorrectly = await UpdateProducto(p);
+        if (updatedCorrectly) {
+            props.setProducto(p);
+        }
+    }
 
     return (
         <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} >
@@ -210,7 +234,7 @@ export const VerProducto = (props: { producto: Producto, showModal: Function }) 
                             Imprimir etiqueta
                         </button>
                         <button disabled={!hayCambios} className={`${hayCambios ? 'bg-blue-500 hover:bg-blue-600' : 'bg-blue-400'} h-12 w-full rounded-xl  shadow-lg`}
-                            onClick={() => { }}>
+                            onClick={async () => { await GuardarCambios() }}>
                             Guardar cambios
                         </button>
                     </div>

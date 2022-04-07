@@ -43,6 +43,15 @@ export const QUERY_PRODUCTS = gql`
     }
 `;
 
+export const UPDATE_PRODUCT = gql`
+   mutation UpdateProducto($producto: ProductoUpdateInput!) {
+  updateProducto(producto: $producto) {
+    message
+    successful
+  }
+}
+`;
+
 export const QUERY_PRODUCT = gql`
     query Producto($find: ProductoFind!) {
         producto(find: $find) {

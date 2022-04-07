@@ -46,14 +46,15 @@ PuntoDeVenta.PageLayout = DashboardLayout;
 
 export const getServerSideProps: GetServerSideProps = async (ctx) => {
     const jwt = getJwtFromString(ctx.req.cookies.authorization);
-    const emp: SesionEmpleado = {
+    let emp: SesionEmpleado = {
         _id: jwt._id,
         apellidos: jwt.apellidos,
         email: jwt.email,
         nombre: jwt.nombre,
         rol: jwt.rol,
-        TPV: jwt.TPV
     }
+    jwt.TPV ? emp.TPV = jwt.TPV : null;
+
     return {
         props: {
             isEmpleadoUsingTPV: Boolean(jwt.TPV),
