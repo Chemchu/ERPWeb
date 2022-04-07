@@ -4,7 +4,7 @@ import GQLFetcher from "../../../utils/serverFetcher";
 import queryString from 'query-string';
 import { Producto } from "../../../tipos/Producto";
 
-const handler = async (req: NextApiRequest, res: NextApiResponse) => {
+const handler = async (req: NextApiRequest, res: NextApiResponse): Promise<void> => {
     try {
         const method = req.method;
         const query = queryString.parse(req.query.id.toString());
@@ -12,24 +12,24 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
         switch (method) {
             case 'POST':
                 if (req.query.id === "file") {
-                    await AddProductosFromFile(req, res);
+                    return await AddProductosFromFile(req, res);
                 }
                 else {
-                    await AddProducto(req, res);
+                    return await AddProducto(req, res);
                 }
 
             case 'GET':
-                if (query.query) await GetProductosFromQuery(query, res);
-                else await GetProductoFromId(req, res);
+                if (query.query) { return await GetProductosFromQuery(query, res); }
+                else { return await GetProductoFromId(req, res); }
 
             case 'PUT':
-                await UpdateProducto(req, res);
+                return await UpdateProducto(req, res);
         }
 
     }
     catch (err) {
         console.log(err);
-        res.status(500).json({ message: `${err}` });
+        return res.status(500).json({ message: `${err}` });
     }
 }
 
@@ -138,10 +138,11 @@ const UpdateProducto = async (req: NextApiRequest, res: NextApiResponse) => {
         });
 
         if (response.data.updateProducto.successful) {
-            return res.status(200).json({ message: response.data.updateProducto.message, successful: response.data.updateProducto.successful });
+            res.status(200).json({ message: response.data.updateProducto.message, successful: response.data.updateProducto.successful });
+            return;
         }
 
-        return res.status(300).json({ message: `Fallo al actualizar el producto: ${response.data.message}`, successful: false });
+        res.status(300).json({ message: `Fallo al actualizar el producto: ${response.data.message}`, successful: false });
     }
     catch (e) {
         console.log(e);
