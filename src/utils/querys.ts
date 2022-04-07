@@ -250,6 +250,7 @@ export const OCUPY_TPV = gql`
     mutation OcupyTPV($idEmpleado: ID!, $idTpv: ID!, $cajaInicial: Float!) {
         ocupyTPV(idEmpleado: $idEmpleado, idTPV: $idTpv, cajaInicial: $cajaInicial) {
             token
+            successful
         }
     }
 `;

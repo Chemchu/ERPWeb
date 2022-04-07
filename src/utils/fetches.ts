@@ -443,11 +443,10 @@ export const OcuparTPV = async (tpvId: string, empId: string, cajaInicial: numbe
             });
         const tpvOcupadaJson = await fetchRes.json();
 
-        if (!fetchRes.ok) { notifyError(tpvOcupadaJson.message); return false; }
+        if (!fetchRes.ok) { notifyError(tpvOcupadaJson.message); }
+        else { notifySuccess(tpvOcupadaJson.message); }
 
-        const empJwt = getJwtFromString(tpvOcupadaJson.token);
-
-        return !!empJwt.TPV;
+        return tpvOcupadaJson.successful;
     }
     catch (e) {
         console.error(e);

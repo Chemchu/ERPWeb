@@ -18,7 +18,6 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
                 res.status(405).end(`Method ${req.method} Not Allowed`);
         }
 
-
     }
     catch (err) {
         console.log(err);
@@ -52,7 +51,7 @@ const AddCierre = async (req: NextApiRequest, res: NextApiResponse) => {
     const TotalRealEnCaja = req.body.TotalRealEnCaja;
     const Ventas = req.body.Ventas;
 
-    GQLFetcher.mutate({
+    const addCierreResult = await GQLFetcher.mutate({
         mutation: ADD_CIERRE,
         variables: {
             "cierre": {
@@ -83,7 +82,15 @@ const AddCierre = async (req: NextApiRequest, res: NextApiResponse) => {
                 "dineroRealEnCaja": Number(TotalRealEnCaja)
             }
         }
-    })
+    });
+
+    if (addCierreResult.data.addCierreTPV.successful) {
+        res.setHeader('Set-Cookie', `authorization=${addCierreResult.data.addCierreTPV.token}; HttpOnly; expires=Thu, 01 Jan 1970 00:00:00 GMT; Path=/`);
+        res.status(200).json({ message: addCierreResult.data.addCierreTPV.message, successful: addCierreResult.data.addCierreTPV.successful });
+        return;
+    }
+
+    res.status(300).json({ message: "No se ha podido añadir el cierre a la base de datos", successful: false });
 }
 
 export default handler;
