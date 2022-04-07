@@ -19,7 +19,7 @@ import Ticket from "../../ticket";
 import GenerateQrBase64 from "../../../utils/generateQr";
 import { Empleado, SesionEmpleado } from "../../../tipos/Empleado";
 
-const TPV = (props: { productos: Producto[], serverOperativo: boolean, empleadoUsandoTPV: boolean, setEmpleadoUsandoTPV: Function, setShowModalCerrar: Function, setShowModalAbrir: Function }) => {
+const TPV = (props: { productos: Producto[], empleadoUsandoTPV: boolean, setEmpleadoUsandoTPV: Function, setShowModalCerrar: Function, setShowModalAbrir: Function }) => {
     const [ProductosFiltrados, setProductosFiltrados] = useState<Producto[]>([]);
     const { ProductosEnCarrito, SetProductosEnCarrito } = useProductEnCarritoContext();
     const [Familias, setFamilias] = useState<string[]>([]);
@@ -89,7 +89,7 @@ const TPV = (props: { productos: Producto[], serverOperativo: boolean, empleadoU
                             }
                         </div>
                         <div className="h-full overflow-hidden">
-                            <ListaProductos productos={[]} productosFiltrados={ProductosFiltrados} ServerUp={props.serverOperativo} />
+                            <ListaProductos productos={[]} productosFiltrados={ProductosFiltrados} />
                         </div>
                     </div>
                 </div>
@@ -120,8 +120,7 @@ const TPV = (props: { productos: Producto[], serverOperativo: boolean, empleadoU
 
                         {/* Genera los botones de favorito */}
                         {
-                            props.serverOperativo &&
-                                props.productos.length <= 0 ?
+                            props.productos.length <= 0 ?
                                 <div className="flex gap-2 p-4">
                                     {
                                         arrayNum.map((n, i) => {
@@ -155,7 +154,7 @@ const TPV = (props: { productos: Producto[], serverOperativo: boolean, empleadoU
                                 </div>
                         }
                         <div className="h-full overflow-hidden">
-                            <ListaProductos productos={props.productos} productosFiltrados={ProductosFiltrados} ServerUp={props.serverOperativo} />
+                            <ListaProductos productos={props.productos} productosFiltrados={ProductosFiltrados} />
                         </div>
                     </div>
                 </div>
@@ -165,64 +164,47 @@ const TPV = (props: { productos: Producto[], serverOperativo: boolean, empleadoU
     );
 }
 
-const ListaProductos = (props: { productos: Producto[], productosFiltrados: Producto[], ServerUp: boolean }) => {
+const ListaProductos = (props: { productos: Producto[], productosFiltrados: Producto[] }) => {
     const { ProductosEnCarrito, SetProductosEnCarrito } = useProductEnCarritoContext();
     const maxItems = 30;
 
-    if (props.ServerUp) {
-        if (props.productos.length <= 0) {
-            const arrayNum = [...Array(30)];
+    if (props.productos.length <= 0) {
+        const arrayNum = [...Array(30)];
 
-            return (
-                <div className="h-full overflow-y-auto overflow-x-hidden px-2">
-                    <div className="grid gap-4 pb-3 sm:grid-cols-1 sm:gap-2 md:grid-cols-2 lg:grid-cols-3 lg:gap-3 xl:grid-cols-4 2xl:grid-cols-5 text-xs">
-                        {arrayNum.map((n, i) => {
-                            return (
-                                <SkeletonProductCard key={"SkeletonTPVCard-" + i} />
-                            );
-                        })}
-                    </div>
+        return (
+            <div className="h-full overflow-y-auto overflow-x-hidden px-2">
+                <div className="grid gap-4 pb-3 sm:grid-cols-1 sm:gap-2 md:grid-cols-2 lg:grid-cols-3 lg:gap-3 xl:grid-cols-4 2xl:grid-cols-5 text-xs">
+                    {arrayNum.map((n, i) => {
+                        return (
+                            <SkeletonProductCard key={"SkeletonTPVCard-" + i} />
+                        );
+                    })}
                 </div>
-            );
-        }
-
-        if (props.productosFiltrados.length > 0 && props.productos.length > 0) {
-            return (
-                <div className="h-full overflow-y-auto overflow-x-hidden px-3 pt-2">
-                    <div className="grid gap-4 sm:grid-cols-1 sm:gap-2 md:grid-cols-2 lg:grid-cols-3 lg:gap-3 xl:grid-cols-4 2xl:grid-cols-5 text-xs">
-                        {
-                            props.productosFiltrados.slice(0, maxItems).map((prod: Producto) => {
-                                return (
-                                    <button key={prod._id} id={prod._id}
-                                        onClick={() => { AddProductoToCarrito(prod, ProductosEnCarrito, SetProductosEnCarrito) }}>
-                                        <ProductCard Prod={prod} />
-                                    </button>
-                                );
-                            })
-                        }
-                    </div>
-                </div>
-            );
-        }
-        else {
-            return (<ProductosNoEncontrados />)
-        }
+            </div>
+        );
     }
 
-    return (
-        <div className="bg-blue-gray-100 rounded-3xl flex flex-wrap content-center justify-center h-full opacity-25">
-            <div className="w-full text-center">
-                <svg xmlns="http://www.w3.org/2000/svg" className="h-24 w-24 inline-block" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 7v10c0 2.21 3.582 4 8 4s8-1.79 8-4V7M4 7c0 2.21 3.582 4 8 4s8-1.79 8-4M4 7c0-2.21 3.582-4 8-4s8 1.79 8 4m0 5c0 2.21-3.582 4-8 4s-8-1.79-8-4" />
-                </svg>
-                <p className="text-xl">
-                    FALLO DE CONEXIÓN
-                    <br />
-                    CON LA BBDD
-                </p>
+    if (props.productosFiltrados.length > 0 && props.productos.length > 0) {
+        return (
+            <div className="h-full overflow-y-auto overflow-x-hidden px-3 pt-2">
+                <div className="grid gap-4 sm:grid-cols-1 sm:gap-2 md:grid-cols-2 lg:grid-cols-3 lg:gap-3 xl:grid-cols-4 2xl:grid-cols-5 text-xs">
+                    {
+                        props.productosFiltrados.slice(0, maxItems).map((prod: Producto) => {
+                            return (
+                                <button key={prod._id} id={prod._id}
+                                    onClick={() => { AddProductoToCarrito(prod, ProductosEnCarrito, SetProductosEnCarrito) }}>
+                                    <ProductCard Prod={prod} />
+                                </button>
+                            );
+                        })
+                    }
+                </div>
             </div>
-        </div>
-    );
+        );
+    }
+    else {
+        return (<ProductosNoEncontrados />)
+    }
 }
 
 const ProductosNoEncontrados = () => {

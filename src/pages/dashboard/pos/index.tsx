@@ -11,10 +11,8 @@ import getJwtFromString from "../../../hooks/jwt";
 import { SesionEmpleado } from "../../../tipos/Empleado";
 import useEmpleadoContext from "../../../context/empleadoContext";
 
-
 const PuntoDeVenta = (props: { isEmpleadoUsingTPV: boolean, EmpleadoSesion: SesionEmpleado }) => {
     const [Productos, SetProductos] = useState<Producto[]>([]);
-    const [ServerUp, setServerUp] = useState<boolean>(true);
     const [showModalCerrarCaja, setCerrarCajaModal] = useState<boolean>(false);
 
     const [empleadoUsandoTpv, setEmpleadoUsandoTPV] = useState<boolean>(props.isEmpleadoUsingTPV);
@@ -33,7 +31,7 @@ const PuntoDeVenta = (props: { isEmpleadoUsingTPV: boolean, EmpleadoSesion: Sesi
 
     return (
         <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}>
-            <TPV productos={Productos} serverOperativo={ServerUp} empleadoUsandoTPV={empleadoUsandoTpv} setEmpleadoUsandoTPV={setEmpleadoUsandoTPV} setShowModalAbrir={setAbrirCajaModal} setShowModalCerrar={setCerrarCajaModal} />
+            <TPV productos={Productos} empleadoUsandoTPV={empleadoUsandoTpv} setEmpleadoUsandoTPV={setEmpleadoUsandoTPV} setShowModalAbrir={setAbrirCajaModal} setShowModalCerrar={setCerrarCajaModal} />
             <AnimatePresence initial={false} exitBeforeEnter={true}>
                 {showModalCerrarCaja && <CerrarCaja setModalOpen={setCerrarCajaModal} setEmpleadoUsandoTPV={setEmpleadoUsandoTPV} />}
                 {showModalAbrirCaja && !empleadoUsandoTpv && <AbrirCaja setShowModal={setAbrirCajaModal} setEmpleadoUsandoTPV={setEmpleadoUsandoTPV} />}
