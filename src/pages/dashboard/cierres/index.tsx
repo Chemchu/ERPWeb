@@ -50,7 +50,7 @@ const Cierres = (props: { EmpleadoSesion: SesionEmpleado }) => {
                     }
                 >
                     <span className='text-xl'>
-                        Cierre
+                        Cierres
                     </span>
                 </Tab>
             </Tab.List>

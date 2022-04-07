@@ -133,15 +133,25 @@ const TPV = (props: { productos: Producto[], serverOperativo: boolean, empleadoU
                                 </div>
                                 :
                                 Familias[0] !== undefined &&
-                                <div className="flex gap-4 pt-4 pl-4 overflow-y-hidden">
-                                    <button key={"Todos"} id={"Todos"} className="bg-blue-400 font-semibold hover:bg-blue-500 text-white rounded-lg h-10 w-16 md:w-32 lg:w-48 mb-6"
-                                        onClick={() => setProductosFiltrados(props.productos)}>Todos</button>
-                                    {
-                                        Familias.map(f => {
-                                            return <button key={f} id={f} className="bg-blue-400 font-semibold hover:bg-blue-500 text-white rounded-lg h-10 w-16 md:w-32 lg:w-48 mb-6"
-                                                onClick={(e) => setProductosFiltrados(props.productos.filter(p => p.familia === e.currentTarget.id))}>{f}</button>
-                                        })
-                                    }
+                                <div className="px-4">
+                                    <div className="flex w-full max-h-20 py-2 gap-4 overflow-y-hidden overflow-x-scroll justify-start text-center">
+                                        <button key={"Todos"} id={"Todos"} className="flex bg-blue-400 hover:bg-blue-500 text-white rounded-xl w-auto py-1 px-2"
+                                            onClick={() => setProductosFiltrados(props.productos)}>
+                                            <span className="self-center p-1">Todos</span>
+                                        </button>
+                                        {
+                                            Familias.map(f => {
+                                                return (
+                                                    <button key={f} id={f} className="flex bg-blue-400 hover:bg-blue-500 text-white rounded-xl w-auto py-1 px-2"
+                                                        onClick={(e) => setProductosFiltrados(props.productos.filter(p => p.familia === e.currentTarget.id))}>
+                                                        <span className="self-center p-1">
+                                                            {f}
+                                                        </span>
+                                                    </button>
+                                                )
+                                            })
+                                        }
+                                    </div>
                                 </div>
                         }
                         <div className="h-full overflow-hidden">

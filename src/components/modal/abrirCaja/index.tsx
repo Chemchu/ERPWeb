@@ -1,11 +1,8 @@
-import { useMutation } from "@apollo/client";
 import { motion } from "framer-motion";
 import { useEffect, useState } from "react";
 import useEmpleadoContext from "../../../context/empleadoContext";
-import { JWT } from "../../../tipos/JWT";
 import { TPVType } from "../../../tipos/TPV";
-import { FetchTPVsByDisponibilidad } from "../../../utils/fetches";
-import { OCUPY_TPV } from "../../../utils/querys";
+import { FetchTPVsByDisponibilidad, OcuparTPV } from "../../../utils/fetches";
 import { ValidatePositiveFloatingNumber } from "../../../utils/validator";
 import Droplist from "../../Forms/droplist";
 import { Backdrop } from "../backdrop";
@@ -38,7 +35,6 @@ const AbrirCaja = (props: { setShowModal: Function, setEmpleadoUsandoTPV: Functi
     const [tpvs, setTpvs] = useState<TPVType[]>([]);
     const [currentTpvName, setCurrentTpvName] = useState<string>();
     const [cajaInicial, setCajaInicial] = useState<string>('0');
-    const [ocuparTpv, { data, error }] = useMutation(OCUPY_TPV);
     const { Empleado } = useEmpleadoContext();
 
     useEffect(() => {
@@ -61,28 +57,21 @@ const AbrirCaja = (props: { setShowModal: Function, setEmpleadoUsandoTPV: Functi
         }
     }, [tpvs]);
 
-    useEffect(() => {
-        if (!error && data) {
-            //Cookies.set("authorization", data.ocupyTPV.token) --> Arreglar esto
-            props.setShowModal(false);
-            props.setEmpleadoUsandoTPV(true);
-        }
-
-    }, [data])
-
     const AbrirTPV = async () => {
         const tpv: TPVType | undefined = tpvs.find((t) => {
             return t.nombre === currentTpvName
         });
 
-        const cInicial: number = parseFloat(Number(cajaInicial).toFixed(2))
-        ocuparTpv({
-            variables: {
-                "idEmpleado": Empleado._id,
-                "idTpv": tpv?._id,
-                "cajaInicial": cInicial
+        const cInicial: number = parseFloat(Number(cajaInicial).toFixed(2));
+
+        if (tpv?._id) {
+            const res = await OcuparTPV(tpv._id, Empleado._id, cInicial);
+
+            if (res) {
+                props.setShowModal(false);
+                props.setEmpleadoUsandoTPV(true);
             }
-        });
+        }
     }
 
     return (

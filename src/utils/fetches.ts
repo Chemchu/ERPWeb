@@ -430,3 +430,30 @@ export const FetchCurrentUserUsingTPV = async (): Promise<boolean> => {
     }
 
 }
+
+export const OcuparTPV = async (tpvId: string, empId: string, cajaInicial: number): Promise<boolean> => {
+    try {
+        const fetchRes = await fetch(`/api/tpv/${tpvId}`,
+            {
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ tpvId: tpvId, empId: empId, cajaInicial: cajaInicial })
+            });
+        const tpvOcupadaJson = await fetchRes.json();
+
+        if (!fetchRes.ok) { notifyError(tpvOcupadaJson.message); return false; }
+
+        const empJwt = getJwtFromString(tpvOcupadaJson.token);
+
+        return !!empJwt.TPV;
+    }
+    catch (e) {
+        console.error(e);
+        notifyError("Error de conexión");
+
+        return false;
+    }
+
+}

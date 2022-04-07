@@ -37,7 +37,7 @@ export const VerProducto = (props: { producto: Producto, setProducto: Function, 
     const [Nombre, setNombre] = useState<string>(props.producto.nombre);
     const [Familia, setFamilia] = useState<string>(props.producto.familia);
     const [Proveedor, setProveedor] = useState<string>(props.producto.proveedor);
-    const [Ean, setEan] = useState<number>(Number(props.producto.ean));
+    const [Ean, setEan] = useState<string>(props.producto.ean);
     const [Cantidad, setCantidad] = useState<number>(props.producto.cantidad);
     const [CantidadRestock, setCantidadRestock] = useState<number>(props.producto.cantidadRestock);
     const [Iva, setIva] = useState<number>(props.producto.iva);
@@ -146,7 +146,7 @@ export const VerProducto = (props: { producto: Producto, setProducto: Function, 
                             <span>
                                 EAN:
                             </span>
-                            <EditableNumberLabel
+                            <EditableLabel
                                 text={Ean}
                                 setText={setEan}
                                 cambiosHandler={setHayCambios}
