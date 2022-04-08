@@ -6,7 +6,7 @@ import { Producto } from "../../../tipos/Producto";
 import { UpdateProducto } from "../../../utils/fetches";
 import Etiqueta from "../../etiqueta";
 import EditableLabel from "../../Forms/editableLabel";
-import EditableNumberLabel from "../../Forms/editableNumberLabel";
+import EditableIntegerLabel from "../../Forms/editableNumberLabel";
 import { Backdrop } from "../backdrop";
 
 const In = {
@@ -34,16 +34,16 @@ const In = {
 }
 
 export const VerProducto = (props: { producto: Producto, setProducto: Function, showModal: Function }) => {
-    const [Nombre, setNombre] = useState<string>(props.producto.nombre);
-    const [Familia, setFamilia] = useState<string>(props.producto.familia);
-    const [Proveedor, setProveedor] = useState<string>(props.producto.proveedor);
-    const [Ean, setEan] = useState<string>(props.producto.ean);
-    const [Cantidad, setCantidad] = useState<number>(props.producto.cantidad);
-    const [CantidadRestock, setCantidadRestock] = useState<number>(props.producto.cantidadRestock);
-    const [Iva, setIva] = useState<number>(props.producto.iva);
-    const [Margen, setMargen] = useState<number>(props.producto.margen);
-    const [PrecioCompra, setPrecioCompra] = useState<number>(props.producto.precioCompra);
-    const [PrecioVenta, setPrecioVenta] = useState<number>(props.producto.precioVenta);
+    const [Nombre, setNombre] = useState<string>(props.producto.nombre || "");
+    const [Familia, setFamilia] = useState<string>(props.producto.familia || "");
+    const [Proveedor, setProveedor] = useState<string>(props.producto.proveedor || "");
+    const [Ean, setEan] = useState<string>(props.producto.ean || "");
+    const [Cantidad, setCantidad] = useState<string>(String(props.producto.cantidad));
+    const [CantidadRestock, setCantidadRestock] = useState<string>(String(props.producto.cantidadRestock));
+    const [Iva, setIva] = useState<string>(String(props.producto.iva));
+    const [Margen, setMargen] = useState<string>(String(props.producto.margen));
+    const [PrecioCompra, setPrecioCompra] = useState<string>(String(props.producto.precioCompra));
+    const [PrecioVenta, setPrecioVenta] = useState<string>(String(props.producto.precioVenta));
     const [Alta, setAlta] = useState<boolean>(props.producto.alta);
     const [hayCambios, setHayCambios] = useState<boolean>(false);
 
@@ -62,15 +62,15 @@ export const VerProducto = (props: { producto: Producto, setProducto: Function, 
         const p: Producto = {
             _id: props.producto._id,
             alta: Alta,
-            cantidad: Cantidad,
-            cantidadRestock: CantidadRestock,
+            cantidad: Number(Cantidad),
+            cantidadRestock: Number(CantidadRestock),
             ean: String(Ean),
             familia: Familia,
-            iva: Iva,
-            margen: Margen,
+            iva: Number(Iva),
+            margen: Number(Margen),
             nombre: Nombre,
-            precioCompra: PrecioCompra,
-            precioVenta: PrecioVenta,
+            precioCompra: Number(PrecioCompra),
+            precioVenta: Number(PrecioVenta),
             proveedor: Proveedor
         }
 
@@ -120,7 +120,7 @@ export const VerProducto = (props: { producto: Producto, setProducto: Function, 
                             <span>
                                 Cantidad:
                             </span>
-                            <EditableNumberLabel
+                            <EditableIntegerLabel
                                 text={Cantidad}
                                 setText={setCantidad}
                                 cambiosHandler={setHayCambios}
@@ -133,7 +133,7 @@ export const VerProducto = (props: { producto: Producto, setProducto: Function, 
                             <span>
                                 Cantidad de reestock:
                             </span>
-                            <EditableNumberLabel
+                            <EditableIntegerLabel
                                 text={CantidadRestock}
                                 setText={setCantidadRestock}
                                 cambiosHandler={setHayCambios}
@@ -159,7 +159,7 @@ export const VerProducto = (props: { producto: Producto, setProducto: Function, 
                             <span>
                                 IVA:
                             </span>
-                            <EditableNumberLabel
+                            <EditableIntegerLabel
                                 text={Iva}
                                 setText={setIva}
                                 cambiosHandler={setHayCambios}
@@ -173,7 +173,7 @@ export const VerProducto = (props: { producto: Producto, setProducto: Function, 
                             <span>
                                 Margen:
                             </span>
-                            <EditableNumberLabel
+                            <EditableIntegerLabel
                                 text={Margen}
                                 setText={setMargen}
                                 cambiosHandler={setHayCambios}
@@ -187,7 +187,7 @@ export const VerProducto = (props: { producto: Producto, setProducto: Function, 
                             <span>
                                 Precio de compra:
                             </span>
-                            <EditableNumberLabel
+                            <EditableIntegerLabel
                                 text={PrecioCompra}
                                 setText={setPrecioCompra}
                                 cambiosHandler={setHayCambios}
@@ -202,7 +202,7 @@ export const VerProducto = (props: { producto: Producto, setProducto: Function, 
                             <span>
                                 Precio de venta al público:
                             </span>
-                            <EditableNumberLabel
+                            <EditableIntegerLabel
                                 text={PrecioVenta}
                                 setText={setPrecioVenta}
                                 cambiosHandler={setHayCambios}
@@ -246,7 +246,7 @@ export const VerProducto = (props: { producto: Producto, setProducto: Function, 
                                 ref={componentRef}
                                 nombre={Nombre}
                                 ean={String(Ean)}
-                                precio={PrecioVenta}
+                                precio={Number(PrecioVenta)}
                             />
                         </div>
                     }

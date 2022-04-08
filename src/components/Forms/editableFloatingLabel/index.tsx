@@ -1,8 +1,7 @@
 import React, { useState } from "react";
-import { ValidatePositiveIntegerNumber } from "../../../utils/validator";
 
 // Component accept text, placeholder values and also pass what type of Input - input, textarea so that we can use it for styling accordingly
-const EditableIntegerLabel = (props: {
+const EditableFloatingLabel = (props: {
     text: string,
     setText: React.Dispatch<React.SetStateAction<string>>,
     type: string,
@@ -53,16 +52,16 @@ const EditableIntegerLabel = (props: {
                         name="task"
                         placeholder={props.placeholder}
                         value={props.text}
-                        onChange={e => { props.setText(ValidatePositiveIntegerNumber(e.target.value)); props.cambiosHandler(true); }}
+                        onChange={e => { props.setText(Number(e.target.value)); props.cambiosHandler(true); }}
                     />
                 </div>
                 :
                 <div
                     onClick={() => setEditing(true)}
                 >
-                    <span className={`${props.text ? 'text-black' : 'text-gray-400 italic'}`}>
+                    <span className={`${!isNaN(props.text) ? 'text-black' : 'text-gray-400 italic'}`}>
                         {
-                            props.text || props.placeholder
+                            !isNaN(props.text) ? props.text : props.placeholder
                         }
                     </span>
                 </div>
@@ -71,4 +70,4 @@ const EditableIntegerLabel = (props: {
     );
 };
 
-export default EditableIntegerLabel;
+export default EditableFloatingLabel;
