@@ -8,11 +8,13 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
         let fetchResult;
 
         fetchResult = await GQLFetcher.query({
-            query: QUERY_CIERRES, variables: {
+            query: QUERY_CIERRES,
+            variables: {
                 "find": {
                     "fecha": id
                 }
-            }
+            },
+            fetchPolicy: "no-cache"
         });
 
         if (!fetchResult.error) {

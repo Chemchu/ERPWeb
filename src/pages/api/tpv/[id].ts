@@ -1,5 +1,5 @@
 import { NextApiRequest, NextApiResponse } from "next";
-import { OCUPY_TPV, QUERY_TPV, QUERY_TPVS } from "../../../utils/querys";
+import { ADD_CIERRE, OCUPY_TPV, QUERY_TPV, QUERY_TPVS } from "../../../utils/querys";
 import GQLFetcher from "../../../utils/serverFetcher";
 import queryString from 'query-string';
 
@@ -14,6 +14,8 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
 
             case 'PUT':
                 return await OcuparTpvById(req, res);
+            // if (query.ocuparTpv) { return await OcuparTpvById(req, res); }
+            // else { return await AddCierre(req, res); }
 
             default:
                 res.setHeader('Allow', ['GET', 'PUT']);
@@ -29,12 +31,13 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
 }
 
 const GetTpvById = async (req: NextApiRequest, res: NextApiResponse) => {
+    const query = queryString.parse(req.query.id.toString());
     const fetchResult = await GQLFetcher.query(
         {
             query: QUERY_TPV,
             variables: {
                 "find": {
-                    "_id": req.query.idvId
+                    "_id": query.TPVId
                 },
                 "limit": 3000
             }
@@ -88,6 +91,50 @@ const OcuparTpvById = async (req: NextApiRequest, res: NextApiResponse) => {
     }
 
     return res.status(300).json(JSON.stringify({ message: `Fallo al buscar la TPV`, successful: fetchResult.data.ocupyTPV.successful }));
+}
+
+const AddCierre = async (req: NextApiRequest, res: NextApiResponse) => {
+    const fetchResult = await GQLFetcher.mutate(
+        {
+            mutation: ADD_CIERRE,
+            variables: {
+                "cierre": {
+                    "tpv": req.body.TPV,
+                    "cajaInicial": req.body.cajaInicial,
+                    "abiertoPor": {
+                        "_id": req.body.enUsoPor._id,
+                        "nombre": req.body.enUsoPor.nombre,
+                        "apellidos": req.body.enUsoPor.apellidos,
+                        "rol": req.body.enUsoPor.rol,
+                        "email": req.body.enUsoPor.email
+                    },
+                    "cerradoPor": {
+                        "_id": req.body._id,
+                        "nombre": req.body.nombre,
+                        "apellidos": req.body.apellidos,
+                        "rol": req.body.rol,
+                        "email": req.body.email
+                    },
+                    "apertura": req.body.updatedAt,
+                    "ventasEfectivo": Number(req.body.TotalEfectivo),
+                    "ventasTarjeta": Number(req.body.TotalTarjeta),
+                    "ventasTotales": Number(req.body.TotalEfectivo) + Number(req.body.TotalTarjeta),
+                    "dineroRetirado": Number(req.body.DineroRetirado),
+                    "fondoDeCaja": Number(req.body.TotalRealEnCaja) - Number(req.body.DineroRetirado),
+                    "numVentas": req.body.Ventas.length || 0,
+                    "dineroEsperadoEnCaja": Number(req.body.TotalPrevistoEnCaja),
+                    "dineroRealEnCaja": Number(req.body.TotalRealEnCaja)
+                }
+            }
+        }
+    );
+
+    if (fetchResult.data.addCierreTPV.successful) {
+        res.setHeader('Set-Cookie', `authorization=${fetchResult.data.addCierreTPV.token}; HttpOnly; Path=/`);
+        return res.status(200).json(JSON.stringify({ message: `Éxito al cerrar la TPV`, successful: true }));
+    }
+
+    return res.status(300).json(JSON.stringify({ message: `Fallo al cerrar la TPV`, successful: fetchResult.data.addCierreTPV.successful }));
 }
 
 export default handler;

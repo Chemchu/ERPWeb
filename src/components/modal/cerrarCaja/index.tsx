@@ -1,13 +1,12 @@
-import { useMutation } from "@apollo/client";
 import { motion } from "framer-motion";
 import { useEffect, useState } from "react";
 import useEmpleadoContext from "../../../context/empleadoContext";
 import { SesionEmpleado } from "../../../tipos/Empleado";
 import { TPVType } from "../../../tipos/TPV";
 import { Venta } from "../../../tipos/Venta";
-import { FetchVentasByTPVDate, FetchTPV } from "../../../utils/fetches";
+import { FetchVentasByTPVDate, FetchTPV, AddCierreTPV } from "../../../utils/fetches";
 import { GetEfectivoTotal, GetTarjetaTotal, GetTotalEnCaja } from "../../../utils/preciosUtils";
-import { ADD_CIERRE } from "../../../utils/querys";
+import { notifyError } from "../../../utils/toastify";
 import { ValidatePositiveFloatingNumber } from "../../../utils/validator";
 import { Backdrop } from "../backdrop";
 
@@ -45,44 +44,12 @@ export const CerrarCaja = (props: { Empleado?: SesionEmpleado, setModalOpen: Fun
     const [DineroRetirado, setDineroRetirado] = useState<string>("0");
     const { Empleado } = useEmpleadoContext();
 
-    const [cerrarCaja, { loading, data, error }] = useMutation(ADD_CIERRE, {
-        variables: {
-            "cierre": {
-                "tpv": Empleado?.TPV,
-                "cajaInicial": Tpv?.cajaInicial,
-                "abiertoPor": {
-                    "_id": Tpv?.enUsoPor._id,
-                    "nombre": Tpv?.enUsoPor.nombre,
-                    "apellidos": Tpv?.enUsoPor.apellidos,
-                    "rol": Tpv?.enUsoPor.rol,
-                    "email": Tpv?.enUsoPor.email
-                },
-                "cerradoPor": {
-                    "_id": Empleado?._id,
-                    "nombre": Empleado?.nombre,
-                    "apellidos": Empleado?.apellidos,
-                    "rol": Empleado?.rol,
-                    "email": Empleado?.email
-                },
-                "apertura": Tpv?.updatedAt,
-                "ventasEfectivo": Number(TotalEfectivo),
-                "ventasTarjeta": Number(TotalTarjeta),
-                "ventasTotales": Number(TotalEfectivo) + Number(TotalTarjeta),
-                "dineroRetirado": Number(DineroRetirado),
-                "fondoDeCaja": Number(TotalRealEnCaja) - Number(DineroRetirado),
-                "numVentas": Ventas?.length || 0,
-                "dineroEsperadoEnCaja": Number(TotalPrevistoEnCaja),
-                "dineroRealEnCaja": Number(TotalRealEnCaja)
-            }
-        }
-    });
-
     useEffect(() => {
         const GetVentas = async (j: SesionEmpleado) => {
             if (!j.TPV) { return; }
 
             const tpv = await FetchTPV(j.TPV);
-            if (!tpv) { return; }
+            if (!tpv) { notifyError("No se ha encontrado la TPV que se quiere cerrar"); return; }
 
             const ventas = await FetchVentasByTPVDate(j.TPV, tpv.updatedAt.toString());
 
@@ -96,13 +63,17 @@ export const CerrarCaja = (props: { Empleado?: SesionEmpleado, setModalOpen: Fun
         GetVentas(Empleado);
     }, [])
 
-    useEffect(() => {
-        if (data && data.addCierreTPV.successful && !error && !loading) {
-            // Cookies.set("authorization", data.addCierreTPV.token) --> Arreglar esto
-            props.setModalOpen(false);
-            props.setEmpleadoUsandoTPV(false);
-        }
-    }, [data]);
+    const CerrarCaja = async () => {
+        if (!Tpv || !Tpv._id) { return; }
+
+        await AddCierreTPV(Empleado, Number(TotalEfectivo),
+            Number(TotalTarjeta), Number(DineroRetirado),
+            Number(TotalPrevistoEnCaja), Number(TotalRealEnCaja),
+            Ventas?.length || 0);
+
+        props.setModalOpen(false);
+        props.setEmpleadoUsandoTPV(false);
+    }
 
     if (!Ventas) {
         return (
@@ -117,6 +88,7 @@ export const CerrarCaja = (props: { Empleado?: SesionEmpleado, setModalOpen: Fun
                         exit="exit"
                     >
                         {/* Meter skeletons */}
+                        ey wooo
                     </motion.div>
                 </Backdrop>
             </motion.div>
@@ -194,7 +166,7 @@ export const CerrarCaja = (props: { Empleado?: SesionEmpleado, setModalOpen: Fun
                             {
                                 Number(TotalRealEnCaja) > 0 && Number(TotalRealEnCaja) - Number(DineroRetirado) >= 0 ?
                                     <div className={`flex h-10 w-2/3 m-auto bg-blue-500 hover:bg-blue-600 rounded-lg cursor-pointer items-center justify-center shadow-lg`}
-                                        onClick={() => { cerrarCaja() }}>
+                                        onClick={async () => { await CerrarCaja() }}>
                                         <div>
                                             Cerrar TPV
                                         </div>

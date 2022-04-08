@@ -67,7 +67,7 @@ export const GetTarjetaTotal = (Ventas: Venta[]): number => {
 }
 
 export const GetTotalEnCaja = (Ventas: Venta[], Tpv: TPVType): number => {
-    return Tpv.cajaInicial + Ventas.reduce((total: number, v: Venta): number => {
+    return Ventas.reduce((total: number, v: Venta): number => {
         if (Tpv._id !== v.tpv) {
             return total;
         }
@@ -86,5 +86,5 @@ export const GetTotalEnCaja = (Ventas: Venta[], Tpv: TPVType): number => {
         }
 
         return Number(total.toFixed(2));
-    }, 0);
+    }, Tpv.cajaInicial);
 }

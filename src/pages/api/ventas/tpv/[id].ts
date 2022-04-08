@@ -30,7 +30,8 @@ const GetSaleByTPV = async (req: NextApiRequest, res: NextApiResponse) => {
                 find: {
                     tpv: req.query.id
                 }
-            }
+            },
+            fetchPolicy: "no-cache"
         });
 
         if (fetchResult.error) {

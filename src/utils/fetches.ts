@@ -433,13 +433,56 @@ export const FetchCurrentUserUsingTPV = async (): Promise<boolean> => {
 
 export const OcuparTPV = async (tpvId: string, empId: string, cajaInicial: number): Promise<boolean> => {
     try {
-        const fetchRes = await fetch(`/api/tpv/${tpvId}`,
+        const f = queryString.stringify({ ocuparTpv: true });
+        const fetchRes = await fetch(`/api/tpv/${f}`,
             {
                 method: 'PUT',
                 headers: {
                     'Content-Type': 'application/json'
                 },
                 body: JSON.stringify({ tpvId: tpvId, empId: empId, cajaInicial: cajaInicial })
+            });
+        const tpvOcupadaJson = await fetchRes.json();
+
+        if (!fetchRes.ok) { notifyError(tpvOcupadaJson.message); }
+        else { notifySuccess(tpvOcupadaJson.message); }
+
+        return tpvOcupadaJson.successful;
+    }
+    catch (e) {
+        console.error(e);
+        notifyError("Error de conexión");
+
+        return false;
+    }
+
+}
+
+export const AddCierreTPV = async (Empleado: SesionEmpleado, TotalEfectivo: number, TotalTarjeta: number, DineroRetirado: number,
+    TotalPrevistoEnCaja: number, TotalRealEnCaja: number, NumVentas: number): Promise<boolean> => {
+    try {
+        if (!Empleado.TPV) { return false; }
+
+        const Tpv = await FetchTPV(Empleado.TPV);
+        if (!Tpv) { return false; }
+
+        const fetchRes = await fetch(`/api/cierres/`,
+            {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    Empleado: Empleado,
+                    NumVentas: NumVentas,
+                    TotalEfectivo: TotalEfectivo,
+                    TotalTarjeta: TotalTarjeta,
+                    ventasTotales: TotalEfectivo + TotalTarjeta,
+                    TotalPrevistoEnCaja: TotalPrevistoEnCaja,
+                    TotalRealEnCaja: TotalRealEnCaja,
+                    DineroRetirado: DineroRetirado,
+                    TPV: Tpv
+                })
             });
         const tpvOcupadaJson = await fetchRes.json();
 

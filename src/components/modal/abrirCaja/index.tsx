@@ -65,8 +65,6 @@ const AbrirCaja = (props: { setShowModal: Function, setEmpleadoUsandoTPV: Functi
         const cInicial: number = parseFloat(Number(cajaInicial).toFixed(2));
 
         if (tpv?._id) {
-            console.log(tpv._id, Empleado._id);
-
             const res = await OcuparTPV(tpv._id, Empleado._id, cInicial);
 
             if (res) {
