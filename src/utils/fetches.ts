@@ -11,6 +11,7 @@ import { notifyError, notifySuccess } from "./toastify";
 import { TPVType } from "../tipos/TPV";
 import { Devolucion } from "../tipos/Devolucion";
 import { getJwtFromString } from "../hooks/jwt";
+import useEmpleadoContext from "../context/empleadoContext";
 
 export const FetchProductos = async (): Promise<Producto[]> => {
     try {
@@ -431,7 +432,7 @@ export const FetchCurrentUserUsingTPV = async (): Promise<boolean> => {
 
 }
 
-export const OcuparTPV = async (tpvId: string, empId: string, cajaInicial: number): Promise<boolean> => {
+export const OcuparTPV = async (tpvId: string, emp: SesionEmpleado, cajaInicial: number, setEmpleado: Function): Promise<boolean> => {
     try {
         const f = queryString.stringify({ ocuparTpv: true });
         const fetchRes = await fetch(`/api/tpv/${f}`,
@@ -440,12 +441,17 @@ export const OcuparTPV = async (tpvId: string, empId: string, cajaInicial: numbe
                 headers: {
                     'Content-Type': 'application/json'
                 },
-                body: JSON.stringify({ tpvId: tpvId, empId: empId, cajaInicial: cajaInicial })
+                body: JSON.stringify({ tpvId: tpvId, empId: emp._id, cajaInicial: cajaInicial })
             });
         const tpvOcupadaJson = await fetchRes.json();
 
-        if (!fetchRes.ok) { notifyError(tpvOcupadaJson.message); }
-        else { notifySuccess(tpvOcupadaJson.message); }
+        if (fetchRes.ok) {
+            notifySuccess(tpvOcupadaJson.message);
+            let e = emp;
+            e.TPV = tpvId;
+            setEmpleado(e);
+        }
+        else { notifyError(tpvOcupadaJson.message); }
 
         return tpvOcupadaJson.successful;
     }
@@ -458,7 +464,7 @@ export const OcuparTPV = async (tpvId: string, empId: string, cajaInicial: numbe
 
 }
 
-export const AddCierreTPV = async (Empleado: SesionEmpleado, TotalEfectivo: number, TotalTarjeta: number, DineroRetirado: number,
+export const AddCierreTPV = async (Empleado: SesionEmpleado, setEmpleado: Function, TotalEfectivo: number, TotalTarjeta: number, DineroRetirado: number,
     TotalPrevistoEnCaja: number, TotalRealEnCaja: number, NumVentas: number): Promise<boolean> => {
     try {
         if (!Empleado.TPV) { return false; }
@@ -486,8 +492,13 @@ export const AddCierreTPV = async (Empleado: SesionEmpleado, TotalEfectivo: numb
             });
         const tpvOcupadaJson = await fetchRes.json();
 
-        if (!fetchRes.ok) { notifyError(tpvOcupadaJson.message); }
-        else { notifySuccess(tpvOcupadaJson.message); }
+        if (fetchRes.ok) {
+            notifySuccess(tpvOcupadaJson.message);
+            let e = Empleado;
+            e.TPV = undefined;
+            setEmpleado(e);
+        }
+        else { notifyError(tpvOcupadaJson.message); }
 
         return tpvOcupadaJson.successful;
     }

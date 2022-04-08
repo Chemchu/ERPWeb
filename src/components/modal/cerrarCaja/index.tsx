@@ -42,11 +42,11 @@ export const CerrarCaja = (props: { Empleado?: SesionEmpleado, setModalOpen: Fun
     const [TotalPrevistoEnCaja, setTotalPrevistoEnCaja] = useState<string>();
     const [TotalRealEnCaja, setTotalRealEnCaja] = useState<string>("0");
     const [DineroRetirado, setDineroRetirado] = useState<string>("0");
-    const { Empleado } = useEmpleadoContext();
+    const { Empleado, SetEmpleado } = useEmpleadoContext();
 
     useEffect(() => {
         const GetVentas = async (j: SesionEmpleado) => {
-            if (!j.TPV) { return; }
+            if (!j.TPV) { notifyError("El empleado no está usando la TPV"); return; }
 
             const tpv = await FetchTPV(j.TPV);
             if (!tpv) { notifyError("No se ha encontrado la TPV que se quiere cerrar"); return; }
@@ -66,7 +66,7 @@ export const CerrarCaja = (props: { Empleado?: SesionEmpleado, setModalOpen: Fun
     const CerrarCaja = async () => {
         if (!Tpv || !Tpv._id) { return; }
 
-        await AddCierreTPV(Empleado, Number(TotalEfectivo),
+        await AddCierreTPV(Empleado, SetEmpleado, Number(TotalEfectivo),
             Number(TotalTarjeta), Number(DineroRetirado),
             Number(TotalPrevistoEnCaja), Number(TotalRealEnCaja),
             Ventas?.length || 0);

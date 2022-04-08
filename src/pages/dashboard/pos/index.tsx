@@ -42,6 +42,8 @@ const PuntoDeVenta = (props: { isEmpleadoUsingTPV: boolean, EmpleadoSesion: Sesi
 
 PuntoDeVenta.PageLayout = DashboardLayout;
 
+// No se está actualizando el EmpleadoSesion al cambiar el header de la cookie cuando abres la caja
+
 export const getServerSideProps: GetServerSideProps = async (ctx) => {
     const jwt = getJwtFromString(ctx.req.cookies.authorization);
     let emp: SesionEmpleado = {
@@ -52,6 +54,8 @@ export const getServerSideProps: GetServerSideProps = async (ctx) => {
         rol: jwt.rol,
     }
     jwt.TPV ? emp.TPV = jwt.TPV : null;
+
+    console.log(jwt);
 
     return {
         props: {

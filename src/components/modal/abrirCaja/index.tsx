@@ -35,7 +35,7 @@ const AbrirCaja = (props: { setShowModal: Function, setEmpleadoUsandoTPV: Functi
     const [tpvs, setTpvs] = useState<TPVType[]>([]);
     const [currentTpvName, setCurrentTpvName] = useState<string>();
     const [cajaInicial, setCajaInicial] = useState<string>('0');
-    const { Empleado } = useEmpleadoContext();
+    const { Empleado, SetEmpleado } = useEmpleadoContext();
 
     useEffect(() => {
         const TpvsAbiertas = async () => {
@@ -65,7 +65,7 @@ const AbrirCaja = (props: { setShowModal: Function, setEmpleadoUsandoTPV: Functi
         const cInicial: number = parseFloat(Number(cajaInicial).toFixed(2));
 
         if (tpv?._id) {
-            const res = await OcuparTPV(tpv._id, Empleado._id, cInicial);
+            const res = await OcuparTPV(tpv._id, Empleado, cInicial, SetEmpleado);
 
             if (res) {
                 props.setShowModal(false);
