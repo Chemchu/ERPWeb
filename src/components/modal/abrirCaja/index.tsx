@@ -89,8 +89,7 @@ const AbrirCaja = (props: { setShowModal: Function, setEmpleadoUsandoTPV: Functi
                                 Selecciona la TPV
                             </div>
                             <div className="w-full self-center justify-end">
-                                {/* <Dropdown selectedElemento={tpvs ? tpvs.values().next().value : "Cargando..."} elementos={Array.from(tpvs.values())} setElemento={setCurrentTpv} /> */}
-                                <Droplist selectedElemento={tpvs.length > 0 ? tpvs[0].nombre : "Cargando..."} elementos={tpvs.map((a) => { return a.nombre; })} setElemento={setCurrentTpvName} />
+                                <Droplist selectedElemento={currentTpvName ? currentTpvName : "Cargando..."} elementos={tpvs.map((a) => { return a.nombre; })} setElemento={setCurrentTpvName} />
                             </div>
                         </div>
 

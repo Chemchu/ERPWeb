@@ -55,8 +55,6 @@ export const getServerSideProps: GetServerSideProps = async (ctx) => {
     }
     jwt.TPV ? emp.TPV = jwt.TPV : null;
 
-    console.log(jwt);
-
     return {
         props: {
             isEmpleadoUsingTPV: Boolean(jwt.TPV),
