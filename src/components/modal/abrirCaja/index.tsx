@@ -78,7 +78,7 @@ const AbrirCaja = (props: { setShowModal: Function, setEmpleadoUsandoTPV: Functi
         <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}>
             <Backdrop >
                 <motion.div variants={In} initial="hidden" animate="visible" exit="exit"
-                    className="flex flex-col h-3/5 w-3/5 bg-white rounded-xl  items-center">
+                    className="flex flex-col h-3/6 w-3/6 max-h-96 max-w-lg bg-white rounded-xl  items-center">
                     <div className="text-2xl justify-self-start pt-4 w">
                         TPV Cerrada
                     </div>
@@ -98,12 +98,11 @@ const AbrirCaja = (props: { setShowModal: Function, setEmpleadoUsandoTPV: Functi
                             <div className="self-center">
                                 Caja inicial
                             </div>
-                            <div className="flex gap-2 self-center justify-end ml-auto">
+                            <div className="flex gap-2 self-center ml-auto items-center">
                                 <input type="text" inputMode="numeric" name="cajaInicial" id="cajaInicial" placeholder=" Por ejemplo 350.50"
-                                    className="text-right border border-gray-500 rounded-md justify-self-end w-60  outline-blue-500 "
+                                    className="text-right placeholder:text-gray-400 placeholder:italic p-2 border rounded-lg w-full h-full focus:outline-none focus:ring-2 focus:ring-blue-600"
                                     onChange={(e) => { setCajaInicial(ValidatePositiveFloatingNumber(e.target.value)) }} value={cajaInicial} />
-                                €
-
+                                <span>€</span>
                             </div>
                         </div>
                     </div>

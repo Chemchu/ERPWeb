@@ -88,7 +88,7 @@ export const CerrarCaja = (props: { Empleado?: SesionEmpleado, setModalOpen: Fun
                         exit="exit"
                     >
                         {/* Meter skeletons */}
-                        ey wooo
+                        Cargando...
                     </motion.div>
                 </Backdrop>
             </motion.div>
