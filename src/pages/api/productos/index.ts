@@ -45,7 +45,6 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
                 }
 
                 return res.status(300).json({ message: `Fallo al pedir la lista de productos` });
-                break;
 
             default:
                 return res.status(400).json({ message: `Solo se puede hacer un GET / POST en productos` });

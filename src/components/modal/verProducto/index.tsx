@@ -1,12 +1,13 @@
 import { motion } from "framer-motion";
-import React from "react";
+import React, { useEffect } from "react";
 import { useRef, useState } from "react";
 import { useReactToPrint } from "react-to-print";
 import { Producto } from "../../../tipos/Producto";
 import { UpdateProducto } from "../../../utils/fetches";
+import { notifyError } from "../../../utils/toastify";
 import Etiqueta from "../../etiqueta";
 import EditableLabel from "../../Forms/editableLabel";
-import EditableIntegerLabel from "../../Forms/editableNumberLabel";
+import ProductoForm from "../../Forms/productoForm";
 import { Backdrop } from "../backdrop";
 
 const In = {
@@ -35,17 +36,23 @@ const In = {
 
 export const VerProducto = (props: { producto: Producto, setProducto: Function, showModal: Function }) => {
     const [Nombre, setNombre] = useState<string>(props.producto.nombre || "");
-    const [Familia, setFamilia] = useState<string>(props.producto.familia || "");
-    const [Proveedor, setProveedor] = useState<string>(props.producto.proveedor || "");
-    const [Ean, setEan] = useState<string>(props.producto.ean || "");
-    const [Cantidad, setCantidad] = useState<string>(String(props.producto.cantidad));
-    const [CantidadRestock, setCantidadRestock] = useState<string>(String(props.producto.cantidadRestock));
-    const [Iva, setIva] = useState<string>(String(props.producto.iva));
-    const [Margen, setMargen] = useState<string>(String(props.producto.margen));
-    const [PrecioCompra, setPrecioCompra] = useState<string>(String(props.producto.precioCompra));
-    const [PrecioVenta, setPrecioVenta] = useState<string>(String(props.producto.precioVenta));
-    const [Alta, setAlta] = useState<boolean>(props.producto.alta);
+    const [ProductoAux, setProductoAux] = useState<Producto>();
     const [hayCambios, setHayCambios] = useState<boolean>(false);
+    const [imprimible, setImprimible] = useState<boolean>(true);
+
+    useEffect(() => {
+        if (!ProductoAux) { setHayCambios(false); return; }
+        if (!ProductoAux.precioVenta) { setHayCambios(false); setImprimible(false); return; }
+        if (!ProductoAux.nombre) { setHayCambios(false); setImprimible(false); return; }
+        if (!ProductoAux.ean) { setHayCambios(false); setImprimible(false); return; }
+        setImprimible(true);
+
+        if (!ProductoAux.precioCompra) { setHayCambios(false); return; }
+        if (!ProductoAux.iva) { setHayCambios(false); return; }
+        if (!ProductoAux.margen) { setHayCambios(false); return; }
+        if (!ProductoAux.alta) { setHayCambios(false); return; }
+        setHayCambios(true);
+    }, [ProductoAux]);
 
     const componentRef = useRef(null);
 
@@ -56,22 +63,34 @@ export const VerProducto = (props: { producto: Producto, setProducto: Function, 
     const handlePrint = useReactToPrint({
         documentTitle: "Etiqueta de producto",
         content: reactToPrintContent,
-    });
+    })
+
+    const Print = () => {
+        try {
+            handlePrint()
+        }
+        catch (e) {
+            notifyError("Rellene los campos necesarios para imprimir la etiqueta");
+            console.log(e);
+        }
+    };
 
     const GuardarCambios = async () => {
+        if (!ProductoAux) { return; }
+
         const p: Producto = {
             _id: props.producto._id,
-            alta: Alta,
-            cantidad: Number(Cantidad),
-            cantidadRestock: Number(CantidadRestock),
-            ean: String(Ean),
-            familia: Familia,
-            iva: Number(Iva),
-            margen: Number(Margen),
+            alta: ProductoAux.alta,
+            cantidad: Number(ProductoAux.cantidad),
+            cantidadRestock: Number(ProductoAux.cantidadRestock),
+            ean: String(ProductoAux.ean),
+            familia: ProductoAux.familia,
+            iva: Number(ProductoAux.iva),
+            margen: Number(ProductoAux.margen),
             nombre: Nombre,
-            precioCompra: Number(PrecioCompra),
-            precioVenta: Number(PrecioVenta),
-            proveedor: Proveedor
+            precioCompra: Number(ProductoAux.precioCompra),
+            precioVenta: Number(ProductoAux.precioVenta),
+            proveedor: ProductoAux.proveedor
         }
 
         const updatedCorrectly = await UpdateProducto(p);
@@ -90,163 +109,42 @@ export const VerProducto = (props: { producto: Producto, setProducto: Function, 
                     animate="visible"
                     exit="exit"
                 >
-                    <div className="self-start font-semibold text-xl w-1/2 xl:text-3xl">
-                        <EditableLabel
-                            text={Nombre}
-                            setText={setNombre}
-                            cambiosHandler={setHayCambios}
-                            placeholder="Nombre del producto"
-                            type="input"
-                        />
-                    </div>
-                    <div className="flex flex-col gap-2 h-full w-1/2 cursor-default self-start xl:text-xl">
-                        <span>
-                            ID: {props.producto._id}
-                        </span>
-                        <div className="flex gap-2 items-center">
-                            <span>
-                                Familia:
-                            </span>
+                    <div className="flex flex-col w-full h-full">
+                        <div className="self-start font-semibold text-2xl w-1/2 h-auto xl:text-3xl">
                             <EditableLabel
-                                text={Familia}
-                                setText={setFamilia}
+                                text={Nombre}
+                                setText={setNombre}
                                 cambiosHandler={setHayCambios}
-                                placeholder="Familia del producto..."
+                                placeholder="Nombre del producto"
                                 type="input"
                             />
+                        </div>
+                        <ProductoForm setProducto={setProductoAux} producto={props.producto} />
+                        <div className="flex w-full h-full gap-10 text-white self-end items-end justify-around">
+                            <button className="h-12 w-full rounded-xl bg-red-500 hover:bg-red-600 shadow-lg" onClick={() => { props.showModal(false) }}>
+                                Cerrar
+                            </button>
+                            <button disabled={!imprimible} className={`${imprimible ? 'bg-orange-500 hover:bg-orange-600' : 'bg-orange-400'} h-12 w-full rounded-xl shadow-lg`}
+                                onClick={Print}>
+                                Imprimir etiqueta
+                            </button>
+                            <button disabled={!hayCambios} className={`${hayCambios ? 'bg-blue-500 hover:bg-blue-600' : 'bg-blue-400'} h-12 w-full rounded-xl shadow-lg`}
+                                onClick={async () => { await GuardarCambios() }}>
+                                Guardar cambios
+                            </button>
                         </div>
 
-                        <div className="flex gap-2 items-center">
-                            <span>
-                                Cantidad:
-                            </span>
-                            <EditableIntegerLabel
-                                text={Cantidad}
-                                setText={setCantidad}
-                                cambiosHandler={setHayCambios}
-                                placeholder="Cantidad en stock..."
-                                type="input"
-                            />
-                        </div>
-
-                        <div className="flex gap-2 items-center">
-                            <span>
-                                Cantidad de reestock:
-                            </span>
-                            <EditableIntegerLabel
-                                text={CantidadRestock}
-                                setText={setCantidadRestock}
-                                cambiosHandler={setHayCambios}
-                                placeholder="Cantidad de aviso restock..."
-                                type="input"
-                            />
-                        </div>
-
-                        <div className="flex gap-2 items-center">
-                            <span>
-                                EAN:
-                            </span>
-                            <EditableLabel
-                                text={Ean}
-                                setText={setEan}
-                                cambiosHandler={setHayCambios}
-                                placeholder="Código de barras..."
-                                type="input"
-                            />
-                        </div>
-
-                        <div className="flex gap-2 items-center">
-                            <span>
-                                IVA:
-                            </span>
-                            <EditableIntegerLabel
-                                text={Iva}
-                                setText={setIva}
-                                cambiosHandler={setHayCambios}
-                                placeholder="Porcentaje de IVA aplicado..."
-                                type="input"
-                            />
-                            %
-                        </div>
-
-                        <div className="flex gap-2 items-center">
-                            <span>
-                                Margen:
-                            </span>
-                            <EditableIntegerLabel
-                                text={Margen}
-                                setText={setMargen}
-                                cambiosHandler={setHayCambios}
-                                placeholder="Margen de beneficio..."
-                                type="input"
-                            />
-                            %
-                        </div>
-
-                        <div className="flex gap-2 items-center">
-                            <span>
-                                Precio de compra:
-                            </span>
-                            <EditableIntegerLabel
-                                text={PrecioCompra}
-                                setText={setPrecioCompra}
-                                cambiosHandler={setHayCambios}
-                                placeholder="Precio de compra del producto..."
-                                type="input"
-                            />
-                            €
-                        </div>
-
-                        {/* Calcular el precio de venta en función del margen, precio de compra e IVA */}
-                        <div className="flex gap-2 items-center">
-                            <span>
-                                Precio de venta al público:
-                            </span>
-                            <EditableIntegerLabel
-                                text={PrecioVenta}
-                                setText={setPrecioVenta}
-                                cambiosHandler={setHayCambios}
-                                placeholder="Precio de venta final del producto..."
-                                type="input"
-                            />
-                            €
-                        </div>
-
-                        <div className="flex gap-2 items-center">
-                            <span>
-                                Proveedor:
-                            </span>
-                            <EditableLabel
-                                text={Proveedor}
-                                setText={setProveedor}
-                                cambiosHandler={setHayCambios}
-                                placeholder="Proveedor del producto..."
-                                type="input"
-                            />
-                        </div>
-                    </div>
-                    <div className="flex w-full h-full gap-10 text-white self-end items-end justify-around">
-                        <button className="h-12 w-full rounded-xl bg-red-500 hover:bg-red-600 shadow-lg" onClick={() => { props.showModal(false) }}>
-                            Cerrar
-                        </button>
-                        <button className="h-12 w-full rounded-xl bg-orange-500 hover:bg-orange-600 shadow-lg"
-                            onClick={handlePrint}>
-                            Imprimir etiqueta
-                        </button>
-                        <button disabled={!hayCambios} className={`${hayCambios ? 'bg-blue-500 hover:bg-blue-600' : 'bg-blue-400'} h-12 w-full rounded-xl  shadow-lg`}
-                            onClick={async () => { await GuardarCambios() }}>
-                            Guardar cambios
-                        </button>
                     </div>
                     {
-                        Ean &&
-                        PrecioVenta &&
+                        ProductoAux?.ean &&
+                        ProductoAux?.precioVenta > 0 &&
+                        imprimible &&
                         <div style={{ display: "none" }}>
                             <Etiqueta
                                 ref={componentRef}
                                 nombre={Nombre}
-                                ean={String(Ean)}
-                                precio={Number(PrecioVenta)}
+                                ean={ProductoAux?.ean}
+                                precio={Number(ProductoAux?.precioVenta)}
                             />
                         </div>
                     }

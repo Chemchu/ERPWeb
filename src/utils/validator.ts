@@ -38,10 +38,7 @@ export const ValidatePositiveFloatingNumber = (inputNumber: string): string => {
 
     if (valuePostRegex === undefined) { return ""; }
 
-    console.log(valuePostRegex);
-
-
-    return Number(valuePostRegex).toFixed(2);
+    return valuePostRegex;
 }
 
 export const ValidatePositiveIntegerNumber = (inputNumber: string): string => {

@@ -11,7 +11,6 @@ import { notifyError, notifySuccess } from "./toastify";
 import { TPVType } from "../tipos/TPV";
 import { Devolucion } from "../tipos/Devolucion";
 import { getJwtFromString } from "../hooks/jwt";
-import useEmpleadoContext from "../context/empleadoContext";
 
 export const FetchProductos = async (): Promise<Producto[]> => {
     try {
