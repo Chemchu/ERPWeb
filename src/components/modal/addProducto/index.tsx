@@ -1,6 +1,8 @@
 import { motion } from "framer-motion";
 import { useEffect, useState } from "react";
 import { Producto } from "../../../tipos/Producto";
+import { CreateProducto } from "../../../utils/fetches";
+import { notifyError } from "../../../utils/toastify";
 import { ValidatePositiveFloatingNumber } from "../../../utils/validator";
 import ProductoForm from "../../Forms/productoForm";
 import { Backdrop } from "../backdrop";
@@ -32,9 +34,12 @@ const In = {
 const AddProducto = (props: { showModal: Function }) => {
     const [Producto, setProducto] = useState<Producto>();
 
-    const CrearProducto = () => {
-        console.log("Crear producto");
-
+    const CrearProducto = async () => {
+        if (!Producto) {
+            notifyError("Error con el producto");
+            return;
+        }
+        await CreateProducto(Producto);
     }
 
     return (
@@ -58,7 +63,7 @@ const AddProducto = (props: { showModal: Function }) => {
                             <button className="h-12 w-full rounded-xl bg-red-500 hover:bg-red-600 shadow-lg" onClick={() => props.showModal(false)}>
                                 Cancelar
                             </button>
-                            <button className="h-12 w-full rounded-xl bg-blue-500 hover:bg-blue-600 shadow-lg" onClick={() => { CrearProducto() }}>
+                            <button className="h-12 w-full rounded-xl bg-blue-500 hover:bg-blue-600 shadow-lg" onClick={async () => { await CrearProducto() }}>
                                 Crear producto
                             </button>
                         </div>

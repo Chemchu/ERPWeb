@@ -75,12 +75,12 @@ export const QUERY_PRODUCT = gql`
 `;
 
 export const ADD_PRODUCT = gql`
-    mutation AddProducto($precioVenta: Float!, $ean: String!, $iva: Float, $proveedor: String, $familia: String, $nombre: String!, $precioCompra: Float, $margen: Float, $cantidad: Int, $cantidadRestock: Int, $alta: Boolean) {
-        addProducto(precioVenta: $precioVenta, ean: $ean, iva: $iva, proveedor: $proveedor, familia: $familia, nombre: $nombre, precioCompra: $precioCompra, margen: $margen, cantidad: $cantidad, cantidadRestock: $cantidadRestock, alta: $alta) {
-            message
-            successful
-        }
-    }
+    mutation AddProducto($producto: ProductoAddInput!) {
+  addProducto(producto: $producto) {
+    message
+    successful
+  }
+}
 `;
 
 export const ADD_PRODUCTOS_FILE = gql`

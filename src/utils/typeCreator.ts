@@ -15,6 +15,7 @@ function CreateProduct(p: any): Producto | undefined {
             _id: p._id,
             alta: p.alta,
             cantidad: p.cantidad | 0,
+            cantidadRestock: p.cantidadRestock | 0,
             descripcion: p.descripcion ? p.descripcion : "",
             ean: p.ean,
             familia: p.familia,

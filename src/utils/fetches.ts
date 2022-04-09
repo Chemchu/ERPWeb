@@ -16,14 +16,7 @@ export const FetchProductos = async (): Promise<Producto[]> => {
     try {
         let prodRes = [] as Producto[];
 
-        const pResponse = await fetch('/api/productos', {
-            method: 'POST',
-            headers: {
-                'Accept': 'application/json',
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify({ limit: 3000 })
-        });
+        const pResponse = await fetch('/api/productos');
 
         if (!pResponse.ok) { notifyError("Error al buscar los productos"); return []; }
 
@@ -80,6 +73,28 @@ export const UpdateProducto = async (producto: Producto): Promise<Boolean> => {
         if (!pResponse.ok) { notifyError(msg.message); return false; }
         else { notifySuccess(msg.message); return msg.successful; }
 
+    }
+    catch (e) {
+        console.log(e);
+        notifyError("Error de conexión");
+        return false;
+    }
+}
+
+export const CreateProducto = async (producto: Producto): Promise<Boolean> => {
+    try {
+        const pResponse = await fetch(`/api/productos/`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(producto)
+        });
+
+        const msg = await pResponse.json();
+
+        if (!pResponse.ok) { notifyError(msg.message); return false; }
+        else { notifySuccess(msg.message); return msg.successful; }
     }
     catch (e) {
         console.log(e);
