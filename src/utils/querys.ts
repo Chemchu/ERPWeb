@@ -83,6 +83,15 @@ export const ADD_PRODUCT = gql`
 }
 `;
 
+export const DELETE_PRODUCT = gql`
+    mutation Mutation($id: ID!) {
+  deleteProducto(_id: $id) {
+    message
+    successful
+  }
+}
+`;
+
 export const ADD_PRODUCTOS_FILE = gql`
     mutation AddProductosFile($csv: String!) {
         addProductosFile(csv: $csv) {

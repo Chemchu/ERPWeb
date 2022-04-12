@@ -1,35 +1,12 @@
 import { motion } from "framer-motion";
 import { useEffect, useState } from "react";
 import { Producto } from "../../../tipos/Producto";
+import { In } from "../../../utils/animations";
 import { CreateProducto } from "../../../utils/fetches";
 import { notifyError } from "../../../utils/toastify";
-import { ValidatePositiveFloatingNumber } from "../../../utils/validator";
 import ProductoForm from "../../Forms/productoForm";
 import { Backdrop } from "../backdrop";
 
-const In = {
-    hidden: {
-        scale: 0,
-        opacity: 0
-    },
-    visible: {
-        scale: 1,
-        opacity: 1,
-        transition: {
-            duration: 0.1,
-            type: "spring",
-            damping: 15,
-            stifness: 500
-        }
-    },
-    exit: {
-        y: "-100vh",
-        opacity: 0,
-        transition: {
-            duration: 0.25,
-        }
-    }
-}
 
 const AddProducto = (props: { showModal: Function }) => {
     const [Producto, setProducto] = useState<Producto>();
@@ -53,7 +30,7 @@ const AddProducto = (props: { showModal: Function }) => {
                     exit="exit"
                 >
                     <div className="flex flex-col w-full h-full text-left ">
-                        <span className="text-3xl">
+                        <span className="text-3xl cursor-default">
                             Añadir nuevo producto
                         </span>
 

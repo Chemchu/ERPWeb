@@ -103,6 +103,30 @@ export const CreateProducto = async (producto: Producto): Promise<Boolean> => {
     }
 }
 
+export const DeleteProducto = async (productoId: string): Promise<Boolean> => {
+    try {
+        const pResponse = await fetch(`/api/productos/${productoId}`, {
+            method: 'DELETE',
+            headers: {
+                'Content-Type': 'application/json'
+            }
+        });
+
+        const msg = await pResponse.json();
+
+        console.log(msg);
+
+
+        if (!pResponse.ok) { notifyError(msg.message); return false; }
+        else { notifySuccess(msg.message); return msg.successful; }
+    }
+    catch (e) {
+        console.log(e);
+        notifyError("Error de conexión");
+        return false;
+    }
+}
+
 export const FetchClientes = async (): Promise<Cliente[]> => {
     try {
         const cResponse = await fetch('/api/clientes', {

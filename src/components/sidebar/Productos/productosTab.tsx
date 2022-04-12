@@ -13,7 +13,7 @@ import AddProducto from "../../modal/addProducto";
 
 const arrayNum = [...Array(8)];
 
-const ProductPage = (props: { productos: Producto[], serverUp: boolean }) => {
+const ProductPage = (props: { Productos: Producto[], SetProductos: Function, serverUp: boolean }) => {
     const [filtro, setFiltro] = useState<string>("");
     const [ProductosFiltrados, setProductosFiltradas] = useState<Producto[] | undefined>();
     const [addProdModal, setAddProdModal] = useState<boolean>(false);
@@ -79,9 +79,9 @@ const ProductPage = (props: { productos: Producto[], serverUp: boolean }) => {
             </div>
             {
                 ProductosFiltrados ?
-                    <TablaProductos Productos={ProductosFiltrados} />
+                    <TablaProductos Productos={ProductosFiltrados} SetProductos={props.SetProductos} />
                     :
-                    <TablaProductos Productos={props.productos} />
+                    <TablaProductos Productos={props.Productos} SetProductos={props.SetProductos} />
             }
             <AnimatePresence>
                 {addProdModal && <AddProducto showModal={setAddProdModal} />}
@@ -90,7 +90,7 @@ const ProductPage = (props: { productos: Producto[], serverUp: boolean }) => {
     );
 }
 
-const TablaProductos = (props: { Productos: Producto[] }) => {
+const TablaProductos = (props: { Productos: Producto[], SetProductos: Function }) => {
     const [currentPage, setCurrentPage] = useState<number>(1);
 
     const elementsPerPage = 50;
@@ -117,7 +117,7 @@ const TablaProductos = (props: { Productos: Producto[] }) => {
                         props.Productos.slice((elementsPerPage * (currentPage - 1)), currentPage * elementsPerPage).map((p, index) => {
                             return (
                                 <div key={`FilaProdTable${p._id}`}>
-                                    <FilaProducto producto={p} />
+                                    <FilaProducto producto={p} productos={props.Productos} setAllProductos={props.SetProductos} />
                                 </div>
                             );
                         })
@@ -130,9 +130,20 @@ const TablaProductos = (props: { Productos: Producto[] }) => {
     )
 }
 
-const FilaProducto = (props: { producto: Producto }) => {
+const FilaProducto = (props: { producto: Producto, productos: Producto[], setAllProductos: Function }) => {
     const [showModal, setModal] = useState<boolean>(false);
     const [producto, setProducto] = useState<Producto>(props.producto);
+
+    const SetCurrentProduct = (p: Producto | null) => {
+        if (p === null) {
+            const prods = props.productos.filter((p) => { return p._id !== producto._id });
+            props.setAllProductos(prods);
+
+            return;
+        }
+
+        setProducto(p);
+    }
 
     return (
         <div className="hover:bg-blue-200">
@@ -153,7 +164,7 @@ const FilaProducto = (props: { producto: Producto }) => {
                 </div>
             </div>
             <AnimatePresence>
-                {showModal && <VerProducto showModal={setModal} producto={producto} setProducto={setProducto} />}
+                {showModal && <VerProducto showModal={setModal} producto={producto} setProducto={SetCurrentProduct} />}
             </AnimatePresence>
         </div>
 

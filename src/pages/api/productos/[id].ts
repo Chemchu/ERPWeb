@@ -1,5 +1,5 @@
 import { NextApiRequest, NextApiResponse } from "next"
-import { ADD_PRODUCT, ADD_PRODUCTOS_FILE, QUERY_PRODUCT, QUERY_PRODUCTS, UPDATE_PRODUCT } from "../../../utils/querys";
+import { ADD_PRODUCT, ADD_PRODUCTOS_FILE, DELETE_PRODUCT, QUERY_PRODUCT, QUERY_PRODUCTS, UPDATE_PRODUCT } from "../../../utils/querys";
 import GQLFetcher from "../../../utils/serverFetcher";
 import queryString from 'query-string';
 import { Producto } from "../../../tipos/Producto";
@@ -14,9 +14,9 @@ const handler = async (req: NextApiRequest, res: NextApiResponse): Promise<void>
                 if (req.query.id === "file") {
                     return await AddProductosFromFile(req, res);
                 }
-                else {
-                    return await AddProducto(req, res);
-                }
+            // else {
+            //     return await AddProducto(req, res);
+            // }
 
             case 'GET':
                 if (query.query) { return await GetProductosFromQuery(query, res); }
@@ -24,6 +24,9 @@ const handler = async (req: NextApiRequest, res: NextApiResponse): Promise<void>
 
             case 'PUT':
                 return await UpdateProducto(req, res);
+
+            case 'DELETE':
+                return await DeleteProducto(req, res);
         }
 
     }
@@ -109,7 +112,21 @@ const AddProducto = async (req: NextApiRequest, res: NextApiResponse) => {
     if (response.data.addProducto.successful) {
         return res.status(200).json({ message: response.data.addProducto.message });
     }
-    return res.status(300).json({ message: `Fallo al añadir el producto: ${response.data.message}` });
+    return res.status(300).json({ message: `Fallo al añadir el producto: ${response.data.addProducto.message}` });
+}
+
+const DeleteProducto = async (req: NextApiRequest, res: NextApiResponse) => {
+    const response = await GQLFetcher.mutate({
+        mutation: DELETE_PRODUCT,
+        variables: {
+            "id": req.query.id
+        }
+    });
+
+    if (response.data.deleteProducto.successful) {
+        return res.status(200).json({ message: response.data.deleteProducto.message, successful: response.data.deleteProducto.successful });
+    }
+    return res.status(300).json({ message: `Fallo al añadir el producto: ${response.data.deleteProducto.message}`, successful: response.data.deleteProducto.successful });
 }
 
 const UpdateProducto = async (req: NextApiRequest, res: NextApiResponse) => {

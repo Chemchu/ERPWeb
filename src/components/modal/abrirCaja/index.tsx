@@ -2,34 +2,11 @@ import { motion } from "framer-motion";
 import { useEffect, useState } from "react";
 import useEmpleadoContext from "../../../context/empleadoContext";
 import { TPVType } from "../../../tipos/TPV";
+import { In } from "../../../utils/animations";
 import { FetchTPVsByDisponibilidad, OcuparTPV } from "../../../utils/fetches";
 import { ValidatePositiveFloatingNumber } from "../../../utils/validator";
 import Droplist from "../../Forms/droplist";
 import { Backdrop } from "../backdrop";
-
-const In = {
-    hidden: {
-        scale: 0,
-        opacity: 0
-    },
-    visible: {
-        scale: 1,
-        opacity: 1,
-        transition: {
-            duration: 0.1,
-            type: "spring",
-            damping: 15,
-            stifness: 500
-        }
-    },
-    exit: {
-        y: "-100vh",
-        opacity: 0,
-        transition: {
-            duration: 0.25,
-        }
-    }
-}
 
 const AbrirCaja = (props: { setShowModal: Function, setEmpleadoUsandoTPV: Function }) => {
     const [tpvs, setTpvs] = useState<TPVType[]>([]);

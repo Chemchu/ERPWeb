@@ -4,34 +4,11 @@ import { useReactToPrint } from "react-to-print";
 import { CustomerPaymentInformation } from "../../../tipos/CustomerPayment";
 import { TPVType } from "../../../tipos/TPV";
 import { Venta } from "../../../tipos/Venta";
+import { In } from "../../../utils/animations";
 import { FetchTPV } from "../../../utils/fetches";
 import GenerateQrBase64 from "../../../utils/generateQr";
 import Ticket from "../../ticket";
 import { Backdrop } from "../backdrop";
-
-const In = {
-    hidden: {
-        scale: 0,
-        opacity: 0
-    },
-    visible: {
-        scale: 1,
-        opacity: 1,
-        transition: {
-            duration: 0.1,
-            type: "spring",
-            damping: 15,
-            stifness: 500
-        }
-    },
-    exit: {
-        y: "-100vh",
-        opacity: 0,
-        transition: {
-            duration: 0.25,
-        }
-    }
-}
 
 const EditarVenta = (props: { venta: Venta | undefined, setModal: Function }) => {
     const [tpv, setTpv] = useState<TPVType>();

@@ -72,23 +72,4 @@ const AddProducto = async (req: NextApiRequest, res: NextApiResponse) => {
     return res.status(300).json({ message: `Fallo al pedir la lista de productos`, successful: false });
 }
 
-// fetchResult = await GQLFetcher.query({
-//     query: QUERY_PRODUCTS,
-//     variables: {
-//         "find": find,
-//         "limit": limit
-//     }
-// });
-
-// if (fetchResult.errors) {
-//     return res.status(300).json({ message: `Fallo al pedir la lista de productos: ${fetchResult.errors[0]}` });
-// }
-
-// if (fetchResult.data) {
-//     return res.status(200).json(fetchResult.data);
-// }
-
-// return res.status(300).json({ message: `Fallo al pedir la lista de productos` });
-
-
 export default handler;

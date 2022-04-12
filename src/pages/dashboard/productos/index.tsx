@@ -102,7 +102,7 @@ const Productos = (props: { EmpleadoSesion: SesionEmpleado }) => {
                         'focus:outline-none ring-white ring-opacity-60'
                     )}
                 >
-                    <ProductPage productos={Productos} serverUp={serverUp} />
+                    <ProductPage Productos={Productos} SetProductos={SetProductos} serverUp={serverUp} />
                 </Tab.Panel>
                 <Tab.Panel
                     key={"Mermas"}

@@ -10,37 +10,12 @@ import { AddVenta, FetchClientes } from "../../../utils/fetches";
 import { CalcularCambio } from "../../../utils/preciosUtils";
 import { ValidatePositiveFloatingNumber } from "../../../utils/validator";
 import Dropdown from "../../Forms/dropdown";
-import { Input } from "../../Forms/input/input";
 import { InputNumber } from "../../Forms/input/inputDinero";
 import Ticket from "../../ticket";
 import { Backdrop } from "../backdrop";
 import { notifyError, notifySuccess } from "../../../utils/toastify";
-import { JWT } from "../../../tipos/JWT";
 import GenerateQrBase64 from "../../../utils/generateQr";
-
-const In = {
-    hidden: {
-        scale: 0,
-        opacity: 0
-    },
-    visible: {
-        scale: 1,
-        opacity: 1,
-        transition: {
-            duration: 0.1,
-            type: "spring",
-            damping: 15,
-            stifness: 500
-        }
-    },
-    exit: {
-        y: "-100vh",
-        opacity: 0,
-        transition: {
-            duration: 0.25,
-        }
-    }
-}
+import { In } from "../../../utils/animations";
 
 export const ModalPagar = (props: { PagoCliente: CustomerPaymentInformation, handleModalOpen: Function, AllClientes?: Cliente[] }) => {
     const [dineroEntregado, setDineroEntregado] = useState<string>("0");

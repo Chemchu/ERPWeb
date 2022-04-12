@@ -46,7 +46,7 @@ export const ProductSelectedCard = React.memo((props: { producto: ProductoVendid
                             <div className="grid grid-rows-2 text-left">
                                 <p className="text-sm truncate font-semibold">{props.producto.nombre}</p>
                                 {
-                                    isNaN(Number(props.producto.dto)) || Number(props.producto.dto) == 0 ?
+                                    isNaN(Number(props.producto.dto)) || Number(props.producto.dto) === 0 ?
                                         <p className="text-xs block">{(props.producto.precioVenta * Number(props.producto.cantidadVendida)).toFixed(2)}€</p>
                                         :
                                         <div className="flex-grow-0">
@@ -64,7 +64,8 @@ export const ProductSelectedCard = React.memo((props: { producto: ProductoVendid
                         </svg>
                     </button>
                 </div>
-                {isOpen &&
+                {
+                    isOpen &&
                     <div className="flex mt-1 p-2 gap-4 bg-blue-200 rounded-lg" onClick={(e) => e.stopPropagation()}>
                         <div>
                             <div className="font-semibold">
@@ -107,7 +108,6 @@ export const ProductSelectedCard = React.memo((props: { producto: ProductoVendid
                                 <> %</>
                             </div>
                         </div>
-
                     </div>
                 }
             </div>

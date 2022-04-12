@@ -1,44 +1,23 @@
-import { motion } from "framer-motion";
+import { AnimatePresence, motion } from "framer-motion";
 import React, { useEffect } from "react";
 import { useRef, useState } from "react";
 import { useReactToPrint } from "react-to-print";
 import { Producto } from "../../../tipos/Producto";
-import { UpdateProducto } from "../../../utils/fetches";
+import { In } from "../../../utils/animations";
+import { DeleteProducto, UpdateProducto } from "../../../utils/fetches";
 import { notifyError } from "../../../utils/toastify";
 import Etiqueta from "../../etiqueta";
 import EditableLabel from "../../Forms/editableLabel";
 import ProductoForm from "../../Forms/productoForm";
 import { Backdrop } from "../backdrop";
-
-const In = {
-    hidden: {
-        scale: 0,
-        opacity: 0
-    },
-    visible: {
-        scale: 1,
-        opacity: 1,
-        transition: {
-            duration: 0.1,
-            type: "spring",
-            damping: 15,
-            stifness: 500
-        }
-    },
-    exit: {
-        y: "-100vh",
-        opacity: 0,
-        transition: {
-            duration: 0.25,
-        }
-    }
-}
+import BorrarProductoModal from "../borrarProductoModal";
 
 export const VerProducto = (props: { producto: Producto, setProducto: Function, showModal: Function }) => {
     const [Nombre, setNombre] = useState<string>(props.producto.nombre || "");
     const [ProductoAux, setProductoAux] = useState<Producto>();
     const [hayCambios, setHayCambios] = useState<boolean>(false);
     const [imprimible, setImprimible] = useState<boolean>(true);
+    const [showDeleteModal, setDeleteModal] = useState<boolean>(false);
 
     useEffect(() => {
         if (!ProductoAux) { setHayCambios(false); return; }
@@ -75,27 +54,36 @@ export const VerProducto = (props: { producto: Producto, setProducto: Function, 
         }
     };
 
-    const GuardarCambios = async () => {
-        if (!ProductoAux) { return; }
+    const GuardarCambios = async (Prod: Producto | undefined, id: string) => {
+        if (!Prod) { return; }
 
         const p: Producto = {
-            _id: props.producto._id,
-            alta: ProductoAux.alta,
-            cantidad: Number(ProductoAux.cantidad),
-            cantidadRestock: Number(ProductoAux.cantidadRestock),
-            ean: String(ProductoAux.ean),
-            familia: ProductoAux.familia,
-            iva: Number(ProductoAux.iva),
-            margen: Number(ProductoAux.margen),
+            _id: id,
+            alta: Prod.alta,
+            cantidad: Number(Prod.cantidad),
+            cantidadRestock: Number(Prod.cantidadRestock),
+            ean: String(Prod.ean),
+            familia: Prod.familia,
+            iva: Number(Prod.iva),
+            margen: Number(Prod.margen),
             nombre: Nombre,
-            precioCompra: Number(ProductoAux.precioCompra),
-            precioVenta: Number(ProductoAux.precioVenta),
-            proveedor: ProductoAux.proveedor
+            precioCompra: Number(Prod.precioCompra),
+            precioVenta: Number(Prod.precioVenta),
+            proveedor: Prod.proveedor
         }
 
         const updatedCorrectly = await UpdateProducto(p);
         if (updatedCorrectly) {
             props.setProducto(p);
+        }
+    }
+
+    const BorrarProducto = async (id: string) => {
+        const deletedCorrectly = await DeleteProducto(id);
+
+        if (deletedCorrectly) {
+            props.showModal(false);
+            props.setProducto(null);
         }
     }
 
@@ -110,7 +98,7 @@ export const VerProducto = (props: { producto: Producto, setProducto: Function, 
                     exit="exit"
                 >
                     <div className="flex flex-col w-full h-full">
-                        <div className="self-start font-semibold text-2xl w-1/2 h-auto xl:text-3xl">
+                        <div className="flex self-start font-semibold text-2xl w-full h-auto xl:text-3xl justify-between">
                             <EditableLabel
                                 text={Nombre}
                                 setText={setNombre}
@@ -118,6 +106,14 @@ export const VerProducto = (props: { producto: Producto, setProducto: Function, 
                                 placeholder="Nombre del producto"
                                 type="input"
                             />
+                            <motion.button
+                                whileHover={{ scale: 1.2 }}
+                                onClick={() => { setDeleteModal(true); }}
+                                className="self-center">
+                                <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                                    <path strokeLinecap="round" strokeLinejoin="round" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                                </svg>
+                            </motion.button>
                         </div>
                         <ProductoForm setProducto={setProductoAux} producto={props.producto} />
                         <div className="flex w-full h-full gap-10 text-white self-end items-end justify-around">
@@ -129,25 +125,31 @@ export const VerProducto = (props: { producto: Producto, setProducto: Function, 
                                 Imprimir etiqueta
                             </button>
                             <button disabled={!hayCambios} className={`${hayCambios ? 'bg-blue-500 hover:bg-blue-600' : 'bg-blue-400'} h-12 w-full rounded-xl shadow-lg`}
-                                onClick={async () => { await GuardarCambios() }}>
+                                onClick={async () => { await GuardarCambios(ProductoAux, props.producto._id) }}>
                                 Guardar cambios
                             </button>
                         </div>
+                        <AnimatePresence>
+                            {
+                                showDeleteModal &&
+                                <BorrarProductoModal showProductModal={props.showModal} showModal={setDeleteModal} setProducto={props.setProducto} producto={props.producto} />
+                            }
+                        </AnimatePresence>
+                        {
+                            ProductoAux?.ean &&
+                            ProductoAux?.precioVenta > 0 &&
+                            imprimible &&
+                            <div style={{ display: "none" }}>
+                                <Etiqueta
+                                    ref={componentRef}
+                                    nombre={Nombre}
+                                    ean={ProductoAux?.ean}
+                                    precio={Number(ProductoAux?.precioVenta)}
+                                />
+                            </div>
+                        }
 
                     </div>
-                    {
-                        ProductoAux?.ean &&
-                        ProductoAux?.precioVenta > 0 &&
-                        imprimible &&
-                        <div style={{ display: "none" }}>
-                            <Etiqueta
-                                ref={componentRef}
-                                nombre={Nombre}
-                                ean={ProductoAux?.ean}
-                                precio={Number(ProductoAux?.precioVenta)}
-                            />
-                        </div>
-                    }
                 </motion.div>
             </Backdrop>
         </motion.div>

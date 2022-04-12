@@ -4,35 +4,12 @@ import useEmpleadoContext from "../../../context/empleadoContext";
 import { SesionEmpleado } from "../../../tipos/Empleado";
 import { TPVType } from "../../../tipos/TPV";
 import { Venta } from "../../../tipos/Venta";
+import { In } from "../../../utils/animations";
 import { FetchVentasByTPVDate, FetchTPV, AddCierreTPV } from "../../../utils/fetches";
 import { GetEfectivoTotal, GetTarjetaTotal, GetTotalEnCaja } from "../../../utils/preciosUtils";
 import { notifyError } from "../../../utils/toastify";
 import { ValidatePositiveFloatingNumber } from "../../../utils/validator";
 import { Backdrop } from "../backdrop";
-
-const In = {
-    hidden: {
-        scale: 0,
-        opacity: 0
-    },
-    visible: {
-        scale: 1,
-        opacity: 1,
-        transition: {
-            duration: 0.1,
-            type: "spring",
-            damping: 15,
-            stifness: 500
-        }
-    },
-    exit: {
-        y: "-100vh",
-        opacity: 0,
-        transition: {
-            duration: 0.25,
-        }
-    }
-}
 
 export const CerrarCaja = (props: { Empleado?: SesionEmpleado, setModalOpen: Function, setEmpleadoUsandoTPV: Function }) => {
     const [Ventas, setVentas] = useState<Venta[]>();
