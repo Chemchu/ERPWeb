@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { Producto } from "../../../tipos/Producto";
-import { IsValidProduct, ValidatePositiveFloatingNumber, ValidatePositiveIntegerNumber } from "../../../utils/validator";
+import { ValidatePositiveFloatingNumber, ValidatePositiveIntegerNumber } from "../../../utils/validator";
 
 const ProductoForm = (props: { setProducto: Function, producto?: Producto, setHayCambios?: Function }) => {
     const [Nombre, setNombre] = useState<string>(props.producto?.nombre || "");
@@ -11,8 +11,8 @@ const ProductoForm = (props: { setProducto: Function, producto?: Producto, setHa
     const [PrecioVenta, setPrecioVenta] = useState<string>(props.producto?.precioVenta ? props.producto?.precioVenta.toFixed(2) : "");
     const [Iva, setIva] = useState<string>(props.producto?.iva ? props.producto?.iva.toFixed(2) : "");
     const [Margen, setMargen] = useState<string>(props.producto?.margen ? props.producto?.margen.toFixed(2) : "");
-    const [Cantidad, setCantidad] = useState<string>(props.producto?.cantidad ? String(props.producto?.cantidad) : "");
-    const [CantidadReestock, setCantidadReestock] = useState<string>(props.producto?.cantidadRestock ? String(props.producto?.cantidadRestock) : "");
+    const [Cantidad, setCantidad] = useState<string>(props.producto?.cantidad ? String(props.producto?.cantidad) : "0");
+    const [CantidadReestock, setCantidadReestock] = useState<string>(props.producto?.cantidadRestock ? String(props.producto?.cantidadRestock) : "0");
 
     useEffect(() => {
         const p: Producto = {
@@ -95,7 +95,7 @@ const ProductoForm = (props: { setProducto: Function, producto?: Producto, setHa
                     <label className="block tracking-wide text-gray-700 font-bold">
                         Cantidad
                     </label>
-                    <input className="appearance-none ring-blue-500 block w-full bg-gray-200 text-gray-700 border border-gray-200 rounded py-3 px-4 leading-tight focus:outline-none focus:bg-white focus:border-gray-500" id="grid-last-name" type="text" placeholder="ID numérico de trece dígitos"
+                    <input className="appearance-none ring-blue-500 block w-full bg-gray-200 text-gray-700 border border-gray-200 rounded py-3 px-4 leading-tight focus:outline-none focus:bg-white focus:border-gray-500" id="grid-last-name" type="text" placeholder="Cantidad en stock"
                         value={Cantidad} onChange={(e) => { setCantidad(ValidatePositiveIntegerNumber(e.target.value)); props.setHayCambios && props.setHayCambios(true); }} />
                 </div>
             </div>
@@ -138,7 +138,7 @@ const ProductoForm = (props: { setProducto: Function, producto?: Producto, setHa
                     <label className="block tracking-wide text-gray-700 font-bold">
                         Cantidad de reestock
                     </label>
-                    <input className="appearance-none ring-blue-500 block w-full bg-gray-200 text-gray-700 border border-gray-200 rounded py-3 px-4 leading-tight focus:outline-none focus:bg-white focus:border-gray-500" id="grid-last-name" type="text" placeholder="ID numérico de trece dígitos"
+                    <input className="appearance-none ring-blue-500 block w-full bg-gray-200 text-gray-700 border border-gray-200 rounded py-3 px-4 leading-tight focus:outline-none focus:bg-white focus:border-gray-500" id="grid-last-name" type="text" placeholder="Cantidad mínima recomendada en stock"
                         value={CantidadReestock} onChange={(e) => { setCantidadReestock(ValidatePositiveIntegerNumber(e.target.value)); props.setHayCambios && props.setHayCambios(true); }} />
                 </div>
             </div>

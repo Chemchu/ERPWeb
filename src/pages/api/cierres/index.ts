@@ -88,7 +88,7 @@ const AddCierre = async (req: NextApiRequest, res: NextApiResponse) => {
 
     if (addCierreResult.data.addCierreTPV.successful) {
         res.setHeader('Set-Cookie', `authorization=${addCierreResult.data.addCierreTPV.token}; HttpOnly; Path=/`);
-        res.status(200).json({ message: addCierreResult.data.addCierreTPV.message, successful: addCierreResult.data.addCierreTPV.successful });
+        res.status(200).json({ message: addCierreResult.data.addCierreTPV.message, successful: addCierreResult.data.addCierreTPV.successful, cierre: addCierreResult.data.addCierreTPV.cierre });
         return;
     }
     else {

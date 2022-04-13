@@ -1,14 +1,19 @@
 import { motion } from "framer-motion";
+import React, { useRef } from "react";
 import { useEffect, useState } from "react";
+import { useReactToPrint } from "react-to-print";
 import useEmpleadoContext from "../../../context/empleadoContext";
+import { Cierre } from "../../../tipos/Cierre";
 import { SesionEmpleado } from "../../../tipos/Empleado";
 import { TPVType } from "../../../tipos/TPV";
 import { Venta } from "../../../tipos/Venta";
 import { In } from "../../../utils/animations";
 import { FetchVentasByTPVDate, FetchTPV, AddCierreTPV } from "../../../utils/fetches";
+import GenerateQrBase64 from "../../../utils/generateQr";
 import { GetEfectivoTotal, GetTarjetaTotal, GetTotalEnCaja } from "../../../utils/preciosUtils";
 import { notifyError } from "../../../utils/toastify";
 import { ValidatePositiveFloatingNumber } from "../../../utils/validator";
+import CierrePrintable from "../../cierrePrintable";
 import { Backdrop } from "../backdrop";
 
 export const CerrarCaja = (props: { Empleado?: SesionEmpleado, setModalOpen: Function, setEmpleadoUsandoTPV: Function }) => {
@@ -19,7 +24,19 @@ export const CerrarCaja = (props: { Empleado?: SesionEmpleado, setModalOpen: Fun
     const [TotalPrevistoEnCaja, setTotalPrevistoEnCaja] = useState<string>();
     const [TotalRealEnCaja, setTotalRealEnCaja] = useState<string>("0");
     const [DineroRetirado, setDineroRetirado] = useState<string>("0");
+    const [qrImage, setQrImage] = useState<string>();
+    const [Cierre, setCierre] = useState<Cierre>();
     const { Empleado, SetEmpleado } = useEmpleadoContext();
+    const componentRef = useRef(null);
+
+    const reactToPrintContent = React.useCallback(() => {
+        return componentRef.current;
+    }, []);
+
+    const handlePrint = useReactToPrint({
+        documentTitle: "Cierre de caja",
+        content: reactToPrintContent,
+    });
 
     useEffect(() => {
         const GetVentas = async (j: SesionEmpleado) => {
@@ -40,16 +57,27 @@ export const CerrarCaja = (props: { Empleado?: SesionEmpleado, setModalOpen: Fun
         GetVentas(Empleado);
     }, [])
 
+    useEffect(() => {
+        if (qrImage) {
+            handlePrint();
+        }
+
+    }, [qrImage])
+
     const CerrarCaja = async () => {
         if (!Tpv || !Tpv._id) { return; }
 
-        await AddCierreTPV(Empleado, SetEmpleado, Number(TotalEfectivo),
+        const cierre = await AddCierreTPV(Empleado, SetEmpleado, Number(TotalEfectivo),
             Number(TotalTarjeta), Number(DineroRetirado),
             Number(TotalPrevistoEnCaja), Number(TotalRealEnCaja),
             Ventas?.length || 0);
 
-        props.setModalOpen(false);
-        props.setEmpleadoUsandoTPV(false);
+        if (cierre) {
+            setCierre(cierre);
+            setQrImage(await GenerateQrBase64(cierre._id));
+            props.setModalOpen(false);
+            props.setEmpleadoUsandoTPV(false);
+        }
     }
 
     if (!Ventas) {
@@ -143,7 +171,7 @@ export const CerrarCaja = (props: { Empleado?: SesionEmpleado, setModalOpen: Fun
                             {
                                 Number(TotalRealEnCaja) > 0 && Number(TotalRealEnCaja) - Number(DineroRetirado) >= 0 ?
                                     <div className={`flex h-10 w-2/3 m-auto bg-blue-500 hover:bg-blue-600 rounded-lg cursor-pointer items-center justify-center shadow-lg`}
-                                        onClick={async () => { await CerrarCaja() }}>
+                                        onClick={async () => { await CerrarCaja(); }}>
                                         <div>
                                             Cerrar TPV
                                         </div>
@@ -154,6 +182,19 @@ export const CerrarCaja = (props: { Empleado?: SesionEmpleado, setModalOpen: Fun
                                             Cerrar TPV
                                         </div>
                                     </div>
+                            }
+                            {
+                                qrImage &&
+                                Cierre &&
+                                Tpv &&
+                                <div style={{ display: "none" }}>
+                                    <CierrePrintable
+                                        ref={componentRef}
+                                        cierre={Cierre}
+                                        tpv={Tpv.nombre}
+                                        qrImage={qrImage}
+                                    />
+                                </div>
                             }
                         </div>
                     </div>

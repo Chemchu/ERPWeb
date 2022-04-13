@@ -233,6 +233,8 @@ export function CreateTPVsList(tpvs: any): TPVType[] {
 }
 
 export function CreateCierreList(cierres: any): Cierre[] {
+    console.log(cierres);
+
     let res: Cierre[] = [];
     cierres.forEach((c: any) => {
         const cierre = CreateCierre(c);

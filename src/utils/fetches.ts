@@ -500,12 +500,12 @@ export const OcuparTPV = async (tpvId: string, emp: SesionEmpleado, cajaInicial:
 }
 
 export const AddCierreTPV = async (Empleado: SesionEmpleado, setEmpleado: Function, TotalEfectivo: number, TotalTarjeta: number, DineroRetirado: number,
-    TotalPrevistoEnCaja: number, TotalRealEnCaja: number, NumVentas: number): Promise<boolean> => {
+    TotalPrevistoEnCaja: number, TotalRealEnCaja: number, NumVentas: number): Promise<Cierre | undefined> => {
     try {
-        if (!Empleado.TPV) { return false; }
+        if (!Empleado.TPV) { return undefined; }
 
         const Tpv = await FetchTPV(Empleado.TPV);
-        if (!Tpv) { return false; }
+        if (!Tpv) { return undefined; }
 
         const fetchRes = await fetch(`/api/cierres/`,
             {
@@ -535,13 +535,14 @@ export const AddCierreTPV = async (Empleado: SesionEmpleado, setEmpleado: Functi
         }
         else { notifyError(tpvOcupadaJson.message); }
 
-        return tpvOcupadaJson.successful;
+        const cierre = CreateCierreList([tpvOcupadaJson.cierre])[0];
+        return cierre;
     }
     catch (e) {
         console.error(e);
         notifyError("Error de conexión");
 
-        return false;
+        return undefined;
     }
 
 }

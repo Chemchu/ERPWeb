@@ -8,45 +8,73 @@ const CierrePrintable = React.forwardRef((props: { tpv: string, cierre: Cierre, 
             <div className="w-full h-5/6 rounded-3xl bg-white z-10 ">
                 <div className="flex flex-col gap-1">
                     <h2 className="text-xl font-semibold text-center ">ERPWeb</h2>
-                    <div className="text-center">Fecha: {new Date(Number(props.cierre.cierre)).toLocaleString()}</div>
-                    <div className="flex flex-col text-center">
-
+                    <div className="text-center">TPV: {props.tpv}</div>
+                    <div className="text-center">Abierto por: {props.cierre.abiertoPor.nombre}, {props.cierre.abiertoPor.email}</div>
+                    <div className="text-center">Abierto: {new Date(Number(props.cierre.apertura)).toLocaleString()}</div>
+                    <div className="text-center">Cerrado por: {props.cierre.cerradoPor.nombre}, {props.cierre.cerradoPor.email}</div>
+                    <div className="text-center">Cerrado: {new Date(Number(props.cierre.cierre)).toLocaleString()}</div>
+                </div>
+                <div className="flex flex-col w-full h-5/6 p-4 text-base">
+                    <hr className="py-1" />
+                    <div className="flex w-full h-full justify-between align-middle">
+                        <p>Caja inicial</p>
+                        <p className="self-center">{props.cierre.cajaInicial.toFixed(2)}€</p>
                     </div>
-                </div>
-                <div id="receipt-content" className="text-left w-full h-5/6 p-4">
-                    <hr />
-                    <div className="w-full h-full">
-                        <div className="flex w-full justify-around">
-                            <p className="w-2/4 text-left font-semibold">Producto</p>
-                            <p className="w-1/4 text-center font-semibold">Cantidad</p>
-                            <p className="w-1/4 text-center font-semibold">Total</p>
-                        </div>
-                        <div className="flex flex-col gap-2 w-full h-full overflow-y-auto overflow-x-hidden pt-2">
-
-                        </div>
-                        <hr />
+                    <div className="flex w-full h-full justify-between align-middle">
+                        <p>Caja final esperada</p>
+                        <p className="self-center">{props.cierre.dineroEsperadoEnCaja.toFixed(2)}€</p>
                     </div>
-                </div>
-            </div>
-            <div className="flex flex-col justify-evenly w-full h-auto items-center">
-                <div className="font-semibold">
+                    <div className="flex w-full h-full justify-between align-middle">
+                        <p>Caja final real</p>
+                        <p className="self-center">{props.cierre.dineroRealEnCaja.toFixed(2)}€</p>
+                    </div>
 
-                </div>
-                <div>
-                </div>
-                <div>
+                    {
+                        props.cierre.dineroRealEnCaja - props.cierre.dineroEsperadoEnCaja >= 0 ?
+                            <div className="flex w-full h-full justify-between align-middle">
+                                <p>Sobra</p>
+                                <p className="self-center">{(props.cierre.dineroRealEnCaja - props.cierre.dineroEsperadoEnCaja).toFixed(2)}€</p>
+                            </div>
+                            :
+                            <div className="flex w-full h-full justify-between align-middle">
+                                <p>Falta</p>
+                                <p className="self-center">{(props.cierre.dineroRealEnCaja - props.cierre.dineroEsperadoEnCaja).toFixed(2)}€</p>
+                            </div>
+                    }
+
+                    <hr className="py-1" />
+
+                    <div className="flex w-full h-full justify-between align-middle">
+                        <p>Total vendido</p>
+                        <p className="self-center">{props.cierre.ventasTotales.toFixed(2)}€</p>
+                    </div>
+
+                    <div className="flex w-full h-full justify-between align-middle">
+                        <p>Total en efectivo</p>
+                        <p className="self-center">{props.cierre.ventasEfectivo.toFixed(2)}€</p>
+                    </div>
+
+                    <div className="flex w-full h-full justify-between align-middle">
+                        <p>Total en tarjeta</p>
+                        <p className="self-center">{props.cierre.ventasTarjeta.toFixed(2)}€</p>
+                    </div>
+                    <hr className="py-1" />
+
+                    <div className="flex w-full h-full justify-between align-middle">
+                        <p>Dinero retirado de caja</p>
+                        <p className="self-center">{props.cierre.dineroRetirado.toFixed(2)}€</p>
+                    </div>
+                    <div className="flex w-full h-full justify-between align-middle">
+                        <p>Fondo de caja dejado</p>
+                        <p className="self-center">{props.cierre.fondoDeCaja.toFixed(2)}€</p>
+                    </div>
                 </div>
             </div>
             <div className="flex justify-center">
                 <Image src={props.qrImage} layout="fixed" width={50} height={50} />
             </div>
 
-            <div className="flex flex-col pb-2">
-                <span>
-                    ¡Gracias por su compra! Vuelva siempre
-                </span>
-                <hr />
-            </div>
+            <hr />
         </div>
 
     )

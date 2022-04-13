@@ -12,13 +12,44 @@ export const ADD_SALE = gql`
 `;
 
 export const ADD_CIERRE = gql`
-    mutation AddCierreTPV($cierre: CierreTPVInput!) {
-        addCierreTPV(cierre: $cierre) {
-            message
-            successful
-            token
-        }
+    mutation Mutation($cierre: CierreTPVInput!) {
+  addCierreTPV(cierre: $cierre) {
+    cierre {
+      _id
+      tpv
+      cajaInicial
+      abiertoPor {
+        _id
+        nombre
+        apellidos
+        rol
+        email
+      }
+      cerradoPor {
+        _id
+        nombre
+        apellidos
+        rol
+        email
+      }
+      apertura
+      cierre
+      numVentas
+      ventasEfectivo
+      ventasTarjeta
+      ventasTotales
+      dineroEsperadoEnCaja
+      dineroRealEnCaja
+      dineroRetirado
+      fondoDeCaja
+      beneficio
+      nota
     }
+    message
+    successful
+    token
+  }
+}
 `;
 
 export const QUERY_PRODUCTS = gql`
