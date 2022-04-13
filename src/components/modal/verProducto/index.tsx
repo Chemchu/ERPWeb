@@ -4,8 +4,9 @@ import { useRef, useState } from "react";
 import { useReactToPrint } from "react-to-print";
 import { Producto } from "../../../tipos/Producto";
 import { In } from "../../../utils/animations";
-import { DeleteProducto, UpdateProducto } from "../../../utils/fetches";
+import { UpdateProducto } from "../../../utils/fetches";
 import { notifyError } from "../../../utils/toastify";
+import { IsValidProduct } from "../../../utils/validator";
 import Etiqueta from "../../etiqueta";
 import EditableLabel from "../../Forms/editableLabel";
 import ProductoForm from "../../Forms/productoForm";
@@ -21,16 +22,11 @@ export const VerProducto = (props: { producto: Producto, setProducto: Function, 
 
     useEffect(() => {
         if (!ProductoAux) { setHayCambios(false); return; }
-        if (!ProductoAux.precioVenta) { setHayCambios(false); setImprimible(false); return; }
-        if (!ProductoAux.nombre) { setHayCambios(false); setImprimible(false); return; }
-        if (!ProductoAux.ean) { setHayCambios(false); setImprimible(false); return; }
+        if (!ProductoAux.precioVenta) { setImprimible(false); return; }
+        if (!ProductoAux.nombre) { setImprimible(false); return; }
+        if (!ProductoAux.ean) { setImprimible(false); return; }
         setImprimible(true);
 
-        if (!ProductoAux.precioCompra) { setHayCambios(false); return; }
-        if (!ProductoAux.iva) { setHayCambios(false); return; }
-        if (!ProductoAux.margen) { setHayCambios(false); return; }
-        if (!ProductoAux.alta) { setHayCambios(false); return; }
-        setHayCambios(true);
     }, [ProductoAux]);
 
     const componentRef = useRef(null);
@@ -75,15 +71,7 @@ export const VerProducto = (props: { producto: Producto, setProducto: Function, 
         const updatedCorrectly = await UpdateProducto(p);
         if (updatedCorrectly) {
             props.setProducto(p);
-        }
-    }
-
-    const BorrarProducto = async (id: string) => {
-        const deletedCorrectly = await DeleteProducto(id);
-
-        if (deletedCorrectly) {
-            props.showModal(false);
-            props.setProducto(null);
+            setHayCambios(false);
         }
     }
 
@@ -115,7 +103,7 @@ export const VerProducto = (props: { producto: Producto, setProducto: Function, 
                                 </svg>
                             </motion.button>
                         </div>
-                        <ProductoForm setProducto={setProductoAux} producto={props.producto} />
+                        <ProductoForm setProducto={setProductoAux} producto={props.producto} setHayCambios={setHayCambios} />
                         <div className="flex w-full h-full gap-10 text-white self-end items-end justify-around">
                             <button className="h-12 w-full rounded-xl bg-red-500 hover:bg-red-600 shadow-lg" onClick={() => { props.showModal(false) }}>
                                 Cerrar
@@ -124,10 +112,21 @@ export const VerProducto = (props: { producto: Producto, setProducto: Function, 
                                 onClick={Print}>
                                 Imprimir etiqueta
                             </button>
-                            <button disabled={!hayCambios} className={`${hayCambios ? 'bg-blue-500 hover:bg-blue-600' : 'bg-blue-400'} h-12 w-full rounded-xl shadow-lg`}
-                                onClick={async () => { await GuardarCambios(ProductoAux, props.producto._id) }}>
-                                Guardar cambios
-                            </button>
+                            {
+                                hayCambios ?
+                                    <button className={`flex bg-blue-500 hover:bg-blue-600 h-12 w-full rounded-xl shadow-lg justify-center items-center`}
+                                        onClick={async () => { await GuardarCambios(ProductoAux, props.producto._id) }}>
+                                        <p>
+                                            Guardar cambios
+                                        </p>
+                                    </button>
+                                    :
+                                    <div className={`flex bg-blue-400 h-12 w-full rounded-xl shadow-lg justify-center items-center `}>
+                                        <p>
+                                            Guardar cambios
+                                        </p>
+                                    </div>
+                            }
                         </div>
                         <AnimatePresence>
                             {
