@@ -114,9 +114,6 @@ export const DeleteProducto = async (productoId: string): Promise<Boolean> => {
 
         const msg = await pResponse.json();
 
-        console.log(msg);
-
-
         if (!pResponse.ok) { notifyError(msg.message); return false; }
         else { notifySuccess(msg.message); return msg.successful; }
     }

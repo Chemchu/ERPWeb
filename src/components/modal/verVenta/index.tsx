@@ -10,7 +10,7 @@ import GenerateQrBase64 from "../../../utils/generateQr";
 import Ticket from "../../ticket";
 import { Backdrop } from "../backdrop";
 
-const EditarVenta = (props: { venta: Venta | undefined, setModal: Function }) => {
+const VerVenta = (props: { venta: Venta | undefined, setModal: Function }) => {
     const [tpv, setTpv] = useState<TPVType>();
     const componentRef = useRef(null);
     const [PagoDelCliente, setPago] = useState<CustomerPaymentInformation>();
@@ -235,4 +235,4 @@ const GenerarFilaProducto = (props: { numFila: number, nombreProducto: string, c
     );
 }
 
-export default EditarVenta;
+export default VerVenta;

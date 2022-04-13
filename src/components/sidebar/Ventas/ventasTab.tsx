@@ -9,7 +9,7 @@ import DateRange from "../../Forms/dateRange";
 import DownloadFile from "../../Forms/downloadFile";
 import { Paginador } from "../../Forms/paginador";
 import UploadFile from "../../Forms/uploadFile";
-import EditarVenta from "../../modal/editarVenta";
+import VerVenta from "../../modal/verVenta";
 import SkeletonCard from "../../Skeletons/skeletonCard";
 
 const SalesPage = (props: { ventas: Venta[], clientes: Cliente[] }) => {
@@ -133,7 +133,7 @@ const SalesPage = (props: { ventas: Venta[], clientes: Cliente[] }) => {
                 {
                     showModalEditarVenta &&
                     <div>
-                        <EditarVenta venta={CurrentVenta} setModal={setShowModal} />
+                        <VerVenta venta={CurrentVenta} setModal={setShowModal} />
                     </div>
                 }
             </AnimatePresence>

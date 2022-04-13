@@ -7,6 +7,7 @@ import { notifyWarn } from "../../../utils/toastify";
 import DateRange from "../../Forms/dateRange";
 import { Paginador } from "../../Forms/paginador";
 import UploadFile from "../../Forms/uploadFile";
+import VerCierre from "../../modal/verCierre";
 import SkeletonCard from "../../Skeletons/skeletonCard";
 
 const arrayNum = [...Array(8)];
@@ -102,12 +103,13 @@ export default CierrePage;
 
 const FilaCierre = (props: { cierre: Cierre, tpvs: TPVType[] }) => {
     const [showModal, setModal] = useState<boolean>(false);
+    const tpv = props.tpvs.find((t) => { return t._id === props.cierre.tpv })?.nombre || 'Cargando...';
 
     return (
         <div className="hover:bg-blue-200">
             <div className="flex justify-between border-b px-5 py-2 cursor-pointer" onClick={() => { setModal(true) }}>
                 <div className="w-1/4 text-sm text-left">
-                    {props.tpvs.find((t) => { return t._id === props.cierre.tpv })?.nombre || 'Cargando...'}
+                    {tpv}
                 </div>
                 <div className="w-1/4 text-sm text-left">
                     {new Date(Number(props.cierre.cierre)).toLocaleString()}
@@ -120,7 +122,7 @@ const FilaCierre = (props: { cierre: Cierre, tpvs: TPVType[] }) => {
                 </div>
             </div>
             <AnimatePresence>
-                {/* {showModal && <EditarProducto showModal={setModal} product={props.producto} />} */}
+                {showModal && <VerCierre showModal={setModal} cierre={props.cierre} tpv={tpv} />}
             </AnimatePresence>
         </div>
 
