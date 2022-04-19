@@ -1,11 +1,11 @@
 import { AnimatePresence } from "framer-motion";
 import { useState } from "react";
-import { Cliente } from "../../../tipos/Cliente";
 import { Empleado } from "../../../tipos/Empleado";
 import { TipoDocumento } from "../../../tipos/Enums/TipoDocumentos";
 import { notifyWarn } from "../../../utils/toastify";
 import { Paginador } from "../../Forms/paginador";
 import UploadFile from "../../Forms/uploadFile";
+import AddEmpleado from "../../modal/addEmpleado";
 import SkeletonCard from "../../Skeletons/skeletonCard";
 
 const arrayNum = [...Array(8)];
@@ -14,6 +14,7 @@ const EmpleadosPage = (props: { Empleados: Empleado[] }) => {
     const [currentPage, setCurrentPage] = useState<number>(1);
     const [filtro, setFiltro] = useState<string>("");
     const [EmpleadosFiltrados, setEmpleadosFiltrados] = useState<Empleado[] | undefined>();
+    const [showModal, setModal] = useState<boolean>(false);
 
     const elementsPerPage = 50;
     const numPages = Math.ceil(props.Empleados.length / elementsPerPage);
@@ -36,7 +37,8 @@ const EmpleadosPage = (props: { Empleados: Empleado[] }) => {
         <div className="flex flex-col h-full w-full bg-white rounded-b-2xl rounded-r-2xl p-4 shadow-lg border-x">
             <div className="flex w-full h-auto py-4 gap-10 justify-end">
                 <div className="flex gap-4 w-full h-full">
-                    <button className="flex flex-shrink-0 gap-2 px-4 py-2 text-base font-semibold text-white bg-green-500 rounded-lg shadow-md hover:bg-green-600 focus:outline-none focus:ring-2 focus:ring-green-600 focus:ring-offset-2 focus:ring-offset-blue-200">
+                    <button className="flex flex-shrink-0 gap-2 px-4 py-2 text-base font-semibold text-white bg-green-500 rounded-lg shadow-md hover:bg-green-600 focus:outline-none focus:ring-2 focus:ring-green-600 focus:ring-offset-2 focus:ring-offset-blue-200"
+                        onClick={() => setModal(true)}>
                         Nuevo
                         <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v3m0 0v3m0-3h3m-3 0H9m12 0a9 9 0 11-18 0 9 9 0 0118 0z" />
@@ -93,6 +95,9 @@ const EmpleadosPage = (props: { Empleados: Empleado[] }) => {
             <div className="flex pt-2 items-center justify-center">
                 <Paginador numPages={numPages} paginaActual={currentPage} maxPages={10} cambiarPaginaActual={setPaginaActual} />
             </div>
+            <AnimatePresence>
+                {showModal && <AddEmpleado showModal={setModal} />}
+            </AnimatePresence>
         </div>
     );
 }
@@ -114,7 +119,7 @@ const FilaEmpleado = (props: { empleado: Empleado }) => {
                 </div>
             </div>
             <AnimatePresence>
-                {/* {showModal && <EditarProducto showModal={setModal} product={props.cliente} />} */}
+                {/* {showModal && <VerEmpleado showModal={setModal} />} */}
             </AnimatePresence>
         </div>
 
