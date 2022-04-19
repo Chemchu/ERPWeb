@@ -1,34 +1,25 @@
 import { AnimatePresence } from "framer-motion";
 import React, { useEffect, useState } from "react";
-import { Producto } from "../../../tipos/Producto";
 import { Paginador } from "../../Forms/paginador";
 import SkeletonCard from "../../Skeletons/skeletonCard";
-import VerProducto from "../../modal/verProducto";
 import { notifyWarn } from "../../../utils/toastify";
-import { FetchProductoByQuery, FetchProductos } from "../../../utils/fetches";
 import UploadFile from "../../Forms/uploadFile";
 import { TipoDocumento } from "../../../tipos/Enums/TipoDocumentos";
 import DownloadFile from "../../Forms/downloadFile";
 import AddProducto from "../../modal/addProducto";
+import { Merma } from "../../../tipos/Merma";
 
 const arrayNum = [...Array(8)];
 
-const ProductPage = () => {
+const MermaPage = () => {
     const [filtro, setFiltro] = useState<string>("");
-    const [ProductosFiltrados, setProductosFiltradas] = useState<Producto[] | undefined>();
-    const [addProdModal, setAddProdModal] = useState<boolean>(false);
-    const [Productos, SetProductos] = useState<Producto[]>([]);
-
-    useEffect(() => {
-        const GetAllData = async () => {
-            SetProductos(await FetchProductos());
-        }
-        GetAllData();
-    }, []);
+    const [Mermas, setMermas] = useState<Merma[]>([]);
+    const [MermasFiltradas, setMermasFiltradas] = useState<Merma[] | undefined>();
+    const [addMermaModal, setAddMermaModal] = useState<boolean>(false);
 
     useEffect(() => {
         if (filtro === "") {
-            setProductosFiltradas(undefined);
+            setMermasFiltradas(undefined);
         }
     }, [filtro])
 
@@ -36,7 +27,7 @@ const ProductPage = () => {
     const Filtrar = async (f: string) => {
         if (!f.match('^[-_a-zA-Z0-9.\s ]*$')) { notifyWarn("Producto inválido"); return; }
 
-        setProductosFiltradas(await FetchProductoByQuery(f));
+        //setMermasFiltradas(await FetchProductoByQuery(f));
     }
 
     return (
@@ -44,7 +35,7 @@ const ProductPage = () => {
             <div className="flex w-full h-auto py-4">
                 <div className="flex gap-4 w-full h-full justify-start">
                     <button className="flex flex-shrink-0 gap-2 px-4 py-2 text-base font-semibold text-white bg-green-500 rounded-lg shadow-md hover:bg-green-600 focus:outline-none focus:ring-2 focus:ring-green-600 focus:ring-offset-2 focus:ring-offset-blue-200"
-                        onClick={(e) => { e.preventDefault(); setAddProdModal(true); }}>
+                        onClick={(e) => { e.preventDefault(); setAddMermaModal(true); }}>
                         Nuevo
                         <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v3m0 0v3m0-3h3m-3 0H9m12 0a9 9 0 11-18 0 9 9 0 0118 0z" />
@@ -86,23 +77,23 @@ const ProductPage = () => {
                 </div>
             </div>
             {
-                ProductosFiltrados ?
-                    <TablaProductos Productos={ProductosFiltrados} SetProductos={SetProductos} />
+                MermasFiltradas ?
+                    <TablaMerma Mermas={MermasFiltradas} SetMermas={setMermas} />
                     :
-                    <TablaProductos Productos={Productos} SetProductos={SetProductos} />
+                    <TablaMerma Mermas={Mermas} SetMermas={setMermas} />
             }
             <AnimatePresence>
-                {addProdModal && <AddProducto showModal={setAddProdModal} />}
+                {addMermaModal && <AddProducto showModal={setAddMermaModal} />}
             </AnimatePresence>
         </div>
     );
 }
 
-const TablaProductos = (props: { Productos: Producto[], SetProductos: Function }) => {
+const TablaMerma = (props: { Mermas: Merma[], SetMermas: Function }) => {
     const [currentPage, setCurrentPage] = useState<number>(1);
 
     const elementsPerPage = 50;
-    const numPages = Math.ceil(props.Productos.length / elementsPerPage);
+    const numPages = Math.ceil(props.Mermas.length / elementsPerPage);
 
     const setPaginaActual = (page: number) => {
         if (page < 1) { return; }
@@ -115,17 +106,17 @@ const TablaProductos = (props: { Productos: Producto[], SetProductos: Function }
         <>
             <div className="h-full w-full border-2 rounded-b overflow-y-scroll">
                 {
-                    props.Productos.length <= 0 ?
+                    props.Mermas.length <= 0 ?
                         arrayNum.map((n, i) => {
                             return (
                                 <SkeletonCard key={`SkeletonProdList-${i}`} />
                             );
                         })
                         :
-                        props.Productos.slice((elementsPerPage * (currentPage - 1)), currentPage * elementsPerPage).map((p, index) => {
+                        props.Mermas.slice((elementsPerPage * (currentPage - 1)), currentPage * elementsPerPage).map((p, index) => {
                             return (
                                 <div key={`FilaProdTable${p._id}`}>
-                                    <FilaProducto producto={p} productos={props.Productos} setAllProductos={props.SetProductos} />
+                                    <FilaMerma merma={p} allMermas={props.Mermas} setAllProductos={props.SetMermas} />
                                 </div>
                             );
                         })
@@ -138,45 +129,45 @@ const TablaProductos = (props: { Productos: Producto[], SetProductos: Function }
     )
 }
 
-const FilaProducto = (props: { producto: Producto, productos: Producto[], setAllProductos: Function }) => {
+const FilaMerma = (props: { merma: Merma, allMermas: Merma[], setAllProductos: Function }) => {
     const [showModal, setModal] = useState<boolean>(false);
-    const [producto, setProducto] = useState<Producto>(props.producto);
+    const [merma, setMerma] = useState<Merma>(props.merma);
 
-    const SetCurrentProduct = (p: Producto | null) => {
+    const SetCurrentMerma = (p: Merma | null) => {
         if (p === null) {
-            const prods = props.productos.filter((p) => { return p._id !== producto._id });
+            const prods = props.allMermas.filter((p) => { return p._id !== merma._id });
             props.setAllProductos(prods);
 
             return;
         }
 
-        setProducto(p);
+        setMerma(p);
     }
 
     return (
         <div className="hover:bg-blue-200">
             <div className="flex justify-between border-b px-5 py-2 cursor-pointer" onClick={() => { setModal(true) }}>
                 <div className="w-2/5 text-sm text-left">
-                    {producto.nombre}
+                    {merma._id}
                 </div>
                 <div className="w-1/5 text-sm text-left">
-                    {producto.precioVenta.toFixed(2)}€
+                    {merma.productos.length}
                 </div>
                 <div className="w-1/5 text-base text-left">
-                    {producto.familia}
+                    {/* {merma.familia} */}
                 </div>
                 <div className="w-1/5 text-sm text-right">
-                    <span className={`w-full px-3 py-1 rounded-full ${producto.cantidad > 0 ? " text-green-900 bg-green-300" : "text-red-900 bg-red-300"}`}>
-                        {producto.cantidad ? producto.cantidad : 0}
-                    </span>
+                    {/* <span className={`w-full px-3 py-1 rounded-full ${merma.cantidad > 0 ? " text-green-900 bg-green-300" : "text-red-900 bg-red-300"}`}>
+                        {merma.cantidad ? merma.cantidad : 0}
+                    </span> */}
                 </div>
             </div>
             <AnimatePresence>
-                {showModal && <VerProducto showModal={setModal} producto={producto} setProducto={SetCurrentProduct} />}
+                {/* {showModal && <VerProducto showModal={setModal} producto={merma} setProducto={SetCurrentMerma} />} */}
             </AnimatePresence>
         </div>
 
     );
 }
 
-export default ProductPage;
+export default MermaPage;
