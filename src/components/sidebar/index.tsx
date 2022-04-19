@@ -25,7 +25,7 @@ const OpenedSidebar = (props: { setCollapsed: Function, IndexSeleccionado: Sideb
                     </span>
                 </div>
 
-                <div className="flex flex-col w-full h-full gap-6 justify-center px-5">
+                <div className="flex flex-col w-full h-full xl:gap-10 gap-6 justify-center px-5">
                     <Link href="/dashboard">
                         <div className={`${props.IndexSeleccionado === SidebarOption.Inicio && "bg-gray-100"} hover:text-gray-800 hover:bg-gray-100 flex items-center gap-4 transition-colors dark:hover:text-white dark:hover:bg-gray-600 duration-200
                         text-gray-600 dark:text-gray-400 rounded-lg cursor-pointer`} onClick={(e) => { props.setIndex(SidebarOption.Inicio); e.stopPropagation(); }}>
@@ -129,7 +129,7 @@ const OpenedSidebar = (props: { setCollapsed: Function, IndexSeleccionado: Sideb
 
                 </div>
 
-                <div className='flex flex-col w-full h-1/6 gap-6 justify-center px-5 pb-10'>
+                <div className='flex flex-col w-full h-1/6 xl:gap-10 gap-6 justify-center px-5 pb-10'>
                     <Link href="/dashboard/configuracion">
                         <div onClick={(e) => { props.setIndex(SidebarOption.Ajustes); e.stopPropagation(); }} className={`${props.IndexSeleccionado === SidebarOption.Ajustes && "bg-gray-100"} 
                         hover:text-gray-800 hover:bg-gray-100 flex gap-4 transition-colors dark:hover:text-white dark:hover:bg-gray-600 duration-200
@@ -173,7 +173,7 @@ const CollapsedSidebar = (props: { setCollapsed: Function, IndexSeleccionado: Si
                     </svg>
                 </div>
 
-                <div className="flex flex-col w-full h-full gap-6 justify-center px-5">
+                <div className="flex flex-col w-full h-full xl:gap-10 gap-6 justify-center px-5">
                     <Link href="/dashboard">
                         <div className={`${props.IndexSeleccionado === SidebarOption.Inicio && "bg-gray-100"} hover:text-gray-800 hover:bg-gray-100 cursor-pointer dark:hover:text-white dark:hover:bg-gray-600 duration-200 text-gray-600 dark:text-gray-400 rounded-lg `}
                             onClick={(e) => { props.setIndex(SidebarOption.Inicio); e.stopPropagation(); }}>
@@ -243,7 +243,7 @@ const CollapsedSidebar = (props: { setCollapsed: Function, IndexSeleccionado: Si
                     </Link>
                 </div>
 
-                <div className='flex flex-col w-full h-1/6 gap-6 justify-center px-5 pb-10'>
+                <div className='flex flex-col w-full h-1/6 xl:gap-10 gap-6 justify-center px-5 pb-10'>
                     <Link href="/dashboard/configuracion">
                         <div onClick={(e) => { props.setIndex(SidebarOption.Ajustes); e.stopPropagation() }} className={`${props.IndexSeleccionado === SidebarOption.Ajustes && "bg-gray-100"} hover:text-gray-800 hover:bg-gray-100 cursor-pointer dark:hover:text-white dark:hover:bg-gray-600 duration-200 text-gray-600 dark:text-gray-400 rounded-lg `} >
                             <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">

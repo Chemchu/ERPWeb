@@ -193,7 +193,7 @@ export const QUERY_SALE = gql`
         createdAt
     }
 }
-`
+`;
 
 export const QUERY_SALES = gql`
     query VentasVentas($find: VentasFind) {
@@ -330,3 +330,15 @@ export const QUERY_CIERRES = gql`
   }
 }
 `;
+
+export const QUERY_EMPLEADOS = gql`
+    query Empleados($find: EmpleadosFind, $limit: Int) {
+  empleados(find: $find, limit: $limit) {
+    _id
+    nombre
+    apellidos
+    rol
+    email
+  }
+}
+`

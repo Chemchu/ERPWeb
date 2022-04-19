@@ -45,7 +45,7 @@ const EmpleadosPage = (props: { Empleados: Empleado[] }) => {
                     <UploadFile tipoDocumento={TipoDocumento.Clientes} />
                 </div>
                 <div className="flex gap-2">
-                    <input autoFocus={true} className="rounded-lg border appearance-none shadow-lg w-72 xl:w-96 h-full py-2 px-4 bg-white text-gray-700 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-600" placeholder="Cliente a buscar"
+                    <input autoFocus={true} className="rounded-lg border appearance-none shadow-lg w-72 xl:w-96 h-full py-2 px-4 bg-white text-gray-700 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-600" placeholder="Empleado a buscar"
                         onChange={(e) => { setFiltro(e.target.value); }} onKeyPress={async (e) => { }} />
 
                     {
@@ -66,10 +66,10 @@ const EmpleadosPage = (props: { Empleados: Empleado[] }) => {
                     Nombre
                 </div>
                 <div className="text-left text-sm font-semibold w-1/3">
-                    CIF
+                    Correo
                 </div>
                 <div className="text-left text-sm font-semibold w-1/3">
-                    Dirección
+                    Rol
                 </div>
             </div>
             <div className="h-full w-full border overflow-y-scroll">

@@ -323,7 +323,7 @@ export const FetchEmpleados = async (): Promise<Empleado[]> => {
         if (!fetchRes.ok) { notifyError("Error al buscar al empleado"); return []; }
 
         const empleadoJson = await fetchRes.json();
-        return CreateEmployeeList(empleadoJson.empleado);
+        return CreateEmployeeList(empleadoJson.empleados);
     }
     catch (e) {
         console.error(e);
