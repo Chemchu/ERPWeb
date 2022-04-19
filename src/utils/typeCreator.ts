@@ -233,13 +233,22 @@ export function CreateTPVsList(tpvs: any): TPVType[] {
 }
 
 export function CreateCierreList(cierres: any): Cierre[] {
-    console.log(cierres);
-
     let res: Cierre[] = [];
     cierres.forEach((c: any) => {
         const cierre = CreateCierre(c);
 
         if (cierre) res.push(cierre);
+    });
+
+    return res;
+}
+
+export function CreateEmployeeList(empleados: any): Empleado[] {
+    let res: Empleado[] = [];
+    empleados.forEach((emp: any) => {
+        const empleado = CreateEmployee(emp);
+
+        if (empleado) res.push(empleado);
     });
 
     return res;

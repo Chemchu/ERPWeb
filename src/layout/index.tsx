@@ -7,6 +7,8 @@ import { ProductCarritoContextProvider } from "../context/productosEnCarritoCont
 import { EmpleadoContextProvider } from "../context/empleadoContext";
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import { SidebarOption } from "../tipos/Enums/SidebarOption";
+
 const variants = {
     initial: {
         opacity: 0
@@ -28,10 +30,9 @@ const variants = {
     },
 }
 
-
 const DashboardLayout = React.memo(({ children }: { children: React.ReactNode }) => {
     const [isSidebarCollapsed, setSidebarCollapsed] = useState<boolean>(false);
-    const [IndexSidebar, setSidebarIndex] = useState<number>(0);
+    const [IndexSidebar, setSidebarIndex] = useState<SidebarOption>(SidebarOption.Inicio);
 
     {/* router.route es lo que hace que funcione el exit del AnimatePresence */ }
     const router = useRouter();

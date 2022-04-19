@@ -23,10 +23,7 @@ const Ventas = (props: { EmpleadoSesion: SesionEmpleado }) => {
             SetEmpleado(props.EmpleadoSesion)
         }
         const GetAllData = async () => {
-            const ventas = await FetchVentas();
-            //const reembolsos: Devolucion[] = ventas.filter((venta) => { return venta.precioVentaTotal < 0 });
-            setVentas(ventas);
-            //setDevoluciones(reembolsos);
+            setVentas(await FetchVentas());
         }
 
         GetAllData();

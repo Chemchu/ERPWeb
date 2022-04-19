@@ -6,7 +6,6 @@ import { TPVType } from "../../../tipos/TPV";
 import { notifyWarn } from "../../../utils/toastify";
 import DateRange from "../../Forms/dateRange";
 import { Paginador } from "../../Forms/paginador";
-import UploadFile from "../../Forms/uploadFile";
 import VerCierre from "../../modal/verCierre";
 import SkeletonCard from "../../Skeletons/skeletonCard";
 

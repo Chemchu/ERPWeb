@@ -1,17 +1,17 @@
 import { Tab } from "@headlessui/react";
 import { GetServerSideProps } from "next";
 import { useEffect, useState } from "react";
-import CierrePage from "../../../components/sidebar/Cierres";
+import EmpleadosPage from "../../../components/sidebar/Empleados";
 import useEmpleadoContext from "../../../context/empleadoContext";
 import getJwtFromString from "../../../hooks/jwt";
 import DashboardLayout from "../../../layout";
 import { Cierre } from "../../../tipos/Cierre";
-import { SesionEmpleado } from "../../../tipos/Empleado";
+import { Empleado, SesionEmpleado } from "../../../tipos/Empleado";
 import { TPVType } from "../../../tipos/TPV";
-import { FetchCierres, FetchTPVs } from "../../../utils/fetches";
+import { FetchCierres, FetchEmpleados, FetchTPVs } from "../../../utils/fetches";
 
-const Cierres = (props: { EmpleadoSesion: SesionEmpleado }) => {
-    const [CierresList, SetCierres] = useState<Cierre[]>([]);
+const Empleados = (props: { EmpleadoSesion: SesionEmpleado }) => {
+    const [EmpleadosList, SetEmpleados] = useState<Empleado[]>([]);
     const [tpvs, SetTpvs] = useState<TPVType[]>([]);
     const { Empleado, SetEmpleado } = useEmpleadoContext();
 
@@ -20,13 +20,13 @@ const Cierres = (props: { EmpleadoSesion: SesionEmpleado }) => {
             SetEmpleado(props.EmpleadoSesion)
         }
         const GetAllData = async () => {
-            SetCierres(await FetchCierres());
+            SetEmpleados(await FetchEmpleados());
             SetTpvs(await FetchTPVs());
         }
         GetAllData();
     }, []);
 
-    if (CierresList.length <= 0) {
+    if (EmpleadosList.length <= 0) {
         return (
             <div>
                 Cargando..
@@ -38,7 +38,7 @@ const Cierres = (props: { EmpleadoSesion: SesionEmpleado }) => {
         <Tab.Group as="div" className="flex flex-col w-full h-full pt-3 pr-2">
             <Tab.List className="flex gap-1 h-10 pr-10">
                 <Tab
-                    key={"Cierres"}
+                    key={"Empleados"}
                     className={({ selected }) =>
                         classNames(
                             'w-1/4 h-full text-sm rounded-t-2xl border-t border-x',
@@ -50,26 +50,26 @@ const Cierres = (props: { EmpleadoSesion: SesionEmpleado }) => {
                     }
                 >
                     <span className='text-xl'>
-                        Cierres
+                        Empleados
                     </span>
                 </Tab>
             </Tab.List>
             <Tab.Panels className="flex flex-col h-90v w-full pr-2">
                 <Tab.Panel
-                    key={"Cierres"}
+                    key={"Empleados"}
                     className={classNames(
                         'pb-3 h-full w-full',
                         'focus:outline-none ring-white ring-opacity-60'
                     )}
                 >
-                    <CierrePage cierres={CierresList} tpvs={tpvs} />
+                    <EmpleadosPage Empleados={EmpleadosList} />
                 </Tab.Panel>
             </Tab.Panels>
         </Tab.Group >
     );
 }
 
-Cierres.PageLayout = DashboardLayout;
+Empleados.PageLayout = DashboardLayout;
 
 export const getServerSideProps: GetServerSideProps = async (context) => {
     const jwt = getJwtFromString(context.req.cookies.authorization);
@@ -89,7 +89,7 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
     }
 }
 
-export default Cierres;
+export default Empleados;
 
 function classNames(...classes: any) {
     return classes.filter(Boolean).join(' ')

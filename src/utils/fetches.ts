@@ -5,7 +5,7 @@ import { Empleado, SesionEmpleado } from "../tipos/Empleado";
 import { Producto } from "../tipos/Producto";
 import { ProductoVendido } from "../tipos/ProductoVendido";
 import { Venta } from "../tipos/Venta";
-import { CreateCierreList, CreateClientList, CreateDevolucionList, CreateEmployee, CreateProductList, CreateSalesList, CreateTPV, CreateTPVsList } from "./typeCreator";
+import { CreateCierreList, CreateClientList, CreateDevolucionList, CreateEmployee, CreateEmployeeList, CreateProductList, CreateSalesList, CreateTPV, CreateTPVsList } from "./typeCreator";
 import queryString from 'query-string';
 import { notifyError, notifySuccess } from "./toastify";
 import { TPVType } from "../tipos/TPV";
@@ -313,6 +313,23 @@ export const FetchEmpleado = async (_id: string): Promise<Empleado | undefined> 
         notifyError("Error de conexión");
 
         return undefined;
+    }
+}
+
+export const FetchEmpleados = async (): Promise<Empleado[]> => {
+    try {
+        const fetchRes = await fetch(`/api/empleado/`);
+
+        if (!fetchRes.ok) { notifyError("Error al buscar al empleado"); return []; }
+
+        const empleadoJson = await fetchRes.json();
+        return CreateEmployeeList(empleadoJson.empleado);
+    }
+    catch (e) {
+        console.error(e);
+        notifyError("Error de conexión");
+
+        return [];
     }
 }
 

@@ -48,6 +48,9 @@ const VerCierre = (props: { showModal: Function, cierre: Cierre, tpv: string }) 
                             Cierre de {fechaCierre}
                             <div className="flex flex-col gap-1 pt-4 text-base">
                                 <span>
+                                    ID: {props.cierre._id}
+                                </span>
+                                <span>
                                     TPV: {props.tpv}
                                 </span>
                                 <span>
