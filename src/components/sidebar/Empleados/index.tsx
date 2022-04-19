@@ -6,6 +6,7 @@ import { notifyWarn } from "../../../utils/toastify";
 import { Paginador } from "../../Forms/paginador";
 import UploadFile from "../../Forms/uploadFile";
 import AddEmpleado from "../../modal/addEmpleado";
+import VerEmpleado from "../../modal/verEmpleado";
 import SkeletonCard from "../../Skeletons/skeletonCard";
 
 const arrayNum = [...Array(8)];
@@ -104,22 +105,23 @@ const EmpleadosPage = (props: { Empleados: Empleado[] }) => {
 
 const FilaEmpleado = (props: { empleado: Empleado }) => {
     const [showModal, setModal] = useState<boolean>(false);
+    const [empleado, setEmpleado] = useState<Empleado>(props.empleado);
 
     return (
         <div className="hover:bg-gray-200">
             <div className="flex justify-between border-b px-5 py-2 cursor-pointer" onClick={() => { setModal(true) }}>
                 <div className="w-1/3 text-sm text-left">
-                    {props.empleado.nombre}
+                    {empleado.nombre}
                 </div>
                 <div className="w-1/3 text-sm text-left">
-                    {props.empleado.email}
+                    {empleado.email}
                 </div>
                 <div className="w-1/3 text-base text-left">
-                    {props.empleado.rol}
+                    {empleado.rol}
                 </div>
             </div>
             <AnimatePresence>
-                {/* {showModal && <VerEmpleado showModal={setModal} />} */}
+                {showModal && <VerEmpleado showModal={setModal} empleado={empleado} setEmpleado={setEmpleado} />}
             </AnimatePresence>
         </div>
 
