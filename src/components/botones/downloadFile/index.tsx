@@ -6,42 +6,6 @@ import DownloadFileModal from "../../modal/downloadFileModal";
 
 const DownloadFile = (props: { tipoDocumento: TipoDocumento }) => {
     const [showModal, setModal] = useState<boolean>(false);
-    const TIPOS_PERMITIDOS: string[] = ["csv", "xlsx", "xls"];
-
-    const handleChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
-        try {
-            e.preventDefault();
-            if (!e.target.files) return;
-            if (e.target.files.length <= 0) return;
-
-            const f = e.target.files[0];
-
-            if (!f.type) { console.log("File no tiene tipo"); return; }
-            if (!TIPOS_PERMITIDOS.includes(`${f.type.substring(5)}`)) { console.log(`File is not an ${f.type}`); return; }
-
-            const text = await f.text();
-
-            const res = new Promise(async (resolve) => {
-                const response = await fetch(`/api/${props.tipoDocumento}/file`, {
-                    headers: { 'Content-Type': 'application/json' },
-                    method: 'POST',
-                    body: JSON.stringify(text)
-                });
-                const json = await response.json();
-                resolve(json.message)
-            });
-
-            notifyPromise(res, "Añadiendo productos...");
-        }
-        catch (e) {
-            console.log(e);
-            notifyError("Problemas al subir el documento");
-        }
-        finally {
-            // Esta línea de código asegura que se pueda volver a subir el mismo archivo otra vez
-            e.target.value = ''
-        }
-    };
 
     return (
         <>
@@ -55,7 +19,7 @@ const DownloadFile = (props: { tipoDocumento: TipoDocumento }) => {
             <AnimatePresence>
                 {
                     showModal &&
-                    <DownloadFileModal setModal={setModal} />
+                    <DownloadFileModal setModal={setModal} tipoDocumento={props.tipoDocumento} />
                 }
             </AnimatePresence>
         </>

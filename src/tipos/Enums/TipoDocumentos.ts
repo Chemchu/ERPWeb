@@ -1,6 +1,6 @@
 export enum TipoDocumento {
-    Productos = "productos",
-    Ventas = "ventas",
-    Clientes = "clientes",
-    Cierres = "cierres"
+    Productos = "Productos",
+    Ventas = "Ventas",
+    Clientes = "Clientes",
+    Cierres = "Cierres"
 }
