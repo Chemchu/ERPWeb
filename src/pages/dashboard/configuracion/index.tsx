@@ -1,6 +1,7 @@
 import { Tab } from "@headlessui/react";
 import { GetServerSideProps } from "next";
 import { useEffect } from "react";
+import EnDesarrolloPage from "../../../components/enDesarrollo";
 import AyudaPage from "../../../components/sidebar/Ayuda";
 import useEmpleadoContext from "../../../context/empleadoContext";
 import getJwtFromString from "../../../hooks/jwt";
@@ -89,9 +90,7 @@ const ConfiguracionPage = (props: { EmpleadoSesion: SesionEmpleado }) => {
                         'focus:outline-none ring-white ring-opacity-60'
                     )}
                 >
-                    <div>
-                        TPVs config page
-                    </div>
+                    <EnDesarrolloPage />
                 </Tab.Panel>
 
                 <Tab.Panel

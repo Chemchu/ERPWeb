@@ -1,6 +1,7 @@
 import { Tab } from "@headlessui/react";
 import { GetServerSideProps } from "next";
 import { useEffect } from "react";
+import EnDesarrolloPage from "../../../components/enDesarrollo";
 import useEmpleadoContext from "../../../context/empleadoContext";
 import getJwtFromString from "../../../hooks/jwt";
 import DashboardLayout from "../../../layout";
@@ -79,6 +80,7 @@ const Stats = (props: { EmpleadoSesion: SesionEmpleado }) => {
                     )}
                 >
                     {/* <EstadisticasPage /> */}
+                    <EnDesarrolloPage />
                 </Tab.Panel>
 
                 <Tab.Panel
@@ -89,6 +91,7 @@ const Stats = (props: { EmpleadoSesion: SesionEmpleado }) => {
                     )}
                 >
                     {/* <EstadisticasPage /> */}
+                    <EnDesarrolloPage />
                 </Tab.Panel>
 
                 <Tab.Panel
@@ -99,6 +102,7 @@ const Stats = (props: { EmpleadoSesion: SesionEmpleado }) => {
                     )}
                 >
                     {/* <EstadisticasPage /> */}
+                    <EnDesarrolloPage />
                 </Tab.Panel>
             </Tab.Panels>
         </Tab.Group >

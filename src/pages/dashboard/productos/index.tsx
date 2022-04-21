@@ -1,6 +1,7 @@
 import { Tab } from "@headlessui/react";
 import { GetServerSideProps } from "next";
 import { useEffect, useState } from "react";
+import EnDesarrolloPage from "../../../components/enDesarrollo";
 import MermaPage from "../../../components/sidebar/Mermas";
 import ProductPage from "../../../components/sidebar/Productos/productosTab";
 import useEmpleadoContext from "../../../context/empleadoContext";
@@ -113,9 +114,7 @@ const Productos = (props: { EmpleadoSesion: SesionEmpleado }) => {
                         'focus:outline-none ring-white ring-opacity-60'
                     )}
                 >
-                    <div>
-                        Inventario page
-                    </div>
+                    <EnDesarrolloPage />
                 </Tab.Panel>
                 <Tab.Panel
                     key={"Pedidos"}
@@ -124,9 +123,7 @@ const Productos = (props: { EmpleadoSesion: SesionEmpleado }) => {
                         'focus:outline-none ring-white ring-opacity-60'
                     )}
                 >
-                    <div>
-                        Pedidos page
-                    </div>
+                    <EnDesarrolloPage />
                 </Tab.Panel>
             </Tab.Panels>
         </Tab.Group >

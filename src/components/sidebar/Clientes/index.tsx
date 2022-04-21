@@ -7,6 +7,7 @@ import { Paginador } from "../../Forms/paginador";
 import UploadFile from "../../botones/uploadFile";
 import SkeletonCard from "../../Skeletons/skeletonCard";
 import NuevoBoton from "../../botones/nuevoBoton";
+import DownloadFile from "../../botones/downloadFile";
 
 const arrayNum = [...Array(8)];
 
@@ -14,6 +15,7 @@ const ClientesPage = (props: { Clientes: Cliente[] }) => {
     const [currentPage, setCurrentPage] = useState<number>(1);
     const [filtro, setFiltro] = useState<string>("");
     const [ClientesFiltrados, setClientesFiltrados] = useState<Cliente[] | undefined>();
+    const [showModal, setModal] = useState<boolean>(false);
 
     const elementsPerPage = 50;
     const numPages = Math.ceil(props.Clientes.length / elementsPerPage);
@@ -36,8 +38,8 @@ const ClientesPage = (props: { Clientes: Cliente[] }) => {
         <div className="flex flex-col h-full w-full bg-white rounded-b-2xl rounded-r-2xl p-4 shadow-lg border-x">
             <div className="flex w-full h-auto py-4 gap-10 justify-end">
                 <div className="flex gap-4 w-full h-full">
-                    {/* <NuevoBoton /> */}
                     <UploadFile tipoDocumento={TipoDocumento.Clientes} />
+                    <DownloadFile tipoDocumento={TipoDocumento.Clientes} />
                 </div>
                 <div className="flex gap-2">
                     <input autoFocus={true} className="rounded-lg border appearance-none shadow-lg w-72 xl:w-96 h-full py-2 px-4 bg-white text-gray-700 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-600" placeholder="Cliente a buscar"

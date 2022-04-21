@@ -1,6 +1,7 @@
 import { Tab } from "@headlessui/react";
 import { GetServerSideProps } from "next";
 import { useEffect, useState } from "react";
+import EnDesarrolloPage from "../../../components/enDesarrollo";
 import ClientesPage from "../../../components/sidebar/Clientes";
 import useEmpleadoContext from "../../../context/empleadoContext";
 import getJwtFromString from "../../../hooks/jwt";
@@ -43,7 +44,7 @@ const Clientes = (props: { EmpleadoSesion: SesionEmpleado }) => {
                     </span>
                 </Tab>
                 <Tab
-                    key={"TPV"}
+                    key={"Proveedores"}
                     className={({ selected }) =>
                         classNames(
                             'w-1/4 h-full text-sm rounded-t-2xl border-t border-x',
@@ -72,15 +73,13 @@ const Clientes = (props: { EmpleadoSesion: SesionEmpleado }) => {
                 </Tab.Panel>
 
                 <Tab.Panel
-                    key={"TPV"}
+                    key={"Proveedores"}
                     className={classNames(
                         'pb-3 h-full w-full',
                         'focus:outline-none ring-white ring-opacity-60'
                     )}
                 >
-                    <div>
-                        Proveedores page
-                    </div>
+                    <EnDesarrolloPage />
                 </Tab.Panel>
             </Tab.Panels>
         </Tab.Group >
