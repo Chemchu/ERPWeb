@@ -6,9 +6,9 @@ import { Venta } from "../../../tipos/Venta";
 import { FetchVenta, FetchVentasByDateRange } from "../../../utils/fetches";
 import { notifyWarn } from "../../../utils/toastify";
 import DateRange from "../../Forms/dateRange";
-import DownloadFile from "../../Forms/downloadFile";
+import DownloadFile from "../../botones/downloadFile";
 import { Paginador } from "../../Forms/paginador";
-import UploadFile from "../../Forms/uploadFile";
+import UploadFile from "../../botones/uploadFile";
 import VerVenta from "../../modal/verVenta";
 import SkeletonCard from "../../Skeletons/skeletonCard";
 

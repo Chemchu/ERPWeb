@@ -4,10 +4,11 @@ import { Empleado } from "../../../tipos/Empleado";
 import { TipoDocumento } from "../../../tipos/Enums/TipoDocumentos";
 import { notifyWarn } from "../../../utils/toastify";
 import { Paginador } from "../../Forms/paginador";
-import UploadFile from "../../Forms/uploadFile";
+import UploadFile from "../../botones/uploadFile";
 import AddEmpleado from "../../modal/addEmpleado";
 import VerEmpleado from "../../modal/verEmpleado";
 import SkeletonCard from "../../Skeletons/skeletonCard";
+import NuevoBoton from "../../botones/nuevoBoton";
 
 const arrayNum = [...Array(8)];
 
@@ -38,13 +39,7 @@ const EmpleadosPage = (props: { Empleados: Empleado[] }) => {
         <div className="flex flex-col h-full w-full bg-white rounded-b-2xl rounded-r-2xl p-4 shadow-lg border-x">
             <div className="flex w-full h-auto py-4 gap-10 justify-end">
                 <div className="flex gap-4 w-full h-full">
-                    <button className="flex flex-shrink-0 gap-2 px-4 py-2 text-base font-semibold text-white bg-green-500 rounded-lg shadow-md hover:bg-green-600 focus:outline-none focus:ring-2 focus:ring-green-600 focus:ring-offset-2 focus:ring-offset-blue-200"
-                        onClick={() => setModal(true)}>
-                        Nuevo
-                        <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v3m0 0v3m0-3h3m-3 0H9m12 0a9 9 0 11-18 0 9 9 0 0118 0z" />
-                        </svg>
-                    </button>
+                    <NuevoBoton accionEvent={() => setModal(true)} />
                     <UploadFile tipoDocumento={TipoDocumento.Clientes} />
                 </div>
                 <div className="flex gap-2">
