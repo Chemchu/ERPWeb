@@ -13,12 +13,17 @@ const VerCierre = (props: { showModal: Function, cierre: Cierre, tpv: string }) 
     const [qrImage, setQrImage] = useState<string>();
 
     useEffect(() => {
+        const abortController = new AbortController();
         const GetQrImage = async () => {
-            const qr = await GenerateQrBase64(props.cierre._id);
+            const qr = await GenerateQrBase64(props.cierre._id, abortController);
             setQrImage(qr);
         }
 
         GetQrImage();
+
+        return (() => {
+            abortController.abort();
+        });
     }, []);
 
     const reactToPrintContent = React.useCallback(() => {
