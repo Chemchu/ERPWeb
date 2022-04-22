@@ -106,6 +106,7 @@ export const ModalPagar = (props: { PagoCliente: CustomerPaymentInformation, han
     }
 
     const RealizarVenta = async (pagoCliente: CustomerPaymentInformation) => {
+        const abortController = new AbortController();
         try {
             UpdatePaymentInfo();
             if (!Empleado || !Empleado.TPV) { notifyError("Error con la autenticación"); return; }
@@ -113,7 +114,7 @@ export const ModalPagar = (props: { PagoCliente: CustomerPaymentInformation, han
 
             if (!error) {
                 setFecha(data.createdAt);
-                setQrImage(await GenerateQrBase64(data._id));
+                setQrImage(await GenerateQrBase64(data._id, abortController));
                 props.handleModalOpen(false);
             }
             else {
@@ -124,6 +125,7 @@ export const ModalPagar = (props: { PagoCliente: CustomerPaymentInformation, han
         }
         catch (err) {
             console.log(err);
+            abortController.abort();
             notifyError("Error al realizar la venta")
         }
     }

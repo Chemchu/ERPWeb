@@ -397,12 +397,12 @@ export const FetchVentasByTPVDate = async (TPV: string, fecha: string): Promise<
     }
 }
 
-export const FetchTPV = async (TPVId: string): Promise<TPVType | undefined> => {
+export const FetchTPV = async (TPVId: string, abortController: AbortController): Promise<TPVType | undefined> => {
     if (!TPVId) { throw "ID de la TPV no puede ser undefined"; }
 
     try {
         const f = queryString.stringify({ TPVId: TPVId });
-        const fetchTPV = await fetch(`/api/tpv/${f}`);
+        const fetchTPV = await fetch(`/api/tpv/${f}`, { signal: abortController.signal });
 
         if (!fetchTPV.ok) { notifyError("Error al buscar la TPV"); return undefined; }
 
@@ -433,10 +433,10 @@ export const FetchTPVs = async (): Promise<TPVType[]> => {
     }
 }
 
-export const FetchTPVsByDisponibilidad = async (isTpvFree: boolean): Promise<TPVType[]> => {
+export const FetchTPVsByDisponibilidad = async (isTpvFree: boolean, abortController: AbortController): Promise<TPVType[] | undefined> => {
     try {
         const f = queryString.stringify({ isTpvFree: isTpvFree });
-        const fetchTPV = await fetch(`/api/tpv/${f}`);
+        const fetchTPV = await fetch(`/api/tpv/${f}`, { signal: abortController.signal });
 
         if (!fetchTPV.ok) { notifyError("Error al buscar la TPV"); return []; }
 
@@ -446,7 +446,7 @@ export const FetchTPVsByDisponibilidad = async (isTpvFree: boolean): Promise<TPV
     catch (e) {
         console.error(e);
         notifyError("Error de conexión");
-        return [];
+        return undefined;
     }
 }
 
@@ -542,11 +542,11 @@ export const OcuparTPV = async (tpvId: string, emp: SesionEmpleado, cajaInicial:
 }
 
 export const AddCierreTPV = async (Empleado: SesionEmpleado, setEmpleado: Function, TotalEfectivo: number, TotalTarjeta: number, DineroRetirado: number,
-    TotalPrevistoEnCaja: number, TotalRealEnCaja: number, NumVentas: number): Promise<Cierre | undefined> => {
+    TotalPrevistoEnCaja: number, TotalRealEnCaja: number, NumVentas: number, abortController: AbortController): Promise<Cierre | undefined> => {
     try {
         if (!Empleado.TPV) { return undefined; }
 
-        const Tpv = await FetchTPV(Empleado.TPV);
+        const Tpv = await FetchTPV(Empleado.TPV, abortController);
         if (!Tpv) { return undefined; }
 
         const fetchRes = await fetch(`/api/cierres/`,
@@ -565,7 +565,8 @@ export const AddCierreTPV = async (Empleado: SesionEmpleado, setEmpleado: Functi
                     TotalRealEnCaja: TotalRealEnCaja,
                     DineroRetirado: DineroRetirado,
                     TPV: Tpv
-                })
+                }),
+                signal: abortController.signal
             });
         const tpvOcupadaJson = await fetchRes.json();
 

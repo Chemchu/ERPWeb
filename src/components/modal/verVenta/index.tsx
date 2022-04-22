@@ -26,6 +26,7 @@ const VerVenta = (props: { venta: Venta | undefined, setModal: Function }) => {
     });
 
     useEffect(() => {
+        const abortController = new AbortController();
         const fetchData = async () => {
             if (!props.venta) {
                 return;
@@ -43,19 +44,18 @@ const VerVenta = (props: { venta: Venta | undefined, setModal: Function }) => {
                     tipo: props.venta.tipo
                 } as CustomerPaymentInformation
 
-                const tpvRes = await FetchTPV(props.venta.tpv);
-                const qr = await GenerateQrBase64(props.venta._id);
+                const tpvRes = await FetchTPV(props.venta.tpv, abortController);
+                const qr = await GenerateQrBase64(props.venta._id, abortController);
                 setQrImage(qr);
                 setTpv(tpvRes);
                 setPago(pago);
             }
             catch (e) { console.log(e) }
         }
-        let isUnmounted = false;
         fetchData();
 
         return () => {
-            isUnmounted = true;
+            abortController.abort();
         }
     }, [])
 

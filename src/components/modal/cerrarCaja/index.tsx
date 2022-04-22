@@ -39,10 +39,11 @@ export const CerrarCaja = (props: { Empleado?: SesionEmpleado, setModalOpen: Fun
     });
 
     useEffect(() => {
+        const abortController = new AbortController();
         const GetVentas = async (j: SesionEmpleado) => {
             if (!j.TPV) { notifyError("El empleado no está usando la TPV"); return; }
 
-            const tpv = await FetchTPV(j.TPV);
+            const tpv = await FetchTPV(j.TPV, abortController);
             if (!tpv) { notifyError("No se ha encontrado la TPV que se quiere cerrar"); return; }
 
             const ventas = await FetchVentasByTPVDate(j.TPV, tpv.updatedAt.toString());
@@ -55,6 +56,10 @@ export const CerrarCaja = (props: { Empleado?: SesionEmpleado, setModalOpen: Fun
         }
 
         GetVentas(Empleado);
+
+        return () => {
+            abortController.abort();
+        }
     }, [])
 
     useEffect(() => {
@@ -65,18 +70,25 @@ export const CerrarCaja = (props: { Empleado?: SesionEmpleado, setModalOpen: Fun
     }, [qrImage])
 
     const CerrarCaja = async () => {
-        if (!Tpv || !Tpv._id) { return; }
+        const abortController = new AbortController();
+        try {
+            if (!Tpv || !Tpv._id) { return; }
 
-        const cierre = await AddCierreTPV(Empleado, SetEmpleado, Number(TotalEfectivo),
-            Number(TotalTarjeta), Number(DineroRetirado),
-            Number(TotalPrevistoEnCaja), Number(TotalRealEnCaja),
-            Ventas?.length || 0);
+            const cierre = await AddCierreTPV(Empleado, SetEmpleado, Number(TotalEfectivo),
+                Number(TotalTarjeta), Number(DineroRetirado),
+                Number(TotalPrevistoEnCaja), Number(TotalRealEnCaja),
+                Ventas?.length || 0, abortController);
 
-        if (cierre) {
-            setCierre(cierre);
-            setQrImage(await GenerateQrBase64(cierre._id));
-            props.setModalOpen(false);
-            props.setEmpleadoUsandoTPV(false);
+            if (cierre) {
+                setQrImage(await GenerateQrBase64(cierre._id, abortController));
+                setCierre(cierre);
+                props.setModalOpen(false);
+                props.setEmpleadoUsandoTPV(false);
+            }
+        }
+        catch (e) {
+            abortController.abort();
+            return;
         }
     }
 

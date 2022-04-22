@@ -15,15 +15,16 @@ const AbrirCaja = (props: { setShowModal: Function, setEmpleadoUsandoTPV: Functi
     const { Empleado, SetEmpleado } = useEmpleadoContext();
 
     useEffect(() => {
+        const abortController = new AbortController();
         const TpvsAbiertas = async () => {
-            setTpvs(await FetchTPVsByDisponibilidad(true));
+            const tpvs = await FetchTPVsByDisponibilidad(true, abortController);
+            if (tpvs) { setTpvs(tpvs); }
         }
 
-        let isUnmounted = false;
         TpvsAbiertas();
 
         return (() => {
-            isUnmounted = true;
+            abortController.abort();
         })
     }, []);
 

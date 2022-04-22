@@ -1,7 +1,5 @@
 import { NextApiRequest, NextApiResponse } from "next";
-import getJwtFromString from "../../../hooks/jwt";
 import { SesionEmpleado } from "../../../tipos/Empleado";
-import { FetchTPV } from "../../../utils/fetches";
 import { ADD_CIERRE, QUERY_CIERRES } from "../../../utils/querys";
 import GQLFetcher from "../../../utils/serverFetcher";
 

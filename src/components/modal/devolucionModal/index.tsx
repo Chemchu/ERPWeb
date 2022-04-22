@@ -26,21 +26,21 @@ const DevolucionModal = (props: { devolucion: Devolucion | undefined, setModal: 
     });
 
     useEffect(() => {
+        const abortController = new AbortController();
+
         const fetchData = async () => {
             if (!props.devolucion) {
                 return;
             }
-
-            const tpvRes = await FetchTPV(props.devolucion.tpv);
-            const qr = await GenerateQrBase64(props.devolucion._id);
+            const tpvRes = await FetchTPV(props.devolucion.tpv, abortController);
+            const qr = await GenerateQrBase64(props.devolucion._id, abortController);
             setQrImage(qr);
             setTpv(tpvRes);
         }
-        let isUnmounted = false;
         fetchData();
 
         return () => {
-            isUnmounted = true;
+            abortController.abort();
         }
     }, [])
 
