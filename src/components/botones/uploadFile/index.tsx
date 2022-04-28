@@ -40,13 +40,15 @@ const UploadFile = (props: { tipoDocumento: TipoDocumento }) => {
     };
 
     return (
-        <label className="flex gap-2 px-4 py-2 text-base font-semibold cursor-pointer text-white bg-amber-500 rounded-lg shadow-md hover:bg-amber-600 focus:outline-none focus:ring-2 focus:ring-amber-600 focus:ring-offset-2 focus:ring-offset-blue-200">
-            Importar
+        <div className="flex flex-shrink-0 justify-center gap-2 w-28 py-2 text-base font-semibold cursor-pointer text-white bg-amber-500 rounded-lg shadow-md hover:bg-amber-600 focus:outline-none focus:ring-2 focus:ring-amber-600 focus:ring-offset-2 focus:ring-offset-blue-200">
+            <span>
+                Importar
+            </span>
             <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
                 <path strokeLinecap="round" strokeLinejoin="round" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12" />
             </svg>
             <input type='file' className="hidden" accept=".csv, .xlsx, .xls" onChange={handleChange} />
-        </label>
+        </div>
     );
 }
 
