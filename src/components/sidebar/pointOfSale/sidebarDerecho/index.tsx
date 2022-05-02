@@ -159,8 +159,9 @@ const SidebarDerecho = React.memo((props: {
         const { data, error } = await AddVenta(pagoCliente, productosEnCarrito, emp, clientes, emp.TPV);
 
         if (!error) {
+            const abortController = new AbortController();
             setFecha(data.createdAt);
-            setQrImage(await GenerateQrBase64(data._id));
+            setQrImage(await GenerateQrBase64(data._id, abortController));
         }
         else {
             setFecha(undefined);

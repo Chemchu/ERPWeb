@@ -1,4 +1,4 @@
-import { motion } from "framer-motion";
+import { AnimatePresence, motion } from "framer-motion";
 import React, { useEffect, useRef, useState } from "react";
 import { useReactToPrint } from "react-to-print";
 import { CustomerPaymentInformation } from "../../../tipos/CustomerPayment";
@@ -9,12 +9,14 @@ import { FetchTPV } from "../../../utils/fetches";
 import GenerateQrBase64 from "../../../utils/generateQr";
 import Ticket from "../../ticket";
 import { Backdrop } from "../backdrop";
+import DevolverVenta from "../devolucionModal/devolverVenta";
 
 const VerVenta = (props: { venta: Venta | undefined, setModal: Function }) => {
     const [tpv, setTpv] = useState<TPVType>();
     const componentRef = useRef(null);
     const [PagoDelCliente, setPago] = useState<CustomerPaymentInformation>();
     const [qrImage, setQrImage] = useState<string>();
+    const [showDevolverModal, setShowDevolverModal] = useState<boolean>(false);
 
     const reactToPrintContent = React.useCallback(() => {
         return componentRef.current;
@@ -190,7 +192,7 @@ const VerVenta = (props: { venta: Venta | undefined, setModal: Function }) => {
                             <button className="w-1/4 h-12 rounded-xl bg-red-500 hover:bg-red-600 shadow-lg" onClick={() => { props.setModal(false) }}>
                                 Cerrar
                             </button>
-                            <button className="w-1/4 h-12 rounded-xl bg-orange-500 hover:bg-orange-600 shadow-lg">
+                            <button className="w-1/4 h-12 rounded-xl bg-orange-500 hover:bg-orange-600 shadow-lg" onClick={() => { setShowDevolverModal(true) }}>
                                 Devolver
                             </button>
                             <button className="w-1/4 h-12 rounded-xl bg-blue-500 hover:bg-blue-600 shadow-lg" onClick={() => { handlePrint() }}>
@@ -209,10 +211,16 @@ const VerVenta = (props: { venta: Venta | undefined, setModal: Function }) => {
                                 />
                             </div>
                         }
+                        <AnimatePresence>
+                            {
+                                showDevolverModal &&
+                                <DevolverVenta productos={props.venta.productos} setModal={setShowDevolverModal} />
+                            }
+                        </AnimatePresence>
                     </div>
                 </motion.div>
             </Backdrop>
-        </motion.div>
+        </motion.div >
     );
 }
 

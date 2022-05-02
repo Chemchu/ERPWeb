@@ -1,6 +1,7 @@
 import { Tab } from "@headlessui/react";
 import { GetServerSideProps } from "next";
 import { useEffect, useState } from "react";
+import EnDesarrolloPage from "../../../components/enDesarrollo";
 import EmpleadosPage from "../../../components/sidebar/Empleados";
 import useEmpleadoContext from "../../../context/empleadoContext";
 import getJwtFromString from "../../../hooks/jwt";
@@ -45,12 +46,28 @@ const Empleados = (props: { EmpleadoSesion: SesionEmpleado }) => {
                             'focus:outline-none ring-white ring-opacity-60',
                             selected
                                 ? 'bg-white shadow-lg'
-                                : 'hover:bg-blue-400 hover:text-white'
+                                : 'bg-gray-200 hover:bg-blue-400 hover:text-white'
                         )
                     }
                 >
                     <span className='text-xl'>
                         Empleados
+                    </span>
+                </Tab>
+                <Tab
+                    key={"Turnos"}
+                    className={({ selected }) =>
+                        classNames(
+                            'w-1/4 h-full text-sm rounded-t-2xl border-t border-x',
+                            'focus:outline-none ring-white ring-opacity-60',
+                            selected
+                                ? 'bg-white shadow-lg'
+                                : 'bg-gray-200 hover:bg-blue-400 hover:text-white'
+                        )
+                    }
+                >
+                    <span className='text-xl'>
+                        Turnos
                     </span>
                 </Tab>
             </Tab.List>
@@ -63,6 +80,15 @@ const Empleados = (props: { EmpleadoSesion: SesionEmpleado }) => {
                     )}
                 >
                     <EmpleadosPage Empleados={EmpleadosList} />
+                </Tab.Panel>
+                <Tab.Panel
+                    key={"EnDesarrollo"}
+                    className={classNames(
+                        'pb-3 h-full w-full',
+                        'focus:outline-none ring-white ring-opacity-60'
+                    )}
+                >
+                    <EnDesarrolloPage />
                 </Tab.Panel>
             </Tab.Panels>
         </Tab.Group >
