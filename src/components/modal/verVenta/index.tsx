@@ -7,7 +7,7 @@ import { Venta } from "../../../tipos/Venta";
 import { In } from "../../../utils/animations";
 import { FetchTPV } from "../../../utils/fetches";
 import GenerateQrBase64 from "../../../utils/generateQr";
-import Ticket from "../../ticket";
+import Ticket from "../../printable/ticket";
 import { Backdrop } from "../backdrop";
 import DevolverVenta from "../devolucionModal/devolverVenta";
 

@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { ValidatePositiveIntegerNumber } from "../../../utils/validator";
+import { ValidatePositiveIntegerNumber } from "../../../../utils/validator";
 
 // Component accept text, placeholder values and also pass what type of Input - input, textarea so that we can use it for styling accordingly
 const EditableIntegerLabel = (props: {

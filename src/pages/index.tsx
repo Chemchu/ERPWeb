@@ -1,7 +1,7 @@
 import type { NextPage } from 'next'
 import { motion } from 'framer-motion';
 import React from 'react';
-import { SplitLetters, SplitWords } from '../components/compAnimados/SplitText';
+import { SplitLetters, SplitWords } from '../components/elementos/compAnimados/SplitText';
 import { useRouter } from 'next/router';
 
 const Home: NextPage = () => {

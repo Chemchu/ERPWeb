@@ -1,6 +1,6 @@
 import React from "react";
 import Image from "next/image";
-import { Cierre } from "../../tipos/Cierre";
+import { Cierre } from "../../../tipos/Cierre";
 
 const CierrePrintable = React.forwardRef((props: { tpv: string, cierre: Cierre, qrImage: string }, ref: React.LegacyRef<HTMLDivElement>) => {
     return (

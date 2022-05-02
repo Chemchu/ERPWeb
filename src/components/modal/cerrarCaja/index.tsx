@@ -13,7 +13,7 @@ import GenerateQrBase64 from "../../../utils/generateQr";
 import { GetEfectivoTotal, GetTarjetaTotal, GetTotalEnCaja } from "../../../utils/preciosUtils";
 import { notifyError } from "../../../utils/toastify";
 import { ValidatePositiveFloatingNumber } from "../../../utils/validator";
-import CierrePrintable from "../../cierrePrintable";
+import CierrePrintable from "../../printable/cierrePrintable";
 import { Backdrop } from "../backdrop";
 
 export const CerrarCaja = (props: { Empleado?: SesionEmpleado, setModalOpen: Function, setEmpleadoUsandoTPV: Function }) => {

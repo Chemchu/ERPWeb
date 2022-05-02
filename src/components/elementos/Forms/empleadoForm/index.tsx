@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
-import { Empleado } from "../../../tipos/Empleado";
-import { Roles } from "../../../tipos/Enums/Roles";
-import { ValidatePositiveFloatingNumber, ValidatePositiveIntegerNumber } from "../../../utils/validator";
+import { Empleado } from "../../../../tipos/Empleado";
+import { Roles } from "../../../../tipos/Enums/Roles";
+import { ValidatePositiveFloatingNumber, ValidatePositiveIntegerNumber } from "../../../../utils/validator";
 import SimpleListBox from "../simpleListBox";
 
 const EmpleadoForm = (props: { setEmpleado: Function, empleado?: Empleado, setHayCambios?: Function }) => {

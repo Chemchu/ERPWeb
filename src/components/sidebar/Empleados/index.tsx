@@ -3,13 +3,13 @@ import { useState } from "react";
 import { Empleado } from "../../../tipos/Empleado";
 import { TipoDocumento } from "../../../tipos/Enums/TipoDocumentos";
 import { notifyWarn } from "../../../utils/toastify";
-import { Paginador } from "../../Forms/paginador";
-import UploadFile from "../../botones/uploadFile";
+import { Paginador } from "../../elementos/Forms/paginador";
+import UploadFile from "../../elementos/botones/uploadFile";
 import AddEmpleado from "../../modal/addEmpleado";
 import VerEmpleado from "../../modal/verEmpleado";
 import SkeletonCard from "../../Skeletons/skeletonCard";
-import NuevoBoton from "../../botones/nuevoBoton";
-import DownloadFile from "../../botones/downloadFile";
+import NuevoBoton from "../../elementos/botones/nuevoBoton";
+import DownloadFile from "../../elementos/botones/downloadFile";
 
 const arrayNum = [...Array(8)];
 

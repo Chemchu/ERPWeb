@@ -8,7 +8,7 @@ import SkeletonProductCard from "../../Skeletons/skeletonProductCard";
 import SidebarDerecho from "./sidebarDerecho";
 
 const TPV = (props: { productos: Producto[], empleadoUsandoTPV: boolean, setEmpleadoUsandoTPV: Function, setShowModalCerrar: Function, setShowModalAbrir: Function }) => {
-    const [ProductosFiltrados, setProductosFiltrados] = useState<Producto[]>([]);
+    const [ProductosFiltrados, setProductosFiltrados] = useState<Producto[]>(props.productos);
     const { ProductosEnCarrito, SetProductosEnCarrito } = useProductEnCarritoContext();
     const [Familias, setFamilias] = useState<string[]>([]);
 
@@ -34,16 +34,15 @@ const TPV = (props: { productos: Producto[], empleadoUsandoTPV: boolean, setEmpl
         if (!props.productos) { return; }
 
         setFamilias(uniq_fast(props.productos));
-        setProductosFiltrados(props.productos);
     }, [props.productos]);
 
-    var Filtrar = (cadena: string) => {
+    const Filtrar = (cadena: string) => {
         const stringValidated = ValidateSearchString(cadena);
 
         let productosFiltrados: Producto[];
         if (stringValidated === "") productosFiltrados = props.productos;
         else {
-            productosFiltrados = props.productos.filter((p: Producto) => {
+            productosFiltrados = ProductosFiltrados.filter((p: Producto) => {
                 return p.nombre.toUpperCase().includes(stringValidated.toUpperCase()) || p.ean === stringValidated.toUpperCase()
             });
         }

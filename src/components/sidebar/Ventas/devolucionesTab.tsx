@@ -4,8 +4,8 @@ import { Cliente } from "../../../tipos/Cliente";
 import { Devolucion } from "../../../tipos/Devolucion";
 import { FetchDevolucionesByQuery } from "../../../utils/fetches";
 import { notifyWarn } from "../../../utils/toastify";
-import DateRange from "../../Forms/dateRange";
-import { Paginador } from "../../Forms/paginador";
+import DateRange from "../../elementos/Forms/dateRange";
+import { Paginador } from "../../elementos/Forms/paginador";
 import DevolucionModal from "../../modal/devolucionModal";
 import SkeletonCard from "../../Skeletons/skeletonCard";
 

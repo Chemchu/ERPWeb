@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
-import { Producto } from "../../../tipos/Producto";
-import { ValidatePositiveFloatingNumber, ValidatePositiveIntegerNumber } from "../../../utils/validator";
+import { Producto } from "../../../../tipos/Producto";
+import { ValidatePositiveFloatingNumber, ValidatePositiveIntegerNumber } from "../../../../utils/validator";
 
 const ProductoForm = (props: { setProducto: Function, producto?: Producto, setHayCambios?: Function }) => {
     const [Nombre, setNombre] = useState<string>(props.producto?.nombre || "");

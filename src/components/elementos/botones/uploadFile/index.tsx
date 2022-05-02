@@ -1,5 +1,5 @@
-import { TipoDocumento } from "../../../tipos/Enums/TipoDocumentos";
-import { notifyError, notifyPromise, notifySuccess } from "../../../utils/toastify";
+import { TipoDocumento } from "../../../../tipos/Enums/TipoDocumentos";
+import { notifyError, notifyPromise, notifySuccess } from "../../../../utils/toastify";
 
 const UploadFile = (props: { tipoDocumento: TipoDocumento }) => {
     const TIPOS_PERMITIDOS: string[] = ["csv", "xlsx", "xls"];

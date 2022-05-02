@@ -4,7 +4,7 @@ import { Producto } from "../../../tipos/Producto";
 import { In } from "../../../utils/animations";
 import { CreateProducto } from "../../../utils/fetches";
 import { notifyError } from "../../../utils/toastify";
-import ProductoForm from "../../Forms/productoForm";
+import ProductoForm from "../../elementos/Forms/productoForm";
 import { Backdrop } from "../backdrop";
 
 

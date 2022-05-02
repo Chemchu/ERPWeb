@@ -7,8 +7,8 @@ import { TPVType } from "../../../tipos/TPV";
 import { In } from "../../../utils/animations";
 import { FetchTPV } from "../../../utils/fetches";
 import GenerateQrBase64 from "../../../utils/generateQr";
-import DevolucionTicket from "../../devolucionTicket";
-import Ticket from "../../ticket";
+import DevolucionTicket from "../../printable/devolucionTicket";
+import Ticket from "../../printable/ticket";
 import { Backdrop } from "../backdrop";
 
 const DevolucionModal = (props: { devolucion: Devolucion | undefined, setModal: Function }) => {

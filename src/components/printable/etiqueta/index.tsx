@@ -1,6 +1,6 @@
 import JsBarcode from "jsbarcode";
 import React, { useEffect } from "react";
-import { notifyWarn } from "../../utils/toastify";
+import { notifyWarn } from "../../../utils/toastify";
 
 const Etiqueta = React.forwardRef((props: { nombre: string, ean: string, precio: number }, ref: React.LegacyRef<HTMLDivElement>) => {
     useEffect(() => {

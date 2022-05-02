@@ -5,7 +5,7 @@ import { TPVType } from "../../../tipos/TPV";
 import { In } from "../../../utils/animations";
 import { FetchTPVsByDisponibilidad, OcuparTPV } from "../../../utils/fetches";
 import { ValidatePositiveFloatingNumber } from "../../../utils/validator";
-import Droplist from "../../Forms/droplist";
+import Droplist from "../../elementos/Forms/droplist";
 import { Backdrop } from "../backdrop";
 
 const AbrirCaja = (props: { setShowModal: Function, setEmpleadoUsandoTPV: Function }) => {

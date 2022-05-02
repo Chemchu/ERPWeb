@@ -1,6 +1,6 @@
 import { motion } from 'framer-motion';
 import React, { useState } from 'react';
-import { SplitLetters } from '../../components/compAnimados/SplitText';
+import { SplitLetters } from '../../components/elementos/compAnimados/SplitText';
 import Router from 'next/router';
 import { notifySuccess } from '../../utils/toastify';
 

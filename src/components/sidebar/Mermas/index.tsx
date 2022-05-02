@@ -1,14 +1,14 @@
 import { AnimatePresence } from "framer-motion";
 import React, { useEffect, useState } from "react";
-import { Paginador } from "../../Forms/paginador";
+import { Paginador } from "../../elementos/Forms/paginador";
 import SkeletonCard from "../../Skeletons/skeletonCard";
 import { notifyWarn } from "../../../utils/toastify";
-import UploadFile from "../../botones/uploadFile";
+import UploadFile from "../../elementos/botones/uploadFile";
 import { TipoDocumento } from "../../../tipos/Enums/TipoDocumentos";
-import DownloadFile from "../../botones/downloadFile";
+import DownloadFile from "../../elementos/botones/downloadFile";
 import AddProducto from "../../modal/addProducto";
 import { Merma } from "../../../tipos/Merma";
-import NuevoBoton from "../../botones/nuevoBoton";
+import NuevoBoton from "../../elementos/botones/nuevoBoton";
 
 const arrayNum = [...Array(8)];
 

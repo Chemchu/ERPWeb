@@ -3,8 +3,8 @@ import { useState } from "react";
 import { Empleado } from "../../../../tipos/Empleado";
 import { TipoDocumento } from "../../../../tipos/Enums/TipoDocumentos";
 import { notifyWarn } from "../../../../utils/toastify";
-import NuevoBoton from "../../../botones/nuevoBoton";
-import UploadFile from "../../../botones/uploadFile";
+import NuevoBoton from "../../../elementos/botones/nuevoBoton";
+import UploadFile from "../../../elementos/botones/uploadFile";
 import SkeletonCard from "../../../Skeletons/skeletonCard";
 
 const arrayNum = [...Array(8)];

@@ -4,8 +4,8 @@ import { Cierre } from "../../../tipos/Cierre";
 import { TipoDocumento } from "../../../tipos/Enums/TipoDocumentos";
 import { TPVType } from "../../../tipos/TPV";
 import { notifyWarn } from "../../../utils/toastify";
-import DateRange from "../../Forms/dateRange";
-import { Paginador } from "../../Forms/paginador";
+import DateRange from "../../elementos/Forms/dateRange";
+import { Paginador } from "../../elementos/Forms/paginador";
 import VerCierre from "../../modal/verCierre";
 import SkeletonCard from "../../Skeletons/skeletonCard";
 

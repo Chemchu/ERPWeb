@@ -6,8 +6,8 @@ import { In } from "../../../utils/animations";
 import { CreateProducto } from "../../../utils/fetches";
 import { notifyError } from "../../../utils/toastify";
 import { CreateEmployee } from "../../../utils/typeCreator";
-import EmpleadoForm from "../../Forms/empleadoForm";
-import ProductoForm from "../../Forms/productoForm";
+import EmpleadoForm from "../../elementos/Forms/empleadoForm";
+import ProductoForm from "../../elementos/Forms/productoForm";
 import { Backdrop } from "../backdrop";
 
 

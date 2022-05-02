@@ -7,9 +7,9 @@ import { In } from "../../../utils/animations";
 import { UpdateProducto } from "../../../utils/fetches";
 import { notifyError } from "../../../utils/toastify";
 import { IsValidProduct } from "../../../utils/validator";
-import Etiqueta from "../../etiqueta";
-import EditableLabel from "../../Forms/editableLabel";
-import ProductoForm from "../../Forms/productoForm";
+import Etiqueta from "../../printable/etiqueta";
+import EditableLabel from "../../elementos/Forms/editableLabel";
+import ProductoForm from "../../elementos/Forms/productoForm";
 import { Backdrop } from "../backdrop";
 import BorrarProductoModal from "../borrarProductoModal";
 

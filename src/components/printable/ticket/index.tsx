@@ -1,6 +1,6 @@
 import React from "react";
-import { CustomerPaymentInformation } from "../../tipos/CustomerPayment";
-import { ProductoVendido } from "../../tipos/ProductoVendido";
+import { CustomerPaymentInformation } from "../../../tipos/CustomerPayment";
+import { ProductoVendido } from "../../../tipos/ProductoVendido";
 import Image from "next/image";
 
 const Ticket = React.forwardRef((props: { pagoCliente: CustomerPaymentInformation, productosVendidos: ProductoVendido[], fecha: string, qrImage: string }, ref: React.LegacyRef<HTMLDivElement>) => {

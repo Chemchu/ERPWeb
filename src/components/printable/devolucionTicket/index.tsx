@@ -1,6 +1,6 @@
 import React from "react";
 import Image from "next/image";
-import { Devolucion } from "../../tipos/Devolucion";
+import { Devolucion } from "../../../tipos/Devolucion";
 
 const DevolucionTicket = React.forwardRef((props: { devolucion: Devolucion, fecha: string, qrImage: string }, ref: React.LegacyRef<HTMLDivElement>) => {
     return (

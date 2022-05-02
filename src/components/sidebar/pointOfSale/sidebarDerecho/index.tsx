@@ -15,7 +15,7 @@ import { AplicarDescuentos, PrecioTotalCarrito } from "../../../../utils/precios
 import { notifyError, notifySuccess } from "../../../../utils/toastify";
 import { IsPositiveFloatingNumber, IsPositiveIntegerNumber, ValidatePositiveFloatingNumber } from "../../../../utils/validator";
 import ModalPagar from "../../../modal/pagar";
-import Ticket from "../../../ticket";
+import Ticket from "../../../printable/ticket";
 import { ProductSelectedCard } from "../productCard";
 
 const SidebarDerecho = React.memo((props: {

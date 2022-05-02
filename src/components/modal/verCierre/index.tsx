@@ -5,7 +5,7 @@ import { useReactToPrint } from "react-to-print";
 import { Cierre } from "../../../tipos/Cierre";
 import { In } from "../../../utils/animations";
 import GenerateQrBase64 from "../../../utils/generateQr";
-import CierrePrintable from "../../cierrePrintable";
+import CierrePrintable from "../../printable/cierrePrintable";
 import { Backdrop } from "../backdrop";
 
 const VerCierre = (props: { showModal: Function, cierre: Cierre, tpv: string }) => {

@@ -1,8 +1,8 @@
 import { AnimatePresence } from "framer-motion";
 import { useState } from "react";
-import { TipoDocumento } from "../../../tipos/Enums/TipoDocumentos";
-import { notifyError, notifyPromise, notifySuccess } from "../../../utils/toastify";
-import DownloadFileModal from "../../modal/downloadFileModal";
+import { TipoDocumento } from "../../../../tipos/Enums/TipoDocumentos";
+import { notifyError, notifyPromise, notifySuccess } from "../../../../utils/toastify";
+import DownloadFileModal from "../../../modal/downloadFileModal";
 
 const DownloadFile = (props: { tipoDocumento: TipoDocumento }) => {
     const [showModal, setModal] = useState<boolean>(false);

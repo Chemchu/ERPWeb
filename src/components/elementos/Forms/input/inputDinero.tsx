@@ -1,4 +1,4 @@
-import { Teclado } from "../../modal/teclado/tecladoPago";
+import { Teclado } from "../../../modal/teclado/tecladoPago";
 
 export const InputNumber = (props: { value: string, setValue: Function }) => {
 

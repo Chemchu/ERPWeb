@@ -6,9 +6,9 @@ import { Empleado } from "../../../tipos/Empleado";
 import { In } from "../../../utils/animations";
 import { UpdateEmpleado, UpdateProducto } from "../../../utils/fetches";
 import { notifyError } from "../../../utils/toastify";
-import Etiqueta from "../../etiqueta";
-import EditableLabel from "../../Forms/editableLabel";
-import EmpleadoForm from "../../Forms/empleadoForm";
+import Etiqueta from "../../printable/etiqueta";
+import EditableLabel from "../../elementos/Forms/editableLabel";
+import EmpleadoForm from "../../elementos/Forms/empleadoForm";
 import { Backdrop } from "../backdrop";
 
 export const VerEmpleado = (props: { empleado: Empleado, setEmpleado: Function, showModal: Function }) => {

@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { className } from "../../../tipos/className";
+import { className } from "../../../../tipos/className";
 import { Input } from "../input/input";
 
 type AutoCompleteProps = {
