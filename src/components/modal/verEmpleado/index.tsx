@@ -1,12 +1,9 @@
 import { AnimatePresence, motion } from "framer-motion";
 import React, { useEffect } from "react";
-import { useRef, useState } from "react";
-import { useReactToPrint } from "react-to-print";
+import { useState } from "react";
 import { Empleado } from "../../../tipos/Empleado";
 import { In } from "../../../utils/animations";
-import { UpdateEmpleado, UpdateProducto } from "../../../utils/fetches";
-import { notifyError } from "../../../utils/toastify";
-import Etiqueta from "../../printable/etiqueta";
+import { UpdateEmpleado } from "../../../utils/fetches";
 import EditableLabel from "../../elementos/Forms/editableLabel";
 import EmpleadoForm from "../../elementos/Forms/empleadoForm";
 import { Backdrop } from "../backdrop";
@@ -15,35 +12,12 @@ export const VerEmpleado = (props: { empleado: Empleado, setEmpleado: Function, 
     const [Nombre, setNombre] = useState<string>(props.empleado.nombre || "");
     const [EmpleadoAux, setEmpleadoAux] = useState<Empleado>();
     const [hayCambios, setHayCambios] = useState<boolean>(false);
-    const [imprimible, setImprimible] = useState<boolean>(true);
     const [showDeleteModal, setDeleteModal] = useState<boolean>(false);
 
     useEffect(() => {
         if (!EmpleadoAux) { setHayCambios(false); return; }
-        setImprimible(true);
 
     }, [EmpleadoAux]);
-
-    const componentRef = useRef(null);
-
-    const reactToPrintContent = React.useCallback(() => {
-        return componentRef.current;
-    }, []);
-
-    const handlePrint = useReactToPrint({
-        documentTitle: "Etiqueta de producto",
-        content: reactToPrintContent,
-    })
-
-    const Print = () => {
-        try {
-            handlePrint()
-        }
-        catch (e) {
-            notifyError("Rellene los campos necesarios para imprimir la etiqueta");
-            console.log(e);
-        }
-    };
 
     const GuardarCambios = async (empleado: Empleado | undefined) => {
         if (!empleado) { return; }
@@ -96,10 +70,6 @@ export const VerEmpleado = (props: { empleado: Empleado, setEmpleado: Function, 
                         <div className="flex w-full h-full gap-10 text-white self-end items-end justify-around">
                             <button className="h-12 w-full rounded-xl bg-red-500 hover:bg-red-600 shadow-lg" onClick={() => { props.showModal(false) }}>
                                 Cerrar
-                            </button>
-                            <button disabled={!imprimible} className={`${imprimible ? 'bg-orange-500 hover:bg-orange-600' : 'bg-orange-400'} h-12 w-full rounded-xl shadow-lg`}
-                                onClick={Print}>
-                                Imprimir etiqueta
                             </button>
                             {
                                 hayCambios ?

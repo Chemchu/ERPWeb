@@ -408,7 +408,7 @@ export const FetchTPV = async (TPVId: string, abortController: AbortController):
 
         const tpvJson = await fetchTPV.json();
 
-        return CreateTPV(JSON.parse(tpvJson.tpv));
+        return CreateTPV(JSON.parse(JSON.parse(tpvJson).tpv));
     }
     catch (e) {
         console.error(e);
@@ -424,7 +424,8 @@ export const FetchTPVs = async (): Promise<TPVType[]> => {
         if (!fetchTPV.ok) { notifyError("Error al buscar la TPV"); return []; }
 
         const tpvJson = await fetchTPV.json();
-        return CreateTPVsList(JSON.parse(tpvJson.tpvs));
+
+        return CreateTPVsList(JSON.parse(JSON.parse(tpvJson).tpvs));
     }
     catch (e) {
         console.error(e);
@@ -441,7 +442,7 @@ export const FetchTPVsByDisponibilidad = async (isTpvFree: boolean, abortControl
         if (!fetchTPV.ok) { notifyError("Error al buscar la TPV"); return []; }
 
         const tpvJson = await fetchTPV.json();
-        return CreateTPVsList(JSON.parse(tpvJson.tpv));
+        return CreateTPVsList(JSON.parse(JSON.parse(tpvJson).tpv));
     }
     catch (e) {
         console.error(e);

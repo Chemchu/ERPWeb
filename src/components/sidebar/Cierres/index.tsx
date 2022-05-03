@@ -1,7 +1,6 @@
 import { AnimatePresence } from "framer-motion";
 import { useState } from "react";
 import { Cierre } from "../../../tipos/Cierre";
-import { TipoDocumento } from "../../../tipos/Enums/TipoDocumentos";
 import { TPVType } from "../../../tipos/TPV";
 import { notifyWarn } from "../../../utils/toastify";
 import DateRange from "../../elementos/Forms/dateRange";
