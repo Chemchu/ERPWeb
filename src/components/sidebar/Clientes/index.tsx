@@ -16,7 +16,6 @@ const arrayNum = [...Array(8)];
 
 const ClientesPage = (props: { Clientes: Cliente[] }) => {
     const [Clientes, setClientes] = useState<Cliente[]>(props.Clientes.filter((c) => { return c.nif !== "General" }));
-    const [currentPage, setCurrentPage] = useState<number>(1);
     const [filtro, setFiltro] = useState<string>("");
     const [ClientesFiltrados, setClientesFiltrados] = useState<Cliente[] | undefined>();
     const [showModal, setModal] = useState<boolean>(false);
@@ -25,21 +24,13 @@ const ClientesPage = (props: { Clientes: Cliente[] }) => {
         setClientes(props.Clientes.filter((c) => { return c.nif !== "General" }));
     }, [props.Clientes]);
 
-    const elementsPerPage = 50;
-    const numPages = Math.ceil(Clientes.length / elementsPerPage);
-
-    const setPaginaActual = (page: number) => {
-        if (page < 1) { return; }
-        if (page > numPages) { return; }
-
-        setCurrentPage(page);
-    }
+    useEffect(() => {
+        if (filtro === "") { setClientesFiltrados(undefined); return; }
+    }, [filtro])
 
     const Filtrar = async (f: string) => {
-        if (f === "") { setClientesFiltrados(undefined); return; }
-        if (!f.match('^[0-9a-fA-F]{24}$')) { notifyWarn("Cliente inválido"); return; }
-
-        setClientesFiltrados(await FetchClientesByQuery(f));
+        const clientes = await FetchClientesByQuery(f);
+        setClientesFiltrados(clientes.filter((c) => c.nif !== "General"));
     }
 
     return (
@@ -78,16 +69,45 @@ const ClientesPage = (props: { Clientes: Cliente[] }) => {
                     Dirección
                 </div>
             </div>
+            {
+                ClientesFiltrados ?
+                    <TablaClientes clientes={ClientesFiltrados} />
+                    :
+                    <TablaClientes clientes={Clientes} />
+            }
+            <AnimatePresence>
+                {showModal && <AddCliente showModal={setModal} setClientes={setClientes} />}
+            </AnimatePresence>
+        </div>
+    );
+}
+
+const TablaClientes = (props: { clientes: Cliente[] }) => {
+    const [currentPage, setCurrentPage] = useState<number>(1);
+
+    const elementsPerPage = 50;
+    const numPages = Math.ceil(props.clientes.length / elementsPerPage);
+
+    const setPaginaActual = (page: number) => {
+        if (page < 1) { return; }
+        if (page > numPages) { return; }
+
+        setCurrentPage(page);
+    }
+
+    return (
+        <>
             <div className="h-full w-full border overflow-y-scroll">
                 {
-                    Clientes.length <= 0 ?
+
+                    props.clientes.length <= 0 ?
                         arrayNum.map((n, i) => {
                             return (
                                 <SkeletonCard key={`SkeletonProdList-${i}`} />
                             );
                         })
                         :
-                        Clientes.slice((elementsPerPage * (currentPage - 1)), currentPage * elementsPerPage).map((c: Cliente, index) => {
+                        props.clientes.slice((elementsPerPage * (currentPage - 1)), currentPage * elementsPerPage).map((c: Cliente, index) => {
                             return (
                                 <div key={`FilaProdTable${c._id}`}>
                                     <FilaCliente cliente={c} />
@@ -99,11 +119,8 @@ const ClientesPage = (props: { Clientes: Cliente[] }) => {
             <div className="flex pt-2 items-center justify-center">
                 <Paginador numPages={numPages} paginaActual={currentPage} maxPages={10} cambiarPaginaActual={setPaginaActual} />
             </div>
-            <AnimatePresence>
-                {showModal && <AddCliente showModal={setModal} setClientes={setClientes} />}
-            </AnimatePresence>
-        </div>
-    );
+        </>
+    )
 }
 
 const FilaCliente = (props: { cliente: Cliente }) => {

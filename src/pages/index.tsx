@@ -5,28 +5,11 @@ import { SplitLetters, SplitWords } from '../components/elementos/compAnimados/S
 import { useRouter } from 'next/router';
 
 const Home: NextPage = () => {
-    const animaciones = {
-        initial: {
-            opacity: 0
-        },
-        animate: {
-            opacity: 1,
-            transition: {
-                duration: 1.5,
-            },
-        },
-        exit: {
-            opacity: 0,
-            transition: {
-                duration: 1,
-            },
-        }
-    }
-
     const router = useRouter();
 
     return (
-        <motion.div initial={animaciones.initial} animate={animaciones.animate} exit={animaciones.exit} className="min-h-screen bg-no-repeat flex flex-col justify-center sm:py-12 relative overflow-hidden h-screen bg-landing1 bg-cover bg-center">
+        <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1, transition: { duration: 1.5 } }} exit={{ opacity: 0, transition: { duration: 1 } }}
+            className="min-h-screen bg-no-repeat flex flex-col justify-center sm:py-12 relative overflow-hidden h-screen bg-landing1 bg-cover bg-center">
             <header className="absolute top-0 left-0 right-0 z-20">
                 <nav className="container mx-auto px-6 md:px-12 py-4">
                     <div className="md:flex justify-center items-center">

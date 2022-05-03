@@ -174,18 +174,7 @@ export const FetchClientesByQuery = async (userQuery: string): Promise<Cliente[]
         id.query = userQuery.valueOf();
 
         const query = queryString.stringify(id);
-
-        const cResponse = await fetch(`/api/clientes/${query}`, {
-            headers: {
-                'Content-type': 'application/json'
-            },
-            method: 'POST',
-            body: JSON.stringify({
-                find: {},
-                limit: 50,
-                neededValues: ["_id", "nombre", "nif", "calle", "cp"]
-            })
-        });
+        const cResponse = await fetch(`/api/clientes/${query}`);
 
         if (!cResponse.ok) {
             notifyError("Error al buscar los clientes");

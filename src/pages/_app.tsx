@@ -15,8 +15,7 @@ type AppPropsConPageLayout = AppProps & {
 }
 
 const client = new ApolloClient({
-  //uri: process.env.ERPBACK_URL + "graphql",
-  uri: "http://192.168.1.140:8080/graphql",
+  uri: process.env.ERPBACK_URL + "graphql",
   cache: new InMemoryCache()
 });
 

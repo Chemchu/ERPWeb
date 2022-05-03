@@ -20,11 +20,6 @@ export const ProductCarritoContextProvider = ({ children }: { children: React.Re
     const [DtoEfectivo, setDtoEfectivo] = React.useState<string>("0");
     const [DtoPorcentaje, setDtoPorcentaje] = React.useState<string>("0");
 
-    const SetValidatedSoldProductos = (prodList: ProductoVendido[]) => {
-        const pL = CreateProductoVendidoList(prodList);
-        setProductos(pL);
-    }
-
     const values: ProductContextualizado = {
         ProductosEnCarrito: Productos,
         SetProductosEnCarrito: setProductos,

@@ -133,8 +133,8 @@ export const ADD_PRODUCTOS_FILE = gql`
 `;
 
 export const QUERY_CLIENTS = gql`
-  query Clientes($limit: Int) {
-    clientes(limit: $limit) {
+  query Clientes($limit: Int, $find: ClientesFind) {
+    clientes(limit: $limit, find: $find) {
         _id
         nif
         nombre
