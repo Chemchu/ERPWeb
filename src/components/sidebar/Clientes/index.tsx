@@ -1,5 +1,5 @@
 import { AnimatePresence } from "framer-motion";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Cliente } from "../../../tipos/Cliente";
 import { TipoDocumento } from "../../../tipos/Enums/TipoDocumentos";
 import { notifyWarn } from "../../../utils/toastify";
@@ -8,17 +8,24 @@ import UploadFile from "../../elementos/botones/uploadFile";
 import SkeletonCard from "../../Skeletons/skeletonCard";
 import NuevoBoton from "../../elementos/botones/nuevoBoton";
 import DownloadFile from "../../elementos/botones/downloadFile";
+import VerCliente from "../../modal/verCliente";
+import AddCliente from "../../modal/addCliente";
 
 const arrayNum = [...Array(8)];
 
 const ClientesPage = (props: { Clientes: Cliente[] }) => {
+    const [Clientes, setClientes] = useState<Cliente[]>(props.Clientes.filter((c) => { return c.nif !== "General" }));
     const [currentPage, setCurrentPage] = useState<number>(1);
     const [filtro, setFiltro] = useState<string>("");
     const [ClientesFiltrados, setClientesFiltrados] = useState<Cliente[] | undefined>();
     const [showModal, setModal] = useState<boolean>(false);
 
+    useEffect(() => {
+        setClientes(props.Clientes.filter((c) => { return c.nif !== "General" }));
+    }, [props.Clientes]);
+
     const elementsPerPage = 50;
-    const numPages = Math.ceil(props.Clientes.length / elementsPerPage);
+    const numPages = Math.ceil(Clientes.length / elementsPerPage);
 
     const setPaginaActual = (page: number) => {
         if (page < 1) { return; }
@@ -38,6 +45,7 @@ const ClientesPage = (props: { Clientes: Cliente[] }) => {
         <div className="flex flex-col h-full w-full bg-white rounded-b-2xl rounded-r-2xl p-4 shadow-lg border-x">
             <div className="flex w-full h-auto py-4 gap-10 justify-end">
                 <div className="flex gap-4 w-full h-full">
+                    <NuevoBoton accionEvent={() => setModal(true)} />
                     <UploadFile tipoDocumento={TipoDocumento.Clientes} />
                     <DownloadFile tipoDocumento={TipoDocumento.Clientes} />
                 </div>
@@ -71,14 +79,14 @@ const ClientesPage = (props: { Clientes: Cliente[] }) => {
             </div>
             <div className="h-full w-full border overflow-y-scroll">
                 {
-                    props.Clientes.length <= 0 ?
+                    Clientes.length <= 0 ?
                         arrayNum.map((n, i) => {
                             return (
                                 <SkeletonCard key={`SkeletonProdList-${i}`} />
                             );
                         })
                         :
-                        props.Clientes.slice((elementsPerPage * (currentPage - 1)), currentPage * elementsPerPage).map((c: Cliente, index) => {
+                        Clientes.slice((elementsPerPage * (currentPage - 1)), currentPage * elementsPerPage).map((c: Cliente, index) => {
                             return (
                                 <div key={`FilaProdTable${c._id}`}>
                                     <FilaCliente cliente={c} />
@@ -90,6 +98,9 @@ const ClientesPage = (props: { Clientes: Cliente[] }) => {
             <div className="flex pt-2 items-center justify-center">
                 <Paginador numPages={numPages} paginaActual={currentPage} maxPages={10} cambiarPaginaActual={setPaginaActual} />
             </div>
+            <AnimatePresence>
+                {showModal && <AddCliente showModal={setModal} />}
+            </AnimatePresence>
         </div>
     );
 }
@@ -111,7 +122,7 @@ const FilaCliente = (props: { cliente: Cliente }) => {
                 </div>
             </div>
             <AnimatePresence>
-                {/* {showModal && <EditarProducto showModal={setModal} product={props.cliente} />} */}
+                {showModal && <VerCliente showModal={setModal} cliente={props.cliente} />}
             </AnimatePresence>
         </div>
 

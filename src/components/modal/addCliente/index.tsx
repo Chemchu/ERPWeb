@@ -1,25 +1,22 @@
 import { motion } from "framer-motion";
 import { useEffect, useState } from "react";
-import { Empleado } from "../../../tipos/Empleado";
-import { Producto } from "../../../tipos/Producto";
+import { Cliente } from "../../../tipos/Cliente";
 import { In } from "../../../utils/animations";
 import { CreateProducto } from "../../../utils/fetches";
 import { notifyError } from "../../../utils/toastify";
-import { CreateEmployee } from "../../../utils/typeCreator";
-import EmpleadoForm from "../../elementos/Forms/empleadoForm";
-import ProductoForm from "../../elementos/Forms/productoForm";
+import ClientForm from "../../elementos/Forms/clientForm";
 import { Backdrop } from "../backdrop";
 
 
-const AddEmpleado = (props: { showModal: Function }) => {
-    const [Empleado, setEmpleado] = useState<Empleado>();
+const AddCliente = (props: { showModal: Function }) => {
+    const [Cliente, setCliente] = useState<Cliente>();
 
-    const CrearEmpleado = async () => {
-        if (!Empleado) {
-            notifyError("Error con el producto");
+    const CrearCliente = async () => {
+        if (!Cliente) {
+            notifyError("Error con la creación del cliente");
             return;
         }
-        CreateEmployee(Empleado);
+        //CreateClient(Cliente);
     }
 
     return (
@@ -34,17 +31,17 @@ const AddEmpleado = (props: { showModal: Function }) => {
                 >
                     <div className="flex flex-col w-full h-full text-left ">
                         <span className="text-3xl cursor-default">
-                            Añadir nuevo empleado
+                            Añadir nuevo cliente
                         </span>
 
-                        <EmpleadoForm setEmpleado={setEmpleado} />
+                        <ClientForm setCliente={setCliente} />
 
                         <div className="flex w-full h-full items-end justify-around text-white gap-10">
                             <button className="h-12 w-full rounded-xl bg-red-500 hover:bg-red-600 shadow-lg" onClick={() => props.showModal(false)}>
                                 Cancelar
                             </button>
-                            <button className="h-12 w-full rounded-xl bg-blue-500 hover:bg-blue-600 shadow-lg" onClick={async () => { await CrearEmpleado() }}>
-                                Añadir empleado
+                            <button className="h-12 w-full rounded-xl bg-blue-500 hover:bg-blue-600 shadow-lg" onClick={async () => { await CrearCliente() }}>
+                                Añadir cliente
                             </button>
                         </div>
                     </div>
@@ -54,4 +51,4 @@ const AddEmpleado = (props: { showModal: Function }) => {
     )
 }
 
-export default AddEmpleado;
+export default AddCliente;
