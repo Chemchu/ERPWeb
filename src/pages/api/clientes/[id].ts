@@ -33,20 +33,18 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
 }
 
 const AddClientesFromFile = async (req: NextApiRequest, res: NextApiResponse) => {
-    const reqBody = req.body;
 
-    if (reqBody.find) {
-        const fetchResult = await GQLFetcher.mutate(
-            {
-                mutation: ADD_CLIENTS_FILE,
-                variables: {
-                    "csv": reqBody.csv
-                }
+    const reqBody = req.body;
+    const fetchResult = await GQLFetcher.mutate(
+        {
+            mutation: ADD_CLIENTS_FILE,
+            variables: {
+                "csv": reqBody.csv
             }
-        );
-        if (!fetchResult.errors) {
-            return res.status(200).json({ message: fetchResult.data.message, successful: fetchResult.data.successful });
         }
+    );
+    if (!fetchResult.errors) {
+        return res.status(200).json({ message: fetchResult.data.message, successful: fetchResult.data.successful });
     }
 
     return res.status(300).json({ message: "Fallo al añadir los clientes", successful: false });
@@ -96,44 +94,40 @@ const GetClienteFromId = async (req: NextApiRequest, res: NextApiResponse) => {
 }
 
 const UpdateCliente = async (req: NextApiRequest, res: NextApiResponse) => {
-    const reqBody = req.body;
 
-    if (reqBody.find) {
-        const fetchResult = await GQLFetcher.mutate(
-            {
-                mutation: UPDATE_CLIENT,
-                variables: {
-                    "id": reqBody.id,
-                    "nif": reqBody.nif,
-                    "nombre": reqBody.nombre,
-                    "calle": reqBody.calle,
-                    "cp": reqBody.cp
-                }
+    const reqBody = req.body;
+    const fetchResult = await GQLFetcher.mutate(
+        {
+            mutation: UPDATE_CLIENT,
+            variables: {
+                "id": reqBody.id,
+                "nif": reqBody.nif,
+                "nombre": reqBody.nombre,
+                "calle": reqBody.calle,
+                "cp": reqBody.cp
             }
-        );
-        if (!fetchResult.errors) {
-            return res.status(200).json({ message: fetchResult.data.message, successful: fetchResult.data.successful });
         }
+    );
+    if (!fetchResult.errors) {
+        return res.status(200).json({ message: fetchResult.data.message, successful: fetchResult.data.successful });
     }
 
     return res.status(300).json({ message: "Fallo al actualizar el cliente", successful: false });
 }
 
 const DeleteCliente = async (req: NextApiRequest, res: NextApiResponse) => {
-    const reqBody = req.body;
 
-    if (reqBody.find) {
-        const fetchResult = await GQLFetcher.mutate(
-            {
-                mutation: DELETE_CLIENT,
-                variables: {
-                    "id": reqBody._id
-                }
+    const reqBody = req.body;
+    const fetchResult = await GQLFetcher.mutate(
+        {
+            mutation: DELETE_CLIENT,
+            variables: {
+                "id": reqBody._id
             }
-        );
-        if (!fetchResult.errors) {
-            return res.status(200).json({ message: fetchResult.data.message, successful: fetchResult.data.successful });
         }
+    );
+    if (!fetchResult.errors) {
+        return res.status(200).json({ message: fetchResult.data.message, successful: fetchResult.data.successful });
     }
 
     return res.status(300).json({ message: "Fallo al borrar el cliente", successful: false });

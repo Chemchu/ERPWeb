@@ -151,23 +151,13 @@ export const DeleteProducto = async (productoId: string): Promise<Boolean> => {
 
 export const FetchClientes = async (): Promise<Cliente[]> => {
     try {
-        const cResponse = await fetch('/api/clientes', {
-            headers: {
-                'Content-type': 'application/json'
-            },
-            method: 'POST',
-            body: JSON.stringify({
-                find: {},
-                limit: 50,
-                neededValues: ["_id", "nombre", "nif", "calle", "cp"]
-            })
-        });
+        const cResponse = await fetch('/api/clientes');
+        const cJson = await cResponse.json();
 
         if (!cResponse.ok) {
-            notifyError("Error al buscar los clientes");
+            notifyError(cJson.message);
             return [];
         }
-        const cJson = await cResponse.json();
 
         return CreateClientList(cJson.clientes);
     }

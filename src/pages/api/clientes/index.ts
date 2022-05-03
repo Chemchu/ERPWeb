@@ -1,4 +1,3 @@
-import { gql } from "@apollo/client";
 import { NextApiRequest, NextApiResponse } from "next";
 import { ADD_CLIENT, QUERY_CLIENTS } from "../../../utils/querys";
 import GQLFetcher from "../../../utils/serverFetcher";
@@ -46,22 +45,16 @@ const AddCliente = async (req: NextApiRequest, res: NextApiResponse) => {
 const GetClientes = async (req: NextApiRequest, res: NextApiResponse) => {
     const reqBody = req.body;
 
-    if (reqBody.find) {
-        const fetchResult = await GQLFetcher.query(
-            {
-                query: QUERY_CLIENTS,
-                variables: {
-                    "find": {
-                        "_ids": reqBody.find._ids,
-                        "nombre": reqBody.find.nombre
-                    },
-                    "limit": reqBody.limit
-                }
+    const fetchResult = await GQLFetcher.query(
+        {
+            query: QUERY_CLIENTS,
+            variables: {
+                "limit": reqBody.limit || 50
             }
-        );
-        if (!fetchResult.error) {
-            return res.status(200).json({ message: "Éxito al buscar a los clientes", successful: true, clientes: fetchResult.data.clientes });
         }
+    );
+    if (!fetchResult.errors) {
+        return res.status(200).json({ message: "Éxito al buscar a los clientes", successful: true, clientes: fetchResult.data.clientes });
     }
 
     return res.status(300).json({ message: "Fallo al buscar los clientes", successful: false });

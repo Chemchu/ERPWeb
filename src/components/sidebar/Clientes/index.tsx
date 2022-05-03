@@ -130,5 +130,4 @@ const FilaCliente = (props: { cliente: Cliente }) => {
     );
 }
 
-
 export default ClientesPage;
