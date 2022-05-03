@@ -51,7 +51,7 @@ export async function middleware(req: NextRequest, ev: NextFetchEvent) {
 
 const IsJwtExpired = (Jwt: string): boolean => {
     let base64Payload = Jwt.split('.')[1];
-    let payload = Buffer.from(base64Payload, 'base64');
+    let payload = atob(base64Payload);
     const exp = JSON.parse(payload.toString()).exp;
 
     const expDate = new Date(0).setSeconds(exp);

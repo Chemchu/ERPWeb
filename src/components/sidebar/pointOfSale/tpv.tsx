@@ -34,6 +34,7 @@ const TPV = (props: { productos: Producto[], empleadoUsandoTPV: boolean, setEmpl
         if (!props.productos) { return; }
 
         setFamilias(uniq_fast(props.productos));
+        setProductosFiltrados(props.productos)
     }, [props.productos]);
 
     const Filtrar = (cadena: string) => {
@@ -76,13 +77,13 @@ const TPV = (props: { productos: Producto[], empleadoUsandoTPV: boolean, setEmpl
                             }
                         </div>
                         <div className="h-full overflow-hidden">
-                            <ListaProductos productos={[]} productosFiltrados={ProductosFiltrados} />
+                            <ListaProductos productosFiltrados={ProductosFiltrados} />
                         </div>
                     </div>
                 </div>
                 {/* Sidebar derecho */}
                 <div className="h-screen">
-                    <SidebarDerecho todosProductos={[]} productosEnCarrito={[]} setProductosCarrito={SetProductosEnCarrito} empleadoUsandoTPV={props.empleadoUsandoTPV} setShowModalAbrir={props.setShowModalAbrir} setShowModalCerrar={props.setShowModalCerrar} />
+                    <SidebarDerecho setProductosCarrito={SetProductosEnCarrito} empleadoUsandoTPV={props.empleadoUsandoTPV} setShowModalAbrir={props.setShowModalAbrir} setShowModalCerrar={props.setShowModalCerrar} />
                 </div>
 
             </div>
@@ -104,8 +105,6 @@ const TPV = (props: { productos: Producto[], empleadoUsandoTPV: boolean, setEmpl
                             </div>
                             <input onChange={(e) => { Filtrar(e.target.value); }} className="bg-white rounded-3xl shadow text-lg full w-full h-16 py-4 pl-16 transition-shadow focus:shadow-2xl focus:outline-none" placeholder="Buscar producto o código de barras..." />
                         </div>
-
-                        {/* Genera los botones de favorito */}
                         {
                             props.productos.length <= 0 ?
                                 <div className="flex gap-2 p-4">
@@ -145,17 +144,17 @@ const TPV = (props: { productos: Producto[], empleadoUsandoTPV: boolean, setEmpl
                         </div>
                     </div>
                 </div>
-                <SidebarDerecho todosProductos={props.productos} productosEnCarrito={ProductosEnCarrito} setProductosCarrito={SetProductosEnCarrito} empleadoUsandoTPV={props.empleadoUsandoTPV} setShowModalAbrir={props.setShowModalAbrir} setShowModalCerrar={props.setShowModalCerrar} />
+                <SidebarDerecho setProductosCarrito={SetProductosEnCarrito} empleadoUsandoTPV={props.empleadoUsandoTPV} setShowModalAbrir={props.setShowModalAbrir} setShowModalCerrar={props.setShowModalCerrar} />
             </div>
         </div>
     );
 }
 
-const ListaProductos = (props: { productos: Producto[], productosFiltrados: Producto[] }) => {
+const ListaProductos = (props: { productos?: Producto[], productosFiltrados: Producto[] }) => {
     const { ProductosEnCarrito, SetProductosEnCarrito } = useProductEnCarritoContext();
     const maxItems = 30;
 
-    if (props.productos.length <= 0) {
+    if (!props.productos) {
         const arrayNum = [...Array(30)];
 
         return (
@@ -190,25 +189,21 @@ const ListaProductos = (props: { productos: Producto[], productosFiltrados: Prod
         );
     }
     else {
-        return (<ProductosNoEncontrados />)
-    }
-}
-
-const ProductosNoEncontrados = () => {
-    return (
-        <div className="h-full overflow-y-auto overflow-x-hidden px-2">
-            <div className="bg-blue-gray-100 rounded-3xl flex flex-wrap content-center justify-center h-full opacity-25">
-                <div className="w-full text-center">
-                    <svg xmlns="http://www.w3.org/2000/svg" className="h-24 w-24 inline-block" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
-                    </svg>
-                    <p className="text-xl">
-                        PRODUCTO NO ENCONTRADO
-                    </p>
+        return (
+            <div className="h-full overflow-y-auto overflow-x-hidden px-2">
+                <div className="bg-blue-gray-100 rounded-3xl flex flex-wrap content-center justify-center h-full opacity-25">
+                    <div className="w-full text-center">
+                        <svg xmlns="http://www.w3.org/2000/svg" className="h-24 w-24 inline-block" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                        </svg>
+                        <p className="text-xl">
+                            PRODUCTO NO ENCONTRADO
+                        </p>
+                    </div>
                 </div>
             </div>
-        </div>
-    );
+        )
+    }
 }
 
 export default TPV;

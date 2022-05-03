@@ -19,15 +19,15 @@ import Ticket from "../../../printable/ticket";
 import { ProductSelectedCard } from "../productCard";
 
 const SidebarDerecho = React.memo((props: {
-    todosProductos: Producto[], productosEnCarrito: ProductoVendido[],
     setProductosCarrito: React.Dispatch<React.SetStateAction<ProductoVendido[]>>, empleadoUsandoTPV: boolean,
     setShowModalCerrar: Function, setShowModalAbrir: Function
 }) => {
+    const { ProductosEnCarrito, SetProductosEnCarrito } = useProductEnCarritoContext();
     const { Empleado } = useEmpleadoContext();
     const [DescuentoOpen, setDescuentoPupup] = useState<boolean>(false);
     const { DtoEfectivo, SetDtoEfectivo, DtoPorcentaje, SetDtoPorcentaje } = useProductEnCarritoContext()
-    const [PrecioTotal, setPrecioTotal] = useState<number>(PrecioTotalCarrito(props.productosEnCarrito));
-    const [PrecioTotalFinal, setPrecioTotalFinal] = useState<number>(AplicarDescuentos(props.productosEnCarrito, Number(DtoEfectivo), Number(DtoPorcentaje)));
+    const [PrecioTotal, setPrecioTotal] = useState<number>(PrecioTotalCarrito(ProductosEnCarrito));
+    const [PrecioTotalFinal, setPrecioTotalFinal] = useState<number>(AplicarDescuentos(ProductosEnCarrito, Number(DtoEfectivo), Number(DtoPorcentaje)));
 
     const [showModalPagar, setPagarModal] = useState(false);
     const [PagoRapido, setPagoRapido] = useState<CustomerPaymentInformation>();
@@ -61,9 +61,9 @@ const SidebarDerecho = React.memo((props: {
     }, [qrImage]);
 
     useEffect(() => {
-        setPrecioTotal(PrecioTotalCarrito(props.productosEnCarrito));
-        setPrecioTotalFinal(AplicarDescuentos(props.productosEnCarrito, Number(DtoEfectivo), Number(DtoPorcentaje)));
-    }, [props.productosEnCarrito, DtoEfectivo, DtoPorcentaje])
+        setPrecioTotal(PrecioTotalCarrito(ProductosEnCarrito));
+        setPrecioTotalFinal(AplicarDescuentos(ProductosEnCarrito, Number(DtoEfectivo), Number(DtoPorcentaje)));
+    }, [ProductosEnCarrito, DtoEfectivo, DtoPorcentaje])
 
     useEffect(() => {
         const pagoRapido = {
@@ -194,7 +194,7 @@ const SidebarDerecho = React.memo((props: {
             <div className="bg-white rounded-3xl shadow h-full resize-x">
                 {/* En caso de carrito vacío o con productos */}
                 {
-                    props.productosEnCarrito.length <= 0 ?
+                    ProductosEnCarrito.length <= 0 ?
                         <div className="grid grid-rows-2 grid-cols-1 h-full">
                             <div className="flex flex-col gap-2 justify-items-center justify-self-center opacity-25 self-end">
                                 <div className="flex justify-center animate-bounce">
@@ -233,7 +233,7 @@ const SidebarDerecho = React.memo((props: {
                                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z" />
                                         </svg>
                                         <div className="text-center absolute text-white w-5 h-5 text-xs p-0 leading-5 rounded-full -right-2 top-3" />
-                                        {` ${props.productosEnCarrito.length}`}
+                                        {` ${ProductosEnCarrito.length}`}
                                     </div>
                                     <div className="px-8 text-right text-lg py-4 relative">
                                         {/* Boton basura */}
@@ -248,7 +248,7 @@ const SidebarDerecho = React.memo((props: {
                             <div className="flex flex-col flex-grow gap-2 px-2 overflow-scroll overflow-x-hidden">
                                 {/* Añadir producto al carrito (fila con información y cantidad)*/}
                                 {
-                                    <GenerarProductList productosEnCarrito={props.productosEnCarrito} setPropiedadProducto={SetPropiedadProd} />
+                                    <GenerarProductList productosEnCarrito={ProductosEnCarrito} setPropiedadProducto={SetPropiedadProd} />
                                 }
                             </div>
                             <div className="text-center p-4 mb-4">
@@ -297,27 +297,27 @@ const SidebarDerecho = React.memo((props: {
                                             <div className="flex gap-2 justify-end ml-auto">
                                                 <div className="text-right w-full text-red-500 line-through">
                                                     {/*Cambiar en caso de que la cesta tenga productos y calcular el valor total*/}
-                                                    {props.productosEnCarrito.length <= 0 ? 0.00 : PrecioTotal.toFixed(2)} €
+                                                    {ProductosEnCarrito.length <= 0 ? 0.00 : PrecioTotal.toFixed(2)} €
                                                 </div>
                                                 <div className="text-right w-full">
                                                     {/*Cambiar en caso de que la cesta tenga productos y calcular el valor total*/}
-                                                    {props.productosEnCarrito.length <= 0 ? 0.00 : PrecioTotalFinal.toFixed(2)} €
+                                                    {ProductosEnCarrito.length <= 0 ? 0.00 : PrecioTotalFinal.toFixed(2)} €
                                                 </div>
                                             </div>
                                             :
                                             <div className="text-right w-full">
                                                 {/*Cambiar en caso de que la cesta tenga productos y calcular el valor total*/}
-                                                {props.productosEnCarrito.length <= 0 ? 0.00 : PrecioTotal.toFixed(2)} €
+                                                {ProductosEnCarrito.length <= 0 ? 0.00 : PrecioTotal.toFixed(2)} €
                                             </div>
                                     }
                                 </div>
                                 {
-                                    props.productosEnCarrito.length > 0 &&
+                                    ProductosEnCarrito.length > 0 &&
                                     !isNaN(PrecioTotal) &&
                                     <div className="grid grid-cols-1 gap-2 h-auto">
                                         <motion.button whileTap={{ scale: 0.9 }} className="bg-blue-500 h-12 shadow rounded-lg hover:shadow-lg hover:bg-blue-600 text-white focus:outline-none" onClick={(e) => { setPagarModal(true) }}>PAGAR</motion.button>
                                         <motion.button whileTap={{ scale: 0.9 }} className="bg-blue-500 h-12 shadow rounded-lg hover:shadow-lg hover:bg-blue-600 text-white focus:outline-none"
-                                            onClick={async () => { await Vender(PagoRapido, props.productosEnCarrito, Empleado, Clientes); }}>
+                                            onClick={async () => { await Vender(PagoRapido, ProductosEnCarrito, Empleado, Clientes); }}>
                                             COBRO RAPIDO
                                         </motion.button>
                                     </div>
@@ -331,7 +331,7 @@ const SidebarDerecho = React.memo((props: {
                         <Ticket
                             ref={componentRef}
                             pagoCliente={PagoRapido}
-                            productosVendidos={props.productosEnCarrito}
+                            productosVendidos={ProductosEnCarrito}
                             fecha={Fecha}
                             qrImage={qrImage}
                         />
