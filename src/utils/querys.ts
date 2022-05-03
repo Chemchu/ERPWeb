@@ -133,15 +133,63 @@ export const ADD_PRODUCTOS_FILE = gql`
 `;
 
 export const QUERY_CLIENTS = gql`
-    query Clientes($limit: Int) {
-        clientes(limit: $limit) {
-            _id
-            nif
-            nombre
-            calle
-            cp
-        }
+  query Clientes($limit: Int) {
+    clientes(limit: $limit) {
+        _id
+        nif
+        nombre
+        calle
+        cp
     }
+  }
+`;
+
+export const ADD_CLIENTES_FILE = gql`
+  mutation AddClientesFile($csv: String!) {
+    addClientesFile(csv: $csv) {
+      message
+      successful
+    }
+  }
+`;
+
+export const QUERY_CLIENT = gql`
+  query Cliente($find: ClienteFind!) {
+    cliente(find: $find) {
+      _id
+      nif
+      nombre
+      calle
+      cp
+    }
+  }
+`;
+
+export const UPDATE_CLIENT = gql`
+  mutation Mutation($id: ID!, $nif: String, $nombre: String, $calle: String, $cp: String) {
+    updateCliente(_id: $id, nif: $nif, nombre: $nombre, calle: $calle, cp: $cp) {
+      message
+      successful
+    }
+  }
+`;
+
+export const DELETE_CLIENT = gql`
+  mutation DeleteCliente($id: ID!) {
+    deleteCliente(_id: $id) {
+      message
+      successful
+    }
+  }
+`;
+
+export const ADD_CLIENT = gql`
+  mutation Mutation($nif: String!, $nombre: String!, $calle: String, $cp: String) {
+    addCliente(nif: $nif, nombre: $nombre, calle: $calle, cp: $cp) {
+      message
+      successful
+    }
+  }
 `;
 
 export const QUERY_SALE = gql`

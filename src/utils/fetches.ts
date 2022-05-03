@@ -178,6 +178,41 @@ export const FetchClientes = async (): Promise<Cliente[]> => {
     }
 }
 
+export const FetchClientesByQuery = async (userQuery: string): Promise<Cliente[]> => {
+    try {
+        let cliRes = [] as Cliente[];
+        let id: any = new Object;
+        id.query = userQuery.valueOf();
+
+        const query = queryString.stringify(id);
+
+        const cResponse = await fetch(`/api/clientes/${query}`, {
+            headers: {
+                'Content-type': 'application/json'
+            },
+            method: 'POST',
+            body: JSON.stringify({
+                find: {},
+                limit: 50,
+                neededValues: ["_id", "nombre", "nif", "calle", "cp"]
+            })
+        });
+
+        if (!cResponse.ok) {
+            notifyError("Error al buscar los clientes");
+            return [];
+        }
+        const cJson = await cResponse.json();
+
+        return CreateClientList(cJson.clientes);
+    }
+    catch (e) {
+        console.error(e);
+        notifyError("Error de conexión");
+        return [];
+    }
+}
+
 export const FetchVentas = async (): Promise<Venta[]> => {
     try {
         const vRes = await fetch(`/api/ventas/`);

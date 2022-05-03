@@ -14,9 +14,6 @@ const handler = async (req: NextApiRequest, res: NextApiResponse): Promise<void>
                 if (req.query.id === "file") {
                     return await AddProductosFromFile(req, res);
                 }
-            // else {
-            //     return await AddProducto(req, res);
-            // }
 
             case 'GET':
                 if (query.query) { return await GetProductosFromQuery(query, res); }

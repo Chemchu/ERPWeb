@@ -10,6 +10,7 @@ import NuevoBoton from "../../elementos/botones/nuevoBoton";
 import DownloadFile from "../../elementos/botones/downloadFile";
 import VerCliente from "../../modal/verCliente";
 import AddCliente from "../../modal/addCliente";
+import { FetchClientesByQuery } from "../../../utils/fetches";
 
 const arrayNum = [...Array(8)];
 
@@ -38,7 +39,7 @@ const ClientesPage = (props: { Clientes: Cliente[] }) => {
         if (f === "") { setClientesFiltrados(undefined); return; }
         if (!f.match('^[0-9a-fA-F]{24}$')) { notifyWarn("Cliente inválido"); return; }
 
-        // setClientesFiltrados(/* Fetch clientes */);
+        setClientesFiltrados(await FetchClientesByQuery(f));
     }
 
     return (

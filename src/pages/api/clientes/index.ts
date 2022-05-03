@@ -1,57 +1,71 @@
 import { gql } from "@apollo/client";
 import { NextApiRequest, NextApiResponse } from "next";
+import { ADD_CLIENT, QUERY_CLIENTS } from "../../../utils/querys";
 import GQLFetcher from "../../../utils/serverFetcher";
 
 const handler = async (req: NextApiRequest, res: NextApiResponse) => {
     try {
-        const reqCredentials = req.body;
-        let fetchResult;
-
-        if (reqCredentials.find) {
-            fetchResult = await GQLFetcher.query(
-                {
-                    query: gql`
-                query Clientes($find: ClientesFind, $limit: Int) {
-                    clientes(find: $find, limit: $limit) {
-                        ${reqCredentials.neededValues.map((c: string) => { return c })}
-                    }
-                }
-                `,
-                    variables: {
-                        "find": {
-                            "_ids": reqCredentials.find._ids,
-                            "nombre": reqCredentials.find.nombre
-                        },
-                        "limit": reqCredentials.limit
-                    }
-                }
-            );
-        }
-        else {
-            fetchResult = await GQLFetcher.query(
-                {
-                    query: gql`
-                query Clientes($limit: Int) {
-                    clientes(limit: $limit) {
-                        ${reqCredentials.neededValues.map((c: string) => { return c })}
-                    }
-                }
-                `
-                }
-            );
+        switch (req.method) {
+            case 'POST':
+                return await AddCliente(req, res);
+            case 'GET':
+                return await GetClientes(req, res);
         }
 
-
-        if (!fetchResult.error) {
-            return res.status(200).json(fetchResult.data);
-        }
-
-        return res.status(300).json({ message: `Fallo al pedir la lista de clientes` });
+        return res.status(300).json({ message: `Fallo al pedir la lista de clientes`, successful: false });
     }
     catch (err) {
         console.log(err);
-        return res.status(500).json({ message: `Error: ${err}` });
+        return res.status(500).json({ message: `Error: ${err}`, successful: false });
     }
 }
+
+const AddCliente = async (req: NextApiRequest, res: NextApiResponse) => {
+    const reqBody = req.body;
+
+    if (reqBody.find) {
+        const fetchResult = await GQLFetcher.mutate(
+            {
+                mutation: ADD_CLIENT,
+                variables: {
+                    "nombre": reqBody.nombre,
+                    "calle": reqBody.calle,
+                    "nif": reqBody.nif,
+                    "cp": reqBody.cp
+                }
+            }
+        );
+        if (!fetchResult.errors) {
+            return res.status(200).json({ message: "Éxito al buscar a los clientes", successful: true, clientes: fetchResult.data.clientes });
+        }
+    }
+
+    return res.status(300).json({ message: "Fallo al buscar los clientes", successful: false });
+}
+
+const GetClientes = async (req: NextApiRequest, res: NextApiResponse) => {
+    const reqBody = req.body;
+
+    if (reqBody.find) {
+        const fetchResult = await GQLFetcher.query(
+            {
+                query: QUERY_CLIENTS,
+                variables: {
+                    "find": {
+                        "_ids": reqBody.find._ids,
+                        "nombre": reqBody.find.nombre
+                    },
+                    "limit": reqBody.limit
+                }
+            }
+        );
+        if (!fetchResult.error) {
+            return res.status(200).json({ message: "Éxito al buscar a los clientes", successful: true, clientes: fetchResult.data.clientes });
+        }
+    }
+
+    return res.status(300).json({ message: "Fallo al buscar los clientes", successful: false });
+}
+
 
 export default handler;
