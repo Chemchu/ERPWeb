@@ -1,7 +1,5 @@
 import { useEffect, useMemo, useState } from "react";
 import { Cliente } from "../../../../tipos/Cliente";
-import { Roles } from "../../../../tipos/Enums/Roles";
-import SimpleListBox from "../simpleListBox";
 
 const ClientForm = (props: { setCliente: Function, cliente?: Cliente, setHayCambios?: Function }) => {
     const [Nombre, setNombre] = useState<string>(props.cliente?.nombre || "");
@@ -37,7 +35,6 @@ const ClientForm = (props: { setCliente: Function, cliente?: Cliente, setHayCamb
             }
             <div className="flex gap-10 w-full ">
                 <div className="flex flex-col gap-4 w-1/2 h-full ">
-
                     <div>
                         <label className="block tracking-wide text-gray-700 font-bold">
                             Nombre
@@ -47,35 +44,28 @@ const ClientForm = (props: { setCliente: Function, cliente?: Cliente, setHayCamb
                     </div>
                     <div className="w-full">
                         <label className="block tracking-wide text-gray-700 font-bold">
-                            Correo electrónico
+                            Dirección
                         </label>
-                        <input className="appearance-none ring-blue-500 block w-full bg-gray-200 text-gray-700 border border-gray-200 rounded py-3 px-4 leading-tight focus:outline-none focus:bg-white focus:border-gray-500" id="grid-last-name" type="text" placeholder="Su dirección de correo electrónico"
-                            value={CP} onChange={(e) => { setCP(e.target.value); props.setHayCambios && props.setHayCambios(true); }} />
+                        <input className="appearance-none ring-blue-500 block w-full bg-gray-200 text-gray-700 border border-gray-200 rounded py-3 px-4 leading-tight focus:outline-none focus:bg-white focus:border-gray-500" id="grid-last-name" type="text" placeholder="Su dirección física"
+                            value={Calle} onChange={(e) => { setCalle(e.target.value); props.setHayCambios && props.setHayCambios(true); }} />
                     </div>
-                    {
-                        !props.cliente &&
-                        <div className="w-full">
-                            <label className="block tracking-wide text-gray-700 font-bold">
-                                Rol
-                            </label>
-                            <SimpleListBox elementos={[Roles.Cajero, Roles.Gerente, Roles.Administrador]} />
-                        </div>
-                    }
                 </div>
                 <div className="flex flex-col gap-4 w-1/2">
                     <div className="w-full">
                         <label className="block tracking-wide text-gray-700 font-bold">
-                            Apellidos
+                            Documento de identidad
                         </label>
-                        <input className="appearance-none ring-blue-500 block w-full bg-gray-200 text-gray-700 border rounded py-3 px-4 leading-tight focus:outline-none focus:bg-white" type="text" placeholder="Apellidos del nuevo empleado"
-                            value={Calle} onChange={(e) => { setCalle(e.target.value); props.setHayCambios && props.setHayCambios(true); }} />
+                        <input className="appearance-none ring-blue-500 block w-full bg-gray-200 text-gray-700 border rounded py-3 px-4 leading-tight focus:outline-none focus:bg-white" type="text"
+                            placeholder="DNI, NIE o CIF"
+                            value={CIF} onChange={(e) => { setCif(e.target.value); props.setHayCambios && props.setHayCambios(true); }} />
                     </div>
                     <div className="w-full">
                         <label className="block tracking-wide text-gray-700 font-bold">
-                            DNI o NIE
+                            Código postal
                         </label>
-                        <input className="appearance-none ring-blue-500 block w-full bg-gray-200 text-gray-700 border border-gray-200 rounded py-3 px-4 leading-tight focus:outline-none focus:bg-white focus:border-gray-500" id="grid-last-name" type="text" placeholder="Número del documento de identidad"
-                            value={CIF} onChange={(e) => { setCif(e.target.value); props.setHayCambios && props.setHayCambios(true); }} />
+                        <input className="appearance-none ring-blue-500 block w-full bg-gray-200 text-gray-700 border border-gray-200 rounded py-3 px-4 leading-tight focus:outline-none focus:bg-white focus:border-gray-500" id="grid-last-name" type="text"
+                            placeholder="Número código postal"
+                            value={CP} onChange={(e) => { setCP(e.target.value); props.setHayCambios && props.setHayCambios(true); }} />
                     </div>
                 </div>
             </div>

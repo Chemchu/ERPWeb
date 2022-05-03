@@ -100,7 +100,7 @@ const ClientesPage = (props: { Clientes: Cliente[] }) => {
                 <Paginador numPages={numPages} paginaActual={currentPage} maxPages={10} cambiarPaginaActual={setPaginaActual} />
             </div>
             <AnimatePresence>
-                {showModal && <AddCliente showModal={setModal} />}
+                {showModal && <AddCliente showModal={setModal} setClientes={setClientes} />}
             </AnimatePresence>
         </div>
     );

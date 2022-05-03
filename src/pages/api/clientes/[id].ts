@@ -40,7 +40,8 @@ const AddClientesFromFile = async (req: NextApiRequest, res: NextApiResponse) =>
             mutation: ADD_CLIENTS_FILE,
             variables: {
                 "csv": reqBody.csv
-            }
+            },
+            fetchPolicy: "no-cache"
         }
     );
     if (!fetchResult.errors) {
@@ -60,7 +61,8 @@ const GetClientesFromQuery = async (userQuery: queryString.ParsedQuery<string>, 
                 "find": {
                     "query": userQuery.query
                 }
-            }
+            },
+            fetchPolicy: "no-cache"
         }
     );
 
@@ -82,7 +84,8 @@ const GetClienteFromId = async (req: NextApiRequest, res: NextApiResponse) => {
                     "find": {
                         "_id": reqBody.find._id
                     }
-                }
+                },
+                fetchPolicy: "no-cache"
             }
         );
         if (!fetchResult.errors) {
@@ -105,7 +108,8 @@ const UpdateCliente = async (req: NextApiRequest, res: NextApiResponse) => {
                 "nombre": reqBody.nombre,
                 "calle": reqBody.calle,
                 "cp": reqBody.cp
-            }
+            },
+            fetchPolicy: "no-cache"
         }
     );
     if (!fetchResult.errors) {
@@ -123,7 +127,8 @@ const DeleteCliente = async (req: NextApiRequest, res: NextApiResponse) => {
             mutation: DELETE_CLIENT,
             variables: {
                 "id": reqBody._id
-            }
+            },
+            fetchPolicy: "no-cache"
         }
     );
     if (!fetchResult.errors) {

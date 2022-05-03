@@ -1,22 +1,40 @@
 import { motion } from "framer-motion";
-import { useEffect, useState } from "react";
+import { Dispatch, SetStateAction, useEffect, useState } from "react";
 import { Cliente } from "../../../tipos/Cliente";
 import { In } from "../../../utils/animations";
-import { CreateProducto } from "../../../utils/fetches";
-import { notifyError } from "../../../utils/toastify";
+import { CreateClientes } from "../../../utils/fetches";
+import { notifyError, notifySuccess } from "../../../utils/toastify";
 import ClientForm from "../../elementos/Forms/clientForm";
 import { Backdrop } from "../backdrop";
 
+const AddCliente = (props: { showModal: Function, setClientes: Dispatch<SetStateAction<Cliente[]>> }) => {
+    const [Cliente, setCliente] = useState<Cliente>({} as Cliente);
+    const [FormatoCorrectoCliente, setFormatoCorrecto] = useState<boolean>(false);
 
-const AddCliente = (props: { showModal: Function }) => {
-    const [Cliente, setCliente] = useState<Cliente>();
+    useEffect(() => {
+        if (!Cliente.calle) { setFormatoCorrecto(false); return; }
+        if (!Cliente.nombre) { setFormatoCorrecto(false); return; }
+        if (!Cliente.cp) { setFormatoCorrecto(false); return; }
+        if (!Cliente.nif) { setFormatoCorrecto(false); return; }
+
+        setFormatoCorrecto(true);
+    }, [Cliente])
+
 
     const CrearCliente = async () => {
         if (!Cliente) {
             notifyError("Error con la creación del cliente");
             return;
         }
-        //CreateClient(Cliente);
+        const created = await CreateClientes(Cliente);
+
+        if (created) {
+            notifySuccess("Cliente creado correctamente");
+            props.setClientes((cList) => [...cList, Cliente]);
+            props.showModal(false);
+            return;
+        }
+        notifyError("No se ha podido añadir el cliente a la base de datos");
     }
 
     return (
@@ -40,7 +58,9 @@ const AddCliente = (props: { showModal: Function }) => {
                             <button className="h-12 w-full rounded-xl bg-red-500 hover:bg-red-600 shadow-lg" onClick={() => props.showModal(false)}>
                                 Cancelar
                             </button>
-                            <button className="h-12 w-full rounded-xl bg-blue-500 hover:bg-blue-600 shadow-lg" onClick={async () => { await CrearCliente() }}>
+                            <button className={`${FormatoCorrectoCliente ? 'bg-blue-500 hover:bg-blue-600' : 'bg-blue-400 hover:bg-blue-400 cursor-default'} 
+                                h-12 w-full rounded-xl shadow-lg`}
+                                onClick={async () => { FormatoCorrectoCliente && await CrearCliente() }}>
                                 Añadir cliente
                             </button>
                         </div>

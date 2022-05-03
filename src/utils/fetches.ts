@@ -170,7 +170,6 @@ export const FetchClientes = async (): Promise<Cliente[]> => {
 
 export const FetchClientesByQuery = async (userQuery: string): Promise<Cliente[]> => {
     try {
-        let cliRes = [] as Cliente[];
         let id: any = new Object;
         id.query = userQuery.valueOf();
 
@@ -200,6 +199,36 @@ export const FetchClientesByQuery = async (userQuery: string): Promise<Cliente[]
         console.error(e);
         notifyError("Error de conexión");
         return [];
+    }
+}
+
+export const CreateClientes = async (cliente: Cliente): Promise<Boolean> => {
+    try {
+        const cResponse = await fetch('/api/clientes', {
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            method: 'POST',
+            body: JSON.stringify({
+                nif: cliente.nif,
+                nombre: cliente.nombre,
+                cp: cliente.cp,
+                calle: cliente.calle
+            })
+        });
+        const cJson = await cResponse.json();
+
+        if (!cResponse.ok) {
+            notifyError(cJson.message);
+            return false;
+        }
+
+        return cJson.successful;
+    }
+    catch (e) {
+        console.error(e);
+        notifyError("Error de conexión");
+        return false;
     }
 }
 
