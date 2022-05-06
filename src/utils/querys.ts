@@ -132,6 +132,15 @@ export const ADD_PRODUCTOS_FILE = gql`
     }
 `;
 
+export const ADD_SALES_FILE = gql`
+    mutation AddVentasFile($ventasJson: String!) {
+      addVentasFile(ventasJson: $ventasJson) {
+        message
+        successful
+      }
+    }
+`;
+
 export const QUERY_CLIENTS = gql`
   query Clientes($limit: Int, $find: ClientesFind) {
     clientes(limit: $limit, find: $find) {

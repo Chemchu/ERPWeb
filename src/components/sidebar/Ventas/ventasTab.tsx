@@ -65,7 +65,7 @@ const SalesPage = (props: { ventas: Venta[], clientes: Cliente[] }) => {
         <div className="flex flex-col h-full w-full bg-white rounded-b-2xl rounded-r-2xl p-4 shadow-lg border-x">
             <div className="flex w-full h-auto py-4">
                 <div className="flex justify-start w-1/3 h-full gap-4 items-start">
-                    <UploadFile tipoDocumento={TipoDocumento.Ventas} />
+                    <UploadFile extension="json" tipoDocumento={TipoDocumento.Ventas} />
                     <DownloadFile tipoDocumento={TipoDocumento.Ventas} />
                 </div>
                 <div className="flex w-2/3 gap-4 justify-end">

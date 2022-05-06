@@ -1,5 +1,5 @@
 import { NextApiRequest, NextApiResponse } from "next"
-import { QUERY_SALE, QUERY_SALES } from "../../../utils/querys";
+import { ADD_SALES_FILE, QUERY_SALE, QUERY_SALES } from "../../../utils/querys";
 import GQLFetcher from "../../../utils/serverFetcher";
 import queryString from 'query-string';
 
@@ -10,6 +10,11 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
     // }
 
     switch (req.method) {
+        case 'POST':
+            if (req.query.id === "file") {
+                return await AddVentaFromFile(req, res);
+            }
+
         case 'GET':
             return await GetSale(req, res);
 
@@ -17,6 +22,21 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
             res.setHeader('Allow', ['GET']);
             res.status(405).end(`Method ${req.method} Not Allowed`);
     }
+}
+
+const AddVentaFromFile = async (req: NextApiRequest, res: NextApiResponse) => {
+    const response = await GQLFetcher.mutate({
+        mutation: ADD_SALES_FILE,
+        variables: {
+            ventasJson: JSON.stringify(req.body)
+        }
+    });
+
+    if (response.data.addVentasFile.successful) {
+        return res.status(200).json({ message: response.data.addVentasFile.message });
+    }
+
+    return res.status(300).json({ message: `Fallo al añadir las ventas: ${response.data.message}` });
 }
 
 const GetSale = async (req: NextApiRequest, res: NextApiResponse) => {
@@ -61,5 +81,12 @@ const GetSale = async (req: NextApiRequest, res: NextApiResponse) => {
     }
 }
 
+export const config = {
+    api: {
+        bodyParser: {
+            sizeLimit: '50mb',
+        },
+    },
+}
 
 export default handler;

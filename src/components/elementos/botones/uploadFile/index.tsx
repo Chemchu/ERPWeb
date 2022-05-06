@@ -1,8 +1,9 @@
 import { TipoDocumento } from "../../../../tipos/Enums/TipoDocumentos";
 import { notifyError, notifyPromise, notifySuccess } from "../../../../utils/toastify";
 
-const UploadFile = (props: { tipoDocumento: TipoDocumento }) => {
-    const TIPOS_PERMITIDOS: string[] = ["csv", "xlsx", "xls"];
+const UploadFile = (props: { extension?: string, tipoDocumento: TipoDocumento }) => {
+    const TIPOS_PERMITIDOS: string[] = props.extension ? [props.extension] : ["csv", "xlsx", "xls"];
+    const TIPOS_PERMITIDOS_CON_PUNTO: string = props.extension ? "." + props.extension : ".csv, .xlsx, .xls";
 
     const handleChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
         try {
@@ -12,13 +13,13 @@ const UploadFile = (props: { tipoDocumento: TipoDocumento }) => {
 
             const f = e.target.files[0];
 
-            if (!f.type) { console.log("File no tiene tipo"); return; }
-            if (!TIPOS_PERMITIDOS.includes(`${f.type.substring(5)}`)) { console.log(`File is not an ${f.type}`); return; }
+            if (!f.type) { notifyError("El archivo no tiene tipo"); return; }
+            if (!Boolean(props.extension) && !TIPOS_PERMITIDOS.includes(`${f.type.substring(5)}`)) { notifyError(`El archivo no es del tipo ${f.type}`); return; }
 
             const text = await f.text();
 
             const res = new Promise(async (resolve) => {
-                const response = await fetch(`/api/${props.tipoDocumento}/file`, {
+                const response = await fetch(`/api/${props.tipoDocumento.toLowerCase()}/file`, {
                     headers: { 'Content-Type': 'application/json' },
                     method: 'POST',
                     body: JSON.stringify(text)
@@ -27,7 +28,7 @@ const UploadFile = (props: { tipoDocumento: TipoDocumento }) => {
                 resolve(json.message)
             });
 
-            notifyPromise(res, "Añadiendo productos...");
+            notifyPromise(res, "Añadiendo documentos...");
         }
         catch (e) {
             console.log(e);
@@ -47,7 +48,7 @@ const UploadFile = (props: { tipoDocumento: TipoDocumento }) => {
             <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
                 <path strokeLinecap="round" strokeLinejoin="round" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12" />
             </svg>
-            <input type='file' className="hidden" accept=".csv, .xlsx, .xls" onChange={handleChange} />
+            <input type='file' className="hidden" accept={TIPOS_PERMITIDOS_CON_PUNTO} onChange={handleChange} />
         </label>
     );
 }
