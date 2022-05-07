@@ -44,7 +44,7 @@ const SalesPage = (props: { ventas: Venta[], clientes: Cliente[] }) => {
     }, [dateRange])
 
 
-    const elementsPerPage = 50;
+    const elementsPerPage = 70;
     const numPages = props.ventas.length <= 0 ? 1 : Math.ceil(props.ventas.length / elementsPerPage);
     const arrayNum = [...Array(8)];
 
@@ -73,7 +73,7 @@ const SalesPage = (props: { ventas: Venta[], clientes: Cliente[] }) => {
                     <DateRange dateRange={dateRange} setDateRange={setDateRange} endDate={endDate} startDate={startDate} />
                     <div className="flex gap-2">
                         <input autoFocus={true} className="rounded-lg border appearance-none shadow-lg w-40 xl:w-96 h-full py-2 px-4 bg-white text-gray-700 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-600" placeholder="ID de la venta..."
-                            onChange={(e) => { setFiltro(e.target.value); }} onKeyPress={async (e) => { }} />
+                            onChange={(e) => { setFiltro(e.target.value); }} onKeyPress={async (e) => { e.key === "Enter" && await Filtrar(filtro) }} />
 
                         {
                             filtro ?

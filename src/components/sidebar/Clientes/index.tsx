@@ -44,7 +44,7 @@ const ClientesPage = (props: { Clientes: Cliente[] }) => {
                 </div>
                 <div className="flex gap-2">
                     <input autoFocus={true} className="rounded-lg border appearance-none shadow-lg w-72 xl:w-96 h-full py-2 px-4 bg-white text-gray-700 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-600" placeholder="Cliente a buscar"
-                        onChange={(e) => { setFiltro(e.target.value); }} onKeyPress={async (e) => { }} />
+                        onChange={(e) => { setFiltro(e.target.value); }} onKeyPress={async (e) => { e.key === "Enter" && await Filtrar(filtro) }} />
 
                     {
                         filtro ?
@@ -126,22 +126,23 @@ const TablaClientes = (props: { clientes: Cliente[] }) => {
 
 const FilaCliente = (props: { cliente: Cliente }) => {
     const [showModal, setModal] = useState<boolean>(false);
+    const [cliente, setCliente] = useState<Cliente>(props.cliente);
 
     return (
         <div className="hover:bg-gray-200">
             <div className="flex justify-between border-b px-5 py-2 cursor-pointer" onClick={() => { setModal(true) }}>
                 <div className="w-1/3 text-sm text-left">
-                    {props.cliente.nombre}
+                    {cliente.nombre}
                 </div>
                 <div className="w-1/3 text-sm text-left">
-                    {props.cliente.nif}
+                    {cliente.nif}
                 </div>
                 <div className="w-1/3 text-base text-left">
-                    {props.cliente.calle}
+                    {cliente.calle}
                 </div>
             </div>
             <AnimatePresence>
-                {showModal && <VerCliente showModal={setModal} cliente={props.cliente} />}
+                {showModal && <VerCliente showModal={setModal} cliente={cliente} setCliente={setCliente} />}
             </AnimatePresence>
         </div>
 
