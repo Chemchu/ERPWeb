@@ -43,7 +43,7 @@ const SalesPage = (props: { ventas: Venta[], clientes: Cliente[] }) => {
     }, [dateRange])
 
 
-    const elementsPerPage = 30;
+    const elementsPerPage = 50;
     const numPages = props.ventas.length <= 0 ? 1 : Math.ceil(props.ventas.length / elementsPerPage);
     const arrayNum = [...Array(8)];
 
