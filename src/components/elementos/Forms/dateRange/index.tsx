@@ -5,6 +5,17 @@ registerLocale('es', es);
 setDefaultLocale('es');
 
 const DateRange = (props: { startDate: Date | null, endDate: Date | null, dateRange: Date[] | null[], setDateRange: Function, isClearable?: boolean }) => {
+    const updateDate = (fechas: Date[]): Date[] => {
+        if (fechas[1] !== null) {
+            const f = fechas[1];
+            f.setHours(f.getHours() + 24);
+
+            return [fechas[0], f];
+        }
+
+        return fechas;
+    }
+
     return (
         <div className="flex gap-2">
             <span className="self-center">
@@ -16,7 +27,7 @@ const DateRange = (props: { startDate: Date | null, endDate: Date | null, dateRa
                 dateFormat="dd/MM/yyyy"
                 startDate={props.startDate}
                 endDate={props.endDate}
-                onChange={(update: any) => { props.setDateRange(update); }}
+                onChange={(update: any) => { props.setDateRange(updateDate(update)); }}
                 isClearable={props.isClearable || true}
             />
         </div>

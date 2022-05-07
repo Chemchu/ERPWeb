@@ -1,5 +1,6 @@
 import { AnimatePresence } from "framer-motion";
 import { useState } from "react";
+import useEmpleadoContext from "../../../../context/empleadoContext";
 import { Empleado } from "../../../../tipos/Empleado";
 import { TipoDocumento } from "../../../../tipos/Enums/TipoDocumentos";
 import { notifyWarn } from "../../../../utils/toastify";
@@ -14,6 +15,7 @@ const EstadisticasVentasPage = (props: { Empleados: Empleado[] }) => {
     const [filtro, setFiltro] = useState<string>("");
     const [EmpleadosFiltrados, setEmpleadosFiltrados] = useState<Empleado[] | undefined>();
     const [showModal, setModal] = useState<boolean>(false);
+    const { Empleado } = useEmpleadoContext();
 
     const elementsPerPage = 50;
     const numPages = Math.ceil(props.Empleados.length / elementsPerPage);

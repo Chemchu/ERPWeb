@@ -11,6 +11,7 @@ import { Paginador } from "../../elementos/Forms/paginador";
 import UploadFile from "../../elementos/botones/uploadFile";
 import VerVenta from "../../modal/verVenta";
 import SkeletonCard from "../../Skeletons/skeletonCard";
+import UploadFileRestricted from "../../elementos/botones/uploadFileRestricted";
 
 const SalesPage = (props: { ventas: Venta[], clientes: Cliente[] }) => {
     if (props.ventas == undefined) throw new Error("Props de ventas en ventasTabs.tsx es undefined");
@@ -65,7 +66,7 @@ const SalesPage = (props: { ventas: Venta[], clientes: Cliente[] }) => {
         <div className="flex flex-col h-full w-full bg-white rounded-b-2xl rounded-r-2xl p-4 shadow-lg border-x">
             <div className="flex w-full h-auto py-4">
                 <div className="flex justify-start w-1/3 h-full gap-4 items-start">
-                    <UploadFile extension="json" tipoDocumento={TipoDocumento.Ventas} />
+                    <UploadFileRestricted extension="json" tipoDocumento={TipoDocumento.Ventas} />
                     <DownloadFile tipoDocumento={TipoDocumento.Ventas} />
                 </div>
                 <div className="flex w-2/3 gap-4 justify-end">
@@ -126,7 +127,7 @@ const SalesPage = (props: { ventas: Venta[], clientes: Cliente[] }) => {
                             })
                 }
             </div>
-            <div className="flex pt-2 items-center justify-center">
+            <div className="flex w-full pt-2 items-center justify-center">
                 <Paginador numPages={numPages} paginaActual={CurrentPage} maxPages={elementsPerPage} cambiarPaginaActual={setPaginaActual} />
             </div>
             <AnimatePresence initial={false}>

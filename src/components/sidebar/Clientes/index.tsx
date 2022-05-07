@@ -11,6 +11,7 @@ import DownloadFile from "../../elementos/botones/downloadFile";
 import VerCliente from "../../modal/verCliente";
 import AddCliente from "../../modal/addCliente";
 import { FetchClientesByQuery } from "../../../utils/fetches";
+import useEmpleadoContext from "../../../context/empleadoContext";
 
 const arrayNum = [...Array(8)];
 

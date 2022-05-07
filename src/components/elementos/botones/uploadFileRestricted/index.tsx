@@ -3,7 +3,7 @@ import { Roles } from "../../../../tipos/Enums/Roles";
 import { TipoDocumento } from "../../../../tipos/Enums/TipoDocumentos";
 import { notifyError, notifyPromise, notifySuccess } from "../../../../utils/toastify";
 
-const UploadFile = (props: { extension?: string, tipoDocumento: TipoDocumento }) => {
+const UploadFileRestricted = (props: { extension?: string, tipoDocumento: TipoDocumento }) => {
     const { Empleado } = useEmpleadoContext();
 
     const TIPOS_PERMITIDOS: string[] = props.extension ? [props.extension] : ["csv", "xlsx", "xls"];
@@ -44,7 +44,8 @@ const UploadFile = (props: { extension?: string, tipoDocumento: TipoDocumento })
         }
     };
 
-    if (Empleado.rol === Roles.Cajero) {
+    if (Empleado.rol !== Roles.Administrador) {
+        console.log(Empleado.rol)
         return (
             <></>
         )
@@ -63,4 +64,4 @@ const UploadFile = (props: { extension?: string, tipoDocumento: TipoDocumento })
     );
 }
 
-export default UploadFile;
+export default UploadFileRestricted;

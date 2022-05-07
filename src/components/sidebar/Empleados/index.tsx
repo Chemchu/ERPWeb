@@ -10,6 +10,7 @@ import VerEmpleado from "../../modal/verEmpleado";
 import SkeletonCard from "../../Skeletons/skeletonCard";
 import NuevoBoton from "../../elementos/botones/nuevoBoton";
 import DownloadFile from "../../elementos/botones/downloadFile";
+import useEmpleadoContext from "../../../context/empleadoContext";
 
 const arrayNum = [...Array(8)];
 

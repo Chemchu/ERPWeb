@@ -1,3 +1,5 @@
+import { Roles } from "./Enums/Roles"
+
 export type Empleado = {
     _id: string,
     nombre: string,
@@ -14,7 +16,7 @@ export type SesionEmpleado = {
     _id: string,
     nombre: string,
     apellidos: string,
-    rol: string,
+    rol: Roles,
     email: string,
     TPV?: string
 }

@@ -1,5 +1,5 @@
 export enum Roles {
-    Cajero = "cajero",
-    Gerente = "gerente",
-    Administrador = "administrador"
+    Cajero = "Cajero",
+    Gerente = "Gerente",
+    Administrador = "Administrador"
 }
