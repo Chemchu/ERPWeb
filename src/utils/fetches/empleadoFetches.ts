@@ -97,9 +97,7 @@ export const FetchEmpleadosByQuery = async (userQuery: string): Promise<Empleado
         if (!pResponse.ok) { notifyError("Error al buscar los empleados"); return []; }
 
         const pJson = await pResponse.json();
-
-        empleados = CreateEmployeeList(pJson.empleados);
-        return empleados;
+        return CreateEmployeeList(pJson.empleados);
     }
     catch (e) {
         console.log(e);

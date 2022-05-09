@@ -68,8 +68,8 @@ const GetEmpleadosFromQuery = async (userQuery: queryString.ParsedQuery<string>,
         }
     );
 
-    if (fetchResult.data.productos) {
-        return res.status(200).json({ message: `Productos encontrados`, productos: fetchResult.data.productos });
+    if (fetchResult.data.empleados) {
+        return res.status(200).json({ message: `Empleados encontrados`, empleados: fetchResult.data.empleados });
     }
 
     return res.status(300).json({ message: `Fallo al realizar la búsqueda` });

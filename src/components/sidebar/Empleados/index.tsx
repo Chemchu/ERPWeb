@@ -1,5 +1,5 @@
 import { AnimatePresence } from "framer-motion";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Empleado } from "../../../tipos/Empleado";
 import { TipoDocumento } from "../../../tipos/Enums/TipoDocumentos";
 import { notifyWarn } from "../../../utils/toastify";
@@ -16,24 +16,17 @@ import { FetchEmpleados, FetchEmpleadosByQuery } from "../../../utils/fetches/em
 const arrayNum = [...Array(8)];
 
 const EmpleadosPage = (props: { Empleados: Empleado[] }) => {
-    const [currentPage, setCurrentPage] = useState<number>(1);
     const [filtro, setFiltro] = useState<string>("");
     const [EmpleadosFiltrados, setEmpleadosFiltrados] = useState<Empleado[] | undefined>();
     const [showModal, setModal] = useState<boolean>(false);
 
-    const elementsPerPage = 50;
-    const numPages = Math.ceil(props.Empleados.length / elementsPerPage);
+    useEffect(() => {
+        if (filtro === "") { setEmpleadosFiltrados(undefined); }
+    }, [filtro])
 
-    const setPaginaActual = (page: number) => {
-        if (page < 1) { return; }
-        if (page > numPages) { return; }
-
-        setCurrentPage(page);
-    }
 
     const Filtrar = async (f: string) => {
-        if (f === "") { setEmpleadosFiltrados(undefined); return; }
-        if (!f.match('^[0-9a-fA-F]{24}$')) { notifyWarn("Cliente inválido"); return; }
+        if (f === "") { return; }
 
         setEmpleadosFiltrados(await FetchEmpleadosByQuery(f));
     }
@@ -48,7 +41,7 @@ const EmpleadosPage = (props: { Empleados: Empleado[] }) => {
                 </div>
                 <div className="flex gap-2">
                     <input autoFocus={true} className="rounded-lg border appearance-none shadow-lg w-72 xl:w-96 h-full py-2 px-4 bg-white text-gray-700 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-600" placeholder="Empleado a buscar"
-                        onChange={(e) => { setFiltro(e.target.value); }} onKeyPress={async (e) => { }} />
+                        onChange={(e) => { setFiltro(e.target.value); }} onKeyPress={async (e) => { e.key === "Enter" && await Filtrar(filtro) }} />
 
                     {
                         filtro ?
@@ -74,15 +67,32 @@ const EmpleadosPage = (props: { Empleados: Empleado[] }) => {
                     Rol
                 </div>
             </div>
-            <div className="h-full w-full border overflow-y-scroll">
-                {
-                    props.Empleados.length <= 0 ?
-                        arrayNum.map((n, i) => {
-                            return (
-                                <SkeletonCard key={`SkeletonProdList-${i}`} />
-                            );
-                        })
-                        :
+            <TablaEmpleado Empleados={EmpleadosFiltrados || props.Empleados} />
+            <AnimatePresence>
+                {showModal && <AddEmpleado showModal={setModal} />}
+            </AnimatePresence>
+        </div>
+    );
+}
+
+const TablaEmpleado = (props: { Empleados?: Empleado[] }) => {
+    const [currentPage, setCurrentPage] = useState<number>(1);
+
+    const elementsPerPage = 50;
+    const numPages = Math.ceil(props.Empleados ? (props.Empleados.length / elementsPerPage) : 30);
+
+    const setPaginaActual = (page: number) => {
+        if (page < 1) { return; }
+        if (page > numPages) { return; }
+
+        setCurrentPage(page);
+    }
+
+    if (props.Empleados) {
+        return (
+            <>
+                <div className="h-full w-full border overflow-y-scroll">
+                    {
                         props.Empleados.slice((elementsPerPage * (currentPage - 1)), currentPage * elementsPerPage).map((emp: Empleado, index) => {
                             return (
                                 <div key={`FilaProdTable${emp._id}`}>
@@ -90,16 +100,33 @@ const EmpleadosPage = (props: { Empleados: Empleado[] }) => {
                                 </div>
                             );
                         })
+                    }
+                </div>
+                <div className="flex pt-2 items-center justify-center">
+                    <Paginador numPages={numPages} paginaActual={currentPage} maxPages={10} cambiarPaginaActual={setPaginaActual} />
+                </div>
+            </>
+        )
+    }
+
+    return (
+        <>
+            <div className="h-full w-full border overflow-y-scroll">
+                {
+                    arrayNum.map((n, i) => {
+                        return (
+                            <SkeletonCard key={`SkeletonProdList-${i}`} />
+                        );
+                    })
                 }
             </div>
             <div className="flex pt-2 items-center justify-center">
                 <Paginador numPages={numPages} paginaActual={currentPage} maxPages={10} cambiarPaginaActual={setPaginaActual} />
             </div>
-            <AnimatePresence>
-                {showModal && <AddEmpleado showModal={setModal} />}
-            </AnimatePresence>
-        </div>
-    );
+        </>
+
+
+    )
 }
 
 const FilaEmpleado = (props: { empleado: Empleado }) => {
