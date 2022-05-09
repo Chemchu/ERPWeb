@@ -97,13 +97,12 @@ const GetClienteFromId = async (req: NextApiRequest, res: NextApiResponse) => {
 }
 
 const UpdateCliente = async (req: NextApiRequest, res: NextApiResponse) => {
-
     const reqBody = req.body;
     const fetchResult = await GQLFetcher.mutate(
         {
             mutation: UPDATE_CLIENT,
             variables: {
-                "id": reqBody.id,
+                "id": reqBody._id,
                 "nif": reqBody.nif,
                 "nombre": reqBody.nombre,
                 "calle": reqBody.calle,
@@ -112,11 +111,12 @@ const UpdateCliente = async (req: NextApiRequest, res: NextApiResponse) => {
             fetchPolicy: "no-cache"
         }
     );
-    if (!fetchResult.errors) {
-        return res.status(200).json({ message: fetchResult.data.message, successful: fetchResult.data.successful });
+
+    if (fetchResult.data.updateCliente.successful) {
+        return res.status(200).json({ message: fetchResult.data.updateCliente.message, successful: fetchResult.data.updateCliente.successful });
     }
 
-    return res.status(300).json({ message: "Fallo al actualizar el cliente", successful: false });
+    return res.status(300).json({ message: fetchResult.data.updateCliente.message, successful: false });
 }
 
 const DeleteCliente = async (req: NextApiRequest, res: NextApiResponse) => {

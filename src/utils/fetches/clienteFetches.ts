@@ -75,6 +75,29 @@ export const CreateClientes = async (cliente: Cliente): Promise<Boolean> => {
     }
 }
 
+export const UpdateCliente = async (cliente: Cliente): Promise<Boolean> => {
+    try {
+        const pResponse = await fetch(`/api/clientes/${cliente._id}`, {
+            method: 'PUT',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(cliente)
+        });
+
+        const msg = await pResponse.json();
+
+        if (!pResponse.ok) { notifyError(msg.message); return false; }
+        else { notifySuccess(msg.message); return msg.successful; }
+
+    }
+    catch (e) {
+        console.log(e);
+        notifyError("Error de conexión");
+        return false;
+    }
+}
+
 export const DeleteCliente = async (clienteId: string): Promise<Boolean> => {
     try {
         const pResponse = await fetch(`/api/clientes/${clienteId}`, {
