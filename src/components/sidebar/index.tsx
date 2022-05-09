@@ -17,7 +17,6 @@ const Sidebar = React.memo((props: { isCollapsed: boolean, setCollapsed: Functio
 })
 
 const OpenedSidebar = (props: { setCollapsed: Function, IndexSeleccionado: SidebarOption, setIndex: Function }) => {
-    const { Empleado } = useEmpleadoContext();
 
     return (
         <motion.div initial={{ x: "-10vh", opacity: 0 }} animate={{ x: 0, opacity: 1 }} exit={{ x: "-10vh", opacity: 0 }}

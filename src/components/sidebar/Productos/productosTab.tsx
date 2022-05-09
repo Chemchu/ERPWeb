@@ -35,6 +35,7 @@ const ProductPage = () => {
 
 
     const Filtrar = async (f: string) => {
+        if (f === "") { return; }
         if (!f.match('^[-_a-zA-Z0-9.\s ]*$')) { notifyWarn("Producto inválido"); return; }
 
         setProductosFiltradas(await FetchProductoByQuery(f));
