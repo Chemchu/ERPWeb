@@ -1,7 +1,9 @@
 import { motion } from "framer-motion";
+import { Roles } from "../../../tipos/Enums/Roles";
 import { Producto } from "../../../tipos/Producto";
 import { In } from "../../../utils/animations";
 import { DeleteProducto } from "../../../utils/fetches/productosFetches";
+import AuthorizationWrapper from "../../authorizationWrapper";
 import { Backdrop } from "../backdrop";
 
 const BorrarProductoModal = (props: { showModal: Function, showProductModal: Function, producto: Producto, setProducto: Function }) => {
@@ -53,4 +55,4 @@ const BorrarProductoModal = (props: { showModal: Function, showProductModal: Fun
     )
 }
 
-export default BorrarProductoModal;
+export default AuthorizationWrapper([Roles.Administrador, Roles.Gerente])(BorrarProductoModal);

@@ -1,8 +1,11 @@
 import { AnimatePresence } from "framer-motion";
 import { useState } from "react";
 import { Cierre } from "../../../tipos/Cierre";
+import { TipoDocumento } from "../../../tipos/Enums/TipoDocumentos";
 import { TPVType } from "../../../tipos/TPV";
 import { notifyWarn } from "../../../utils/toastify";
+import DownloadFile from "../../elementos/botones/downloadFile";
+import UploadFileRestricted from "../../elementos/botones/uploadFileRestricted";
 import DateRange from "../../elementos/Forms/dateRange";
 import { Paginador } from "../../elementos/Forms/paginador";
 import VerCierre from "../../modal/verCierre";
@@ -36,26 +39,24 @@ const CierrePage = (props: { cierres: Cierre[], tpvs: TPVType[] }) => {
 
     return (
         <div className="flex flex-col h-full w-full bg-white rounded-b-2xl rounded-r-2xl p-4 shadow-lg border-x">
-            <div className="flex w-full h-auto py-4 gap-10 justify-end">
-                <div className="flex gap-2">
-                    <div className="flex gap-4 w-full h-full">
-                        <DateRange dateRange={dateRange} setDateRange={setDateRange} endDate={endDate} startDate={startDate} />
-                    </div>
-                    <input autoFocus={true} className="rounded-lg border appearance-none shadow-lg w-72 xl:w-96 h-full py-2 px-4 bg-white text-gray-700 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-600" placeholder="ID del cierre"
-                        onChange={(e) => { setFiltro(e.target.value); }} onKeyPress={async (e) => { }} />
+            <div className="flex w-full h-auto py-4 gap-2 justify-end">
+                <UploadFileRestricted tipoDocumento={TipoDocumento.Cierres} />
+                <DownloadFile tipoDocumento={TipoDocumento.Cierres} />
+                <DateRange dateRange={dateRange} setDateRange={setDateRange} endDate={endDate} startDate={startDate} />
+                <input autoFocus={true} className="rounded-lg border appearance-none shadow-lg w-max-72 xl:w-96 h-full py-2 px-4 bg-white text-gray-700 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-600" placeholder="ID del cierre"
+                    onChange={(e) => { setFiltro(e.target.value); }} onKeyPress={async (e) => { }} />
 
-                    {
-                        filtro ?
-                            <button className="px-4 py-2 font-semibold text-white bg-blue-500 rounded-lg shadow-md hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-400 focus:ring-offset-2 focus:ring-offset-purple-200"
-                                onClick={async (e) => { e.preventDefault(); await Filtrar(filtro) }}>
-                                Filtrar
-                            </button>
-                            :
-                            <button disabled className="px-4 py-2 font-semibold text-white bg-blue-300 rounded-lg shadow-md cursor-default">
-                                Filtrar
-                            </button>
-                    }
-                </div>
+                {
+                    filtro ?
+                        <button className="px-4 py-2 font-semibold text-white bg-blue-500 rounded-lg shadow-md hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-400 focus:ring-offset-2 focus:ring-offset-purple-200"
+                            onClick={async (e) => { e.preventDefault(); await Filtrar(filtro) }}>
+                            Filtrar
+                        </button>
+                        :
+                        <button disabled className="px-4 py-2 font-semibold text-white bg-blue-300 rounded-lg shadow-md cursor-default">
+                            Filtrar
+                        </button>
+                }
             </div>
             <div className="flex justify-between border-t-2 border-x-2 rounded-t-2xl px-5 py-2">
                 <div className="text-left text-sm font-semibold w-1/4">

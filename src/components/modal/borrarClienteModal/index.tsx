@@ -1,8 +1,10 @@
 import { motion } from "framer-motion";
 import { Dispatch, SetStateAction } from "react";
 import { Cliente } from "../../../tipos/Cliente";
+import { Roles } from "../../../tipos/Enums/Roles";
 import { In } from "../../../utils/animations";
 import { DeleteCliente } from "../../../utils/fetches/clienteFetches";
+import AuthorizationWrapper from "../../authorizationWrapper";
 import { Backdrop } from "../backdrop";
 
 const BorrarClienteModal = (props: { showModal: Function, showClienteModal: Function, cliente: Cliente, setClientes: Dispatch<SetStateAction<Cliente[]>> }) => {
@@ -54,4 +56,4 @@ const BorrarClienteModal = (props: { showModal: Function, showClienteModal: Func
     )
 }
 
-export default BorrarClienteModal;
+export default AuthorizationWrapper([Roles.Administrador, Roles.Gerente])(BorrarClienteModal);
