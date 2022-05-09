@@ -53,17 +53,18 @@ export const OcuparTPV = async (tpvId: string, emp: SesionEmpleado, cajaInicial:
                 },
                 body: JSON.stringify({ tpvId: tpvId, empId: emp._id, cajaInicial: cajaInicial })
             });
-        const tpvOcupadaJson = await fetchRes.json();
+        const res = await fetchRes.json();
+        const responseJson = JSON.parse(res);
 
         if (fetchRes.ok) {
-            notifySuccess(tpvOcupadaJson.message);
+            notifySuccess(responseJson.message);
             let e = emp;
             e.TPV = tpvId;
             setEmpleado(e);
         }
-        else { notifyError(tpvOcupadaJson.message); }
+        else { notifyError(responseJson.message); }
 
-        return tpvOcupadaJson.successful;
+        return responseJson.successful;
     }
     catch (e) {
         console.error(e);

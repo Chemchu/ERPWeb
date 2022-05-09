@@ -2,12 +2,13 @@ import getJwtFromString from "../../hooks/jwt";
 import { Empleado } from "../../tipos/Empleado";
 import { notifyError } from "../toastify";
 import { CreateEmployee, CreateEmployeeList } from "../typeCreator";
+import queryString from 'query-string';
 
 export const FetchEmpleado = async (_id: string): Promise<Empleado | undefined> => {
     if (!_id) { throw "ID del empleado no puede ser undefined"; }
 
     try {
-        const fetchRes = await fetch(`/api/empleado/${_id}`);
+        const fetchRes = await fetch(`/api/empleados/${_id}`);
 
         if (!fetchRes.ok) { notifyError("Error al buscar al empleado"); return undefined; }
 
@@ -24,7 +25,7 @@ export const FetchEmpleado = async (_id: string): Promise<Empleado | undefined> 
 
 export const FetchEmpleados = async (): Promise<Empleado[]> => {
     try {
-        const fetchRes = await fetch(`/api/empleado/`);
+        const fetchRes = await fetch(`/api/empleados`);
 
         if (!fetchRes.ok) { notifyError("Error al buscar al empleado"); return []; }
 
@@ -81,5 +82,28 @@ export const FetchCurrentUser = async (): Promise<Empleado> => {
 
         return {} as Empleado;
     }
+}
 
+export const FetchEmpleadosByQuery = async (userQuery: string): Promise<Empleado[]> => {
+    try {
+        let empleados = [] as Empleado[];
+        let id: any = new Object;
+        id.query = userQuery.valueOf();
+
+        const query = queryString.stringify(id);
+
+        const pResponse = await fetch(`/api/empleados/${query}`);
+
+        if (!pResponse.ok) { notifyError("Error al buscar los empleados"); return []; }
+
+        const pJson = await pResponse.json();
+
+        empleados = CreateEmployeeList(pJson.empleados);
+        return empleados;
+    }
+    catch (e) {
+        console.log(e);
+        notifyError("Error de conexión");
+        return [];
+    }
 }

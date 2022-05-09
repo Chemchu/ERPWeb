@@ -398,4 +398,22 @@ export const QUERY_EMPLEADOS = gql`
     email
   }
 }
+`;
+
+export const DELETE_EMPLEADO = gql`
+    mutation DeleteEmpleado($id: ID!) {
+  deleteEmpleado(_id: $id) {
+    message
+    successful
+  }
+}
+`
+
+export const UPDATE_EMPLEADO = gql`
+    mutation UpdateEmpleado($id: ID!, $nombre: String, $apellidos: String, $rol: String, $email: String) {
+  updateEmpleado(_id: $id, nombre: $nombre, apellidos: $apellidos, rol: $rol, email: $email) {
+    message
+    successful
+  }
+}
 `

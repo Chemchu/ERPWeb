@@ -40,7 +40,8 @@ const GetTpvById = async (req: NextApiRequest, res: NextApiResponse) => {
                     "_id": query.TPVId
                 },
                 "limit": 3000
-            }
+            },
+            fetchPolicy: "no-cache"
         }
     );
 
@@ -62,8 +63,9 @@ const GetTpvsByUcupabilidad = async (req: NextApiRequest, res: NextApiResponse) 
                 "find": {
                     "libre": isLibre
                 },
-                "limit": 3000
-            }
+                "limit": 100
+            },
+            fetchPolicy: "no-cache"
         }
     );
     if (fetchResult.data.tpvs) {
@@ -81,7 +83,8 @@ const OcuparTpvById = async (req: NextApiRequest, res: NextApiResponse) => {
                 "idEmpleado": req.body.empId,
                 "idTpv": req.body.tpvId,
                 "cajaInicial": req.body.cajaInicial
-            }
+            },
+            fetchPolicy: "no-cache"
         }
     );
 

@@ -8,9 +8,10 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
             {
                 query: QUERY_TPVS,
                 variables: {
-                    "limit": 3000,
+                    "limit": 100,
                     "find": null
-                }
+                },
+                fetchPolicy: "no-cache"
             }
         );
 

@@ -39,7 +39,6 @@ const AbrirCaja = (props: { setShowModal: Function, setEmpleadoUsandoTPV: Functi
         const tpv: TPVType | undefined = tpvs.find((t) => {
             return t.nombre === currentTpvName
         });
-
         const cInicial: number = parseFloat(Number(cajaInicial).toFixed(2));
 
         if (tpv?._id) {

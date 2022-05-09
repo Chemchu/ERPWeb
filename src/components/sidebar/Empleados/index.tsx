@@ -11,6 +11,7 @@ import SkeletonCard from "../../Skeletons/skeletonCard";
 import NuevoBoton from "../../elementos/botones/nuevoBoton";
 import DownloadFile from "../../elementos/botones/downloadFile";
 import useEmpleadoContext from "../../../context/empleadoContext";
+import { FetchEmpleados, FetchEmpleadosByQuery } from "../../../utils/fetches/empleadoFetches";
 
 const arrayNum = [...Array(8)];
 
@@ -34,7 +35,7 @@ const EmpleadosPage = (props: { Empleados: Empleado[] }) => {
         if (f === "") { setEmpleadosFiltrados(undefined); return; }
         if (!f.match('^[0-9a-fA-F]{24}$')) { notifyWarn("Cliente inválido"); return; }
 
-        // setClientesFiltrados(/* Fetch clientes */);
+        setEmpleadosFiltrados(await FetchEmpleadosByQuery(f));
     }
 
     return (
