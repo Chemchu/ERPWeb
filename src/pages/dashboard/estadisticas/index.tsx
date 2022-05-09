@@ -2,10 +2,12 @@ import { Tab } from "@headlessui/react";
 import { GetServerSideProps } from "next";
 import { useEffect } from "react";
 import EnDesarrolloPage from "../../../components/enDesarrollo";
+import EstadisticasVentasPage from "../../../components/sidebar/Estadisticas/ventas";
 import useEmpleadoContext from "../../../context/empleadoContext";
 import getJwtFromString from "../../../hooks/jwt";
 import DashboardLayout from "../../../layout";
 import { SesionEmpleado } from "../../../tipos/Empleado";
+import { Roles } from "../../../tipos/Enums/Roles";
 
 const Stats = (props: { EmpleadoSesion: SesionEmpleado }) => {
     const { Empleado, SetEmpleado } = useEmpleadoContext();
@@ -80,7 +82,7 @@ const Stats = (props: { EmpleadoSesion: SesionEmpleado }) => {
                     )}
                 >
                     {/* <EstadisticasPage /> */}
-                    <EnDesarrolloPage />
+                    <EstadisticasVentasPage Empleados={[]} />
                 </Tab.Panel>
 
                 <Tab.Panel
@@ -118,7 +120,7 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
         apellidos: jwt.apellidos,
         email: jwt.email,
         nombre: jwt.nombre,
-        rol: jwt.rol,
+        rol: Roles[jwt.rol as keyof typeof Roles],
     }
     jwt.TPV ? emp.TPV = jwt.TPV : null;
 

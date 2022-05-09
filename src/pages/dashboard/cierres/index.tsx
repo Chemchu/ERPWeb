@@ -7,6 +7,7 @@ import getJwtFromString from "../../../hooks/jwt";
 import DashboardLayout from "../../../layout";
 import { Cierre } from "../../../tipos/Cierre";
 import { SesionEmpleado } from "../../../tipos/Empleado";
+import { Roles } from "../../../tipos/Enums/Roles";
 import { TPVType } from "../../../tipos/TPV";
 import { FetchCierres, FetchTPVs } from "../../../utils/fetches";
 
@@ -78,7 +79,7 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
         apellidos: jwt.apellidos,
         email: jwt.email,
         nombre: jwt.nombre,
-        rol: jwt.rol,
+        rol: Roles[jwt.rol as keyof typeof Roles] || Roles.Cajero,
     }
     jwt.TPV ? emp.TPV = jwt.TPV : null;
 

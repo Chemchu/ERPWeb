@@ -1,8 +1,10 @@
 import { AnimatePresence } from "framer-motion";
 import { useState } from "react";
 import { Empleado } from "../../../../tipos/Empleado";
+import { Roles } from "../../../../tipos/Enums/Roles";
 import { TipoDocumento } from "../../../../tipos/Enums/TipoDocumentos";
 import { notifyWarn } from "../../../../utils/toastify";
+import AuthorizationWrapper from "../../../authorizationWrapper";
 import NuevoBoton from "../../../elementos/botones/nuevoBoton";
 import UploadFile from "../../../elementos/botones/uploadFile";
 import SkeletonCard from "../../../Skeletons/skeletonCard";
@@ -17,6 +19,9 @@ const EstadisticasVentasPage = (props: { Empleados: Empleado[] }) => {
 
     const elementsPerPage = 50;
     const numPages = Math.ceil(props.Empleados.length / elementsPerPage);
+
+    console.log("Eyyy");
+
 
     const setPaginaActual = (page: number) => {
         if (page < 1) { return; }
@@ -121,4 +126,4 @@ const FilaEmpleado = (props: { empleado: Empleado }) => {
 }
 
 
-export default EstadisticasVentasPage;
+export default AuthorizationWrapper([Roles.Administrador])(EstadisticasVentasPage);

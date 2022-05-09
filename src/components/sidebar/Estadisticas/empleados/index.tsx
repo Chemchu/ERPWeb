@@ -10,7 +10,7 @@ import SkeletonCard from "../../../Skeletons/skeletonCard";
 
 const arrayNum = [...Array(8)];
 
-const EstadisticasVentasPage = (props: { Empleados: Empleado[] }) => {
+const EstadisticasEmpleadoPage = (props: { Empleados: Empleado[] }) => {
     const [currentPage, setCurrentPage] = useState<number>(1);
     const [filtro, setFiltro] = useState<string>("");
     const [EmpleadosFiltrados, setEmpleadosFiltrados] = useState<Empleado[] | undefined>();
@@ -123,4 +123,4 @@ const FilaEmpleado = (props: { empleado: Empleado }) => {
 }
 
 
-export default EstadisticasVentasPage;
+export default EstadisticasEmpleadoPage;

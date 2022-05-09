@@ -10,6 +10,7 @@ import { GetServerSideProps } from "next";
 import getJwtFromString from "../../../hooks/jwt";
 import { SesionEmpleado } from "../../../tipos/Empleado";
 import useEmpleadoContext from "../../../context/empleadoContext";
+import { Roles } from "../../../tipos/Enums/Roles";
 
 const PuntoDeVenta = (props: { isEmpleadoUsingTPV: boolean, EmpleadoSesion: SesionEmpleado }) => {
     const [Productos, SetProductos] = useState<Producto[]>([]);
@@ -51,7 +52,7 @@ export const getServerSideProps: GetServerSideProps = async (ctx) => {
         apellidos: jwt.apellidos,
         email: jwt.email,
         nombre: jwt.nombre,
-        rol: jwt.rol,
+        rol: Roles[jwt.rol as keyof typeof Roles] || Roles.Cajero,
     }
     jwt.TPV ? emp.TPV = jwt.TPV : null;
 
