@@ -4,13 +4,13 @@ import DashboardLayout from "../../../layout";
 import { AnimatePresence, motion } from "framer-motion";
 import { Producto } from "../../../tipos/Producto";
 import AbrirCaja from "../../../components/modal/abrirCaja";
-import { FetchProductos } from "../../../utils/fetches";
 import CerrarCaja from "../../../components/modal/cerrarCaja";
 import { GetServerSideProps } from "next";
 import getJwtFromString from "../../../hooks/jwt";
 import { SesionEmpleado } from "../../../tipos/Empleado";
 import useEmpleadoContext from "../../../context/empleadoContext";
 import { Roles } from "../../../tipos/Enums/Roles";
+import { FetchProductos } from "../../../utils/fetches/productosFetches";
 
 const PuntoDeVenta = (props: { isEmpleadoUsingTPV: boolean, EmpleadoSesion: SesionEmpleado }) => {
     const [Productos, SetProductos] = useState<Producto[]>([]);

@@ -5,12 +5,12 @@ import { Paginador } from "../../elementos/Forms/paginador";
 import SkeletonCard from "../../Skeletons/skeletonCard";
 import VerProducto from "../../modal/verProducto";
 import { notifyWarn } from "../../../utils/toastify";
-import { FetchProductoByQuery, FetchProductos } from "../../../utils/fetches";
 import UploadFile from "../../elementos/botones/uploadFile";
 import { TipoDocumento } from "../../../tipos/Enums/TipoDocumentos";
 import DownloadFile from "../../elementos/botones/downloadFile";
 import AddProducto from "../../modal/addProducto";
 import NuevoBoton from "../../elementos/botones/nuevoBoton";
+import { FetchProductoByQuery, FetchProductos } from "../../../utils/fetches/productosFetches";
 
 const arrayNum = [...Array(8)];
 

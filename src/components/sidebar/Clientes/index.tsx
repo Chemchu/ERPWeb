@@ -10,8 +10,7 @@ import NuevoBoton from "../../elementos/botones/nuevoBoton";
 import DownloadFile from "../../elementos/botones/downloadFile";
 import VerCliente from "../../modal/verCliente";
 import AddCliente from "../../modal/addCliente";
-import { FetchClientesByQuery } from "../../../utils/fetches";
-import useEmpleadoContext from "../../../context/empleadoContext";
+import { FetchClientesByQuery } from "../../../utils/fetches/clienteFetches";
 
 const arrayNum = [...Array(8)];
 

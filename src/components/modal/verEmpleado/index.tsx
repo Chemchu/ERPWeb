@@ -3,7 +3,7 @@ import React, { useEffect } from "react";
 import { useState } from "react";
 import { Empleado } from "../../../tipos/Empleado";
 import { In } from "../../../utils/animations";
-import { UpdateEmpleado } from "../../../utils/fetches";
+import { UpdateEmpleado } from "../../../utils/fetches/empleadoFetches";
 import EditableLabel from "../../elementos/Forms/editableLabel";
 import EmpleadoForm from "../../elementos/Forms/empleadoForm";
 import { Backdrop } from "../backdrop";

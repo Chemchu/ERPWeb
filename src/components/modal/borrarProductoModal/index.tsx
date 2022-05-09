@@ -1,7 +1,7 @@
 import { motion } from "framer-motion";
 import { Producto } from "../../../tipos/Producto";
 import { In } from "../../../utils/animations";
-import { DeleteProducto } from "../../../utils/fetches";
+import { DeleteProducto } from "../../../utils/fetches/productosFetches";
 import { Backdrop } from "../backdrop";
 
 const BorrarProductoModal = (props: { showModal: Function, showProductModal: Function, producto: Producto, setProducto: Function }) => {

@@ -3,7 +3,7 @@ import { useEffect, useState } from "react";
 import useEmpleadoContext from "../../../context/empleadoContext";
 import { TPVType } from "../../../tipos/TPV";
 import { In } from "../../../utils/animations";
-import { FetchTPVsByDisponibilidad, OcuparTPV } from "../../../utils/fetches";
+import { FetchTPVsByDisponibilidad, OcuparTPV } from "../../../utils/fetches/tpvFetches";
 import { ValidatePositiveFloatingNumber } from "../../../utils/validator";
 import Droplist from "../../elementos/Forms/droplist";
 import { Backdrop } from "../backdrop";

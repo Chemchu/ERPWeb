@@ -2,7 +2,7 @@ import { motion } from "framer-motion";
 import { Dispatch, SetStateAction, useEffect, useState } from "react";
 import { Cliente } from "../../../tipos/Cliente";
 import { In } from "../../../utils/animations";
-import { CreateClientes } from "../../../utils/fetches";
+import { CreateClientes } from "../../../utils/fetches/clienteFetches";
 import { notifyError, notifySuccess } from "../../../utils/toastify";
 import ClientForm from "../../elementos/Forms/clientForm";
 import { Backdrop } from "../backdrop";

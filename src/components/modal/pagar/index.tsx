@@ -6,7 +6,6 @@ import useProductEnCarritoContext from "../../../context/productosEnCarritoConte
 import { Cliente } from "../../../tipos/Cliente";
 import { CustomerPaymentInformation } from "../../../tipos/CustomerPayment";
 import { TipoCobro } from "../../../tipos/Enums/TipoCobro";
-import { AddVenta, FetchClientes } from "../../../utils/fetches";
 import { CalcularCambio } from "../../../utils/preciosUtils";
 import { ValidatePositiveFloatingNumber } from "../../../utils/validator";
 import Dropdown from "../../elementos/Forms/dropdown";
@@ -16,6 +15,8 @@ import { Backdrop } from "../backdrop";
 import { notifyError, notifySuccess } from "../../../utils/toastify";
 import GenerateQrBase64 from "../../../utils/generateQr";
 import { In } from "../../../utils/animations";
+import { FetchClientes } from "../../../utils/fetches/clienteFetches";
+import { AddVenta } from "../../../utils/fetches/ventasFetches";
 
 export const ModalPagar = (props: { PagoCliente: CustomerPaymentInformation, handleModalOpen: Function, AllClientes?: Cliente[] }) => {
     const [dineroEntregado, setDineroEntregado] = useState<string>("0");

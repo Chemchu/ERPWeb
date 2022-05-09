@@ -3,7 +3,6 @@ import { useEffect, useState } from "react";
 import { Empleado } from "../../../tipos/Empleado";
 import { Producto } from "../../../tipos/Producto";
 import { In } from "../../../utils/animations";
-import { CreateProducto } from "../../../utils/fetches";
 import { notifyError } from "../../../utils/toastify";
 import { CreateEmployee } from "../../../utils/typeCreator";
 import EmpleadoForm from "../../elementos/Forms/empleadoForm";

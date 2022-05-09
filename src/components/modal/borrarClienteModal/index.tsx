@@ -1,7 +1,7 @@
 import { motion } from "framer-motion";
 import { Cliente } from "../../../tipos/Cliente";
 import { In } from "../../../utils/animations";
-import { DeleteCliente } from "../../../utils/fetches";
+import { DeleteCliente } from "../../../utils/fetches/clienteFetches";
 import { Backdrop } from "../backdrop";
 
 const BorrarClienteModal = (props: { showModal: Function, showClienteModal: Function, cliente: Cliente, setCliente: Function }) => {

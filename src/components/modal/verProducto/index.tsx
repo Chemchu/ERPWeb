@@ -4,7 +4,6 @@ import { useRef, useState } from "react";
 import { useReactToPrint } from "react-to-print";
 import { Producto } from "../../../tipos/Producto";
 import { In } from "../../../utils/animations";
-import { UpdateProducto } from "../../../utils/fetches";
 import { notifyError } from "../../../utils/toastify";
 import { IsValidProduct } from "../../../utils/validator";
 import Etiqueta from "../../printable/etiqueta";
@@ -12,6 +11,7 @@ import EditableLabel from "../../elementos/Forms/editableLabel";
 import ProductoForm from "../../elementos/Forms/productoForm";
 import { Backdrop } from "../backdrop";
 import BorrarProductoModal from "../borrarProductoModal";
+import { UpdateProducto } from "../../../utils/fetches/productosFetches";
 
 export const VerProducto = (props: { producto: Producto, setProducto: Function, showModal: Function }) => {
     const [Nombre, setNombre] = useState<string>(props.producto.nombre || "");

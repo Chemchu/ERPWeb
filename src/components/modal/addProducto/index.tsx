@@ -2,7 +2,7 @@ import { motion } from "framer-motion";
 import { useEffect, useState } from "react";
 import { Producto } from "../../../tipos/Producto";
 import { In } from "../../../utils/animations";
-import { CreateProducto } from "../../../utils/fetches";
+import { CreateProducto } from "../../../utils/fetches/productosFetches";
 import { notifyError } from "../../../utils/toastify";
 import ProductoForm from "../../elementos/Forms/productoForm";
 import { Backdrop } from "../backdrop";

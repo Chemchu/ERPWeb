@@ -11,7 +11,7 @@ import { Devolucion } from '../../../tipos/Devolucion';
 import { SesionEmpleado } from '../../../tipos/Empleado';
 import { Roles } from '../../../tipos/Enums/Roles';
 import { Venta } from '../../../tipos/Venta';
-import { FetchVentas } from '../../../utils/fetches';
+import { FetchVentas } from '../../../utils/fetches/ventasFetches';
 
 const Ventas = (props: { EmpleadoSesion: SesionEmpleado }) => {
     const [Ventas, setVentas] = useState<Venta[]>([]);

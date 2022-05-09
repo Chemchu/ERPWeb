@@ -9,8 +9,6 @@ import getJwtFromString from "../../../hooks/jwt";
 import DashboardLayout from "../../../layout";
 import { SesionEmpleado } from "../../../tipos/Empleado";
 import { Roles } from "../../../tipos/Enums/Roles";
-import { Producto } from "../../../tipos/Producto";
-import { FetchProductos } from "../../../utils/fetches";
 
 const Productos = (props: { EmpleadoSesion: SesionEmpleado }) => {
     const { Empleado, SetEmpleado } = useEmpleadoContext();

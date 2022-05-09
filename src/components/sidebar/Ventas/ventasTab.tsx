@@ -3,7 +3,6 @@ import React, { useEffect, useState } from "react";
 import { Cliente } from "../../../tipos/Cliente";
 import { TipoDocumento } from "../../../tipos/Enums/TipoDocumentos";
 import { Venta } from "../../../tipos/Venta";
-import { FetchVenta, FetchVentasByDateRange } from "../../../utils/fetches";
 import { notifyWarn } from "../../../utils/toastify";
 import DateRange from "../../elementos/Forms/dateRange";
 import DownloadFile from "../../elementos/botones/downloadFile";
@@ -12,6 +11,7 @@ import UploadFile from "../../elementos/botones/uploadFile";
 import VerVenta from "../../modal/verVenta";
 import SkeletonCard from "../../Skeletons/skeletonCard";
 import UploadFileRestricted from "../../elementos/botones/uploadFileRestricted";
+import { FetchVenta, FetchVentasByDateRange } from "../../../utils/fetches/ventasFetches";
 
 const SalesPage = (props: { ventas: Venta[], clientes: Cliente[] }) => {
     if (props.ventas == undefined) throw new Error("Props de ventas en ventasTabs.tsx es undefined");

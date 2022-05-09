@@ -10,7 +10,8 @@ import { Cierre } from "../../../tipos/Cierre";
 import { Empleado, SesionEmpleado } from "../../../tipos/Empleado";
 import { Roles } from "../../../tipos/Enums/Roles";
 import { TPVType } from "../../../tipos/TPV";
-import { FetchCierres, FetchEmpleados, FetchTPVs } from "../../../utils/fetches";
+import { FetchEmpleados } from "../../../utils/fetches/empleadoFetches";
+import { FetchTPVs } from "../../../utils/fetches/tpvFetches";
 
 const Empleados = (props: { EmpleadoSesion: SesionEmpleado }) => {
     const [EmpleadosList, SetEmpleados] = useState<Empleado[]>([]);

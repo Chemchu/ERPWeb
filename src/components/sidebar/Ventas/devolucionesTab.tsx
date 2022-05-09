@@ -2,7 +2,7 @@ import { AnimatePresence } from "framer-motion";
 import React, { useEffect, useState } from "react";
 import { Cliente } from "../../../tipos/Cliente";
 import { Devolucion } from "../../../tipos/Devolucion";
-import { FetchDevolucionesByQuery } from "../../../utils/fetches";
+import { FetchDevolucionesByQuery } from "../../../utils/fetches/devolucionesFetches";
 import { notifyWarn } from "../../../utils/toastify";
 import DateRange from "../../elementos/Forms/dateRange";
 import { Paginador } from "../../elementos/Forms/paginador";

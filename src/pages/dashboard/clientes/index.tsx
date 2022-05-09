@@ -9,7 +9,7 @@ import DashboardLayout from "../../../layout";
 import { Cliente } from "../../../tipos/Cliente";
 import { SesionEmpleado } from "../../../tipos/Empleado";
 import { Roles } from "../../../tipos/Enums/Roles";
-import { FetchClientes } from "../../../utils/fetches";
+import { FetchClientes } from "../../../utils/fetches/clienteFetches";
 
 const Clientes = (props: { EmpleadoSesion: SesionEmpleado }) => {
     const [Clientes, SetClientes] = useState<Cliente[]>([]);

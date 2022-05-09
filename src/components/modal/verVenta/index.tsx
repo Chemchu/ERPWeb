@@ -5,7 +5,7 @@ import { CustomerPaymentInformation } from "../../../tipos/CustomerPayment";
 import { TPVType } from "../../../tipos/TPV";
 import { Venta } from "../../../tipos/Venta";
 import { In } from "../../../utils/animations";
-import { FetchTPV } from "../../../utils/fetches";
+import { FetchTPV } from "../../../utils/fetches/tpvFetches";
 import GenerateQrBase64 from "../../../utils/generateQr";
 import Ticket from "../../printable/ticket";
 import { Backdrop } from "../backdrop";
