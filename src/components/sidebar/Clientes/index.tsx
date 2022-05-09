@@ -1,5 +1,5 @@
 import { AnimatePresence } from "framer-motion";
-import { useEffect, useState } from "react";
+import { Dispatch, SetStateAction, useEffect, useState } from "react";
 import { Cliente } from "../../../tipos/Cliente";
 import { TipoDocumento } from "../../../tipos/Enums/TipoDocumentos";
 import { notifyWarn } from "../../../utils/toastify";
@@ -29,6 +29,10 @@ const ClientesPage = (props: { Clientes: Cliente[] }) => {
     }, [filtro])
 
     const Filtrar = async (f: string) => {
+        if (f === "") {
+            return;
+        }
+
         const clientes = await FetchClientesByQuery(f);
         setClientesFiltrados(clientes.filter((c) => c.nif !== "General"));
     }
@@ -83,10 +87,15 @@ const ClientesPage = (props: { Clientes: Cliente[] }) => {
 }
 
 const TablaClientes = (props: { clientes: Cliente[] }) => {
+    const [Clientes, setClientes] = useState(props.clientes);
     const [currentPage, setCurrentPage] = useState<number>(1);
 
+    useEffect(() => {
+        setClientes(props.clientes);
+    }, [props.clientes]);
+
     const elementsPerPage = 50;
-    const numPages = Math.ceil(props.clientes.length / elementsPerPage);
+    const numPages = Math.ceil(Clientes.length / elementsPerPage);
 
     const setPaginaActual = (page: number) => {
         if (page < 1) { return; }
@@ -100,17 +109,17 @@ const TablaClientes = (props: { clientes: Cliente[] }) => {
             <div className="h-full w-full border overflow-y-scroll">
                 {
 
-                    props.clientes.length <= 0 ?
+                    Clientes.length <= 0 ?
                         arrayNum.map((n, i) => {
                             return (
                                 <SkeletonCard key={`SkeletonProdList-${i}`} />
                             );
                         })
                         :
-                        props.clientes.slice((elementsPerPage * (currentPage - 1)), currentPage * elementsPerPage).map((c: Cliente, index) => {
+                        Clientes.slice((elementsPerPage * (currentPage - 1)), currentPage * elementsPerPage).map((c: Cliente, index) => {
                             return (
                                 <div key={`FilaProdTable${c._id}`}>
-                                    <FilaCliente cliente={c} />
+                                    <FilaCliente cliente={c} setClientes={setClientes} />
                                 </div>
                             );
                         })
@@ -123,7 +132,7 @@ const TablaClientes = (props: { clientes: Cliente[] }) => {
     )
 }
 
-const FilaCliente = (props: { cliente: Cliente }) => {
+const FilaCliente = (props: { cliente: Cliente, setClientes: Dispatch<SetStateAction<Cliente[]>> }) => {
     const [showModal, setModal] = useState<boolean>(false);
     const [cliente, setCliente] = useState<Cliente>(props.cliente);
 
@@ -141,7 +150,7 @@ const FilaCliente = (props: { cliente: Cliente }) => {
                 </div>
             </div>
             <AnimatePresence>
-                {showModal && <VerCliente showModal={setModal} cliente={cliente} setCliente={setCliente} />}
+                {showModal && <VerCliente showModal={setModal} cliente={cliente} setCliente={setCliente} setClientes={props.setClientes} />}
             </AnimatePresence>
         </div>
 

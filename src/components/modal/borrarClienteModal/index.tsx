@@ -1,17 +1,18 @@
 import { motion } from "framer-motion";
+import { Dispatch, SetStateAction } from "react";
 import { Cliente } from "../../../tipos/Cliente";
 import { In } from "../../../utils/animations";
 import { DeleteCliente } from "../../../utils/fetches/clienteFetches";
 import { Backdrop } from "../backdrop";
 
-const BorrarClienteModal = (props: { showModal: Function, showClienteModal: Function, cliente: Cliente, setCliente: Function }) => {
+const BorrarClienteModal = (props: { showModal: Function, showClienteModal: Function, cliente: Cliente, setClientes: Dispatch<SetStateAction<Cliente[]>> }) => {
 
     const Eliminar = async (id: string) => {
         const deletedCorrectly = await DeleteCliente(id);
 
         if (deletedCorrectly) {
             props.showClienteModal(false);
-            props.setCliente(null);
+            props.setClientes((clientes) => clientes.filter((c: Cliente) => c._id !== props.cliente._id));
         }
     }
     return (

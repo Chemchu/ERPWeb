@@ -121,18 +121,17 @@ const UpdateCliente = async (req: NextApiRequest, res: NextApiResponse) => {
 
 const DeleteCliente = async (req: NextApiRequest, res: NextApiResponse) => {
 
-    const reqBody = req.body;
     const fetchResult = await GQLFetcher.mutate(
         {
             mutation: DELETE_CLIENT,
             variables: {
-                "id": reqBody._id
+                "id": req.query.id
             },
             fetchPolicy: "no-cache"
         }
     );
-    if (!fetchResult.errors) {
-        return res.status(200).json({ message: fetchResult.data.message, successful: fetchResult.data.successful });
+    if (fetchResult.data.deleteCliente.successful) {
+        return res.status(200).json({ message: fetchResult.data.deleteCliente.message, successful: fetchResult.data.deleteCliente.successful });
     }
 
     return res.status(300).json({ message: "Fallo al borrar el cliente", successful: false });
