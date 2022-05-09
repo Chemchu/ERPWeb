@@ -14,16 +14,22 @@ const ComprobarAutorizaciones = (requiredAuthorities: Roles[]): boolean => {
     return requiredAuthorities.includes(currentUserAuthorities);
 };
 
-const AuthorizationWrapper = (rolesAutorizados: Roles[]) => {
+const AuthorizationWrapper = (rolesAutorizados: Roles[], showMessage?: boolean) => {
 
     return (WrappedComponent: Function) => {
         return (props: any) => {
             if (!ComprobarAutorizaciones(rolesAutorizados)) {
+                if (showMessage) {
+                    return (
+                        <div>
+                            No estás autorizado para acceder a esta página
+                        </div>
+                    );
+                }
+
                 return (
-                    <div>
-                        No estás autorizado para acceder a esta página
-                    </div>
-                );
+                    <></>
+                )
             }
 
             return (

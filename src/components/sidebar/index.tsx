@@ -4,6 +4,8 @@ import React from 'react';
 import useEmpleadoContext from '../../context/empleadoContext';
 import { Roles } from '../../tipos/Enums/Roles';
 import { SidebarOption } from '../../tipos/Enums/SidebarOption';
+import AuthorizationWrapper from '../authorizationWrapper';
+import RequireHigherAuthorization from './RequireHigherAuth';
 
 const Sidebar = React.memo((props: { isCollapsed: boolean, setCollapsed: Function, IndexSeleccionado: SidebarOption, setIndex: React.Dispatch<React.SetStateAction<SidebarOption>> }) => {
     return (
@@ -53,34 +55,32 @@ const OpenedSidebar = (props: { setCollapsed: Function, IndexSeleccionado: Sideb
                         </div>
                     </Link>
 
-                    {
-                        Empleado.rol !== Roles.Cajero &&
-                        <Link href="/dashboard/productos">
-                            <div onClick={(e) => { props.setIndex(SidebarOption.Productos); e.stopPropagation(); }} className={`${props.IndexSeleccionado === SidebarOption.Productos && "bg-gray-100"} hover:text-gray-800 hover:bg-gray-100 flex items-center gap-4 transition-colors dark:hover:text-white dark:hover:bg-gray-600 duration-200
+                    <Link href="/dashboard/productos">
+                        <div onClick={(e) => { props.setIndex(SidebarOption.Productos); e.stopPropagation(); }} className={`${props.IndexSeleccionado === SidebarOption.Productos && "bg-gray-100"} hover:text-gray-800 hover:bg-gray-100 flex items-center gap-4 transition-colors dark:hover:text-white dark:hover:bg-gray-600 duration-200
                         text-gray-600 dark:text-gray-400 rounded-lg cursor-pointer`}>
-                                <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4" />
-                                </svg>
-                                <span>
-                                    Productos
-                                </span>
-                            </div>
-                        </Link>
-                    }
-
-
-                    <Link href="/dashboard/estadisticas">
-                        <div onClick={(e) => { props.setIndex(SidebarOption.Estadisticas); e.stopPropagation(); }} className={`${props.IndexSeleccionado === SidebarOption.Estadisticas && "bg-gray-100"} hover:text-gray-800 hover:bg-gray-100 flex items-center gap-4 transition-colors dark:hover:text-white dark:hover:bg-gray-600 duration-200
-                        text-gray-600 dark:text-gray-400 rounded-lg cursor-pointer`}>
-                            <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-                                <path strokeLinecap="round" strokeLinejoin="round" d="M8 13v-1m4 1v-3m4 3V8M8 21l4-4 4 4M3 4h18M4 4h16v12a1 1 0 01-1 1H5a1 1 0 01-1-1V4z" />
+                            <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4" />
                             </svg>
                             <span>
-                                Estadísticas
+                                Productos
                             </span>
-
                         </div>
                     </Link>
+
+                    <RequireHigherAuthorization>
+                        <Link href="/dashboard/estadisticas">
+                            <div onClick={(e) => { props.setIndex(SidebarOption.Estadisticas); e.stopPropagation(); }} className={`${props.IndexSeleccionado === SidebarOption.Estadisticas && "bg-gray-100"} hover:text-gray-800 hover:bg-gray-100 flex items-center gap-4 transition-colors dark:hover:text-white dark:hover:bg-gray-600 duration-200
+                        text-gray-600 dark:text-gray-400 rounded-lg cursor-pointer`}>
+                                <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                                    <path strokeLinecap="round" strokeLinejoin="round" d="M8 13v-1m4 1v-3m4 3V8M8 21l4-4 4 4M3 4h18M4 4h16v12a1 1 0 01-1 1H5a1 1 0 01-1-1V4z" />
+                                </svg>
+                                <span>
+                                    Estadísticas
+                                </span>
+
+                            </div>
+                        </Link>
+                    </RequireHigherAuthorization>
 
                     <Link href="/dashboard/ventas">
                         <div onClick={(e) => { props.setIndex(SidebarOption.Ventas); e.stopPropagation(); }} className={`${props.IndexSeleccionado === SidebarOption.Ventas && "bg-gray-100"} hover:text-gray-800 hover:bg-gray-100 flex items-center gap-4 transition-colors dark:hover:text-white dark:hover:bg-gray-600 duration-200
@@ -120,8 +120,8 @@ const OpenedSidebar = (props: { setCollapsed: Function, IndexSeleccionado: Sideb
 
                         </div>
                     </Link>
-                    {
-                        Empleado.rol !== Roles.Cajero &&
+
+                    <RequireHigherAuthorization>
                         <Link href="/dashboard/empleados">
                             <div onClick={(e) => { props.setIndex(SidebarOption.Empleados); e.stopPropagation(); }} className={`${props.IndexSeleccionado === SidebarOption.Empleados && "bg-gray-100"} hover:text-gray-800 hover:bg-gray-100 flex items-center gap-4 transition-colors dark:hover:text-white dark:hover:bg-gray-600 duration-200
                         text-gray-600 dark:text-gray-400 rounded-lg cursor-pointer`} >
@@ -134,8 +134,7 @@ const OpenedSidebar = (props: { setCollapsed: Function, IndexSeleccionado: Sideb
 
                             </div>
                         </Link>
-                    }
-
+                    </RequireHigherAuthorization>
                 </div>
 
                 <div className='flex flex-col w-full h-1/6 xl:gap-10 gap-6 justify-center px-5 pb-10'>
@@ -210,8 +209,8 @@ const CollapsedSidebar = (props: { setCollapsed: Function, IndexSeleccionado: Si
                             </svg>
                         </div>
                     </Link>
-                    {
-                        Empleado.rol !== Roles.Cajero &&
+
+                    <RequireHigherAuthorization>
                         <Link href="/dashboard/estadisticas">
                             <div onClick={(e) => { props.setIndex(SidebarOption.Estadisticas); e.stopPropagation() }} className={`${props.IndexSeleccionado === SidebarOption.Estadisticas && "bg-gray-100"} hover:text-gray-800 hover:bg-gray-100 cursor-pointer dark:hover:text-white dark:hover:bg-gray-600 duration-200 text-gray-600 dark:text-gray-400 rounded-lg `} >
                                 <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
@@ -220,8 +219,7 @@ const CollapsedSidebar = (props: { setCollapsed: Function, IndexSeleccionado: Si
                             </div>
 
                         </Link>
-                    }
-
+                    </RequireHigherAuthorization>
 
                     <Link href="/dashboard/ventas">
                         <div onClick={(e) => { props.setIndex(SidebarOption.Ventas); e.stopPropagation() }} className={`${props.IndexSeleccionado === SidebarOption.Ventas && "bg-gray-100"} hover:text-gray-800 hover:bg-gray-100 cursor-pointer dark:hover:text-white dark:hover:bg-gray-600 duration-200 text-gray-600 dark:text-gray-400 rounded-lg `} >
@@ -247,9 +245,8 @@ const CollapsedSidebar = (props: { setCollapsed: Function, IndexSeleccionado: Si
                         </div>
                     </Link>
 
-                    {
-                        Empleado.rol !== Roles.Cajero &&
-                        < Link href="/dashboard/empleados">
+                    <RequireHigherAuthorization>
+                        <Link href="/dashboard/empleados">
                             <div onClick={(e) => { props.setIndex(SidebarOption.Empleados); e.stopPropagation(); }} className={`${props.IndexSeleccionado === SidebarOption.Empleados && "bg-gray-100"} hover:text-gray-800 hover:bg-gray-100 flex items-center gap-4 transition-colors dark:hover:text-white dark:hover:bg-gray-600 duration-200
                         text-gray-600 dark:text-gray-400 rounded-lg cursor-pointer`} >
                                 <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
@@ -257,7 +254,8 @@ const CollapsedSidebar = (props: { setCollapsed: Function, IndexSeleccionado: Si
                                 </svg>
                             </div>
                         </Link>
-                    }
+                    </RequireHigherAuthorization>
+
                 </div>
 
                 <div className='flex flex-col w-full h-1/6 xl:gap-10 gap-6 justify-center px-5 pb-10'>

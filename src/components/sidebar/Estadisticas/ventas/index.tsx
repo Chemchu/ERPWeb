@@ -20,9 +20,6 @@ const EstadisticasVentasPage = (props: { Empleados: Empleado[] }) => {
     const elementsPerPage = 50;
     const numPages = Math.ceil(props.Empleados.length / elementsPerPage);
 
-    console.log("Eyyy");
-
-
     const setPaginaActual = (page: number) => {
         if (page < 1) { return; }
         if (page > numPages) { return; }
@@ -126,4 +123,4 @@ const FilaEmpleado = (props: { empleado: Empleado }) => {
 }
 
 
-export default AuthorizationWrapper([Roles.Administrador])(EstadisticasVentasPage);
+export default AuthorizationWrapper([Roles.Administrador, Roles.Gerente], true)(EstadisticasVentasPage);
