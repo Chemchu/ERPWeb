@@ -8,6 +8,7 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
     // if (!session) {
     //     return res.status(401).json({ message: "Not signed in" });
     // }
+    const query = queryString.parse(req.query.id.toString());
 
     switch (req.method) {
         case 'POST':
@@ -16,7 +17,8 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
             }
 
         case 'GET':
-            return await GetSale(req, res);
+            if (query.query) { return await GetSalesByQuery(query, res); }
+            else { return await GetSale(req, res); }
 
         default:
             res.setHeader('Allow', ['GET']);
@@ -79,6 +81,27 @@ const GetSale = async (req: NextApiRequest, res: NextApiResponse) => {
         console.log(err);
         return res.status(500).json({ message: `Error: ${err}` });
     }
+}
+
+const GetSalesByQuery = async (userQuery: queryString.ParsedQuery<string>, res: NextApiResponse) => {
+    if (!userQuery.query) { res.status(300).json({ message: `La query no puede estar vacía` }); }
+
+    const fetchResult = await GQLFetcher.query(
+        {
+            query: QUERY_SALES,
+            variables: {
+                "find": {
+                    "query": userQuery.query
+                }
+            }
+        }
+    );
+
+    if (fetchResult.data.ventas) {
+        return res.status(200).json({ message: `Ventas encontradas`, ventas: fetchResult.data.ventas });
+    }
+
+    return res.status(300).json({ message: `Fallo al realizar la búsqueda` });
 }
 
 export const config = {

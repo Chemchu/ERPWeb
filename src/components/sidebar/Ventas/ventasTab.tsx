@@ -3,15 +3,13 @@ import React, { useEffect, useState } from "react";
 import { Cliente } from "../../../tipos/Cliente";
 import { TipoDocumento } from "../../../tipos/Enums/TipoDocumentos";
 import { Venta } from "../../../tipos/Venta";
-import { notifyWarn } from "../../../utils/toastify";
 import DateRange from "../../elementos/Forms/dateRange";
 import DownloadFile from "../../elementos/botones/downloadFile";
 import { Paginador } from "../../elementos/Forms/paginador";
-import UploadFile from "../../elementos/botones/uploadFile";
 import VerVenta from "../../modal/verVenta";
 import SkeletonCard from "../../Skeletons/skeletonCard";
 import UploadFileRestricted from "../../elementos/botones/uploadFileRestricted";
-import { FetchVenta, FetchVentasByDateRange } from "../../../utils/fetches/ventasFetches";
+import { FetchVenta, FetchVentaByQuery, FetchVentasByDateRange } from "../../../utils/fetches/ventasFetches";
 
 const SalesPage = (props: { ventas: Venta[], clientes: Cliente[] }) => {
     if (props.ventas == undefined) throw new Error("Props de ventas en ventasTabs.tsx es undefined");
@@ -43,7 +41,6 @@ const SalesPage = (props: { ventas: Venta[], clientes: Cliente[] }) => {
         GetVentasByDate();
     }, [dateRange])
 
-
     const elementsPerPage = 70;
     const numPages = props.ventas.length <= 0 ? 1 : Math.ceil(props.ventas.length / elementsPerPage);
     const arrayNum = [...Array(8)];
@@ -57,9 +54,8 @@ const SalesPage = (props: { ventas: Venta[], clientes: Cliente[] }) => {
 
     const Filtrar = async (f: string) => {
         if (f === "") { setVentasFiltradas(undefined); return; }
-        if (!f.match('^[0-9a-fA-F]{24}$')) { notifyWarn("Introduce un ID de venta válido"); return; }
 
-        setVentasFiltradas(await FetchVenta(f));
+        setVentasFiltradas(await FetchVentaByQuery(f));
     }
 
     return (
@@ -72,7 +68,7 @@ const SalesPage = (props: { ventas: Venta[], clientes: Cliente[] }) => {
                 <div className="flex w-2/3 gap-4 justify-end">
                     <DateRange dateRange={dateRange} setDateRange={setDateRange} endDate={endDate} startDate={startDate} />
                     <div className="flex gap-2">
-                        <input autoFocus={true} className="rounded-lg border appearance-none shadow-lg w-40 xl:w-96 h-full py-2 px-4 bg-white text-gray-700 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-600" placeholder="ID de la venta..."
+                        <input autoFocus={true} className="rounded-lg border appearance-none shadow-lg w-40 xl:w-96 h-full py-2 px-4 bg-white text-gray-700 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-600" placeholder="Buscar venta..."
                             onChange={(e) => { setFiltro(e.target.value); }} onKeyPress={async (e) => { e.key === "Enter" && await Filtrar(filtro) }} />
 
                         {

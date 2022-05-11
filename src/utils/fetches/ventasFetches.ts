@@ -26,6 +26,42 @@ export const FetchVentas = async (): Promise<Venta[]> => {
     }
 }
 
+export const FetchVenta = async (id: string): Promise<Venta[]> => {
+    try {
+        let query: any = new Object;
+        query.id = id;
+        const idVenta = queryString.stringify(query);
+
+        const vRes = await fetch(`/api/ventas/${idVenta}`);
+
+        const ventas = await vRes.json();
+        return CreateSalesList([ventas.data.venta]);
+    }
+    catch (e) {
+        console.error(e);
+        notifyError("Error de conexión");
+        return [];
+    }
+}
+
+export const FetchVentaByQuery = async (userQuery: string): Promise<Venta[]> => {
+    try {
+        let query: any = new Object;
+        query.query = userQuery;
+        const queryObject = queryString.stringify(query);
+
+        const vRes = await fetch(`/api/ventas/${queryObject}`);
+
+        const resJson = await vRes.json();
+        return CreateSalesList(resJson.ventas);
+    }
+    catch (e) {
+        console.error(e);
+        notifyError("Error de conexión");
+        return [];
+    }
+}
+
 export const FetchVentasByDateRange = async (fechaIni: Date, fechaFin: Date): Promise<Venta[]> => {
     try {
         let fechas: any = new Object;
@@ -46,24 +82,6 @@ export const FetchVentasByDateRange = async (fechaIni: Date, fechaFin: Date): Pr
 
         const ventas = await vRes.json();
         return CreateSalesList(ventas.data.ventas);
-    }
-    catch (e) {
-        console.error(e);
-        notifyError("Error de conexión");
-        return [];
-    }
-}
-
-export const FetchVenta = async (id: string): Promise<Venta[]> => {
-    try {
-        let query: any = new Object;
-        query.id = id;
-        const idVenta = queryString.stringify(query);
-
-        const vRes = await fetch(`/api/ventas/${idVenta}`);
-
-        const ventas = await vRes.json();
-        return CreateSalesList([ventas.data.venta]);
     }
     catch (e) {
         console.error(e);
