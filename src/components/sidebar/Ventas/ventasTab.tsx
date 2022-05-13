@@ -20,7 +20,7 @@ const SalesPage = (props: { ventas: Venta[], clientes: Cliente[] }) => {
     const [showModalEditarVenta, setShowModal] = useState<boolean>();
     const [VentasFiltradas, setVentasFiltradas] = useState<Venta[] | undefined>();
     const [filtro, setFiltro] = useState<string>("");
-    const [dateRange, setDateRange] = useState([null, null]);
+    const [dateRange, setDateRange] = useState<Date[] | null[]>([null, null]);
     const [startDate, endDate] = dateRange;
 
     useEffect(() => {
@@ -55,6 +55,10 @@ const SalesPage = (props: { ventas: Venta[], clientes: Cliente[] }) => {
     const Filtrar = async (f: string) => {
         if (f === "") { setVentasFiltradas(undefined); return; }
 
+        if (dateRange[0] !== null && dateRange[1] !== null) {
+            setVentasFiltradas(await FetchVentaByQuery(f, [String(dateRange[0].getTime()), String(dateRange[1].getTime())]));
+            return;
+        }
         setVentasFiltradas(await FetchVentaByQuery(f));
     }
 

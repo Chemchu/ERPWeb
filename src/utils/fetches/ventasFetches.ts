@@ -44,10 +44,11 @@ export const FetchVenta = async (id: string): Promise<Venta[]> => {
     }
 }
 
-export const FetchVentaByQuery = async (userQuery: string): Promise<Venta[]> => {
+export const FetchVentaByQuery = async (userQuery: string, fechas?: string[]): Promise<Venta[]> => {
     try {
         let query: any = new Object;
         query.query = userQuery;
+        query.fechas = fechas ? fechas : null;
         const queryObject = queryString.stringify(query);
 
         const vRes = await fetch(`/api/ventas/${queryObject}`);

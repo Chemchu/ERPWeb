@@ -91,7 +91,9 @@ const GetSalesByQuery = async (userQuery: queryString.ParsedQuery<string>, res: 
             query: QUERY_SALES,
             variables: {
                 "find": {
-                    "query": userQuery.query
+                    "query": userQuery.query,
+                    "fechaInicial": userQuery.fechas ? userQuery.fechas[0] : null,
+                    "fechaFinal": userQuery.fechas ? userQuery.fechas[1] : null
                 }
             }
         }
