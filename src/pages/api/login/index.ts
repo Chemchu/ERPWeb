@@ -1,5 +1,6 @@
-import { gql } from "@apollo/client";
+
 import { NextApiRequest, NextApiResponse } from "next";
+import { LOGIN } from "../../../utils/querys";
 import GQLFetcher from "../../../utils/serverFetcher";
 
 const handler = async (req: NextApiRequest, res: NextApiResponse) => {
@@ -7,15 +8,7 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
         const reqCredentials = req.body;
         const fetchResult = await GQLFetcher.query(
             {
-                query: gql`
-                query Login($loginValues: Credentials!) {
-                    login(loginValues: $loginValues) {
-                        message
-                        success
-                        token
-                    }
-                }
-                `,
+                query: LOGIN,
                 variables: {
                     "loginValues": {
                         "email": reqCredentials.email,
@@ -24,14 +17,15 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
                 }
             }
         );
+        const jsonResponse = JSON.parse(fetchResult.data);
 
         // Devolver en caso de que todo haya ido bien
-        if (!fetchResult.error && fetchResult.data.login.token) {
-            const token = getJwt(fetchResult.data.login.token);
+        if (!fetchResult.error && jsonResponse.data.login.token) {
+            const token = getJwt(jsonResponse.data.login.token);
             const productionEnv: boolean = process.env.NODE_ENV !== "development";
 
             return res.status(200)
-                .setHeader('Set-Cookie', `authorization=${fetchResult.data.login.token}; HttpOnly; Secure=${productionEnv}; Max-Age=${token.exp - token.iat}; Path=/`)
+                .setHeader('Set-Cookie', `authorization=${jsonResponse.data.login.token}; HttpOnly; Secure=${productionEnv}; Max-Age=${token.exp - token.iat}; Path=/`)
                 .json(JSON.stringify({ message: `Éxito al iniciar sesión` }));
         }
 

@@ -38,8 +38,9 @@ export async function middleware(req: NextRequest, ev: NextFetchEvent) {
                     }
                 )
             })).json();
+            const authHealth = JSON.parse(credentialsValidation.data);
 
-            if (!credentialsValidation.data.validateJwt.validado) { url.pathname = "/login"; return NextResponse.rewrite(url).clearCookie("authorization"); }
+            if (!authHealth.data.validateJwt.validado) { url.pathname = "/login"; return NextResponse.rewrite(url).clearCookie("authorization"); }
             if (req.nextUrl.pathname === '/login') { url.pathname = "/dashboard"; return NextResponse.rewrite(url); }
         }
     }

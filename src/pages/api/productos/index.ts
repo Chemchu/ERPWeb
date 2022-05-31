@@ -22,6 +22,8 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
 }
 
 const GetProductos = async (req: NextApiRequest, res: NextApiResponse) => {
+    console.log("Entra en GetProductos Gus");
+
     const fetchResult = await GQLFetcher.query({
         query: QUERY_PRODUCTS,
         variables: {
@@ -30,15 +32,12 @@ const GetProductos = async (req: NextApiRequest, res: NextApiResponse) => {
         }
     });
 
-    if (fetchResult.errors) {
-        return res.status(300).json({ message: `Fallo al pedir la lista de productos: ${fetchResult.errors[0]}` });
+    const apiResponse = JSON.parse(fetchResult.data);
+    if (!fetchResult.data.successful) {
+        return res.status(300).json({ message: `Fallo al pedir la lista de productos: ${fetchResult.data.message}` });
     }
 
-    if (fetchResult.data) {
-        return res.status(200).json(fetchResult.data);
-    }
-
-    return res.status(300).json({ message: `Fallo al pedir la lista de productos` });
+    return res.status(200).json(apiResponse.data);
 }
 
 const AddProducto = async (req: NextApiRequest, res: NextApiResponse) => {

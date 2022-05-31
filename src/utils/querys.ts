@@ -417,3 +417,13 @@ export const UPDATE_EMPLEADO = gql`
   }
 }
 `
+
+export const LOGIN = gql`
+  query Login($loginValues: Credentials!) {
+    login(loginValues: $loginValues) {
+      message
+      success
+      token
+    }
+  }
+`
