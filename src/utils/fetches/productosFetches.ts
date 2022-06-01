@@ -10,8 +10,9 @@ export const FetchProductos = async (): Promise<Producto[]> => {
 
         if (!pResponse.ok) { notifyError("Error al buscar los productos"); return []; }
 
-        const pJson = JSON.parse(await pResponse.json());
-        prodRes = CreateProductList(pJson.data);
+        const resJson = await pResponse.json();
+
+        prodRes = CreateProductList(resJson.productos);
         return prodRes.filter((p) => { return p.alta === true });
     }
     catch (e: any) {

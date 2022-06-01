@@ -23,14 +23,6 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
 }
 
 const GetProductos = async (req: NextApiRequest, res: NextApiResponse) => {
-    // const fetchResult = await GQLFetcher.query({
-    //     query: QUERY_PRODUCTS,
-    //     variables: {
-    //         "find": null,
-    //         "limit": req.body.limit || 1
-    //     }
-    // });
-
     const fetchResult = await fetch('http://localhost:8080/graphql',
         {
             method: 'POST',
@@ -41,13 +33,13 @@ const GetProductos = async (req: NextApiRequest, res: NextApiResponse) => {
                 query: print(QUERY_PRODUCTS),
                 variables: {
                     "find": null,
-                    "limit": req.body.limit || 1
+                    "limit": req.body.limit || 10000
                 }
             })
         }
     );
 
-    const apiResponse = await (fetchResult.json())
+    const apiResponse = await fetchResult.json();
     const data = JSON.parse(apiResponse.data);
 
     if (!apiResponse.successful) {
