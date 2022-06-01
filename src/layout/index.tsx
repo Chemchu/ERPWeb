@@ -2,7 +2,7 @@ import { AnimatePresence, motion } from "framer-motion";
 import { useRouter } from "next/router";
 import React, { useState } from "react";
 import Sidebar from "../components/sidebar";
-import NextNProgress from "nextjs-progressbar";
+import NextProgress from "next-progress";
 import { ProductCarritoContextProvider } from "../context/productosEnCarritoContext";
 import { EmpleadoContextProvider } from "../context/empleadoContext";
 import { ToastContainer } from "react-toastify";
@@ -42,14 +42,12 @@ const DashboardLayout = React.memo(({ children }: { children: React.ReactNode })
             <ProductCarritoContextProvider>
                 {
                     <main className="dark:bg-gray-800 h-full w-full overflow-hidden bg_food" >
-                        <NextNProgress />
+                        <NextProgress />
                         <div className="flex items-start w-full h-full justify-start">
                             <Sidebar isCollapsed={isSidebarCollapsed} setCollapsed={setSidebarCollapsed} IndexSeleccionado={IndexSidebar} setIndex={setSidebarIndex} />
-                            <AnimatePresence exitBeforeEnter>
-                                <motion.div key={router.route} className="w-full h-full" initial={variants.initial} animate={variants.animate} exit={variants.exit}>
-                                    {children}
-                                </motion.div>
-                            </AnimatePresence>
+                            <motion.div key={router.route} className="w-full h-full" initial={variants.initial} animate={variants.animate} exit={variants.exit}>
+                                {children}
+                            </motion.div>
                             <ToastContainer
                                 position="bottom-right"
                                 autoClose={3000}

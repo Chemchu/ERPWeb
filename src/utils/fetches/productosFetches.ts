@@ -6,17 +6,11 @@ import queryString from 'query-string';
 export const FetchProductos = async (): Promise<Producto[]> => {
     try {
         let prodRes = [] as Producto[];
-
         const pResponse = await fetch('/api/productos');
-
-        console.log(pResponse);
 
         if (!pResponse.ok) { notifyError("Error al buscar los productos"); return []; }
 
         const pJson = JSON.parse(await pResponse.json());
-
-        console.log(pJson);
-
         prodRes = CreateProductList(pJson.data);
         return prodRes.filter((p) => { return p.alta === true });
     }
