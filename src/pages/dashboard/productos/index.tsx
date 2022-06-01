@@ -24,11 +24,11 @@ const Productos = (props: { EmpleadoSesion: SesionEmpleado }) => {
             <Tab.List className="flex gap-1 h-10 pr-10">
                 <Tab
                     key={"Productos"}
-                    className={({ selected }) =>
+                    className={(props: { selected: boolean }) =>
                         classNames(
                             'w-1/4 h-full text-sm rounded-t-2xl border-t border-x',
                             'focus:outline-none ring-white ring-opacity-60',
-                            selected
+                            props.selected
                                 ? 'bg-white shadow-lg'
                                 : 'bg-gray-200 hover:bg-blue-400 hover:text-white'
                         )
@@ -40,11 +40,11 @@ const Productos = (props: { EmpleadoSesion: SesionEmpleado }) => {
                 </Tab>
                 <Tab
                     key={"Mermas"}
-                    className={({ selected }) =>
+                    className={(props: { selected: boolean }) =>
                         classNames(
                             'w-1/4 h-full text-sm rounded-t-2xl border-t border-x',
                             'focus:outline-none  ring-white ring-opacity-60',
-                            selected
+                            props.selected
                                 ? 'bg-white shadow-md'
                                 : 'bg-gray-200 hover:bg-blue-400 hover:text-white'
                         )
@@ -56,11 +56,11 @@ const Productos = (props: { EmpleadoSesion: SesionEmpleado }) => {
                 </Tab>
                 <Tab
                     key={"Inventario"}
-                    className={({ selected }) =>
+                    className={(props: { selected: boolean }) =>
                         classNames(
                             'w-1/4 h-full text-sm rounded-t-2xl border-t border-x',
                             'focus:outline-none  ring-white ring-opacity-60',
-                            selected
+                            props.selected
                                 ? 'bg-white shadow-md'
                                 : 'bg-gray-200 hover:bg-blue-400 hover:text-white'
                         )
@@ -72,11 +72,11 @@ const Productos = (props: { EmpleadoSesion: SesionEmpleado }) => {
                 </Tab>
                 <Tab
                     key={"Pedidos"}
-                    className={({ selected }) =>
+                    className={(props: { selected: boolean }) =>
                         classNames(
                             'w-1/4 h-full text-sm rounded-t-2xl border-t border-x',
                             'focus:outline-none  ring-white ring-opacity-60',
-                            selected
+                            props.selected
                                 ? 'bg-white shadow-md'
                                 : 'bg-gray-200 hover:bg-blue-400 hover:text-white'
                         )

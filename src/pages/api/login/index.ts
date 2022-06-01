@@ -20,12 +20,12 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
         const jsonResponse = JSON.parse(fetchResult.data);
 
         // Devolver en caso de que todo haya ido bien
-        if (!fetchResult.error && jsonResponse.data.login.token) {
-            const token = getJwt(jsonResponse.data.login.token);
+        if (!fetchResult.error && jsonResponse.login.token) {
+            const token = getJwt(jsonResponse.login.token);
             const productionEnv: boolean = process.env.NODE_ENV !== "development";
 
             return res.status(200)
-                .setHeader('Set-Cookie', `authorization=${jsonResponse.data.login.token}; HttpOnly; Secure=${productionEnv}; Max-Age=${token.exp - token.iat}; Path=/`)
+                .setHeader('Set-Cookie', `authorization=${jsonResponse.login.token}; HttpOnly; Secure=${productionEnv}; Max-Age=${token.exp - token.iat}; Path=/`)
                 .json(JSON.stringify({ message: `Éxito al iniciar sesión` }));
         }
 

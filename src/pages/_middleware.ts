@@ -20,7 +20,7 @@ export async function middleware(req: NextRequest, ev: NextFetchEvent) {
         }
 
         if (authCookie) {
-            const credentialsValidation = await (await fetch(`${process.env.ERPBACK_URL}graphql`, {
+            const credentialsValidation = await fetch(`${process.env.ERPBACK_URL}graphql`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -37,11 +37,14 @@ export async function middleware(req: NextRequest, ev: NextFetchEvent) {
                         }
                     }
                 )
-            })).json();
-            const authHealth = JSON.parse(credentialsValidation.data);
+            })
+            const credJson = await credentialsValidation.json();
+            const authHealth = JSON.parse(credJson.data);
 
-            if (!authHealth.data.validateJwt.validado) { url.pathname = "/login"; return NextResponse.rewrite(url).clearCookie("authorization"); }
+            if (!authHealth.validateJwt.validado) { url.pathname = "/login"; return NextResponse.rewrite(url).clearCookie("authorization"); }
             if (req.nextUrl.pathname === '/login') { url.pathname = "/dashboard"; return NextResponse.rewrite(url); }
+
+            return NextResponse.next();
         }
     }
     catch (err) {

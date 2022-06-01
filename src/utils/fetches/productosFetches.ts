@@ -9,16 +9,19 @@ export const FetchProductos = async (): Promise<Producto[]> => {
 
         const pResponse = await fetch('/api/productos');
 
+        console.log(pResponse);
+
         if (!pResponse.ok) { notifyError("Error al buscar los productos"); return []; }
 
-        const pJson = await pResponse.json();
+        const pJson = JSON.parse(await pResponse.json());
 
-        prodRes = CreateProductList(pJson.productos);
+        console.log(pJson);
+
+        prodRes = CreateProductList(pJson.data);
         return prodRes.filter((p) => { return p.alta === true });
     }
-    catch (e) {
-        console.log(e);
-        notifyError("Error de conexión");
+    catch (e: any) {
+        notifyError(e);
         return [];
     }
 

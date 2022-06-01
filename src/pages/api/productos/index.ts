@@ -1,6 +1,7 @@
 import { NextApiRequest, NextApiResponse } from "next";
 import { ADD_PRODUCT, QUERY_PRODUCTS } from "../../../utils/querys";
 import GQLFetcher from "../../../utils/serverFetcher";
+import { print } from 'graphql/language/printer'
 
 const handler = async (req: NextApiRequest, res: NextApiResponse) => {
     try {
@@ -22,22 +23,38 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
 }
 
 const GetProductos = async (req: NextApiRequest, res: NextApiResponse) => {
-    console.log("Entra en GetProductos Gus");
+    // const fetchResult = await GQLFetcher.query({
+    //     query: QUERY_PRODUCTS,
+    //     variables: {
+    //         "find": null,
+    //         "limit": req.body.limit || 1
+    //     }
+    // });
 
-    const fetchResult = await GQLFetcher.query({
-        query: QUERY_PRODUCTS,
-        variables: {
-            "find": null,
-            "limit": req.body.limit || 10000
+    const fetchResult = await fetch('http://localhost:8080/graphql',
+        {
+            method: 'POST',
+            headers: {
+                "Content-type": "application/json"
+            },
+            body: JSON.stringify({
+                query: print(QUERY_PRODUCTS),
+                variables: {
+                    "find": null,
+                    "limit": req.body.limit || 1
+                }
+            })
         }
-    });
+    );
 
-    const apiResponse = JSON.parse(fetchResult.data);
-    if (!fetchResult.data.successful) {
-        return res.status(300).json({ message: `Fallo al pedir la lista de productos: ${fetchResult.data.message}` });
+    const apiResponse = await (fetchResult.json())
+    const data = JSON.parse(apiResponse.data);
+
+    if (!apiResponse.successful) {
+        return res.status(300).json({ message: `Fallo al pedir la lista de productos: ${apiResponse.message}` });
     }
 
-    return res.status(200).json(apiResponse.data);
+    return res.status(200).json(data);
 }
 
 const AddProducto = async (req: NextApiRequest, res: NextApiResponse) => {
