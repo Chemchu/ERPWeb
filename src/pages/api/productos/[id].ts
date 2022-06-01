@@ -34,7 +34,7 @@ const handler = async (req: NextApiRequest, res: NextApiResponse): Promise<void>
 }
 
 const GetProductoFromId = async (req: NextApiRequest, res: NextApiResponse) => {
-    const fetchResult = await GQLQuery.query(
+    const fetchResult = await GQLQuery(
         {
             query: QUERY_PRODUCT,
             variables: {
