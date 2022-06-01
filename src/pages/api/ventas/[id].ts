@@ -1,6 +1,6 @@
 import { NextApiRequest, NextApiResponse } from "next"
 import { ADD_SALES_FILE, QUERY_SALE, QUERY_SALES } from "../../../utils/querys";
-import GQLFetcher from "../../../utils/serverFetcher";
+import GQLQuery from "../../../utils/serverFetcher";
 import queryString from 'query-string';
 
 const handler = async (req: NextApiRequest, res: NextApiResponse) => {
@@ -27,7 +27,7 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
 }
 
 const AddVentaFromFile = async (req: NextApiRequest, res: NextApiResponse) => {
-    const response = await GQLFetcher.mutate({
+    const response = await GQLQuery.mutate({
         mutation: ADD_SALES_FILE,
         variables: {
             ventasJson: JSON.stringify(req.body)
@@ -47,7 +47,7 @@ const GetSale = async (req: NextApiRequest, res: NextApiResponse) => {
         let fetchResult;
 
         if (query.id) {
-            fetchResult = await GQLFetcher.query(
+            fetchResult = await GQLQuery.query(
                 {
                     query: QUERY_SALE,
                     variables: {
@@ -58,7 +58,7 @@ const GetSale = async (req: NextApiRequest, res: NextApiResponse) => {
             );
         }
         if (query.fechaInicial && query.fechaFinal) {
-            fetchResult = await GQLFetcher.query(
+            fetchResult = await GQLQuery.query(
                 {
                     query: QUERY_SALES,
                     variables: {
@@ -86,7 +86,7 @@ const GetSale = async (req: NextApiRequest, res: NextApiResponse) => {
 const GetSalesByQuery = async (userQuery: queryString.ParsedQuery<string>, res: NextApiResponse) => {
     if (!userQuery.query) { res.status(300).json({ message: `La query no puede estar vacía` }); }
 
-    const fetchResult = await GQLFetcher.query(
+    const fetchResult = await GQLQuery.query(
         {
             query: QUERY_SALES,
             variables: {

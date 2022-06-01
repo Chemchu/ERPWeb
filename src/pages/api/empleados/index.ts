@@ -1,6 +1,6 @@
 import { NextApiRequest, NextApiResponse } from "next";
 import { QUERY_EMPLEADOS } from "../../../utils/querys";
-import GQLFetcher from "../../../utils/serverFetcher";
+import GQLQuery from "../../../utils/serverFetcher";
 
 const handler = async (req: NextApiRequest, res: NextApiResponse) => {
     try {
@@ -19,7 +19,7 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
 }
 
 const GetEmpleados = async (req: NextApiRequest, res: NextApiResponse) => {
-    const fetchResult = await GQLFetcher.query(
+    const fetchResult = await GQLQuery.query(
         {
             query: QUERY_EMPLEADOS,
             variables: {

@@ -1,13 +1,13 @@
 import { NextApiRequest, NextApiResponse } from "next";
 import { QUERY_CIERRES } from "../../../utils/querys";
-import GQLFetcher from "../../../utils/serverFetcher";
+import GQLQuery from "../../../utils/serverFetcher";
 
 const handler = async (req: NextApiRequest, res: NextApiResponse) => {
     try {
         const id = req.query.id;
         let fetchResult;
 
-        fetchResult = await GQLFetcher.query({
+        fetchResult = await GQLQuery.query({
             query: QUERY_CIERRES,
             variables: {
                 "find": {

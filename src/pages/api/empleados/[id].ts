@@ -1,6 +1,6 @@
 import { gql } from "@apollo/client";
 import { NextApiRequest, NextApiResponse } from "next";
-import GQLFetcher from "../../../utils/serverFetcher";
+import GQLQuery from "../../../utils/serverFetcher";
 import queryString from 'query-string';
 import { DELETE_EMPLEADO, QUERY_EMPLEADOS, UPDATE_EMPLEADO } from "../../../utils/querys";
 import { Empleado } from "../../../tipos/Empleado";
@@ -36,7 +36,7 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
 }
 
 const GetEmpleadoFromId = async (req: NextApiRequest, res: NextApiResponse) => {
-    const fetchResult = await GQLFetcher.query(
+    const fetchResult = await GQLQuery.query(
         {
             query: QUERY_EMPLEADOS,
             variables: {
@@ -57,7 +57,7 @@ const GetEmpleadoFromId = async (req: NextApiRequest, res: NextApiResponse) => {
 const GetEmpleadosFromQuery = async (userQuery: queryString.ParsedQuery<string>, res: NextApiResponse) => {
     if (!userQuery.query) { res.status(300).json({ message: `La query no puede estar vacía` }); }
 
-    const fetchResult = await GQLFetcher.query(
+    const fetchResult = await GQLQuery.query(
         {
             query: QUERY_EMPLEADOS,
             variables: {
@@ -91,7 +91,7 @@ const AddEmpleadosFromFile = async (req: NextApiRequest, res: NextApiResponse) =
 }
 
 const DeleteEmpleado = async (req: NextApiRequest, res: NextApiResponse) => {
-    const response = await GQLFetcher.mutate({
+    const response = await GQLQuery.mutate({
         mutation: DELETE_EMPLEADO,
         variables: {
             "id": req.query.id
@@ -108,7 +108,7 @@ const UpdateEmpleado = async (req: NextApiRequest, res: NextApiResponse) => {
     try {
         const emp: Empleado = req.body;
 
-        const response = await GQLFetcher.mutate({
+        const response = await GQLQuery.mutate({
             mutation: UPDATE_EMPLEADO,
             variables: {
                 "id": emp._id,

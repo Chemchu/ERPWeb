@@ -1,6 +1,6 @@
 import { NextApiRequest, NextApiResponse } from "next";
 import { ADD_CLIENT, QUERY_CLIENTS } from "../../../utils/querys";
-import GQLFetcher from "../../../utils/serverFetcher";
+import GQLQuery from "../../../utils/serverFetcher";
 
 const handler = async (req: NextApiRequest, res: NextApiResponse) => {
     try {
@@ -21,7 +21,7 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
 
 const AddCliente = async (req: NextApiRequest, res: NextApiResponse) => {
     const reqBody = req.body;
-    const fetchResult = await GQLFetcher.mutate(
+    const fetchResult = await GQLQuery.mutate(
         {
             mutation: ADD_CLIENT,
             variables: {
@@ -43,7 +43,7 @@ const AddCliente = async (req: NextApiRequest, res: NextApiResponse) => {
 
 const GetClientes = async (req: NextApiRequest, res: NextApiResponse) => {
     const reqBody = req.body;
-    const fetchResult = await GQLFetcher.query(
+    const fetchResult = await GQLQuery.query(
         {
             query: QUERY_CLIENTS,
             variables: {

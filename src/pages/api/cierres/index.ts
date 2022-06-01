@@ -1,7 +1,7 @@
 import { NextApiRequest, NextApiResponse } from "next";
 import { SesionEmpleado } from "../../../tipos/Empleado";
 import { ADD_CIERRE, QUERY_CIERRES } from "../../../utils/querys";
-import GQLFetcher from "../../../utils/serverFetcher";
+import GQLQuery from "../../../utils/serverFetcher";
 
 const handler = async (req: NextApiRequest, res: NextApiResponse) => {
     try {
@@ -27,7 +27,7 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
 const GetCierres = async (req: NextApiRequest, res: NextApiResponse) => {
     let fetchResult;
 
-    fetchResult = await GQLFetcher.query({
+    fetchResult = await GQLQuery.query({
         query: QUERY_CIERRES, variables: {
             "limit": 3000
         }
@@ -50,7 +50,7 @@ const AddCierre = async (req: NextApiRequest, res: NextApiResponse) => {
     const Ventas = req.body.NumVentas;
     const Tpv = req.body.TPV;
 
-    const addCierreResult = await GQLFetcher.mutate({
+    const addCierreResult = await GQLQuery.mutate({
         mutation: ADD_CIERRE,
         variables: {
             "cierre": {

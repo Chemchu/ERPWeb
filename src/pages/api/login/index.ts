@@ -1,12 +1,12 @@
 
 import { NextApiRequest, NextApiResponse } from "next";
 import { LOGIN } from "../../../utils/querys";
-import GQLFetcher from "../../../utils/serverFetcher";
+import GQLQuery from "../../../utils/serverFetcher";
 
 const handler = async (req: NextApiRequest, res: NextApiResponse) => {
     try {
         const reqCredentials = req.body;
-        const fetchResult = await GQLFetcher.query(
+        const fetchResult = await GQLQuery.query(
             {
                 query: LOGIN,
                 variables: {

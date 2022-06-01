@@ -5,7 +5,7 @@ import { CustomerPaymentInformation } from "../../../tipos/CustomerPayment";
 import { Empleado } from "../../../tipos/Empleado";
 import { Producto } from "../../../tipos/Producto";
 import { ADD_SALE, QUERY_SALES } from "../../../utils/querys";
-import GQLFetcher from "../../../utils/serverFetcher";
+import GQLQuery from "../../../utils/serverFetcher";
 
 const handler = async (req: NextApiRequest, res: NextApiResponse) => {
     // const session = await getSession({ req })
@@ -35,7 +35,7 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
 }
 
 const GetSales = async (req: NextApiRequest, res: NextApiResponse) => {
-    const fetchResult = await GQLFetcher.query(
+    const fetchResult = await GQLQuery.query(
         {
             query: QUERY_SALES,
             variables: {
@@ -61,7 +61,7 @@ const AddSale = async (req: NextApiRequest, res: NextApiResponse) => {
         const empleado: Empleado = req.body.empleado;
         const tpv = req.body.tpv;
 
-        const fetchResult = await GQLFetcher.mutate(
+        const fetchResult = await GQLQuery.mutate(
             {
                 mutation: ADD_SALE,
                 variables: {

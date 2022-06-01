@@ -1,6 +1,6 @@
 import { NextApiRequest, NextApiResponse } from "next";
 import { ADD_CIERRE, OCUPY_TPV, QUERY_TPV, QUERY_TPVS } from "../../../utils/querys";
-import GQLFetcher from "../../../utils/serverFetcher";
+import GQLQuery from "../../../utils/serverFetcher";
 import queryString from 'query-string';
 
 const handler = async (req: NextApiRequest, res: NextApiResponse) => {
@@ -32,7 +32,7 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
 
 const GetTpvById = async (req: NextApiRequest, res: NextApiResponse) => {
     const query = queryString.parse(req.query.id.toString());
-    const fetchResult = await GQLFetcher.query(
+    const fetchResult = await GQLQuery.query(
         {
             query: QUERY_TPV,
             variables: {
@@ -56,7 +56,7 @@ const GetTpvsByUcupabilidad = async (req: NextApiRequest, res: NextApiResponse) 
     const query = queryString.parse(req.query.id.toString());
     const isLibre: boolean = Boolean(query.isTpvFree);
 
-    const fetchResult = await GQLFetcher.query(
+    const fetchResult = await GQLQuery.query(
         {
             query: QUERY_TPVS,
             variables: {
@@ -76,7 +76,7 @@ const GetTpvsByUcupabilidad = async (req: NextApiRequest, res: NextApiResponse) 
 }
 
 const OcuparTpvById = async (req: NextApiRequest, res: NextApiResponse) => {
-    const fetchResult = await GQLFetcher.mutate(
+    const fetchResult = await GQLQuery.mutate(
         {
             mutation: OCUPY_TPV,
             variables: {
@@ -97,7 +97,7 @@ const OcuparTpvById = async (req: NextApiRequest, res: NextApiResponse) => {
 }
 
 const AddCierre = async (req: NextApiRequest, res: NextApiResponse) => {
-    const fetchResult = await GQLFetcher.mutate(
+    const fetchResult = await GQLQuery.mutate(
         {
             mutation: ADD_CIERRE,
             variables: {

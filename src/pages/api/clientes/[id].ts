@@ -1,7 +1,7 @@
 import { NextApiRequest, NextApiResponse } from "next";
 import queryString from 'query-string';
 import { ADD_CLIENTES_FILE as ADD_CLIENTS_FILE, DELETE_CLIENT, QUERY_CLIENT, QUERY_CLIENTS, UPDATE_CLIENT } from "../../../utils/querys";
-import GQLFetcher from "../../../utils/serverFetcher";
+import GQLQuery from "../../../utils/serverFetcher";
 
 const handler = async (req: NextApiRequest, res: NextApiResponse) => {
     try {
@@ -35,7 +35,7 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
 const AddClientesFromFile = async (req: NextApiRequest, res: NextApiResponse) => {
 
     const reqBody = req.body;
-    const fetchResult = await GQLFetcher.mutate(
+    const fetchResult = await GQLQuery.mutate(
         {
             mutation: ADD_CLIENTS_FILE,
             variables: {
@@ -54,7 +54,7 @@ const AddClientesFromFile = async (req: NextApiRequest, res: NextApiResponse) =>
 const GetClientesFromQuery = async (userQuery: queryString.ParsedQuery<string>, res: NextApiResponse) => {
     if (!userQuery.query) { res.status(300).json({ message: `La query no puede estar vacía` }); }
 
-    const fetchResult = await GQLFetcher.query(
+    const fetchResult = await GQLQuery.query(
         {
             query: QUERY_CLIENTS,
             variables: {
@@ -77,7 +77,7 @@ const GetClienteFromId = async (req: NextApiRequest, res: NextApiResponse) => {
     const reqBody = req.body;
 
     if (reqBody.find) {
-        const fetchResult = await GQLFetcher.mutate(
+        const fetchResult = await GQLQuery.mutate(
             {
                 mutation: QUERY_CLIENT,
                 variables: {
@@ -98,7 +98,7 @@ const GetClienteFromId = async (req: NextApiRequest, res: NextApiResponse) => {
 
 const UpdateCliente = async (req: NextApiRequest, res: NextApiResponse) => {
     const reqBody = req.body;
-    const fetchResult = await GQLFetcher.mutate(
+    const fetchResult = await GQLQuery.mutate(
         {
             mutation: UPDATE_CLIENT,
             variables: {
@@ -121,7 +121,7 @@ const UpdateCliente = async (req: NextApiRequest, res: NextApiResponse) => {
 
 const DeleteCliente = async (req: NextApiRequest, res: NextApiResponse) => {
 
-    const fetchResult = await GQLFetcher.mutate(
+    const fetchResult = await GQLQuery.mutate(
         {
             mutation: DELETE_CLIENT,
             variables: {

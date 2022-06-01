@@ -1,6 +1,6 @@
 import { NextApiRequest, NextApiResponse } from "next"
 import { QUERY_SALES } from "../../../../../utils/querys";
-import GQLFetcher from "../../../../../utils/serverFetcher";
+import GQLQuery from "../../../../../utils/serverFetcher";
 
 const handler = async (req: NextApiRequest, res: NextApiResponse) => {
     // const session = await getSession({ req })
@@ -22,7 +22,7 @@ const GetSaleByTPVDate = async (req: NextApiRequest, res: NextApiResponse) => {
     try {
         const { ids } = req.query;
 
-        const fetchResult = await GQLFetcher.query({
+        const fetchResult = await GQLQuery.query({
             query: QUERY_SALES,
             variables: {
                 find: {

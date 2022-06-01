@@ -1,6 +1,6 @@
 import { NextApiRequest, NextApiResponse } from "next"
 import { ADD_PRODUCT, ADD_PRODUCTOS_FILE, DELETE_PRODUCT, QUERY_PRODUCT, QUERY_PRODUCTS, UPDATE_PRODUCT } from "../../../utils/querys";
-import GQLFetcher from "../../../utils/serverFetcher";
+import GQLQuery from "../../../utils/serverFetcher";
 import queryString from 'query-string';
 import { Producto } from "../../../tipos/Producto";
 
@@ -34,7 +34,7 @@ const handler = async (req: NextApiRequest, res: NextApiResponse): Promise<void>
 }
 
 const GetProductoFromId = async (req: NextApiRequest, res: NextApiResponse) => {
-    const fetchResult = await GQLFetcher.query(
+    const fetchResult = await GQLQuery.query(
         {
             query: QUERY_PRODUCT,
             variables: {
@@ -55,7 +55,7 @@ const GetProductoFromId = async (req: NextApiRequest, res: NextApiResponse) => {
 const GetProductosFromQuery = async (userQuery: queryString.ParsedQuery<string>, res: NextApiResponse) => {
     if (!userQuery.query) { res.status(300).json({ message: `La query no puede estar vacía` }); }
 
-    const fetchResult = await GQLFetcher.query(
+    const fetchResult = await GQLQuery.query(
         {
             query: QUERY_PRODUCTS,
             variables: {
@@ -74,7 +74,7 @@ const GetProductosFromQuery = async (userQuery: queryString.ParsedQuery<string>,
 }
 
 const AddProductosFromFile = async (req: NextApiRequest, res: NextApiResponse) => {
-    const response = await GQLFetcher.mutate({
+    const response = await GQLQuery.mutate({
         mutation: ADD_PRODUCTOS_FILE,
         variables: {
             csv: JSON.stringify(req.body)
@@ -89,7 +89,7 @@ const AddProductosFromFile = async (req: NextApiRequest, res: NextApiResponse) =
 }
 
 const DeleteProducto = async (req: NextApiRequest, res: NextApiResponse) => {
-    const response = await GQLFetcher.mutate({
+    const response = await GQLQuery.mutate({
         mutation: DELETE_PRODUCT,
         variables: {
             "id": req.query.id
@@ -106,7 +106,7 @@ const UpdateProducto = async (req: NextApiRequest, res: NextApiResponse) => {
     try {
         const prod: Producto = req.body;
 
-        const response = await GQLFetcher.mutate({
+        const response = await GQLQuery.mutate({
             mutation: UPDATE_PRODUCT,
             variables: {
                 "producto": {

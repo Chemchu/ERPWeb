@@ -1,6 +1,11 @@
-import { gql } from "@apollo/client";
+import {
+  graphql,
+  GraphQLSchema,
+  GraphQLObjectType,
+  GraphQLString,
+} from 'graphql';
 
-export const ADD_SALE = gql`
+export const ADD_SALE = `
     mutation addVenta($fields: VentaFields!) {
         addVenta(fields: $fields) {
             message
@@ -11,7 +16,7 @@ export const ADD_SALE = gql`
     }
 `;
 
-export const ADD_CIERRE = gql`
+export const ADD_CIERRE = `
     mutation Mutation($cierre: CierreTPVInput!) {
   addCierreTPV(cierre: $cierre) {
     cierre {
@@ -52,7 +57,7 @@ export const ADD_CIERRE = gql`
 }
 `;
 
-export const QUERY_PRODUCTS = gql`
+export const QUERY_PRODUCTS = `
     query Productos($limit: Int, $find: ProductosFind) {
         productos(limit: $limit, find: $find) {
             _id
@@ -74,7 +79,7 @@ export const QUERY_PRODUCTS = gql`
     }
 `;
 
-export const UPDATE_PRODUCT = gql`
+export const UPDATE_PRODUCT = `
    mutation UpdateProducto($producto: ProductoUpdateInput!) {
   updateProducto(producto: $producto) {
     message
@@ -83,7 +88,7 @@ export const UPDATE_PRODUCT = gql`
 }
 `;
 
-export const QUERY_PRODUCT = gql`
+export const QUERY_PRODUCT = `
     query Producto($find: ProductoFind!) {
         producto(find: $find) {
             _id
@@ -105,7 +110,7 @@ export const QUERY_PRODUCT = gql`
     }
 `;
 
-export const ADD_PRODUCT = gql`
+export const ADD_PRODUCT = `
     mutation AddProducto($producto: ProductoAddInput!) {
   addProducto(producto: $producto) {
     message
@@ -114,7 +119,7 @@ export const ADD_PRODUCT = gql`
 }
 `;
 
-export const DELETE_PRODUCT = gql`
+export const DELETE_PRODUCT = `
     mutation Mutation($id: ID!) {
   deleteProducto(_id: $id) {
     message
@@ -123,7 +128,7 @@ export const DELETE_PRODUCT = gql`
 }
 `;
 
-export const ADD_PRODUCTOS_FILE = gql`
+export const ADD_PRODUCTOS_FILE = `
     mutation AddProductosFile($csv: String!) {
         addProductosFile(csv: $csv) {
             message
@@ -132,7 +137,7 @@ export const ADD_PRODUCTOS_FILE = gql`
     }
 `;
 
-export const ADD_SALES_FILE = gql`
+export const ADD_SALES_FILE = `
     mutation AddVentasFile($ventasJson: String!) {
       addVentasFile(ventasJson: $ventasJson) {
         message
@@ -141,7 +146,7 @@ export const ADD_SALES_FILE = gql`
     }
 `;
 
-export const QUERY_CLIENTS = gql`
+export const QUERY_CLIENTS = `
   query Clientes($limit: Int, $find: ClientesFind) {
     clientes(limit: $limit, find: $find) {
         _id
@@ -153,7 +158,7 @@ export const QUERY_CLIENTS = gql`
   }
 `;
 
-export const ADD_CLIENTES_FILE = gql`
+export const ADD_CLIENTES_FILE = `
   mutation AddClientesFile($csv: String!) {
     addClientesFile(csv: $csv) {
       message
@@ -162,7 +167,7 @@ export const ADD_CLIENTES_FILE = gql`
   }
 `;
 
-export const QUERY_CLIENT = gql`
+export const QUERY_CLIENT = `
   query Cliente($find: ClienteFind!) {
     cliente(find: $find) {
       _id
@@ -174,7 +179,7 @@ export const QUERY_CLIENT = gql`
   }
 `;
 
-export const UPDATE_CLIENT = gql`
+export const UPDATE_CLIENT = `
   mutation Mutation($id: ID!, $nif: String, $nombre: String, $calle: String, $cp: String) {
     updateCliente(_id: $id, nif: $nif, nombre: $nombre, calle: $calle, cp: $cp) {
       message
@@ -183,7 +188,7 @@ export const UPDATE_CLIENT = gql`
   }
 `;
 
-export const DELETE_CLIENT = gql`
+export const DELETE_CLIENT = `
   mutation DeleteCliente($id: ID!) {
     deleteCliente(_id: $id) {
       message
@@ -192,7 +197,7 @@ export const DELETE_CLIENT = gql`
   }
 `;
 
-export const ADD_CLIENT = gql`
+export const ADD_CLIENT = `
   mutation Mutation($nif: String!, $nombre: String!, $calle: String, $cp: String) {
     addCliente(nif: $nif, nombre: $nombre, calle: $calle, cp: $cp) {
       message
@@ -201,7 +206,7 @@ export const ADD_CLIENT = gql`
   }
 `;
 
-export const QUERY_SALE = gql`
+export const QUERY_SALE = `
     query Venta($id: ID!) {
     venta(_id: $id) {
         _id
@@ -252,7 +257,7 @@ export const QUERY_SALE = gql`
 }
 `;
 
-export const QUERY_SALES = gql`
+export const QUERY_SALES = `
     query VentasVentas($find: VentasFind) {
         ventas(find: $find) {
             _id
@@ -303,7 +308,7 @@ export const QUERY_SALES = gql`
     }
 `;
 
-export const QUERY_TPV = gql`
+export const QUERY_TPV = `
 query QueryTPV($find: TPVFind!) {
     tpv(find: $find) {
             _id
@@ -323,7 +328,7 @@ query QueryTPV($find: TPVFind!) {
     }
 `;
 
-export const QUERY_TPVS = gql`
+export const QUERY_TPVS = `
 query Tpvs($find: TPVsFind, $limit: Int) {
   tpvs(find: $find, limit: $limit) {
     _id
@@ -343,7 +348,7 @@ query Tpvs($find: TPVsFind, $limit: Int) {
 }
 `;
 
-export const OCUPY_TPV = gql`
+export const OCUPY_TPV = `
     mutation OcupyTPV($idEmpleado: ID!, $idTpv: ID!, $cajaInicial: Float!) {
         ocupyTPV(idEmpleado: $idEmpleado, idTPV: $idTpv, cajaInicial: $cajaInicial) {
             token
@@ -352,7 +357,7 @@ export const OCUPY_TPV = gql`
     }
 `;
 
-export const QUERY_CIERRES = gql`
+export const QUERY_CIERRES = `
     query CierresTPVs {
   cierresTPVs {
     _id
@@ -388,7 +393,7 @@ export const QUERY_CIERRES = gql`
 }
 `;
 
-export const QUERY_EMPLEADOS = gql`
+export const QUERY_EMPLEADOS = `
     query Empleados($find: EmpleadosFind, $limit: Int) {
   empleados(find: $find, limit: $limit) {
     _id
@@ -400,7 +405,7 @@ export const QUERY_EMPLEADOS = gql`
 }
 `;
 
-export const DELETE_EMPLEADO = gql`
+export const DELETE_EMPLEADO = `
     mutation DeleteEmpleado($id: ID!) {
   deleteEmpleado(_id: $id) {
     message
@@ -409,7 +414,7 @@ export const DELETE_EMPLEADO = gql`
 }
 `
 
-export const UPDATE_EMPLEADO = gql`
+export const UPDATE_EMPLEADO = `
     mutation UpdateEmpleado($id: ID!, $nombre: String, $apellidos: String, $rol: String, $email: String) {
   updateEmpleado(_id: $id, nombre: $nombre, apellidos: $apellidos, rol: $rol, email: $email) {
     message
@@ -418,7 +423,7 @@ export const UPDATE_EMPLEADO = gql`
 }
 `
 
-export const LOGIN = gql`
+export const LOGIN = `
   query Login($loginValues: Credentials!) {
     login(loginValues: $loginValues) {
       message
