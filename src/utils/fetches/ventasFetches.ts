@@ -118,10 +118,10 @@ export const AddVenta = async (pagoCliente: CustomerPaymentInformation, producto
 
         if (!addventaRespone.ok) { notifyError("Error al añadir la venta"); return { data: undefined, error: true } }
 
-        const data = await addventaRespone.json();
+        const response = await addventaRespone.json();
 
         const error = addventaRespone.status === 200 ? false : true;
-        return { data: data.addVenta, error: error };
+        return { data: response.data, error: error };
     }
     catch (err) {
         console.error(err);

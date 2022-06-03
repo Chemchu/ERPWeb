@@ -19,7 +19,7 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
 }
 
 const GetEmpleados = async (req: NextApiRequest, res: NextApiResponse) => {
-    const fetchResult = await GQLQuery.query(
+    const apiResponse = await (await GQLQuery(
         {
             query: QUERY_EMPLEADOS,
             variables: {
@@ -27,17 +27,10 @@ const GetEmpleados = async (req: NextApiRequest, res: NextApiResponse) => {
                 "limit": 3000
             }
         }
-    );
+    )).json();
 
-    if (fetchResult.errors) {
-        return res.status(300).json({ message: `Fallo al pedir la lista de productos: ${fetchResult.errors[0]}` });
-    }
-
-    if (fetchResult.data) {
-        return res.status(200).json(fetchResult.data);
-    }
-
-    return res.status(300).json({ message: `Fallo al pedir la lista de productos` });
+    const data = JSON.parse(apiResponse.data);
+    return res.status(apiResponse.successful ? 200 : 300).json({ message: apiResponse.message, data: data, successful: apiResponse.successful });
 }
 
 export default handler;

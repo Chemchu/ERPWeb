@@ -1,6 +1,6 @@
 import { NextApiRequest, NextApiResponse } from "next";
 import { ADD_CLIENT, QUERY_CLIENTS } from "../../../utils/querys";
-import GQLQuery from "../../../utils/serverFetcher";
+import GQLQuery, { GQLMutate } from "../../../utils/serverFetcher";
 
 const handler = async (req: NextApiRequest, res: NextApiResponse) => {
     try {
@@ -21,7 +21,7 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
 
 const AddCliente = async (req: NextApiRequest, res: NextApiResponse) => {
     const reqBody = req.body;
-    const fetchResult = await GQLQuery.mutate(
+    const apiResponse = await (await GQLMutate(
         {
             mutation: ADD_CLIENT,
             variables: {
@@ -29,35 +29,27 @@ const AddCliente = async (req: NextApiRequest, res: NextApiResponse) => {
                 "calle": reqBody.calle,
                 "nif": reqBody.nif,
                 "cp": reqBody.cp
-            },
-            fetchPolicy: "no-cache"
+            }
         }
-    );
+    )).json();
 
-    if (!fetchResult.errors) {
-        return res.status(200).json({ message: "Éxito al buscar a los clientes", successful: true, clientes: fetchResult.data.clientes });
-    }
-
-    return res.status(300).json({ message: "Fallo al buscar los clientes", successful: false });
+    const data = JSON.parse(apiResponse.data)
+    return res.status(200).json({ message: apiResponse.message, successful: apiResponse.successful, data: data.clientes });
 }
 
 const GetClientes = async (req: NextApiRequest, res: NextApiResponse) => {
     const reqBody = req.body;
-    const fetchResult = await GQLQuery.query(
+    const apiResponse = await (await GQLQuery(
         {
             query: QUERY_CLIENTS,
             variables: {
                 "limit": reqBody.limit || 50
-            },
-            fetchPolicy: "no-cache"
+            }
         }
-    );
-    if (!fetchResult.errors) {
-        return res.status(200).json({ message: "Éxito al buscar a los clientes", successful: true, clientes: fetchResult.data.clientes });
-    }
+    )).json();
 
-    return res.status(300).json({ message: "Fallo al buscar los clientes", successful: false });
+    const data = JSON.parse(apiResponse.data)
+    return res.status(apiResponse.successful ? 200 : 300).json({ message: apiResponse.message, successful: apiResponse.successful, data: data.clientes });
 }
-
 
 export default handler;

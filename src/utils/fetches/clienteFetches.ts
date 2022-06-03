@@ -13,7 +13,7 @@ export const FetchClientes = async (): Promise<Cliente[]> => {
             return [];
         }
 
-        return CreateClientList(cJson.clientes);
+        return CreateClientList(cJson.data);
     }
     catch (e) {
         console.error(e);
@@ -36,7 +36,7 @@ export const FetchClientesByQuery = async (userQuery: string): Promise<Cliente[]
         }
         const cJson = await cResponse.json();
 
-        return CreateClientList(cJson.clientes);
+        return CreateClientList(cJson.data);
     }
     catch (e) {
         console.error(e);

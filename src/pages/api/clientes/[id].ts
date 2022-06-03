@@ -1,7 +1,7 @@
 import { NextApiRequest, NextApiResponse } from "next";
 import queryString from 'query-string';
 import { ADD_CLIENTES_FILE as ADD_CLIENTS_FILE, DELETE_CLIENT, QUERY_CLIENT, QUERY_CLIENTS, UPDATE_CLIENT } from "../../../utils/querys";
-import GQLQuery from "../../../utils/serverFetcher";
+import GQLQuery, { GQLMutate } from "../../../utils/serverFetcher";
 
 const handler = async (req: NextApiRequest, res: NextApiResponse) => {
     try {
@@ -35,70 +35,58 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
 const AddClientesFromFile = async (req: NextApiRequest, res: NextApiResponse) => {
 
     const reqBody = req.body;
-    const fetchResult = await GQLQuery.mutate(
+    const apiResponse = await (await GQLMutate(
         {
             mutation: ADD_CLIENTS_FILE,
             variables: {
                 "csv": reqBody.csv
-            },
-            fetchPolicy: "no-cache"
+            }
         }
-    );
-    if (!fetchResult.errors) {
-        return res.status(200).json({ message: fetchResult.data.message, successful: fetchResult.data.successful });
-    }
+    )).json();
 
-    return res.status(300).json({ message: "Fallo al añadir los clientes", successful: false });
+    return res.status(apiResponse ? 200 : 300).json({ message: apiResponse.message, successful: apiResponse.successful });
 }
 
 const GetClientesFromQuery = async (userQuery: queryString.ParsedQuery<string>, res: NextApiResponse) => {
     if (!userQuery.query) { res.status(300).json({ message: `La query no puede estar vacía` }); }
 
-    const fetchResult = await GQLQuery.query(
+    const apiResponse = await (await GQLQuery(
         {
             query: QUERY_CLIENTS,
             variables: {
                 "find": {
                     "query": userQuery.query
                 }
-            },
-            fetchPolicy: "no-cache"
+            }
         }
-    );
+    )).json();
 
-    if (fetchResult.data.clientes) {
-        return res.status(200).json({ message: `Productos encontrados`, clientes: fetchResult.data.clientes, successful: true });
-    }
-
-    return res.status(300).json({ message: `Fallo al realizar la búsqueda`, successful: false });
+    const data = JSON.parse(apiResponse.data);
+    return res.status(apiResponse.successful ? 200 : 300).json({ message: apiResponse.successful, data: data.clientes, successful: apiResponse.successful });
 }
 
 const GetClienteFromId = async (req: NextApiRequest, res: NextApiResponse) => {
     const reqBody = req.body;
 
-    if (reqBody.find) {
-        const fetchResult = await GQLQuery.mutate(
-            {
-                mutation: QUERY_CLIENT,
-                variables: {
-                    "find": {
-                        "_id": reqBody.find._id
-                    }
-                },
-                fetchPolicy: "no-cache"
+    if (!reqBody.find) { return res.status(300).json({ message: "La búsqueda no puede estar vacía", successful: false }); }
+    const apiResponse = await (await GQLMutate(
+        {
+            mutation: QUERY_CLIENT,
+            variables: {
+                "find": {
+                    "_id": reqBody.find._id
+                }
             }
-        );
-        if (!fetchResult.errors) {
-            return res.status(200).json({ message: "Éxito al buscar al cliente", successful: true, clientes: fetchResult.data.cliente });
         }
-    }
+    )).json();
 
-    return res.status(300).json({ message: "Fallo al buscar al cliente", successful: false });
+    const data = JSON.parse(apiResponse.data);
+    return res.status(apiResponse.successful ? 200 : 300).json({ message: apiResponse.message, successful: apiResponse.successful, data: data.cliente });
 }
 
 const UpdateCliente = async (req: NextApiRequest, res: NextApiResponse) => {
     const reqBody = req.body;
-    const fetchResult = await GQLQuery.mutate(
+    const apiResponse = await (await GQLMutate(
         {
             mutation: UPDATE_CLIENT,
             variables: {
@@ -108,33 +96,25 @@ const UpdateCliente = async (req: NextApiRequest, res: NextApiResponse) => {
                 "calle": reqBody.calle,
                 "cp": reqBody.cp
             },
-            fetchPolicy: "no-cache"
         }
-    );
+    )).json();
+    //const data = JSON.parse(apiResponse.data);
+    // data.updateCliente
 
-    if (fetchResult.data.updateCliente.successful) {
-        return res.status(200).json({ message: fetchResult.data.updateCliente.message, successful: fetchResult.data.updateCliente.successful });
-    }
-
-    return res.status(300).json({ message: fetchResult.data.updateCliente.message, successful: false });
+    return res.status(apiResponse.successful ? 200 : 300).json({ message: apiResponse.message, successful: apiResponse.successful });
 }
 
 const DeleteCliente = async (req: NextApiRequest, res: NextApiResponse) => {
-
-    const fetchResult = await GQLQuery.mutate(
+    const apiResponse = await (await GQLMutate(
         {
             mutation: DELETE_CLIENT,
             variables: {
                 "id": req.query.id
-            },
-            fetchPolicy: "no-cache"
+            }
         }
-    );
-    if (fetchResult.data.deleteCliente.successful) {
-        return res.status(200).json({ message: fetchResult.data.deleteCliente.message, successful: fetchResult.data.deleteCliente.successful });
-    }
+    )).json();
 
-    return res.status(300).json({ message: "Fallo al borrar el cliente", successful: false });
+    return res.status(apiResponse.successful ? 200 : 300).json({ message: apiResponse.message, successful: apiResponse.successful });
 }
 
 export default handler;

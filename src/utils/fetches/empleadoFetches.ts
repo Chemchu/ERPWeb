@@ -13,7 +13,7 @@ export const FetchEmpleado = async (_id: string): Promise<Empleado | undefined> 
         if (!fetchRes.ok) { notifyError("Error al buscar al empleado"); return undefined; }
 
         const empleadoJson = await fetchRes.json();
-        return CreateEmployee(empleadoJson.empleado);
+        return CreateEmployee(empleadoJson.data);
     }
     catch (e) {
         console.error(e);
@@ -30,7 +30,7 @@ export const FetchEmpleados = async (): Promise<Empleado[]> => {
         if (!fetchRes.ok) { notifyError("Error al buscar al empleado"); return []; }
 
         const empleadoJson = await fetchRes.json();
-        return CreateEmployeeList(empleadoJson.empleados);
+        return CreateEmployeeList(empleadoJson.data);
     }
     catch (e) {
         console.error(e);
@@ -86,7 +86,6 @@ export const FetchCurrentUser = async (): Promise<Empleado> => {
 
 export const FetchEmpleadosByQuery = async (userQuery: string): Promise<Empleado[]> => {
     try {
-        let empleados = [] as Empleado[];
         let id: any = new Object;
         id.query = userQuery.valueOf();
 
@@ -97,7 +96,7 @@ export const FetchEmpleadosByQuery = async (userQuery: string): Promise<Empleado
         if (!pResponse.ok) { notifyError("Error al buscar los empleados"); return []; }
 
         const pJson = await pResponse.json();
-        return CreateEmployeeList(pJson.empleados);
+        return CreateEmployeeList(pJson.data);
     }
     catch (e) {
         console.log(e);

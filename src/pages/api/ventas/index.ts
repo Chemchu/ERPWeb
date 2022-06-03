@@ -74,7 +74,7 @@ const AddSale = async (req: NextApiRequest, res: NextApiResponse) => {
         )).json();
 
         const data = JSON.parse(apiResponse.data);
-        return res.status(apiResponse.successful ? 200 : 300).json({ data: apiResponse.data, message: apiResponse.message, successful: apiResponse.successful });
+        return res.status(apiResponse.successful ? 200 : 300).json({ data: data.addVenta, message: apiResponse.message, successful: apiResponse.successful });
     }
     catch (err) {
         console.log(err);

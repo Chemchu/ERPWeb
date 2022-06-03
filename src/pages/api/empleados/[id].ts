@@ -1,6 +1,5 @@
-import { gql } from "@apollo/client";
 import { NextApiRequest, NextApiResponse } from "next";
-import GQLQuery from "../../../utils/serverFetcher";
+import GQLQuery, { GQLMutate } from "../../../utils/serverFetcher";
 import queryString from 'query-string';
 import { DELETE_EMPLEADO, QUERY_EMPLEADOS, UPDATE_EMPLEADO } from "../../../utils/querys";
 import { Empleado } from "../../../tipos/Empleado";
@@ -36,7 +35,7 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
 }
 
 const GetEmpleadoFromId = async (req: NextApiRequest, res: NextApiResponse) => {
-    const fetchResult = await GQLQuery.query(
+    const apiResponse = await (await GQLQuery(
         {
             query: QUERY_EMPLEADOS,
             variables: {
@@ -45,19 +44,16 @@ const GetEmpleadoFromId = async (req: NextApiRequest, res: NextApiResponse) => {
                 }
             }
         }
-    );
+    )).json();
 
-    if (!fetchResult.error) {
-        return res.status(200).json(JSON.stringify({ message: `Empleado encontrado`, empleado: fetchResult.data.empleado }));
-    }
-
-    return res.status(300).json({ message: `Fallo al realizar la búsqueda` });
+    const data = JSON.parse(apiResponse.data);
+    return res.status(apiResponse.successful ? 200 : 300).json(JSON.stringify({ message: apiResponse.message, data: data.empleado, successful: apiResponse.successful }));
 }
 
 const GetEmpleadosFromQuery = async (userQuery: queryString.ParsedQuery<string>, res: NextApiResponse) => {
     if (!userQuery.query) { res.status(300).json({ message: `La query no puede estar vacía` }); }
 
-    const fetchResult = await GQLQuery.query(
+    const apiResponse = await (await GQLQuery(
         {
             query: QUERY_EMPLEADOS,
             variables: {
@@ -66,13 +62,10 @@ const GetEmpleadosFromQuery = async (userQuery: queryString.ParsedQuery<string>,
                 }
             }
         }
-    );
+    )).json();
 
-    if (fetchResult.data.empleados) {
-        return res.status(200).json({ message: `Empleados encontrados`, empleados: fetchResult.data.empleados });
-    }
-
-    return res.status(300).json({ message: `Fallo al realizar la búsqueda` });
+    const data = JSON.parse(apiResponse.data);
+    return res.status(apiResponse.successful ? 200 : 300).json({ message: apiResponse.message, data: data.empleados, successful: apiResponse.successful });
 }
 
 const AddEmpleadosFromFile = async (req: NextApiRequest, res: NextApiResponse) => {
@@ -91,24 +84,21 @@ const AddEmpleadosFromFile = async (req: NextApiRequest, res: NextApiResponse) =
 }
 
 const DeleteEmpleado = async (req: NextApiRequest, res: NextApiResponse) => {
-    const response = await GQLQuery.mutate({
+    const apiResponse = await (await GQLMutate({
         mutation: DELETE_EMPLEADO,
         variables: {
             "id": req.query.id
         }
-    });
+    })).json();
 
-    if (response.data.deleteEmpleado.successful) {
-        return res.status(200).json({ message: response.data.deleteEmpleado.message, successful: response.data.deleteEmpleado.successful });
-    }
-    return res.status(300).json({ message: `Fallo al borrar el empleado: ${response.data.deleteEmpleado.message}`, successful: response.data.deleteEmpleado.successful });
+    return res.status(apiResponse.successful ? 200 : 300).json({ message: apiResponse.message, successful: apiResponse.successful });
 }
 
 const UpdateEmpleado = async (req: NextApiRequest, res: NextApiResponse) => {
     try {
         const emp: Empleado = req.body;
 
-        const response = await GQLQuery.mutate({
+        const apiResponse = await (await GQLMutate({
             mutation: UPDATE_EMPLEADO,
             variables: {
                 "id": emp._id,
@@ -117,14 +107,10 @@ const UpdateEmpleado = async (req: NextApiRequest, res: NextApiResponse) => {
                 "rol": emp.rol,
                 "email": emp.email
             }
-        });
+        })).json();
 
-        if (response.data.updateEmpleado.successful) {
-            res.status(200).json({ message: response.data.updateEmpleado.message, successful: response.data.updateEmpleado.successful });
-            return;
-        }
-
-        res.status(300).json({ message: `Fallo al actualizar el empleado: ${response.data.message}`, successful: false });
+        // const data = JSON.parse(apiResponse.data);
+        return res.status(200).json({ message: apiResponse.message, successful: apiResponse.successful });
     }
     catch (e) {
         console.log(e);
