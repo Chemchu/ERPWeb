@@ -1,6 +1,6 @@
 import { NextApiRequest, NextApiResponse } from "next";
 import { ADD_CIERRE, OCUPY_TPV, QUERY_TPV, QUERY_TPVS } from "../../../utils/querys";
-import GQLQuery from "../../../utils/serverFetcher";
+import GQLQuery, { GQLMutate } from "../../../utils/serverFetcher";
 import queryString from 'query-string';
 
 const handler = async (req: NextApiRequest, res: NextApiResponse) => {
@@ -14,8 +14,6 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
 
             case 'PUT':
                 return await OcuparTpvById(req, res);
-            // if (query.ocuparTpv) { return await OcuparTpvById(req, res); }
-            // else { return await AddCierre(req, res); }
 
             default:
                 res.setHeader('Allow', ['GET', 'PUT']);
@@ -32,7 +30,7 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
 
 const GetTpvById = async (req: NextApiRequest, res: NextApiResponse) => {
     const query = queryString.parse(req.query.id.toString());
-    const fetchResult = await GQLQuery.query(
+    const apiResponse = await (await GQLQuery(
         {
             query: QUERY_TPV,
             variables: {
@@ -40,23 +38,19 @@ const GetTpvById = async (req: NextApiRequest, res: NextApiResponse) => {
                     "_id": query.TPVId
                 },
                 "limit": 3000
-            },
-            fetchPolicy: "no-cache"
+            }
         }
-    );
+    )).json();
 
-    if (fetchResult.data.tpv) {
-        return res.status(200).json(JSON.stringify({ message: `Éxito al buscar la TPV`, tpv: JSON.stringify(fetchResult.data.tpv) }));
-    }
-
-    return res.status(300).json(JSON.stringify({ message: `Fallo al buscar la TPV` }));
+    const data = JSON.parse(apiResponse.data);
+    return res.status(apiResponse.successful ? 200 : 300).json({ message: apiResponse.message, data: data.tpv, successful: apiResponse.successful });
 }
 
 const GetTpvsByUcupabilidad = async (req: NextApiRequest, res: NextApiResponse) => {
     const query = queryString.parse(req.query.id.toString());
     const isLibre: boolean = Boolean(query.isTpvFree);
 
-    const fetchResult = await GQLQuery.query(
+    const apiResponse = await (await GQLQuery(
         {
             query: QUERY_TPVS,
             variables: {
@@ -64,40 +58,38 @@ const GetTpvsByUcupabilidad = async (req: NextApiRequest, res: NextApiResponse) 
                     "libre": isLibre
                 },
                 "limit": 100
-            },
-            fetchPolicy: "no-cache"
+            }
         }
-    );
-    if (fetchResult.data.tpvs) {
-        return res.status(200).json(JSON.stringify({ message: `Éxito al buscar la TPV`, tpv: JSON.stringify(fetchResult.data.tpvs) }));
-    }
+    )).json();
+    const data = JSON.parse(apiResponse.data);
 
-    return res.status(300).json(JSON.stringify({ message: `Fallo al buscar la TPV` }));
+    return res.status(apiResponse.successful ? 200 : 300).json({ message: apiResponse.message, data: data.tpvs });
 }
 
 const OcuparTpvById = async (req: NextApiRequest, res: NextApiResponse) => {
-    const fetchResult = await GQLQuery.mutate(
+    const apiResponse = await (await GQLMutate(
         {
             mutation: OCUPY_TPV,
             variables: {
                 "idEmpleado": req.body.empId,
                 "idTpv": req.body.tpvId,
                 "cajaInicial": req.body.cajaInicial
-            },
-            fetchPolicy: "no-cache"
+            }
         }
-    );
+    )).json();
 
-    if (fetchResult.data.ocupyTPV.successful) {
-        res.setHeader('Set-Cookie', `authorization=${fetchResult.data.ocupyTPV.token}; HttpOnly; Path=/`);
-        return res.status(200).json(JSON.stringify({ message: `Éxito al abrir la TPV`, successful: true }));
+    const data = JSON.parse(apiResponse.data);
+
+    if (apiResponse.successful) {
+        res.setHeader('Set-Cookie', `authorization=${data.data.ocupyTPV.token}; HttpOnly; Path=/`);
+        return res.status(200).json({ message: `Éxito al abrir la TPV`, successful: true });
     }
 
-    return res.status(300).json(JSON.stringify({ message: `Fallo al buscar la TPV`, successful: fetchResult.data.ocupyTPV.successful }));
+    return res.status(300).json({ message: `Fallo al buscar la TPV`, successful: apiResponse.successful });
 }
 
 const AddCierre = async (req: NextApiRequest, res: NextApiResponse) => {
-    const fetchResult = await GQLQuery.mutate(
+    const apiResponse = await (await GQLMutate(
         {
             mutation: ADD_CIERRE,
             variables: {
@@ -130,14 +122,16 @@ const AddCierre = async (req: NextApiRequest, res: NextApiResponse) => {
                 }
             }
         }
-    );
+    )).json();
 
-    if (fetchResult.data.addCierreTPV.successful) {
-        res.setHeader('Set-Cookie', `authorization=${fetchResult.data.addCierreTPV.token}; HttpOnly; Path=/`);
-        return res.status(200).json(JSON.stringify({ message: `Éxito al cerrar la TPV`, successful: true }));
+    const data = JSON.parse(apiResponse.data);
+
+    if (apiResponse.successful) {
+        res.setHeader('Set-Cookie', `authorization=${data.addCierreTPV.token}; HttpOnly; Path=/`);
+        return res.status(200).json({ message: `Éxito al cerrar la TPV`, successful: true });
     }
 
-    return res.status(300).json(JSON.stringify({ message: `Fallo al cerrar la TPV`, successful: fetchResult.data.addCierreTPV.successful }));
+    return res.status(300).json({ message: `Fallo al cerrar la TPV`, successful: apiResponse.successful });
 }
 
 export default handler;

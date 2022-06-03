@@ -15,8 +15,7 @@ export const FetchTPV = async (TPVId: string, abortController: AbortController):
         if (!fetchTPV.ok) { notifyError("Error al buscar la TPV"); return undefined; }
 
         const tpvJson = await fetchTPV.json();
-
-        return CreateTPV(JSON.parse(JSON.parse(tpvJson).tpv));
+        return CreateTPV(tpvJson.data);
     }
     catch (e) {
         console.error(e);
@@ -33,7 +32,7 @@ export const FetchTPVs = async (): Promise<TPVType[]> => {
 
         const tpvJson = await fetchTPV.json();
 
-        return CreateTPVsList(JSON.parse(JSON.parse(tpvJson).tpvs));
+        return CreateTPVsList(tpvJson.data);
     }
     catch (e) {
         console.error(e);
@@ -53,8 +52,7 @@ export const OcuparTPV = async (tpvId: string, emp: SesionEmpleado, cajaInicial:
                 },
                 body: JSON.stringify({ tpvId: tpvId, empId: emp._id, cajaInicial: cajaInicial })
             });
-        const res = await fetchRes.json();
-        const responseJson = JSON.parse(res);
+        const responseJson = await fetchRes.json();
 
         if (fetchRes.ok) {
             notifySuccess(responseJson.message);
@@ -111,7 +109,7 @@ export const AddCierreTPV = async (Empleado: SesionEmpleado, setEmpleado: Functi
         }
         else { notifyError(tpvOcupadaJson.message); }
 
-        const cierre = CreateCierreList([tpvOcupadaJson.cierre])[0];
+        const cierre = CreateCierreList([tpvOcupadaJson.data])[0];
         return cierre;
     }
     catch (e) {
@@ -131,7 +129,7 @@ export const FetchTPVsByDisponibilidad = async (isTpvFree: boolean, abortControl
         if (!fetchTPV.ok) { notifyError("Error al buscar la TPV"); return []; }
 
         const tpvJson = await fetchTPV.json();
-        return CreateTPVsList(JSON.parse(JSON.parse(tpvJson).tpv));
+        return CreateTPVsList(tpvJson.data);
     }
     catch (e) {
         console.error(e);

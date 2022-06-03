@@ -4,28 +4,21 @@ import GQLQuery from "../../../utils/serverFetcher";
 
 const handler = async (req: NextApiRequest, res: NextApiResponse) => {
     try {
-        const id = req.query.id;
-        let fetchResult;
-
-        fetchResult = await GQLQuery.query({
+        const apiResponse = await (await GQLQuery({
             query: QUERY_CIERRES,
             variables: {
                 "find": {
-                    "fecha": id
+                    "fecha": req.query.id
                 }
-            },
-            fetchPolicy: "no-cache"
-        });
+            }
+        })).json();
 
-        if (!fetchResult.error) {
-            return res.status(200).json(fetchResult.data);
-        }
-
-        return res.status(300).json({ message: `Fallo al pedir la lista de cierres` });
+        const data = JSON.parse(apiResponse.data);
+        return res.status(apiResponse.successful ? 200 : 300).json({ message: apiResponse.message, successful: apiResponse.successful, data: data.cierresTPVs });
     }
     catch (err) {
         console.log(err);
-        return res.status(500).json({ message: `Error: ${err}` });
+        return res.status(500).json({ message: `Error: ${err}`, successful: false });
     }
 }
 

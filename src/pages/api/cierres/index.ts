@@ -1,7 +1,7 @@
 import { NextApiRequest, NextApiResponse } from "next";
 import { SesionEmpleado } from "../../../tipos/Empleado";
 import { ADD_CIERRE, QUERY_CIERRES } from "../../../utils/querys";
-import GQLQuery from "../../../utils/serverFetcher";
+import GQLQuery, { GQLMutate } from "../../../utils/serverFetcher";
 
 const handler = async (req: NextApiRequest, res: NextApiResponse) => {
     try {
@@ -25,19 +25,15 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
 }
 
 const GetCierres = async (req: NextApiRequest, res: NextApiResponse) => {
-    let fetchResult;
-
-    fetchResult = await GQLQuery.query({
+    const apiResponse = await (await GQLQuery({
         query: QUERY_CIERRES, variables: {
             "limit": 3000
         }
-    });
+    })).json();
 
-    if (!fetchResult.error) {
-        return res.status(200).json(fetchResult.data);
-    }
+    const data = JSON.parse(apiResponse.data);
 
-    return res.status(300).json({ message: `Fallo al pedir la lista de cierres` });
+    return res.status(apiResponse.successful ? 200 : 300).json({ message: apiResponse.message, data: data.cierresTPVs, successful: apiResponse.successful });
 }
 
 const AddCierre = async (req: NextApiRequest, res: NextApiResponse) => {
@@ -50,7 +46,7 @@ const AddCierre = async (req: NextApiRequest, res: NextApiResponse) => {
     const Ventas = req.body.NumVentas;
     const Tpv = req.body.TPV;
 
-    const addCierreResult = await GQLQuery.mutate({
+    const apiResponse = await (await GQLMutate({
         mutation: ADD_CIERRE,
         variables: {
             "cierre": {
@@ -80,18 +76,19 @@ const AddCierre = async (req: NextApiRequest, res: NextApiResponse) => {
                 "dineroEsperadoEnCaja": Number(TotalPrevistoEnCaja),
                 "dineroRealEnCaja": Number(TotalRealEnCaja)
             }
-        },
-        fetchPolicy: "no-cache"
-    });
+        }
+    })).json();
 
-    if (addCierreResult.data.addCierreTPV.successful) {
-        res.setHeader('Set-Cookie', `authorization=${addCierreResult.data.addCierreTPV.token}; HttpOnly; Path=/`);
-        res.status(200).json({ message: addCierreResult.data.addCierreTPV.message, successful: addCierreResult.data.addCierreTPV.successful, cierre: addCierreResult.data.addCierreTPV.cierre });
+    const data = JSON.parse(apiResponse.data);
+
+    if (apiResponse.successful) {
+        res.setHeader('Set-Cookie', `authorization=${data.addCierreTPV.token}; HttpOnly; Path=/`);
+        res.status(200).json({ message: apiResponse.message, successful: apiResponse.successful, data: data.addCierreTPV.cierre });
         return;
     }
     else {
-        res.setHeader('Set-Cookie', `authorization=${addCierreResult.data.addCierreTPV.token}; HttpOnly; Path=/`);
-        res.status(300).json({ message: addCierreResult.data.addCierreTPV.message, successful: addCierreResult.data.addCierreTPV.successful });
+        res.setHeader('Set-Cookie', `authorization=${apiResponse.data.addCierreTPV.token}; HttpOnly; Path=/`);
+        res.status(300).json({ message: apiResponse.message, successful: apiResponse.successful });
         return;
     }
 }
