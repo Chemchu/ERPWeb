@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useTransition } from "react";
 import { ValidateSearchString } from "../../../utils/validator";
 import { Producto } from "../../../tipos/Producto";
 import { ProductoVendido } from "../../../tipos/ProductoVendido";
@@ -11,6 +11,7 @@ const TPV = (props: { productos: Producto[], empleadoUsandoTPV: boolean, setEmpl
     const [ProductosFiltrados, setProductosFiltrados] = useState<Producto[]>(props.productos);
     const { ProductosEnCarrito, SetProductosEnCarrito } = useProductEnCarritoContext();
     const [Familias, setFamilias] = useState<string[]>([]);
+    const [isPending, startTransition] = useTransition();
 
     useEffect(() => {
         function uniq_fast(a: Producto[]) {
@@ -39,16 +40,16 @@ const TPV = (props: { productos: Producto[], empleadoUsandoTPV: boolean, setEmpl
 
     const Filtrar = (cadena: string) => {
         const stringValidated = ValidateSearchString(cadena);
-
-        let productosFiltrados: Producto[];
-        if (stringValidated === "") productosFiltrados = props.productos;
-        else {
-            productosFiltrados = ProductosFiltrados.filter((p: Producto) => {
-                return p.nombre.toUpperCase().includes(stringValidated.toUpperCase()) || p.ean === stringValidated.toUpperCase()
-            });
-        }
-        setProductosFiltrados(productosFiltrados);
-
+        startTransition(() => {
+            let productosFiltrados: Producto[];
+            if (stringValidated === "") productosFiltrados = props.productos;
+            else {
+                productosFiltrados = ProductosFiltrados.filter((p: Producto) => {
+                    return p.nombre.toUpperCase().includes(stringValidated.toUpperCase()) || p.ean === stringValidated.toUpperCase()
+                });
+            }
+            setProductosFiltrados(productosFiltrados);
+        })
     }
 
     const arrayNum = [...Array(3)];
@@ -104,7 +105,8 @@ const TPV = (props: { productos: Producto[], empleadoUsandoTPV: boolean, setEmpl
                                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
                                 </svg>
                             </div>
-                            <input onChange={(e) => { Filtrar(e.target.value); }} className="bg-white rounded-3xl shadow text-lg full w-full h-16 py-4 pl-16 transition-shadow focus:shadow-2xl focus:outline-none" placeholder="Buscar producto o código de barras..." />
+                            <input className="bg-white rounded-3xl shadow text-lg full w-full h-16 py-4 pl-16 transition-shadow focus:shadow-2xl focus:outline-none" placeholder="Buscar producto o código de barras..."
+                                onChange={(e) => { Filtrar(e.target.value) }} />
                         </div>
                         {
                             props.productos.length <= 0 ?
