@@ -1,6 +1,6 @@
 import { NextApiRequest, NextApiResponse } from "next"
 import { ADD_PRODUCT, ADD_PRODUCTOS_FILE, DELETE_PRODUCT, QUERY_PRODUCT, QUERY_PRODUCTS, UPDATE_PRODUCT } from "../../../utils/querys";
-import GQLQuery from "../../../utils/serverFetcher";
+import GQLQuery, { GQLMutate } from "../../../utils/serverFetcher";
 import queryString from 'query-string';
 import { Producto } from "../../../tipos/Producto";
 
@@ -34,79 +34,59 @@ const handler = async (req: NextApiRequest, res: NextApiResponse): Promise<void>
 }
 
 const GetProductoFromId = async (req: NextApiRequest, res: NextApiResponse) => {
-    const fetchResult = await GQLQuery(
-        {
-            query: QUERY_PRODUCT,
-            variables: {
-                "find": {
-                    "_id": req.query.id
-                }
+    const apiResponse = await (await GQLQuery({
+        query: QUERY_PRODUCT, variables: {
+            "find": {
+                "_id": req.query.id
             }
         }
-    );
+    })).json();
+    const data = JSON.parse(apiResponse.data);
 
-    if (fetchResult.data.producto) {
-        return res.status(200).json({ message: `Producto encontrado`, producto: fetchResult.data.producto });
-    }
-
-    return res.status(300).json({ message: `Fallo al realizar la búsqueda` });
+    return res.status(apiResponse.successful ? 200 : 300).json({ message: apiResponse.message, data: data.producto, successful: apiResponse.successful });
 }
 
 const GetProductosFromQuery = async (userQuery: queryString.ParsedQuery<string>, res: NextApiResponse) => {
-    if (!userQuery.query) { res.status(300).json({ message: `La query no puede estar vacía` }); }
+    if (!userQuery.query) { res.status(300).json({ message: `La query no puede estar vacía`, successful: false }); }
 
-    const fetchResult = await GQLQuery.query(
-        {
-            query: QUERY_PRODUCTS,
-            variables: {
-                "find": {
-                    "query": userQuery.query
-                }
+    const apiResponse = await (await GQLQuery({
+        query: QUERY_PRODUCTS, variables: {
+            "find": {
+                "query": userQuery.query
             }
         }
-    );
+    })).json();
+    const data = JSON.parse(apiResponse.data);
 
-    if (fetchResult.data.productos) {
-        return res.status(200).json({ message: `Productos encontrados`, productos: fetchResult.data.productos });
-    }
-
-    return res.status(300).json({ message: `Fallo al realizar la búsqueda` });
+    return res.status(apiResponse.successful ? 200 : 300).json({ message: apiResponse.message, productos: data.productos, successful: apiResponse.successful });
 }
 
 const AddProductosFromFile = async (req: NextApiRequest, res: NextApiResponse) => {
-    const response = await GQLQuery.mutate({
+    const apiResponse = await (await GQLMutate({
         mutation: ADD_PRODUCTOS_FILE,
         variables: {
             csv: JSON.stringify(req.body)
         }
-    });
+    })).json();
 
-    if (response.data.addProductosFile.successful) {
-        return res.status(200).json({ message: response.data.addProductosFile.message });
-    }
-
-    return res.status(300).json({ message: `Fallo al añadir los productos: ${response.data.message}` });
+    return res.status(apiResponse.successful ? 200 : 300).json({ message: apiResponse.message, successful: apiResponse.successful });
 }
 
 const DeleteProducto = async (req: NextApiRequest, res: NextApiResponse) => {
-    const response = await GQLQuery.mutate({
+    const apiResponse = await (await GQLMutate({
         mutation: DELETE_PRODUCT,
         variables: {
             "id": req.query.id
         }
-    });
+    })).json();
 
-    if (response.data.deleteProducto.successful) {
-        return res.status(200).json({ message: response.data.deleteProducto.message, successful: response.data.deleteProducto.successful });
-    }
-    return res.status(300).json({ message: `Fallo al borrar el producto: ${response.data.deleteProducto.message}`, successful: response.data.deleteProducto.successful });
+    return res.status(apiResponse.successful ? 200 : 300).json({ message: apiResponse.message, successful: apiResponse.successful });
 }
 
 const UpdateProducto = async (req: NextApiRequest, res: NextApiResponse) => {
     try {
         const prod: Producto = req.body;
-
-        const response = await GQLQuery.mutate({
+        const apiResponse = await (await GQLMutate({
             mutation: UPDATE_PRODUCT,
             variables: {
                 "producto": {
@@ -125,14 +105,10 @@ const UpdateProducto = async (req: NextApiRequest, res: NextApiResponse) => {
                     "alta": prod.alta
                 }
             }
-        });
+        })).json();
 
-        if (response.data.updateProducto.successful) {
-            res.status(200).json({ message: response.data.updateProducto.message, successful: response.data.updateProducto.successful });
-            return;
-        }
+        return res.status(apiResponse.successful ? 200 : 300).json({ message: apiResponse.message, successful: apiResponse.successful });
 
-        res.status(300).json({ message: `Fallo al actualizar el producto: ${response.data.message}`, successful: false });
     }
     catch (e) {
         console.log(e);

@@ -6,7 +6,7 @@ import GQLQuery from "../../../utils/serverFetcher";
 const handler = async (req: NextApiRequest, res: NextApiResponse) => {
     try {
         const reqCredentials = req.body;
-        const fetchResult = await GQLQuery.query(
+        const apiResponse = await (await GQLQuery(
             {
                 query: LOGIN,
                 variables: {
@@ -16,24 +16,24 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
                     }
                 }
             }
-        );
-        const jsonResponse = JSON.parse(fetchResult.data);
+        )).json();
+        const data = JSON.parse(apiResponse.data);
 
         // Devolver en caso de que todo haya ido bien
-        if (!fetchResult.error && jsonResponse.login.token) {
-            const token = getJwt(jsonResponse.login.token);
+        if (apiResponse.successful) {
+            const token = getJwt(data.login.token);
             const productionEnv: boolean = process.env.NODE_ENV !== "development";
 
             return res.status(200)
-                .setHeader('Set-Cookie', `authorization=${jsonResponse.login.token}; HttpOnly; Secure=${productionEnv}; Max-Age=${token.exp - token.iat}; Path=/`)
-                .json(JSON.stringify({ message: `Éxito al iniciar sesión` }));
+                .setHeader('Set-Cookie', `authorization=${data.login.token}; HttpOnly; Secure=${productionEnv}; Max-Age=${token.exp - token.iat}; Path=/`)
+                .json({ message: `Éxito al iniciar sesión`, successful: apiResponse.successful });
         }
 
-        return res.status(300).json({ message: `Fallo al iniciar sesión: usuario y/o contraseña incorrectos` });
+        return res.status(300).json({ message: `Fallo al iniciar sesión: usuario y/o contraseña incorrectos`, successful: apiResponse.successful });
     }
     catch (err) {
         console.log(err);
-        return res.status(500).json({ message: `Fallo al iniciar sesión: ${err}` });
+        return res.status(500).json({ message: `Fallo al iniciar sesión: ${err}`, successful: false });
     }
 }
 

@@ -12,7 +12,7 @@ export const FetchProductos = async (): Promise<Producto[]> => {
 
         const resJson = await pResponse.json();
 
-        prodRes = CreateProductList(resJson.productos);
+        prodRes = CreateProductList(resJson.data);
         return prodRes.filter((p) => { return p.alta === true });
     }
     catch (e: any) {

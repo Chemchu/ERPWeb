@@ -22,20 +22,15 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
 }
 
 const GetProductos = async (req: NextApiRequest, res: NextApiResponse) => {
-    const variables = {
-        "find": null,
-        "limit": req.body.limit || 10000
-    }
-    const fetchResult = await GQLQuery(QUERY_PRODUCTS, variables);
-
-    const apiResponse = await fetchResult.json();
+    const apiResponse = await (await GQLQuery({
+        query: QUERY_PRODUCTS, variables: {
+            "find": null,
+            "limit": req.body.limit || 10000
+        }
+    })).json();
     const data = JSON.parse(apiResponse.data);
 
-    if (!apiResponse.successful) {
-        return res.status(300).json({ message: `Fallo al pedir la lista de productos: ${apiResponse.message}` });
-    }
-
-    return res.status(200).json(data);
+    return res.status(apiResponse.successful ? 200 : 300).json({ message: apiResponse.message, successful: apiResponse.successful, data: data.productos });
 }
 
 const AddProducto = async (req: NextApiRequest, res: NextApiResponse) => {
@@ -54,15 +49,10 @@ const AddProducto = async (req: NextApiRequest, res: NextApiResponse) => {
             "alta": req.body.alta
         }
     }
-    const fetchResult = await GQLMutate(ADD_PRODUCT, variables);
-    const apiResponse = await fetchResult.json()
+    const apiResponse = await (await GQLMutate({ mutation: ADD_PRODUCT, variables: variables })).json();
     const data = JSON.parse(apiResponse.data);
 
-    if (!apiResponse.successful) {
-        return res.status(300).json({ message: `Fallo al pedir la lista de productos: ${apiResponse.message}`, successful: false });
-    }
-
-    return res.status(200).json({ message: apiResponse.message, successful: apiResponse.successful, data: data });
+    return res.status(apiResponse.successful ? 200 : 300).json({ message: apiResponse.message, successful: apiResponse.successful, data: data.producto });
 }
 
 export default handler;
