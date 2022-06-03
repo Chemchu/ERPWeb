@@ -47,7 +47,7 @@ const GetEmpleadoFromId = async (req: NextApiRequest, res: NextApiResponse) => {
     )).json();
 
     const data = JSON.parse(apiResponse.data);
-    return res.status(apiResponse.successful ? 200 : 300).json(JSON.stringify({ message: apiResponse.message, data: data.empleado, successful: apiResponse.successful }));
+    return res.status(apiResponse.successful ? 200 : 300).json(JSON.stringify({ message: apiResponse.message, data: data.empleados, successful: apiResponse.successful }));
 }
 
 const GetEmpleadosFromQuery = async (userQuery: queryString.ParsedQuery<string>, res: NextApiResponse) => {

@@ -30,7 +30,7 @@ const GetEmpleados = async (req: NextApiRequest, res: NextApiResponse) => {
     )).json();
 
     const data = JSON.parse(apiResponse.data);
-    return res.status(apiResponse.successful ? 200 : 300).json({ message: apiResponse.message, data: data, successful: apiResponse.successful });
+    return res.status(apiResponse.successful ? 200 : 300).json({ message: apiResponse.message, data: data.empleados, successful: apiResponse.successful });
 }
 
 export default handler;
