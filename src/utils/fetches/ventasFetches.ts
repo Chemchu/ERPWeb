@@ -17,7 +17,7 @@ export const FetchVentas = async (): Promise<Venta[]> => {
         }
 
         const ventas = await vRes.json();
-        return CreateSalesList(JSON.parse(ventas.data));
+        return CreateSalesList(ventas.data);
     }
     catch (e) {
         console.error(e);
@@ -35,7 +35,7 @@ export const FetchVenta = async (id: string): Promise<Venta[]> => {
         const vRes = await fetch(`/api/ventas/${idVenta}`);
 
         const ventas = await vRes.json();
-        return CreateSalesList([ventas.data.venta]);
+        return CreateSalesList([ventas.data]);
     }
     catch (e) {
         console.error(e);
@@ -54,7 +54,7 @@ export const FetchVentaByQuery = async (userQuery: string, fechas?: string[]): P
         const vRes = await fetch(`/api/ventas/${queryObject}`);
 
         const resJson = await vRes.json();
-        return CreateSalesList(resJson.ventas);
+        return CreateSalesList(resJson.data);
     }
     catch (e) {
         console.error(e);

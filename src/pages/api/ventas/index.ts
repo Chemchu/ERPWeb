@@ -5,16 +5,10 @@ import { CustomerPaymentInformation } from "../../../tipos/CustomerPayment";
 import { Empleado } from "../../../tipos/Empleado";
 import { Producto } from "../../../tipos/Producto";
 import { ADD_SALE, QUERY_SALES } from "../../../utils/querys";
-import GQLQuery from "../../../utils/serverFetcher";
+import GQLQuery, { GQLMutate } from "../../../utils/serverFetcher";
 
 const handler = async (req: NextApiRequest, res: NextApiResponse) => {
-    // const session = await getSession({ req })
-    // if (!session) {
-    //     return res.status(401).json({ message: "Not signed in" });
-    // }
-
     try {
-
         switch (req.method) {
             case 'GET':
                 return await GetSales(req, res);
@@ -35,22 +29,17 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
 }
 
 const GetSales = async (req: NextApiRequest, res: NextApiResponse) => {
-    const fetchResult = await GQLQuery.query(
+    const apiResponse = await (await GQLQuery(
         {
             query: QUERY_SALES,
             variables: {
                 "limit": 3000,
-            },
-            fetchPolicy: "no-cache"
+            }
         }
-    );
+    )).json();
 
-    if (fetchResult) {
-        let vParsed = fetchResult.data.ventas;
-        return res.status(200).json({ message: `Lista de clientes encontrada`, data: JSON.stringify(vParsed) });
-    }
-
-    return res.status(300).json({ message: `Fallo al pedir la lista de clientes` });
+    let data = JSON.parse(apiResponse.data).ventas;
+    return res.status(apiResponse.successful ? 200 : 300).json({ message: apiResponse.message, data: data, successful: apiResponse.successful });
 }
 
 const AddSale = async (req: NextApiRequest, res: NextApiResponse) => {
@@ -61,7 +50,7 @@ const AddSale = async (req: NextApiRequest, res: NextApiResponse) => {
         const empleado: Empleado = req.body.empleado;
         const tpv = req.body.tpv;
 
-        const fetchResult = await GQLQuery.mutate(
+        const apiResponse = await (await GQLMutate(
             {
                 mutation: ADD_SALE,
                 variables: {
@@ -80,21 +69,16 @@ const AddSale = async (req: NextApiRequest, res: NextApiResponse) => {
                         "descuentoPorcentaje": Number(pagoCliente.dtoPorcentaje.toFixed(2)) || 0,
                         "tpv": tpv
                     }
-                },
-                fetchPolicy: "no-cache"
+                }
             }
-        );
+        )).json();
 
-        if (fetchResult.errors) {
-            console.log(fetchResult.errors);
-
-            return res.status(300).json({ message: `Fallo al buscar la venta` });
-        }
-        return res.status(200).json(fetchResult.data);
+        const data = JSON.parse(apiResponse.data);
+        return res.status(apiResponse.successful ? 200 : 300).json({ data: apiResponse.data, message: apiResponse.message, successful: apiResponse.successful });
     }
     catch (err) {
         console.log(err);
-        return res.status(500).json({ message: `Error: ${err}` });
+        return res.status(500).json({ message: `Error: ${err}`, successful: false });
     }
 }
 
