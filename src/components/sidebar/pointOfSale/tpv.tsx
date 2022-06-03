@@ -48,6 +48,7 @@ const TPV = (props: { productos: Producto[], empleadoUsandoTPV: boolean, setEmpl
             });
         }
         setProductosFiltrados(productosFiltrados);
+
     }
 
     const arrayNum = [...Array(3)];

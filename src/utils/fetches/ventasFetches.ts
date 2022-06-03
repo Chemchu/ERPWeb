@@ -33,8 +33,8 @@ export const FetchVenta = async (id: string): Promise<Venta[]> => {
         const idVenta = queryString.stringify(query);
 
         const vRes = await fetch(`/api/ventas/${idVenta}`);
-
         const ventas = await vRes.json();
+
         return CreateSalesList([ventas.data]);
     }
     catch (e) {
@@ -82,7 +82,7 @@ export const FetchVentasByDateRange = async (fechaIni: Date, fechaFin: Date): Pr
         }
 
         const ventas = await vRes.json();
-        return CreateSalesList(ventas.data.ventas);
+        return CreateSalesList(ventas.data);
     }
     catch (e) {
         console.error(e);
@@ -141,7 +141,7 @@ export const FetchVentasByTPV = async (TPV: string): Promise<Venta[]> => {
 
         const ventasJson = await fetchVentas.json();
 
-        return CreateSalesList(JSON.parse(ventasJson.ventas));
+        return CreateSalesList(ventasJson.data);
     }
     catch (e) {
         console.error(e);
@@ -160,7 +160,7 @@ export const FetchVentasByTPVDate = async (TPV: string, fecha: string): Promise<
         if (!fetchVentasTPVPorFecha.ok) { notifyError("Error al buscar las ventas"); return []; }
 
         const ventasJson = await fetchVentasTPVPorFecha.json();
-        return CreateSalesList(JSON.parse(ventasJson.ventas));
+        return CreateSalesList(ventasJson.data);
     }
     catch (e) {
         console.error(e);

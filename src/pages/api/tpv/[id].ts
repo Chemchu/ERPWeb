@@ -6,7 +6,6 @@ import queryString from 'query-string';
 const handler = async (req: NextApiRequest, res: NextApiResponse) => {
     try {
         const query = queryString.parse(req.query.id.toString());
-
         switch (req.method) {
             case 'GET':
                 if (query.isTpvFree !== undefined) { return await GetTpvsByUcupabilidad(req, res); }
@@ -62,30 +61,34 @@ const GetTpvsByUcupabilidad = async (req: NextApiRequest, res: NextApiResponse) 
         }
     )).json();
     const data = JSON.parse(apiResponse.data);
-
     return res.status(apiResponse.successful ? 200 : 300).json({ message: apiResponse.message, data: data.tpvs });
 }
 
 const OcuparTpvById = async (req: NextApiRequest, res: NextApiResponse) => {
-    const apiResponse = await (await GQLMutate(
-        {
-            mutation: OCUPY_TPV,
-            variables: {
-                "idEmpleado": req.body.empId,
-                "idTpv": req.body.tpvId,
-                "cajaInicial": req.body.cajaInicial
+    try {
+        const apiResponse = await (await GQLMutate(
+            {
+                mutation: OCUPY_TPV,
+                variables: {
+                    "idEmpleado": req.body.empId,
+                    "idTpv": req.body.tpvId,
+                    "cajaInicial": req.body.cajaInicial
+                }
             }
+        )).json();
+
+        const data = JSON.parse(apiResponse.data);
+
+        if (apiResponse.successful) {
+            res.setHeader('Set-Cookie', `authorization=${data.ocupyTPV.token}; HttpOnly; Path=/`);
+            return res.status(200).json({ message: `Éxito al abrir la TPV`, successful: true });
         }
-    )).json();
 
-    const data = JSON.parse(apiResponse.data);
-
-    if (apiResponse.successful) {
-        res.setHeader('Set-Cookie', `authorization=${data.data.ocupyTPV.token}; HttpOnly; Path=/`);
-        return res.status(200).json({ message: `Éxito al abrir la TPV`, successful: true });
+        return res.status(300).json({ message: `Fallo al buscar la TPV`, successful: apiResponse.successful });
     }
-
-    return res.status(300).json({ message: `Fallo al buscar la TPV`, successful: apiResponse.successful });
+    catch (err) {
+        return res.status(300).json({ message: "Error al abrir la caja", successful: false });
+    }
 }
 
 const AddCierre = async (req: NextApiRequest, res: NextApiResponse) => {
