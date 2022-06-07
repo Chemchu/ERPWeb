@@ -1,5 +1,5 @@
 import React, { useEffect, useState, useTransition } from "react";
-import { ValidateSearchString } from "../../../utils/validator";
+import { IsEAN13, ValidateSearchString } from "../../../utils/validator";
 import { Producto } from "../../../tipos/Producto";
 import { ProductoVendido } from "../../../tipos/ProductoVendido";
 import ProductCard from "./productCard";
@@ -9,6 +9,7 @@ import SidebarDerecho from "./sidebarDerecho";
 
 const TPV = (props: { productos: Producto[], empleadoUsandoTPV: boolean, setEmpleadoUsandoTPV: Function, setShowModalCerrar: Function, setShowModalAbrir: Function }) => {
     const [ProductosFiltrados, setProductosFiltrados] = useState<Producto[]>(props.productos);
+    const [Filtro, setFiltro] = useState<string>("");
     const { ProductosEnCarrito, SetProductosEnCarrito } = useProductEnCarritoContext();
     const [Familias, setFamilias] = useState<string[]>([]);
     const [isPending, startTransition] = useTransition();
@@ -40,16 +41,32 @@ const TPV = (props: { productos: Producto[], empleadoUsandoTPV: boolean, setEmpl
 
     const Filtrar = (cadena: string) => {
         const stringValidated = ValidateSearchString(cadena);
-        startTransition(() => {
-            let productosFiltrados: Producto[];
-            if (stringValidated === "") productosFiltrados = props.productos;
-            else {
-                productosFiltrados = ProductosFiltrados.filter((p: Producto) => {
-                    return p.nombre.toUpperCase().includes(stringValidated.toUpperCase()) || p.ean === stringValidated.toUpperCase()
-                });
-            }
-            setProductosFiltrados(productosFiltrados);
-        })
+        try {
+            startTransition(() => {
+                let productosFiltrados: Producto[];
+                if (stringValidated === "") productosFiltrados = props.productos;
+                else {
+                    productosFiltrados = ProductosFiltrados.filter((p: Producto) => {
+                        return p.nombre.toUpperCase().includes(stringValidated.toUpperCase()) || p.ean === stringValidated.toUpperCase()
+                    });
+                }
+
+                if (IsEAN13(stringValidated)) {
+                    AddProductoToCarrito(productosFiltrados[0], ProductosEnCarrito, SetProductosEnCarrito);
+                    setProductosFiltrados(props.productos);
+                    setFiltro("");
+                }
+                else {
+                    setProductosFiltrados(productosFiltrados);
+                    setFiltro(stringValidated);
+                }
+            })
+
+        }
+        catch (err) {
+            setProductosFiltrados([]);
+            setFiltro(stringValidated);
+        }
     }
 
     const arrayNum = [...Array(3)];
@@ -67,7 +84,7 @@ const TPV = (props: { productos: Producto[], empleadoUsandoTPV: boolean, setEmpl
                                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
                                 </svg>
                             </div>
-                            <input className="bg-white rounded-3xl shadow text-lg full w-full h-16 py-4 pl-16 transition-shadow focus:shadow-2xl focus:outline-none" placeholder="Buscar producto o código de barras..." />
+                            <input className="bg-white rounded-3xl shadow text-lg full w-full h-16 py-4 pl-16 transition-shadow focus:shadow-2xl focus:outline-none" placeholder="Buscar producto o código de barras" />
                         </div>
                         <div className="flex gap-2 p-4">
                             {
@@ -106,7 +123,8 @@ const TPV = (props: { productos: Producto[], empleadoUsandoTPV: boolean, setEmpl
                                 </svg>
                             </div>
                             <input className="bg-white rounded-3xl shadow text-lg full w-full h-16 py-4 pl-16 transition-shadow focus:shadow-2xl focus:outline-none" placeholder="Buscar producto o código de barras..."
-                                onChange={(e) => { Filtrar(e.target.value) }} />
+                                onChange={(e) => { Filtrar(e.target.value) }}
+                                value={Filtro} />
                         </div>
                         {
                             props.productos.length <= 0 ?

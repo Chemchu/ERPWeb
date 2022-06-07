@@ -35,6 +35,12 @@ export const ValidateSearchString = (cadena: string): string => {
     else return "";
 }
 
+export const IsEAN13 = (cadena: string) => {
+    const reg = new RegExp("^[0-9]{13}$");
+
+    return reg.test(cadena);
+}
+
 export const ValidatePositiveFloatingNumber = (inputNumber: string): string => {
     const valuePostRegex = inputNumber.match(new RegExp("[+]?([0-9]+([.][0-9]*)?|[.][0-9]+)"))?.[0];
 
