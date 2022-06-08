@@ -42,11 +42,11 @@ const Empleados = (props: { EmpleadoSesion: SesionEmpleado }) => {
             <Tab.List className="flex gap-1 h-10 pr-10">
                 <Tab
                     key={"Empleados"}
-                    className={({ selected }) =>
+                    className={(props: { selected: any }) =>
                         classNames(
                             'w-1/4 h-full text-sm rounded-t-2xl border-t border-x',
                             'focus:outline-none ring-white ring-opacity-60',
-                            selected
+                            props.selected
                                 ? 'bg-white shadow-lg'
                                 : 'bg-gray-200 hover:bg-blue-400 hover:text-white'
                         )
@@ -58,11 +58,11 @@ const Empleados = (props: { EmpleadoSesion: SesionEmpleado }) => {
                 </Tab>
                 <Tab
                     key={"Turnos"}
-                    className={({ selected }) =>
+                    className={(props: { selected: any }) =>
                         classNames(
                             'w-1/4 h-full text-sm rounded-t-2xl border-t border-x',
                             'focus:outline-none ring-white ring-opacity-60',
-                            selected
+                            props.selected
                                 ? 'bg-white shadow-lg'
                                 : 'bg-gray-200 hover:bg-blue-400 hover:text-white'
                         )
@@ -72,7 +72,7 @@ const Empleados = (props: { EmpleadoSesion: SesionEmpleado }) => {
                         Turnos
                     </span>
                 </Tab>
-            </Tab.List>
+            </Tab.List >
             <Tab.Panels className="flex flex-col h-90v w-full pr-2">
                 <Tab.Panel
                     key={"Empleados"}

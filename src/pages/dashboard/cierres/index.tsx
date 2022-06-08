@@ -41,11 +41,11 @@ const Cierres = (props: { EmpleadoSesion: SesionEmpleado }) => {
             <Tab.List className="flex gap-1 h-10 pr-10">
                 <Tab
                     key={"Cierres"}
-                    className={({ selected }) =>
+                    className={(props: { selected: any }) =>
                         classNames(
                             'w-1/4 h-full text-sm rounded-t-2xl border-t border-x',
                             'focus:outline-none ring-white ring-opacity-60',
-                            selected
+                            props.selected
                                 ? 'bg-white shadow-lg'
                                 : 'hover:bg-blue-400 hover:text-white'
                         )
