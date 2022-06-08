@@ -45,7 +45,6 @@ const UploadFileRestricted = (props: { extension?: string, tipoDocumento: TipoDo
     };
 
     if (Empleado.rol !== Roles.Administrador) {
-        console.log(Empleado.rol)
         return (
             <></>
         )

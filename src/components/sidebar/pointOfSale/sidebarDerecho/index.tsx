@@ -340,9 +340,7 @@ const SidebarDerecho = React.memo((props: {
                 }
 
                 {/* Modal aceptar compra */}
-                < AnimatePresence initial={false} exitBeforeEnter={true}>
-                    {showModalPagar && Pago && <ModalPagar PagoCliente={Pago} handleModalOpen={setPagarModal} AllClientes={Clientes} />}
-                </AnimatePresence>
+                {showModalPagar && Pago && <ModalPagar PagoCliente={Pago} handleModalOpen={setPagarModal} AllClientes={Clientes} />}
             </div>
         </div >
     );
