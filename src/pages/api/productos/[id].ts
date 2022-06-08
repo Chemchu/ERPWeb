@@ -34,31 +34,33 @@ const handler = async (req: NextApiRequest, res: NextApiResponse): Promise<void>
 }
 
 const GetProductoFromId = async (req: NextApiRequest, res: NextApiResponse) => {
-    const apiResponse = await (await GQLQuery({
+    const serverRes = await GQLQuery({
         query: QUERY_PRODUCT, variables: {
             "find": {
                 "_id": req.query.id
             }
         }
-    })).json();
+    });
+    const apiResponse = await serverRes.json();
     const data = JSON.parse(apiResponse.data);
 
-    return res.status(apiResponse.successful ? 200 : 300).json({ message: apiResponse.message, data: data.producto, successful: apiResponse.successful });
+    return res.status(serverRes.ok ? 200 : 300).json({ message: data.message, data: data.producto, successful: data.successful ? data.successful : serverRes.ok });
 }
 
 const GetProductosFromQuery = async (userQuery: queryString.ParsedQuery<string>, res: NextApiResponse) => {
     if (!userQuery.query) { res.status(300).json({ message: `La query no puede estar vacía`, successful: false }); }
 
-    const apiResponse = await (await GQLQuery({
+    const serverRes = await GQLQuery({
         query: QUERY_PRODUCTS, variables: {
             "find": {
                 "query": userQuery.query
             }
         }
-    })).json();
+    })
+    const apiResponse = await serverRes.json();
     const data = JSON.parse(apiResponse.data);
 
-    return res.status(apiResponse.successful ? 200 : 300).json({ message: apiResponse.message, productos: data.productos, successful: apiResponse.successful });
+    return res.status(serverRes.ok ? 200 : 300).json({ message: data.message, productos: data.productos, successful: data.successful ? data.successful : serverRes.ok });
 }
 
 const AddProductosFromFile = async (req: NextApiRequest, res: NextApiResponse) => {
@@ -69,7 +71,8 @@ const AddProductosFromFile = async (req: NextApiRequest, res: NextApiResponse) =
         }
     })).json();
 
-    return res.status(apiResponse.successful ? 200 : 300).json({ message: apiResponse.message, successful: apiResponse.successful });
+    const data = JSON.parse(apiResponse.data);
+    return res.status(data.successful ? 200 : 300).json({ message: data.message, successful: data.successful });
 }
 
 const DeleteProducto = async (req: NextApiRequest, res: NextApiResponse) => {
@@ -80,7 +83,8 @@ const DeleteProducto = async (req: NextApiRequest, res: NextApiResponse) => {
         }
     })).json();
 
-    return res.status(apiResponse.successful ? 200 : 300).json({ message: apiResponse.message, successful: apiResponse.successful });
+    const data = JSON.parse(apiResponse.data);
+    return res.status(data.successful ? 200 : 300).json({ message: data.message, successful: data.successful });
 }
 
 const UpdateProducto = async (req: NextApiRequest, res: NextApiResponse) => {
@@ -107,7 +111,8 @@ const UpdateProducto = async (req: NextApiRequest, res: NextApiResponse) => {
             }
         })).json();
 
-        return res.status(apiResponse.successful ? 200 : 300).json({ message: apiResponse.message, successful: apiResponse.successful });
+        const data = JSON.parse(apiResponse.data);
+        return res.status(data.successful ? 200 : 300).json({ message: data.message, successful: data.successful });
 
     }
     catch (e) {

@@ -4,7 +4,7 @@ import GQLQuery from "../../../utils/serverFetcher";
 
 const handler = async (req: NextApiRequest, res: NextApiResponse) => {
     try {
-        const apiResponse = await (await GQLQuery(
+        const serverRes = await GQLQuery(
             {
                 query: QUERY_TPVS,
                 variables: {
@@ -12,10 +12,11 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
                     "find": null
                 }
             }
-        )).json();
+        )
+        const apiResponse = await serverRes.json()
 
         const data = JSON.parse(apiResponse.data);
-        return res.status(apiResponse.successful ? 200 : 300).json({ message: `Éxito al iniciar sesión`, data: data.tpvs, successful: apiResponse.successful });
+        return res.status(serverRes.ok ? 200 : 300).json({ message: data.message, data: data.tpvs, successful: data.successful });
     }
     catch (err) {
         console.log(err);

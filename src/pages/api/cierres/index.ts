@@ -25,15 +25,21 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
 }
 
 const GetCierres = async (req: NextApiRequest, res: NextApiResponse) => {
-    const apiResponse = await (await GQLQuery({
-        query: QUERY_CIERRES, variables: {
-            "limit": 3000
-        }
-    })).json();
+    try {
+        const serverRes = await GQLQuery({
+            query: QUERY_CIERRES, variables: {
+                "limit": 1
+            }
+        });
 
-    const data = JSON.parse(apiResponse.data);
+        const apiResponse = await serverRes.json();
+        const data = JSON.parse(apiResponse.data);
 
-    return res.status(apiResponse.successful ? 200 : 300).json({ message: apiResponse.message, data: data.cierresTPVs, successful: apiResponse.successful });
+        return res.status(serverRes.ok ? 200 : 300).json({ message: "Éxito al buscar los cierres", data: data.cierresTPVs, successful: serverRes.ok });
+    }
+    catch (err) {
+        return res.status(500).json({ message: "Error al buscar los cierres", data: undefined, successful: false });
+    }
 }
 
 const AddCierre = async (req: NextApiRequest, res: NextApiResponse) => {
@@ -79,16 +85,16 @@ const AddCierre = async (req: NextApiRequest, res: NextApiResponse) => {
         }
     })).json();
 
-    const data = JSON.parse(apiResponse.data);
+    const data = JSON.parse(apiResponse.data).addCierreTPV;
 
-    if (apiResponse.successful) {
-        res.setHeader('Set-Cookie', `authorization=${data.addCierreTPV.token}; HttpOnly; Path=/`);
-        res.status(200).json({ message: apiResponse.message, successful: apiResponse.successful, data: data.addCierreTPV.cierre });
+    if (data.successful) {
+        res.setHeader('Set-Cookie', `authorization=${data.token}; HttpOnly; Path=/`);
+        res.status(200).json({ message: data.message, successful: data.successful, data: data.addCierreTPV.cierre });
         return;
     }
     else {
-        res.setHeader('Set-Cookie', `authorization=${apiResponse.data.addCierreTPV.token}; HttpOnly; Path=/`);
-        res.status(300).json({ message: apiResponse.message, successful: apiResponse.successful });
+        res.setHeader('Set-Cookie', `authorization=${data.data.addCierreTPV.token}; HttpOnly; Path=/`);
+        res.status(300).json({ message: data.message, successful: data.successful });
         return;
     }
 }

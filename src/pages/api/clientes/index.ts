@@ -34,22 +34,23 @@ const AddCliente = async (req: NextApiRequest, res: NextApiResponse) => {
     )).json();
 
     const data = JSON.parse(apiResponse.data)
-    return res.status(200).json({ message: apiResponse.message, successful: apiResponse.successful, data: data.clientes });
+    return res.status(data.successful ? 200 : 300).json({ message: data.message, successful: data.successful, data: data.addCliente });
 }
 
 const GetClientes = async (req: NextApiRequest, res: NextApiResponse) => {
     const reqBody = req.body;
-    const apiResponse = await (await GQLQuery(
+    const serverRes = await GQLQuery(
         {
             query: QUERY_CLIENTS,
             variables: {
                 "limit": reqBody.limit || 50
             }
         }
-    )).json();
+    );
+    const apiResponse = await serverRes.json();
 
     const data = JSON.parse(apiResponse.data)
-    return res.status(apiResponse.successful ? 200 : 300).json({ message: apiResponse.message, successful: apiResponse.successful, data: data.clientes });
+    return res.status(serverRes.ok ? 200 : 300).json({ message: data.message, successful: data.successful == undefined ? serverRes.ok : data.successful, data: data.clientes });
 }
 
 export default handler;

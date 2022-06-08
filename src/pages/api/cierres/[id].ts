@@ -13,8 +13,12 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
             }
         })).json();
 
-        const data = JSON.parse(apiResponse.data);
-        return res.status(apiResponse.successful ? 200 : 300).json({ message: apiResponse.message, successful: apiResponse.successful, data: data.cierresTPVs });
+        const data = JSON.parse(apiResponse.data).cierresTPVs;
+
+        console.log(data);
+
+
+        return res.status(apiResponse.successful ? 200 : 300).json({ message: data.message, successful: data.successful, data: data.data });
     }
     catch (err) {
         console.log(err);

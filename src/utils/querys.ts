@@ -427,7 +427,7 @@ export const LOGIN = `
   query Login($loginValues: Credentials!) {
     login(loginValues: $loginValues) {
       message
-      success
+      successful
       token
     }
   }

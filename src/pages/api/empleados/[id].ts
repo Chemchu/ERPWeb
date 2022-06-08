@@ -35,7 +35,7 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
 }
 
 const GetEmpleadoFromId = async (req: NextApiRequest, res: NextApiResponse) => {
-    const apiResponse = await (await GQLQuery(
+    const serverRes = await GQLQuery(
         {
             query: QUERY_EMPLEADOS,
             variables: {
@@ -44,16 +44,17 @@ const GetEmpleadoFromId = async (req: NextApiRequest, res: NextApiResponse) => {
                 }
             }
         }
-    )).json();
+    )
+    const apiResponse = await serverRes.json();
 
     const data = JSON.parse(apiResponse.data);
-    return res.status(apiResponse.successful ? 200 : 300).json(JSON.stringify({ message: apiResponse.message, data: data.empleados, successful: apiResponse.successful }));
+    return res.status(serverRes.ok ? 200 : 300).json(JSON.stringify({ message: apiResponse.message, data: data.empleados, successful: serverRes.ok }));
 }
 
 const GetEmpleadosFromQuery = async (userQuery: queryString.ParsedQuery<string>, res: NextApiResponse) => {
     if (!userQuery.query) { res.status(300).json({ message: `La query no puede estar vacía` }); }
 
-    const apiResponse = await (await GQLQuery(
+    const serverRes = await GQLQuery(
         {
             query: QUERY_EMPLEADOS,
             variables: {
@@ -62,10 +63,11 @@ const GetEmpleadosFromQuery = async (userQuery: queryString.ParsedQuery<string>,
                 }
             }
         }
-    )).json();
+    )
+    const apiResponse = await serverRes.json();
 
     const data = JSON.parse(apiResponse.data);
-    return res.status(apiResponse.successful ? 200 : 300).json({ message: apiResponse.message, data: data.empleados, successful: apiResponse.successful });
+    return res.status(serverRes.ok ? 200 : 300).json({ message: data.message, data: data.empleados, successful: data.successful });
 }
 
 const AddEmpleadosFromFile = async (req: NextApiRequest, res: NextApiResponse) => {
@@ -84,21 +86,23 @@ const AddEmpleadosFromFile = async (req: NextApiRequest, res: NextApiResponse) =
 }
 
 const DeleteEmpleado = async (req: NextApiRequest, res: NextApiResponse) => {
-    const apiResponse = await (await GQLMutate({
+    const serverRes = await GQLMutate({
         mutation: DELETE_EMPLEADO,
         variables: {
             "id": req.query.id
         }
-    })).json();
+    })
+    const apiResponse = await serverRes.json();
 
-    return res.status(apiResponse.successful ? 200 : 300).json({ message: apiResponse.message, successful: apiResponse.successful });
+    const data = JSON.parse(apiResponse)
+    return res.status(data.successful ? 200 : 300).json({ message: data.message, successful: data.successful });
 }
 
 const UpdateEmpleado = async (req: NextApiRequest, res: NextApiResponse) => {
     try {
         const emp: Empleado = req.body;
 
-        const apiResponse = await (await GQLMutate({
+        const serverRes = await GQLMutate({
             mutation: UPDATE_EMPLEADO,
             variables: {
                 "id": emp._id,
@@ -107,10 +111,11 @@ const UpdateEmpleado = async (req: NextApiRequest, res: NextApiResponse) => {
                 "rol": emp.rol,
                 "email": emp.email
             }
-        })).json();
+        })
+        const apiResponse = await serverRes.json();
 
-        // const data = JSON.parse(apiResponse.data);
-        return res.status(200).json({ message: apiResponse.message, successful: apiResponse.successful });
+        const data = JSON.parse(apiResponse.data);
+        return res.status(data.successful ? 200 : 300).json({ message: data.message, successful: data.successful });
     }
     catch (e) {
         console.log(e);

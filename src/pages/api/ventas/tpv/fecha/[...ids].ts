@@ -17,7 +17,7 @@ const GetSaleByTPVDate = async (req: NextApiRequest, res: NextApiResponse) => {
     try {
         const { ids } = req.query;
 
-        const apiResponse = await (await GQLQuery({
+        const serverRes = await GQLQuery({
             query: QUERY_SALES,
             variables: {
                 find: {
@@ -25,10 +25,11 @@ const GetSaleByTPVDate = async (req: NextApiRequest, res: NextApiResponse) => {
                     createdAt: ids[1]
                 }
             }
-        })).json();
+        });
+        const apiResponse = await serverRes.json();
 
         const data = JSON.parse(apiResponse.data);
-        return res.status(apiResponse.successful ? 200 : 300).json({ message: apiResponse.message, data: data.ventas, successful: apiResponse.successful });
+        return res.status(serverRes.ok ? 200 : 300).json({ message: data.message, data: data.ventas, successful: data.successful });
     }
     catch (err) {
         console.log(err);

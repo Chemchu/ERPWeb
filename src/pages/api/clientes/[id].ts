@@ -44,13 +44,14 @@ const AddClientesFromFile = async (req: NextApiRequest, res: NextApiResponse) =>
         }
     )).json();
 
-    return res.status(apiResponse ? 200 : 300).json({ message: apiResponse.message, successful: apiResponse.successful });
+    const data = JSON.parse(apiResponse.data);
+    return res.status(data.successful ? 200 : 300).json({ message: data.message, successful: data.successful });
 }
 
 const GetClientesFromQuery = async (userQuery: queryString.ParsedQuery<string>, res: NextApiResponse) => {
     if (!userQuery.query) { res.status(300).json({ message: `La query no puede estar vacía` }); }
 
-    const apiResponse = await (await GQLQuery(
+    const serverRes = await GQLQuery(
         {
             query: QUERY_CLIENTS,
             variables: {
@@ -59,17 +60,18 @@ const GetClientesFromQuery = async (userQuery: queryString.ParsedQuery<string>, 
                 }
             }
         }
-    )).json();
+    );
 
+    const apiResponse = await serverRes.json();
     const data = JSON.parse(apiResponse.data);
-    return res.status(apiResponse.successful ? 200 : 300).json({ message: apiResponse.successful, data: data.clientes, successful: apiResponse.successful });
+    return res.status(serverRes.ok ? 200 : 300).json({ message: data.successful, data: data.clientes, successful: data.successful == undefined ? serverRes.ok : data.successful });
 }
 
 const GetClienteFromId = async (req: NextApiRequest, res: NextApiResponse) => {
     const reqBody = req.body;
 
     if (!reqBody.find) { return res.status(300).json({ message: "La búsqueda no puede estar vacía", successful: false }); }
-    const apiResponse = await (await GQLMutate(
+    const serverRes = await GQLMutate(
         {
             mutation: QUERY_CLIENT,
             variables: {
@@ -78,10 +80,11 @@ const GetClienteFromId = async (req: NextApiRequest, res: NextApiResponse) => {
                 }
             }
         }
-    )).json();
+    );
 
+    const apiResponse = await serverRes.json()
     const data = JSON.parse(apiResponse.data);
-    return res.status(apiResponse.successful ? 200 : 300).json({ message: apiResponse.message, successful: apiResponse.successful, data: data.cliente });
+    return res.status(serverRes.ok ? 200 : 300).json({ message: apiResponse.message, successful: data.successful == undefined ? serverRes.ok : data.successful, data: data.cliente });
 }
 
 const UpdateCliente = async (req: NextApiRequest, res: NextApiResponse) => {
@@ -98,10 +101,9 @@ const UpdateCliente = async (req: NextApiRequest, res: NextApiResponse) => {
             },
         }
     )).json();
-    //const data = JSON.parse(apiResponse.data);
-    // data.updateCliente
 
-    return res.status(apiResponse.successful ? 200 : 300).json({ message: apiResponse.message, successful: apiResponse.successful });
+    const data = JSON.parse(apiResponse.data).updateCliente;
+    return res.status(data.successful ? 200 : 300).json({ message: data.message, successful: data.successful });
 }
 
 const DeleteCliente = async (req: NextApiRequest, res: NextApiResponse) => {
@@ -114,7 +116,8 @@ const DeleteCliente = async (req: NextApiRequest, res: NextApiResponse) => {
         }
     )).json();
 
-    return res.status(apiResponse.successful ? 200 : 300).json({ message: apiResponse.message, successful: apiResponse.successful });
+    const data = JSON.parse(apiResponse.data).deleteCliente;
+    return res.status(data.successful ? 200 : 300).json({ message: data.message, successful: data.successful });
 }
 
 export default handler;

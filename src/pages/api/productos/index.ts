@@ -22,15 +22,16 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
 }
 
 const GetProductos = async (req: NextApiRequest, res: NextApiResponse) => {
-    const apiResponse = await (await GQLQuery({
+    const serverRes = await GQLQuery({
         query: QUERY_PRODUCTS, variables: {
             "find": null,
             "limit": req.body.limit || 10000
         }
-    })).json();
+    });
+    const apiResponse = await serverRes.json();
     const data = JSON.parse(apiResponse.data);
 
-    return res.status(apiResponse.successful ? 200 : 300).json({ message: apiResponse.message, successful: apiResponse.successful, data: data.productos });
+    return res.status(serverRes.ok ? 200 : 300).json({ message: data.message, successful: data.successful ? data.successful : serverRes.ok, data: data.productos });
 }
 
 const AddProducto = async (req: NextApiRequest, res: NextApiResponse) => {
@@ -49,10 +50,11 @@ const AddProducto = async (req: NextApiRequest, res: NextApiResponse) => {
             "alta": req.body.alta
         }
     }
-    const apiResponse = await (await GQLMutate({ mutation: ADD_PRODUCT, variables: variables })).json();
-    const data = JSON.parse(apiResponse.data);
+    const serverRes = await GQLMutate({ mutation: ADD_PRODUCT, variables: variables });
+    const apiResponse = await serverRes.json();
 
-    return res.status(apiResponse.successful ? 200 : 300).json({ message: apiResponse.message, successful: apiResponse.successful, data: data.producto });
+    const data = JSON.parse(apiResponse.data);
+    return res.status(serverRes.ok ? 200 : 300).json({ message: data.message, successful: data.successful ? data.successful : serverRes.ok, data: data.producto });
 }
 
 export default handler;

@@ -29,7 +29,7 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
 
 const GetTpvById = async (req: NextApiRequest, res: NextApiResponse) => {
     const query = queryString.parse(req.query.id.toString());
-    const apiResponse = await (await GQLQuery(
+    const serverRes = await GQLQuery(
         {
             query: QUERY_TPV,
             variables: {
@@ -39,17 +39,18 @@ const GetTpvById = async (req: NextApiRequest, res: NextApiResponse) => {
                 "limit": 3000
             }
         }
-    )).json();
+    )
+    const apiResponse = await serverRes.json()
 
     const data = JSON.parse(apiResponse.data);
-    return res.status(apiResponse.successful ? 200 : 300).json({ message: apiResponse.message, data: data.tpv, successful: apiResponse.successful });
+    return res.status(serverRes.ok ? 200 : 300).json({ message: data.message, data: data.tpv, successful: data.successful });
 }
 
 const GetTpvsByUcupabilidad = async (req: NextApiRequest, res: NextApiResponse) => {
     const query = queryString.parse(req.query.id.toString());
     const isLibre: boolean = Boolean(query.isTpvFree);
 
-    const apiResponse = await (await GQLQuery(
+    const serverRes = await GQLQuery(
         {
             query: QUERY_TPVS,
             variables: {
@@ -59,14 +60,16 @@ const GetTpvsByUcupabilidad = async (req: NextApiRequest, res: NextApiResponse) 
                 "limit": 100
             }
         }
-    )).json();
+    )
+    const apiResponse = await serverRes.json()
+
     const data = JSON.parse(apiResponse.data);
-    return res.status(apiResponse.successful ? 200 : 300).json({ message: apiResponse.message, data: data.tpvs });
+    return res.status(serverRes.ok ? 200 : 300).json({ message: data.message, data: data.tpvs });
 }
 
 const OcuparTpvById = async (req: NextApiRequest, res: NextApiResponse) => {
     try {
-        const apiResponse = await (await GQLMutate(
+        const serverRes = await GQLMutate(
             {
                 mutation: OCUPY_TPV,
                 variables: {
@@ -75,16 +78,16 @@ const OcuparTpvById = async (req: NextApiRequest, res: NextApiResponse) => {
                     "cajaInicial": req.body.cajaInicial
                 }
             }
-        )).json();
-
+        )
+        const apiResponse = await serverRes.json()
         const data = JSON.parse(apiResponse.data);
 
-        if (apiResponse.successful) {
+        if (data.successful) {
             res.setHeader('Set-Cookie', `authorization=${data.ocupyTPV.token}; HttpOnly; Path=/`);
             return res.status(200).json({ message: `Éxito al abrir la TPV`, successful: true });
         }
 
-        return res.status(300).json({ message: `Fallo al buscar la TPV`, successful: apiResponse.successful });
+        return res.status(300).json({ message: `Fallo al buscar la TPV`, successful: data.successful });
     }
     catch (err) {
         return res.status(300).json({ message: "Error al abrir la caja", successful: false });
@@ -92,7 +95,7 @@ const OcuparTpvById = async (req: NextApiRequest, res: NextApiResponse) => {
 }
 
 const AddCierre = async (req: NextApiRequest, res: NextApiResponse) => {
-    const apiResponse = await (await GQLMutate(
+    const serverRes = await GQLMutate(
         {
             mutation: ADD_CIERRE,
             variables: {
@@ -125,16 +128,16 @@ const AddCierre = async (req: NextApiRequest, res: NextApiResponse) => {
                 }
             }
         }
-    )).json();
-
+    )
+    const apiResponse = await serverRes.json()
     const data = JSON.parse(apiResponse.data);
 
-    if (apiResponse.successful) {
+    if (data.successful) {
         res.setHeader('Set-Cookie', `authorization=${data.addCierreTPV.token}; HttpOnly; Path=/`);
         return res.status(200).json({ message: `Éxito al cerrar la TPV`, successful: true });
     }
 
-    return res.status(300).json({ message: `Fallo al cerrar la TPV`, successful: apiResponse.successful });
+    return res.status(300).json({ message: `Fallo al cerrar la TPV`, successful: data.successful });
 }
 
 export default handler;

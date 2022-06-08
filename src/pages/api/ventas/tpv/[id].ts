@@ -19,17 +19,18 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
 
 const GetSaleByTPV = async (req: NextApiRequest, res: NextApiResponse) => {
     try {
-        const apiResponse = await (await GQLQuery({
+        const serverRes = await GQLQuery({
             query: QUERY_SALES,
             variables: {
                 find: {
                     tpv: req.query.id
                 }
             }
-        })).json();
+        });
+        const apiResponse = await serverRes.json();
 
         const data = JSON.parse(apiResponse.data);
-        return res.status(apiResponse.successful ? 200 : 300).json({ message: apiResponse.message, ventas: data.ventas });
+        return res.status(serverRes.ok ? 200 : 300).json({ message: data.message, ventas: data.ventas });
     }
     catch (err) {
         console.log(err);

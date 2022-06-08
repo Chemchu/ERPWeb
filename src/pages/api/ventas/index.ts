@@ -29,17 +29,18 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
 }
 
 const GetSales = async (req: NextApiRequest, res: NextApiResponse) => {
-    const apiResponse = await (await GQLQuery(
+    const serverRes = await GQLQuery(
         {
             query: QUERY_SALES,
             variables: {
                 "limit": 3000,
             }
         }
-    )).json();
+    );
+    const apiResponse = await serverRes.json()
 
-    let data = JSON.parse(apiResponse.data).ventas;
-    return res.status(apiResponse.successful ? 200 : 300).json({ message: apiResponse.message, data: data, successful: apiResponse.successful });
+    let data = JSON.parse(apiResponse.data);
+    return res.status(serverRes.ok ? 200 : 300).json({ message: data.message, data: data.ventas, successful: data.successful });
 }
 
 const AddSale = async (req: NextApiRequest, res: NextApiResponse) => {
@@ -50,7 +51,7 @@ const AddSale = async (req: NextApiRequest, res: NextApiResponse) => {
         const empleado: Empleado = req.body.empleado;
         const tpv = req.body.tpv;
 
-        const apiResponse = await (await GQLMutate(
+        const serverRes = await GQLMutate(
             {
                 mutation: ADD_SALE,
                 variables: {
@@ -71,10 +72,11 @@ const AddSale = async (req: NextApiRequest, res: NextApiResponse) => {
                     }
                 }
             }
-        )).json();
+        );
+        const apiResponse = await serverRes.json();
 
         const data = JSON.parse(apiResponse.data);
-        return res.status(apiResponse.successful ? 200 : 300).json({ data: data.addVenta, message: apiResponse.message, successful: apiResponse.successful });
+        return res.status(serverRes.ok ? 200 : 300).json({ data: data.addVenta, message: data.message, successful: data.successful });
     }
     catch (err) {
         console.log(err);

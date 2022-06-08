@@ -17,19 +17,19 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
                 }
             }
         )).json();
-        const data = JSON.parse(apiResponse.data);
+        const data = JSON.parse(apiResponse.data).login;
 
         // Devolver en caso de que todo haya ido bien
-        if (apiResponse.successful) {
-            const token = getJwt(data.login.token);
+        if (data.successful) {
+            const token = getJwt(data.token);
             const productionEnv: boolean = process.env.NODE_ENV !== "development";
 
             return res.status(200)
-                .setHeader('Set-Cookie', `authorization=${data.login.token}; HttpOnly; Secure=${productionEnv}; Max-Age=${token.exp - token.iat}; Path=/`)
-                .json({ message: `Éxito al iniciar sesión`, successful: apiResponse.successful });
+                .setHeader('Set-Cookie', `authorization=${data.token}; HttpOnly; Secure=${productionEnv}; Max-Age=${token.exp - token.iat}; Path=/`)
+                .json({ message: `Éxito al iniciar sesión`, successful: data.successful });
         }
 
-        return res.status(300).json({ message: `Fallo al iniciar sesión: usuario y/o contraseña incorrectos`, successful: apiResponse.successful });
+        return res.status(300).json({ message: `Fallo al iniciar sesión: usuario y/o contraseña incorrectos`, successful: false });
     }
     catch (err) {
         console.log(err);
