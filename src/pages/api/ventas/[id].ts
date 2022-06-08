@@ -65,7 +65,7 @@ const GetSale = async (req: NextApiRequest, res: NextApiResponse) => {
         const apiResponse = await serverRes?.json();
 
         const data = JSON.parse(apiResponse.data);
-        return res.status(serverRes?.ok ? 200 : 300).json({ message: data.message, successful: data.successful, data: data });
+        return res.status(serverRes?.ok ? 200 : 300).json({ message: data.message, successful: data.successful, data: data.ventas });
     }
     catch (err) {
         console.log(err);
@@ -75,7 +75,6 @@ const GetSale = async (req: NextApiRequest, res: NextApiResponse) => {
 
 const GetSalesByQuery = async (userQuery: queryString.ParsedQuery<string>, res: NextApiResponse) => {
     if (!userQuery.query) { res.status(300).json({ message: `La query no puede estar vacía` }); }
-
     const serverRes = await GQLQuery(
         {
             query: QUERY_SALES,
@@ -84,14 +83,15 @@ const GetSalesByQuery = async (userQuery: queryString.ParsedQuery<string>, res: 
                     "query": userQuery.query,
                     "fechaInicial": userQuery.fechas ? userQuery.fechas[0] : null,
                     "fechaFinal": userQuery.fechas ? userQuery.fechas[1] : null
-                }
+                },
+                "limit": 1
             }
         }
     );
     const apiResponse = await serverRes.json();
 
     const data = JSON.parse(apiResponse.data);
-    return res.status(serverRes.ok ? 200 : 300).json({ message: data.message, data: data.ventas, successful: data.successful });
+    return res.status(serverRes.ok ? 200 : 300).json({ message: data.message, data: data.data.ventas, successful: data.successful });
 }
 
 export const config = {
