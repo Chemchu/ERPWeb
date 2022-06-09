@@ -8,8 +8,6 @@ const DevolucionFila = (props: { producto: ProductoVendido }) => {
     const [checked, setChecked] = useState<boolean>(false);
 
     const ValueInput = (e: string) => {
-        console.log(IsPositiveIntegerNumber(e));
-
         if (!IsPositiveIntegerNumber(e)) { return }
 
         setCantidad(e)
@@ -49,7 +47,9 @@ const DevolucionFila = (props: { producto: ProductoVendido }) => {
                     <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
                         className="flex gap-1 items-center">
                         <button className="bg-blue-400 hover:bg-blue-500 rounded w-10 h-8 text-white font-bold" onClick={SubCantidad}>-</button>
-                        <input type="text" className="w-12 xl:w-20 border-2 border-blue-400 focus:outline-blue-500 rounded-md text-center" value={cantidad} onChange={(e) => ValueInput(e.target.value)} />
+                        <input type="text" className="w-12 xl:w-20 border-2 border-blue-400 focus:outline-blue-500 rounded-md text-center"
+                            value={cantidad}
+                            onChange={(e) => ValueInput(e.currentTarget.value)} />
                         <button className="bg-blue-400 hover:bg-blue-500 rounded w-10 h-8 text-white font-bold" onClick={AddCantidad}>+</button>
                     </motion.div>
                 }
