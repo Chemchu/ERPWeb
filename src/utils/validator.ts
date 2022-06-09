@@ -64,8 +64,10 @@ export const IsPositiveFloatingNumber = (input: string): boolean => {
 }
 
 export const IsPositiveIntegerNumber = (input: string): boolean => {
-    let reg = new RegExp("^[0-9]*")
+    let reg = new RegExp(/^[0-9]*/);
     return reg.test(input);
+    // var pattern = /^(0|([1-9]\d*))$/;
+    // return pattern.test(input);
 }
 
 export const IsValidProduct = (p: Producto): boolean => {
