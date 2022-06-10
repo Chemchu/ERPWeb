@@ -10,7 +10,7 @@ const ListaDevolucionProductos = (props: { listaProductos: ProductoVendido[] }) 
             <ul className="flex flex-col gap-2 w-full">
                 {
                     props.listaProductos.map((p) => {
-                        return <DevolucionFila key={`id::${p._id}`} producto={p} setProductosDevolver={setDevolver} />
+                        return <DevolucionFila key={`id::${p._id}`} producto={p} />
                     })
                 }
             </ul>

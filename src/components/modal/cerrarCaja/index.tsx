@@ -156,16 +156,16 @@ export const CerrarCaja = (props: { Empleado?: SesionEmpleado, setModalOpen: Fun
                                     <p>{Number(TotalPrevistoEnCaja).toFixed(2)}€</p>
                                 </div>
 
-                                <div className="flex gap-2">
+                                <div className="flex gap-2 items-center">
                                     <p>Dinero total real en caja: </p>
-                                    <input className="rounded-lg border"
+                                    <input className="rounded-lg border p-1 outline-blue-500 text-right"
                                         onChange={(e) => { setTotalRealEnCaja(ValidatePositiveFloatingNumber(e.target.value)) }} value={TotalRealEnCaja} />
                                     €
                                 </div>
 
-                                <div className="flex gap-2">
+                                <div className="flex gap-2 items-center">
                                     <p>Dinero retirado: </p>
-                                    <input className="rounded-lg border"
+                                    <input className="rounded-lg border p-1 outline-blue-500 text-right"
                                         onChange={(e) => { setDineroRetirado(ValidatePositiveFloatingNumber(e.target.value)) }} value={DineroRetirado} />
                                     €
                                 </div>
