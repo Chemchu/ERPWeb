@@ -91,7 +91,7 @@ const GetSalesByQuery = async (userQuery: queryString.ParsedQuery<string>, res: 
     const apiResponse = await serverRes.json();
 
     const data = JSON.parse(apiResponse.data);
-    return res.status(serverRes.ok ? 200 : 300).json({ message: data.message, data: data.data.ventas, successful: data.successful });
+    return res.status(serverRes.ok ? 200 : 300).json({ message: data.message, data: data.ventas, successful: data.successful });
 }
 
 export const config = {

@@ -7,6 +7,11 @@ import ListaDevolucionProductos from "../devolucionListaProductos";
 
 const DevolverVenta = (props: { productos: ProductoVendido[], setModal: Function }) => {
     const [ProductosDevolver, setProductosDevolver] = useState<ProductoVendido[]>([]);
+
+    const AceptarReembolso = () => {
+        console.log("Reembolsado");
+    }
+
     return (
         <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}>
             <Backdrop onClick={() => { props.setModal(false) }}>
@@ -27,7 +32,8 @@ const DevolverVenta = (props: { productos: ProductoVendido[], setModal: Function
                         <button className="w-full h-12 rounded-xl bg-red-500 hover:bg-red-600 shadow-lg" onClick={() => props.setModal(false)}>
                             Cancelar
                         </button>
-                        <button className="w-full h-12 rounded-xl bg-blue-500 hover:bg-blue-600 shadow-lg">
+                        <button className={`w-full h-12 rounded-xl shadow-lg ${ProductosDevolver.length <= 0 ? 'bg-blue-400 cursor-default' : 'bg-blue-500 hover:bg-blue-600 cursor-pointer'}`}
+                            onClick={() => { if (ProductosDevolver.length > 0) { AceptarReembolso() } }}>
                             Aceptar
                         </button>
                     </div>
