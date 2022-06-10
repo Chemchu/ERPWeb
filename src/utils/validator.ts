@@ -69,6 +69,7 @@ export const IsPositiveIntegerNumber = (input: string): boolean => {
     let reg = new RegExp(/^([0-9]*)/);
     const match = input.match(reg);
 
+    if (isNaN(Number(input))) { return false }
     if (match === null) { return false }
     if (match[0] === "") { return false }
     if (isNaN(Number(match[0]))) { return false }

@@ -1,4 +1,4 @@
-import { motion } from "framer-motion";
+import { AnimatePresence, motion } from "framer-motion";
 import React, { useRef } from "react";
 import { useEffect, useState } from "react";
 import { useReactToPrint } from "react-to-print";
@@ -16,6 +16,7 @@ import { notifyError } from "../../../utils/toastify";
 import { ValidatePositiveFloatingNumber } from "../../../utils/validator";
 import CierrePrintable from "../../printable/cierrePrintable";
 import { Backdrop } from "../backdrop";
+import ContarCaja from "../contarCaja";
 
 export const CerrarCaja = (props: { Empleado?: SesionEmpleado, setModalOpen: Function, setEmpleadoUsandoTPV: Function }) => {
     const [Ventas, setVentas] = useState<Venta[]>();
@@ -24,7 +25,9 @@ export const CerrarCaja = (props: { Empleado?: SesionEmpleado, setModalOpen: Fun
     const [TotalTarjeta, setTotalTarjeta] = useState<string>();
     const [TotalPrevistoEnCaja, setTotalPrevistoEnCaja] = useState<string>();
     const [TotalRealEnCaja, setTotalRealEnCaja] = useState<string>("0");
+    const [desglose, setDesglose] = useState<Map<number, number>>(new Map());
     const [DineroRetirado, setDineroRetirado] = useState<string>("0");
+    const [showContarCaja, setContarCaja] = useState<boolean>(false);
     const [qrImage, setQrImage] = useState<string>();
     const [Cierre, setCierre] = useState<Cierre>();
     const { Empleado, SetEmpleado } = useEmpleadoContext();
@@ -161,6 +164,12 @@ export const CerrarCaja = (props: { Empleado?: SesionEmpleado, setModalOpen: Fun
                                     <input className="rounded-lg border p-1 outline-blue-500 text-right"
                                         onChange={(e) => { setTotalRealEnCaja(ValidatePositiveFloatingNumber(e.target.value)) }} value={TotalRealEnCaja} />
                                     €
+                                    <div className="flex hover:bg-blue-200 rounded-full cursor-pointer w-8 h-8 items-center justify-center"
+                                        onClick={() => { setContarCaja((isOpen) => !isOpen) }}>
+                                        <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="#4b5563" strokeWidth={2}>
+                                            <path strokeLinecap="round" strokeLinejoin="round" d="M9 7h6m0 10v-3m-3 3h.01M9 17h.01M9 14h.01M12 14h.01M15 11h.01M12 11h.01M9 11h.01M7 21h10a2 2 0 002-2V5a2 2 0 00-2-2H7a2 2 0 00-2 2v14a2 2 0 002 2z" />
+                                        </svg>
+                                    </div>
                                 </div>
 
                                 <div className="flex gap-2 items-center">
@@ -211,6 +220,11 @@ export const CerrarCaja = (props: { Empleado?: SesionEmpleado, setModalOpen: Fun
                             }
                         </div>
                     </div>
+                    <AnimatePresence>
+                        {
+                            showContarCaja && <ContarCaja showItself={setContarCaja} setTotal={setTotalRealEnCaja} desglose={desglose} setDesglose={setDesglose} />
+                        }
+                    </AnimatePresence>
                 </motion.div>
             </Backdrop>
         </motion.div>
