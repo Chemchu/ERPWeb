@@ -188,14 +188,14 @@ const VerVenta = (props: { venta: Venta | undefined, setModal: Function }) => {
                                 </div>
                             </div>
                         </div>
-                        <div className="flex w-full h-1/6 justify-around items-end text-white">
-                            <button className="w-1/4 h-12 rounded-xl bg-red-500 hover:bg-red-600 shadow-lg" onClick={() => { props.setModal(false) }}>
+                        <div className="flex gap-4 w-full h-1/6 justify-around items-end text-white">
+                            <button className="w-1/3 h-12 rounded-xl bg-red-500 hover:bg-red-600 shadow-lg" onClick={() => { props.setModal(false) }}>
                                 Cerrar
                             </button>
-                            <button className="w-1/4 h-12 rounded-xl bg-orange-500 hover:bg-orange-600 shadow-lg" onClick={() => { setShowDevolverModal(true) }}>
+                            <button className="w-1/3 h-12 rounded-xl bg-orange-500 hover:bg-orange-600 shadow-lg" onClick={() => { setShowDevolverModal(true) }}>
                                 Devolver
                             </button>
-                            <button className="w-1/4 h-12 rounded-xl bg-blue-500 hover:bg-blue-600 shadow-lg" onClick={() => { handlePrint() }}>
+                            <button className="w-1/3 h-12 rounded-xl bg-blue-500 hover:bg-blue-600 shadow-lg" onClick={() => { handlePrint() }}>
                                 Imprimir
                             </button>
                         </div>

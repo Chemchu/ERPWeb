@@ -1,11 +1,40 @@
 import { AnimatePresence, motion } from "framer-motion";
-import { Dispatch, SetStateAction, useEffect, useState } from "react";
-import { ProductoVendido } from "../../../tipos/ProductoVendido";
-import { IsPositiveIntegerNumber } from "../../../utils/validator";
+import { useEffect, useState } from "react";
+import { ProductoVendido } from "../../../../../tipos/ProductoVendido";
+import { IsPositiveIntegerNumber } from "../../../../../utils/validator";
 
-const DevolucionFila = (props: { producto: ProductoVendido }) => {
+const DevolucionFila = (props: { producto: ProductoVendido, productosMarcadosMap: Map<string, number>, setProductosMarcados: Function }) => {
     const [cantidad, setCantidad] = useState<string>(String(props.producto.cantidadVendida));
     const [checked, setChecked] = useState<boolean>(false);
+
+    useEffect(() => {
+        if (checked) {
+            const prodsMap = new Map(props.productosMarcadosMap);
+
+            if (prodsMap.has(props.producto._id)) { return }
+            if (Number(cantidad) <= 0) { return }
+
+            prodsMap.set(props.producto._id, Number(cantidad))
+            props.setProductosMarcados(prodsMap)
+        }
+        else {
+            if (!props.productosMarcadosMap.has(props.producto._id)) { return; }
+
+            const prodsMap = new Map(props.productosMarcadosMap);
+            prodsMap.delete(props.producto._id)
+            props.setProductosMarcados(prodsMap)
+        }
+    }, [checked])
+
+    useEffect(() => {
+        if (!checked) { return; }
+
+        const prodsMap = new Map(props.productosMarcadosMap);
+
+        prodsMap.set(props.producto._id, Number(cantidad))
+        props.setProductosMarcados(prodsMap)
+    }, [cantidad])
+
 
     const ValueInput = (e: string) => {
         if (!IsPositiveIntegerNumber(e)) { return }
