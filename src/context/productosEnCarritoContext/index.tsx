@@ -1,6 +1,5 @@
 import React, { useContext, createContext } from 'react';
 import { ProductoVendido } from '../../tipos/ProductoVendido';
-import { CreateProductoVendidoList } from '../../utils/typeCreator';
 
 type ProductContextualizado = {
     ProductosEnCarrito: ProductoVendido[],

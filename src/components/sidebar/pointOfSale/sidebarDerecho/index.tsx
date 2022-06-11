@@ -137,6 +137,7 @@ const SidebarDerecho = React.memo((props: {
                         margen: prodEnCarrito.margen,
                         precioCompra: prodEnCarrito.precioCompra,
                         precioVenta: prodEnCarrito.precioVenta,
+                        precioFinal: prodEnCarrito.precioVenta * ((100 - Number(dtoAjustado)) / 100),
                         dto: Number(dtoAjustado)
                     } as unknown as ProductoVendido;
 

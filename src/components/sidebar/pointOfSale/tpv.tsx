@@ -245,6 +245,7 @@ const AddProductoToCarrito = (prod: Producto, productosEnCarrito: ProductoVendid
             margen: prodEnCarrito.margen || 0,
             precioCompra: prodEnCarrito.precioCompra,
             precioVenta: prodEnCarrito.precioVenta,
+            precioFinal: prod.precioVenta,
             dto: 0
         } as unknown as ProductoVendido;
 
@@ -265,6 +266,7 @@ const AddProductoToCarrito = (prod: Producto, productosEnCarrito: ProductoVendid
             margen: prod.margen || 0,
             precioCompra: prod.precioCompra,
             precioVenta: prod.precioVenta,
+            precioFinal: prod.precioVenta,
             dto: 0
         } as unknown as ProductoVendido
 

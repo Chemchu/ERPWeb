@@ -96,6 +96,7 @@ function CreateProductoVendido(s: any): ProductoVendido | undefined {
             margen: s.margen,
             precioCompra: s.precioCompra,
             precioVenta: s.precioVenta,
+            precioFinal: s.precioVenta * ((100 - s.dto) / 100),
             cantidadVendida: Number(s.cantidadVendida),
             dto: s.dto || 0
         }
