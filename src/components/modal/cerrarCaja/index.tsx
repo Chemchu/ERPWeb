@@ -25,7 +25,7 @@ export const CerrarCaja = (props: { Empleado?: SesionEmpleado, setModalOpen: Fun
     const [TotalTarjeta, setTotalTarjeta] = useState<string>();
     const [TotalPrevistoEnCaja, setTotalPrevistoEnCaja] = useState<string>();
     const [TotalRealEnCaja, setTotalRealEnCaja] = useState<string>("0");
-    const [desglose, setDesglose] = useState<Map<number, number>>(new Map());
+    const [Desglose, setDesglose] = useState<Map<number, number>>(new Map());
     const [DineroRetirado, setDineroRetirado] = useState<string>("0");
     const [showContarCaja, setContarCaja] = useState<boolean>(false);
     const [qrImage, setQrImage] = useState<string>();
@@ -72,6 +72,12 @@ export const CerrarCaja = (props: { Empleado?: SesionEmpleado, setModalOpen: Fun
         }
 
     }, [qrImage])
+
+    const SetTotalReal = (value: string) => {
+        if (Desglose.size > 0) { setDesglose(new Map()) }
+
+        setTotalRealEnCaja(ValidatePositiveFloatingNumber(value))
+    }
 
     const CerrarCaja = async () => {
         const abortController = new AbortController();
@@ -162,7 +168,7 @@ export const CerrarCaja = (props: { Empleado?: SesionEmpleado, setModalOpen: Fun
                                 <div className="flex gap-2 items-center">
                                     <p>Dinero total real en caja: </p>
                                     <input className="rounded-lg border p-1 outline-blue-500 text-right"
-                                        onChange={(e) => { setTotalRealEnCaja(ValidatePositiveFloatingNumber(e.target.value)) }} value={TotalRealEnCaja} />
+                                        onChange={(e) => { SetTotalReal(e.target.value) }} value={TotalRealEnCaja} />
                                     €
                                     <div className="flex hover:bg-blue-200 rounded-full cursor-pointer w-8 h-8 items-center justify-center"
                                         onClick={() => { setContarCaja((isOpen) => !isOpen) }}>
@@ -222,7 +228,7 @@ export const CerrarCaja = (props: { Empleado?: SesionEmpleado, setModalOpen: Fun
                     </div>
                     <AnimatePresence>
                         {
-                            showContarCaja && <ContarCaja showItself={setContarCaja} setTotal={setTotalRealEnCaja} desglose={desglose} setDesglose={setDesglose} />
+                            showContarCaja && <ContarCaja showItself={setContarCaja} setTotal={setTotalRealEnCaja} desglose={Desglose} setDesglose={setDesglose} />
                         }
                     </AnimatePresence>
                 </motion.div>
