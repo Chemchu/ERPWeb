@@ -112,7 +112,7 @@ const SidebarDerecho = React.memo((props: {
     // Se accede a la lista de productos actualizada usando "functional state update" de react
     // Es para evitar muchos rerenders
     const SetPropiedadProd = useCallback((idProd: string, cantidad: string, dto: string) => {
-        if (!IsPositiveIntegerNumber(cantidad)) { return; }
+        if (!IsPositiveIntegerNumber(String(cantidad))) { return; }
         if (!IsPositiveFloatingNumber(dto)) { return; }
 
         props.setProductosCarrito((prevCarrito) => {

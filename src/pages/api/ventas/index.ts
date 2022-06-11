@@ -45,7 +45,7 @@ const GetSales = async (req: NextApiRequest, res: NextApiResponse) => {
 
 const AddSale = async (req: NextApiRequest, res: NextApiResponse) => {
     try {
-        const productosEnCarrito: Producto[] = req.body.productosEnCarrito;
+        const productosEnCarrito = req.body.productosEnCarrito;
         const pagoCliente: CustomerPaymentInformation = req.body.pagoCliente;
         const cliente: Cliente = req.body.cliente;
         const empleado: Empleado = req.body.empleado;
