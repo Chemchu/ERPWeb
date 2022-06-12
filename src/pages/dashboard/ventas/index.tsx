@@ -11,6 +11,7 @@ import { Devolucion } from '../../../tipos/Devolucion';
 import { SesionEmpleado } from '../../../tipos/Empleado';
 import { Roles } from '../../../tipos/Enums/Roles';
 import { Venta } from '../../../tipos/Venta';
+import { FetchDevoluciones } from '../../../utils/fetches/devolucionesFetches';
 import { FetchVentas } from '../../../utils/fetches/ventasFetches';
 
 const Ventas = (props: { EmpleadoSesion: SesionEmpleado }) => {
@@ -25,6 +26,7 @@ const Ventas = (props: { EmpleadoSesion: SesionEmpleado }) => {
         }
         const GetAllData = async () => {
             setVentas(await FetchVentas());
+            setDevoluciones(await FetchDevoluciones());
         }
 
         GetAllData();

@@ -1,7 +1,9 @@
 import { motion } from "framer-motion";
 import { useEffect, useState } from "react";
+import { Devolucion } from "../../../../tipos/Devolucion";
 import { ProductoVendido } from "../../../../tipos/ProductoVendido";
 import { In } from "../../../../utils/animations";
+import { AddDevolucion } from "../../../../utils/fetches/devolucionesFetches";
 import { Backdrop } from "../../backdrop";
 import ListaDevolucionProductos from "./devolucionListaProductos";
 
@@ -9,7 +11,10 @@ const DevolverVenta = (props: { productos: ProductoVendido[], setModal: Function
     const [ProductosDevolver, setProductosDevolver] = useState<Map<string, number>>(new Map());
 
     const AceptarReembolso = async () => {
+        const devolucion = {
 
+        } as unknown as Devolucion
+        await AddDevolucion(devolucion)
     }
 
     return (

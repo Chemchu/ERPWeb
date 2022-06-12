@@ -2,6 +2,7 @@ import { AnimatePresence, motion } from "framer-motion";
 import React, { useEffect, useRef, useState } from "react";
 import { useReactToPrint } from "react-to-print";
 import { CustomerPaymentInformation } from "../../../tipos/CustomerPayment";
+import { ProductoVendido } from "../../../tipos/ProductoVendido";
 import { TPVType } from "../../../tipos/TPV";
 import { Venta } from "../../../tipos/Venta";
 import { In } from "../../../utils/animations";
@@ -160,28 +161,20 @@ const VerVenta = (props: { venta: Venta | undefined, setModal: Function }) => {
                                 </span>
                                 <div className="bg-gray-100 rounded-lg border-2 w-full h-full font-normal overflow-y-scroll">
                                     <div className="flex w-full justify-around p-2 cursor-default">
-                                        <p className="w-2/4 text-left font-semibold">Producto</p>
+                                        <p className="w-1/4 text-left font-semibold">Producto</p>
                                         <p className="w-1/4 text-center font-semibold">Cantidad</p>
+                                        <p className="w-1/4 text-center font-semibold">Descuento</p>
                                         <p className="w-1/4 text-center font-semibold">Total</p>
                                     </div>
                                     <hr className="border-2 border-gray-300" />
                                     <div className="flex flex-col gap-2 w-full h-full p-2">
                                         {
                                             props.venta.productos.map((prod, index) => {
-                                                if (prod.dto) {
-                                                    return (
-                                                        <div key={`editarVenta_${prod._id}_${index}`} className="hover:bg-gray-200 hover:cursor-pointer">
-                                                            <GenerarFilaProducto numFila={index + 1} nombreProducto={prod.nombre} cantidad={Number(prod.cantidadVendida)} precio={Number(prod.precioVenta * (1 - Number(prod.dto) / 100))} />
-                                                        </div>
-                                                    )
-                                                }
-                                                else {
-                                                    return (
-                                                        <div key={`editarVenta_${prod._id}_${index}`} className="hover:bg-gray-200 hover:cursor-pointer">
-                                                            <GenerarFilaProducto numFila={index + 1} nombreProducto={prod.nombre} cantidad={Number(prod.cantidadVendida)} precio={prod.precioVenta} />
-                                                        </div>
-                                                    )
-                                                }
+                                                return (
+                                                    <div key={`editarVenta_${prod._id}_${index}`} className="hover:bg-gray-200 hover:cursor-pointer">
+                                                        <GenerarFilaProducto numFila={index + 1} producto={prod} />
+                                                    </div>
+                                                )
                                             })
                                         }
                                     </div>
@@ -224,18 +217,24 @@ const VerVenta = (props: { venta: Venta | undefined, setModal: Function }) => {
     );
 }
 
-const GenerarFilaProducto = (props: { numFila: number, nombreProducto: string, cantidad: number, precio: number }) => {
+const GenerarFilaProducto = (props: { numFila: number, producto: ProductoVendido }) => {
+    const precio = props.producto.precioFinal || props.producto.precioVenta * ((100 - props.producto.dto) / 100);
+
     return (
         <>
+            {console.log(props.producto)}
             <div className="flex w-full ">
-                <div className="w-2/4 text-left">
-                    {props.nombreProducto}
+                <div className="w-1/4 text-left">
+                    {props.producto.nombre}
                 </div>
                 <div className="w-1/4 text-center">
-                    {props.cantidad}
+                    {props.producto.cantidadVendida}
                 </div>
                 <div className="w-1/4 text-center">
-                    {(props.precio * props.cantidad).toFixed(2)}€
+                    {props.producto.dto}
+                </div>
+                <div className="w-1/4 text-center">
+                    {(precio * props.producto.cantidadVendida).toFixed(2)}€
                 </div>
             </div>
             <hr />

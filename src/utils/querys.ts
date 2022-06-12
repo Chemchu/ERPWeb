@@ -217,10 +217,12 @@ export const QUERY_SALE = `
             familia
             precioVenta
             precioCompra
+            precioFinal
             iva
             margen
             ean
             cantidadVendida
+            dto
         }
         dineroEntregadoEfectivo
         dineroEntregadoTarjeta
@@ -258,7 +260,7 @@ export const QUERY_SALE = `
 `;
 
 export const QUERY_SALES = `
-    query VentasVentas($find: VentasFind) {
+    query Ventas($find: VentasFind) {
         ventas(find: $find) {
             _id
             dineroEntregadoEfectivo
@@ -278,10 +280,12 @@ export const QUERY_SALES = `
                 familia
                 precioVenta
                 precioCompra
+                precioFinal
                 iva
                 margen
                 ean
                 cantidadVendida
+                dto
             }
             cliente {
                 _id
@@ -431,4 +435,111 @@ export const LOGIN = `
       token
     }
   }
+`
+
+export const QUERY_DEVOLUCIONES = `
+query Devoluciones {
+  devoluciones {
+    _id
+    productosDevueltos {
+      _id
+      nombre
+      proveedor
+      familia
+      precioVenta
+      precioCompra
+      precioFinal
+      iva
+      margen
+      ean
+      cantidadDevuelta
+      dto
+    }
+    dineroDevuelto
+    ventaId
+    ventaOriginal {
+      _id
+      productos {
+        _id
+        nombre
+        familia
+        proveedor
+        precioVenta
+        precioCompra
+        precioFinal
+        iva
+        margen
+        ean
+        cantidadVendida
+        dto
+      }
+      dineroEntregadoEfectivo
+      dineroEntregadoTarjeta
+      precioVentaTotal
+      cambio
+      cliente {
+        _id
+        nif
+        nombre
+        calle
+        cp
+      }
+      vendidoPor {
+        _id
+        nombre
+        apellidos
+        rol
+        email
+      }
+      modificadoPor {
+        _id
+        nombre
+        apellidos
+        rol
+        email
+      }
+      tipo
+      descuentoEfectivo
+      descuentoPorcentaje
+      tpv
+      createdAt
+      updatedAt
+    }
+    tpv
+    cliente {
+      _id
+      nif
+      nombre
+      calle
+      cp
+    }
+    trabajador {
+      _id
+      nombre
+      apellidos
+      rol
+      email
+    }
+    createdAt
+    updatedAt
+    modificadoPor {
+      _id
+      nombre
+      apellidos
+      rol
+      email
+    }
+  }
+}
+`
+
+export const ADD_DEVOLUCION = `
+  mutation AddDevolucion($fields: DevolucionFields!) {
+  addDevolucion(fields: $fields) {
+    message
+    successful
+    _id
+    createdAt
+  }
+}
 `
