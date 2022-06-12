@@ -34,7 +34,7 @@ const PuntoDeVenta = (props: { isEmpleadoUsingTPV: boolean, EmpleadoSesion: Sesi
         <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}>
             <TPV productos={Productos} empleadoUsandoTPV={empleadoUsandoTpv} setEmpleadoUsandoTPV={setEmpleadoUsandoTPV} setShowModalAbrir={setAbrirCajaModal} setShowModalCerrar={setCerrarCajaModal} />
             <AnimatePresence exitBeforeEnter>
-                {showModalCerrarCaja ? <CerrarCaja setModalOpen={setCerrarCajaModal} setEmpleadoUsandoTPV={setEmpleadoUsandoTPV} /> : <></>}
+                {showModalCerrarCaja && <CerrarCaja setModalOpen={setCerrarCajaModal} setEmpleadoUsandoTPV={setEmpleadoUsandoTPV} />}
                 {showModalAbrirCaja && !empleadoUsandoTpv && <AbrirCaja setShowModal={setAbrirCajaModal} setEmpleadoUsandoTPV={setEmpleadoUsandoTPV} />}
             </AnimatePresence>
         </motion.div>
