@@ -4,6 +4,7 @@ import { ProductoDevuelto } from "../../tipos/ProductoDevuelto";
 import { Venta } from "../../tipos/Venta";
 import { notifyError } from "../toastify";
 import { CreateDevolucionList } from "../typeCreator";
+import queryString from 'query-string';
 
 export const FetchDevoluciones = async (): Promise<Devolucion[]> => {
     try {
@@ -25,9 +26,13 @@ export const FetchDevoluciones = async (): Promise<Devolucion[]> => {
     }
 }
 
-export const FetchDevolucionesByQuery = async (query: string): Promise<Devolucion[]> => {
+export const FetchDevolucionesByQuery = async (userQuery: string): Promise<Devolucion[]> => {
     try {
-        const vRes = await fetch(`/api/devoluciones/`);
+        let query: any = new Object;
+        query.query = userQuery;
+        const queryObject = queryString.stringify(query);
+
+        const vRes = await fetch(`/api/devoluciones/${queryObject}`);
 
         if (!vRes.ok) {
             notifyError("Error al buscar las devoluciones");
@@ -44,12 +49,9 @@ export const FetchDevolucionesByQuery = async (query: string): Promise<Devolucio
     }
 }
 
-export const AddDevolucion = async (venta: Venta, productosDevolver: Map<string, number>, empleado: SesionEmpleado) => {
+export const AddDevolucion = async (venta: Venta, productosDevolver: Map<string, number>, empleado: SesionEmpleado): Promise<{ data: any, error: boolean }> => {
     try {
         const productos: ProductoDevuelto[] = []
-        console.log("lol AddDevolucion fetcher");
-
-
         venta.productos.forEach((prod) => {
             const cantidadDevuelta = productosDevolver.get(prod._id)
             if (!cantidadDevuelta) { return }
@@ -87,12 +89,15 @@ export const AddDevolucion = async (venta: Venta, productosDevolver: Map<string,
 
         if (!vRes.ok) {
             notifyError("Error al añadir la devolución");
-            return [];
+            return { data: "Error", error: true };
         }
 
-        return { message: "Opsie doopsie" }
+        const responseJson = await vRes.json();
+        const data = responseJson.data;
+
+        return { data: data, error: false }
     }
     catch (err) {
-
+        return { data: String(err), error: true }
     }
 }

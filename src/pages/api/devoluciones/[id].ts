@@ -1,5 +1,7 @@
 import { NextApiRequest, NextApiResponse } from "next";
 import queryString from 'query-string';
+import { QUERY_DEVOLUCIONES } from "../../../utils/querys";
+import GQLQuery from "../../../utils/serverFetcher";
 
 const handler = async (req: NextApiRequest, res: NextApiResponse) => {
     const query = queryString.parse(req.query.id.toString());
@@ -17,8 +19,26 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
     }
 }
 
-const GetDevolucionesByQuery = async (query: queryString.ParsedQuery<string>, res: NextApiResponse) => {
+const GetDevolucionesByQuery = async (userQuery: queryString.ParsedQuery<string>, res: NextApiResponse) => {
+    if (!userQuery.query) { res.status(300).json({ message: `La query no puede estar vacía` }); }
 
+    const serverRes = await GQLQuery(
+        {
+            query: QUERY_DEVOLUCIONES,
+            variables: {
+                find: {
+                    query: userQuery.query,
+                    fechaInicial: userQuery.fechas ? userQuery.fechas[0] : null,
+                    fechaFinal: userQuery.fechas ? userQuery.fechas[1] : null
+                },
+                limit: 150
+            }
+        }
+    );
+    const apiResponse = await serverRes.json();
+
+    const data = JSON.parse(apiResponse.data);
+    return res.status(serverRes.ok ? 200 : 300).json({ message: data.message, data: data.devoluciones, successful: data.successful });
 }
 
 const GetDevolucion = async (req: NextApiRequest, res: NextApiResponse) => {

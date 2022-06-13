@@ -8,6 +8,7 @@ import { TPVType } from "../../../tipos/TPV";
 import { In } from "../../../utils/animations";
 import { FetchTPV } from "../../../utils/fetches/tpvFetches";
 import GenerateQrBase64 from "../../../utils/generateQr";
+import { notifySuccess } from "../../../utils/toastify";
 import DevolucionTicket from "../../printable/devolucionTicket";
 import { Backdrop } from "../backdrop";
 
@@ -134,7 +135,7 @@ const DevolucionModal = (props: { devolucion: Devolucion | undefined, setModal: 
                             </button>
                         </div>
                         {
-                            qrImage && fecha &&
+                            qrImage &&
                             <div style={{ display: "none" }}>
                                 <DevolucionTicket
                                     ref={componentRef}

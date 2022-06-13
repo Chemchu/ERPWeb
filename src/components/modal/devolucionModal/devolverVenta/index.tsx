@@ -1,18 +1,72 @@
 import { motion } from "framer-motion";
-import { useEffect, useState } from "react";
+import React, { useEffect } from "react";
+import { useRef, useState } from "react";
+import { useReactToPrint } from "react-to-print";
 import useEmpleadoContext from "../../../../context/empleadoContext";
+import { Devolucion } from "../../../../tipos/Devolucion";
 import { Venta } from "../../../../tipos/Venta";
 import { In } from "../../../../utils/animations";
-import { AddDevolucion } from "../../../../utils/fetches/devolucionesFetches";
+import { AddDevolucion, FetchDevolucionesByQuery } from "../../../../utils/fetches/devolucionesFetches";
+import GenerateQrBase64 from "../../../../utils/generateQr";
+import { notifyError, notifySuccess } from "../../../../utils/toastify";
+import DevolucionTicket from "../../../printable/devolucionTicket";
 import { Backdrop } from "../../backdrop";
 import ListaDevolucionProductos from "./devolucionListaProductos";
 
-const DevolverVenta = (props: { venta: Venta, setModal: Function }) => {
+const DevolverVenta = (props: { venta: Venta, setModal: Function, setModalVenta: Function }) => {
     const [ProductosDevolver, setProductosDevolver] = useState<Map<string, number>>(new Map());
+    const [Devolucion, setDevolucion] = useState<Devolucion>();
     const { Empleado } = useEmpleadoContext();
+    const [qrImage, setQrImage] = useState<string>();
+    const componentRef = useRef(null);
+
+    const reactToPrintContent = React.useCallback(() => {
+        return componentRef.current;
+    }, []);
+
+    // Se encarga de limpiar el carrito y los descuentos
+    const onAfterPrintHandler = React.useCallback(() => {
+        notifySuccess("Devolución realizada correctamente")
+        props.setModal(false)
+        props.setModalVenta(false);
+    }, []);
+
+    const handlePrint = useReactToPrint({
+        documentTitle: "Ticket de devolución",
+        content: reactToPrintContent,
+        onAfterPrint: onAfterPrintHandler
+    });
+
+    useEffect(() => {
+        if (qrImage) { handlePrint() }
+    }, [qrImage])
 
     const AceptarReembolso = async () => {
-        await AddDevolucion(props.venta, ProductosDevolver, Empleado)
+        const abortController = new AbortController();
+        try {
+            if (!Empleado || !Empleado.TPV) { notifyError("Error con la autenticación"); return; }
+            const { data, error } = await AddDevolucion(props.venta, ProductosDevolver, Empleado);
+
+            if (!error) {
+                const devoluciones = await FetchDevolucionesByQuery(data._id);
+                if (devoluciones.length <= 0) {
+                    setQrImage(undefined);
+                    notifyError("Error al realizar la devolución")
+                    return;
+                }
+                setDevolucion(devoluciones.pop());
+                setQrImage(await GenerateQrBase64(data._id, abortController));
+            }
+            else {
+                setQrImage(undefined);
+                notifyError("Error al realizar la devolución")
+            }
+        }
+        catch (err) {
+            console.log(err);
+            abortController.abort();
+            notifyError("Error al realizar la devolución")
+        }
     }
 
     return (
@@ -47,6 +101,18 @@ const DevolverVenta = (props: { venta: Venta, setModal: Function }) => {
                                 </button>
                         }
                     </div>
+                    {
+                        qrImage &&
+                        Devolucion &&
+                        <div style={{ display: "none" }}>
+                            <DevolucionTicket
+                                ref={componentRef}
+                                devolucion={Devolucion}
+                                fecha={Devolucion.createdAt}
+                                qrImage={qrImage}
+                            />
+                        </div>
+                    }
                 </motion.div>
             </Backdrop>
         </motion.div>

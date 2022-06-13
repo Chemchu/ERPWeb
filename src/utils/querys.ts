@@ -438,8 +438,8 @@ export const LOGIN = `
 `
 
 export const QUERY_DEVOLUCIONES = `
-query Devoluciones {
-  devoluciones {
+query Devoluciones($find: DevolucionFind, $limit: Int) {
+  devoluciones(find: $find, limit: $limit) {
     _id
     productosDevueltos {
       _id
