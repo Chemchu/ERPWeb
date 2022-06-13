@@ -282,7 +282,7 @@ function CreateDevolucion(s: any): Devolucion | undefined {
 
         let dev: Devolucion = {
             _id: s._id,
-            productosDevueltos: CreateProductoVendidoList(s.productos),
+            productosDevueltos: CreateProductoVendidoList(s.productosDevueltos),
             dineroDevuelto: s.dineroDevuelto,
             cliente: CreateClient(s.cliente) || s.client,
             trabajador: CreateEmployee(s.trabajador),

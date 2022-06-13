@@ -86,7 +86,7 @@ const Ventas = (props: { EmpleadoSesion: SesionEmpleado }) => {
                         'focus:outline-none ring-white ring-opacity-60'
                     )}
                 >
-                    <DevolucionesPage ventas={Devoluciones} clientes={Clientes} />
+                    <DevolucionesPage devoluciones={Devoluciones} clientes={Clientes} />
                 </Tab.Panel>
             </Tab.Panels>
         </Tab.Group >

@@ -9,8 +9,10 @@ import { Paginador } from "../../elementos/Forms/paginador";
 import DevolucionModal from "../../modal/devolucionModal";
 import SkeletonCard from "../../Skeletons/skeletonCard";
 
-const DevolucionesPage = (props: { ventas: Devolucion[], clientes: Cliente[] }) => {
-    if (props.ventas == undefined) throw new Error("Props de ventas en ventasTabs.tsx es undefined");
+const DevolucionesPage = (props: { devoluciones: Devolucion[], clientes: Cliente[] }) => {
+    console.log(props.devoluciones);
+
+    if (props.devoluciones == undefined) throw new Error("Props de devoluciones en devolucionesTabs.tsx es undefined");
     if (props.clientes == undefined) throw new Error("Props de clientes en ventasTabs.tsx es undefined");
 
     const [CurrentPage, setCurrentPage] = useState<number>(1);
@@ -29,7 +31,7 @@ const DevolucionesPage = (props: { ventas: Devolucion[], clientes: Cliente[] }) 
 
 
     const elementsPerPage = 20;
-    const numPages = props.ventas.length <= 0 ? 1 : Math.ceil(props.ventas.length / elementsPerPage);
+    const numPages = props.devoluciones.length <= 0 ? 1 : Math.ceil(props.devoluciones.length / elementsPerPage);
     const arrayNum = [...Array(8)];
 
     const setPaginaActual = (page: number) => {
@@ -84,7 +86,7 @@ const DevolucionesPage = (props: { ventas: Devolucion[], clientes: Cliente[] }) 
             </div>
             <div className="h-full w-full pb-4 border overflow-y-scroll">
                 {
-                    props.ventas.length <= 0 ?
+                    props.devoluciones.length <= 0 ?
                         arrayNum.map((e, i) => <SkeletonCard key={`skeletonprops.ventas-${i}`} />)
                         :
                         DevolucionesFiltradas && filtro ?
@@ -96,7 +98,7 @@ const DevolucionesPage = (props: { ventas: Devolucion[], clientes: Cliente[] }) 
                                 );
                             })
                             :
-                            props.ventas.slice((elementsPerPage * (CurrentPage - 1)), CurrentPage * elementsPerPage).map((v) => {
+                            props.devoluciones.slice((elementsPerPage * (CurrentPage - 1)), CurrentPage * elementsPerPage).map((v) => {
                                 return (
                                     <div className="hover:bg-gray-200 cursor-pointer"
                                         key={`FilaProdTable${v._id}`} onClick={() => { setCurrentDevolucion(v); setShowModal(true) }}>
