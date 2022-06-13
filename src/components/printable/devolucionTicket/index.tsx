@@ -1,6 +1,7 @@
 import React from "react";
 import Image from "next/image";
 import { Devolucion } from "../../../tipos/Devolucion";
+import { ProductoDevuelto } from "../../../tipos/ProductoDevuelto";
 
 const DevolucionTicket = React.forwardRef((props: { devolucion: Devolucion, fecha: string, qrImage: string }, ref: React.LegacyRef<HTMLDivElement>) => {
     return (
@@ -8,6 +9,7 @@ const DevolucionTicket = React.forwardRef((props: { devolucion: Devolucion, fech
             <div className="w-full h-5/6 rounded-3xl bg-white z-10 ">
                 <div className="flex flex-col gap-1">
                     <h2 className="text-xl font-semibold text-center ">ERPWeb</h2>
+                    <h2 className="text-lg text-center ">Devolucion</h2>
                     <div className="text-center">Fecha: {new Date(Number(props.fecha)).toLocaleString()}</div>
                     <div className="flex flex-col text-center">
                         <div>Cliente: {props.devolucion.cliente.nombre} </div>
@@ -20,19 +22,14 @@ const DevolucionTicket = React.forwardRef((props: { devolucion: Devolucion, fech
                     <hr />
                     <div className="w-full h-full">
                         <div className="flex w-full justify-around">
-                            <p className="w-2/4 text-left font-semibold">Producto</p>
-                            <p className="w-1/4 text-center font-semibold">Cantidad</p>
-                            <p className="w-1/4 text-center font-semibold">Total</p>
+                            <p className="w-2/4 text-left font-semibold">Producto devuelto</p>
+                            <p className="w-1/4 text-center font-semibold">Cantidad devuelta</p>
+                            <p className="w-1/4 text-center font-semibold">Total devuelto</p>
                         </div>
                         <div className="flex flex-col gap-2 w-full h-full overflow-y-auto overflow-x-hidden pt-2">
                             {
                                 props.devolucion.productosDevueltos.map((prod, index) => {
-                                    if (prod.dto) {
-                                        return <GenerarFilaProducto key={"modalRes" + prod._id} numFila={index + 1} nombreProducto={prod.nombre} cantidad={Number(prod.cantidadVendida)} />
-                                    }
-                                    else {
-                                        return <GenerarFilaProducto key={"modalRes" + prod._id} numFila={index + 1} nombreProducto={prod.nombre} cantidad={Number(prod.cantidadVendida)} />
-                                    }
+                                    return <GenerarFilaProductoDevuelto key={"modalRes" + prod._id} numFila={index + 1} productoDevuelto={prod} />
                                 })
                             }
                         </div>
@@ -62,14 +59,17 @@ DevolucionTicket.displayName = 'Ticket de devolución';
 export default DevolucionTicket;
 
 
-const GenerarFilaProducto = (props: { numFila: number, nombreProducto: string, cantidad: number }) => {
+const GenerarFilaProductoDevuelto = (props: { numFila: number, productoDevuelto: ProductoDevuelto }) => {
     return (
         <div className="flex w-full">
-            <div className="w-3/4 text-left">
-                {props.nombreProducto}
+            <div className="w-2/4 text-left">
+                {props.productoDevuelto.nombre}
             </div>
             <div className="w-1/4 text-center">
-                {props.cantidad}
+                {props.productoDevuelto.cantidadDevuelta}
+            </div>
+            <div className="w-1/4 text-center">
+                {props.productoDevuelto.precioFinal}€
             </div>
         </div>
     );

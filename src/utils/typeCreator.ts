@@ -3,6 +3,7 @@ import { Cliente } from "../tipos/Cliente";
 import { Devolucion } from "../tipos/Devolucion";
 import { Empleado } from "../tipos/Empleado";
 import { Producto } from "../tipos/Producto";
+import { ProductoDevuelto } from "../tipos/ProductoDevuelto";
 import { ProductoVendido } from "../tipos/ProductoVendido";
 import { TPVType } from "../tipos/TPV";
 import { Venta } from "../tipos/Venta";
@@ -282,7 +283,7 @@ function CreateDevolucion(s: any): Devolucion | undefined {
 
         let dev: Devolucion = {
             _id: s._id,
-            productosDevueltos: CreateProductoVendidoList(s.productosDevueltos),
+            productosDevueltos: CreateProductoDevueltoList(s.productosDevueltos),
             dineroDevuelto: s.dineroDevuelto,
             cliente: CreateClient(s.cliente) || s.client,
             trabajador: CreateEmployee(s.trabajador),
@@ -294,6 +295,40 @@ function CreateDevolucion(s: any): Devolucion | undefined {
         }
 
         return dev;
+    }
+    catch (e) {
+        return undefined;
+    }
+}
+
+export function CreateProductoDevueltoList(pList: any[]): ProductoDevuelto[] {
+    let res: ProductoDevuelto[] = [];
+    pList.forEach((p: any) => {
+        const prod = CreateProductoDevuelto(p);
+
+        if (prod) res.push(prod);
+    });
+
+    return res;
+}
+
+function CreateProductoDevuelto(s: any): ProductoDevuelto | undefined {
+    try {
+        let prod: ProductoDevuelto = {
+            _id: s._id,
+            nombre: s.nombre,
+            proveedor: s.proveedor,
+            familia: s.familia,
+            precioVenta: s.precioVenta,
+            precioCompra: s.precioCompra,
+            precioFinal: s.precioFinal,
+            iva: s.iva,
+            margen: s.margen,
+            ean: s.ean,
+            cantidadDevuelta: s.cantidadDevuelta,
+            dto: s.dto || 0
+        }
+        return prod;
     }
     catch (e) {
         return undefined;

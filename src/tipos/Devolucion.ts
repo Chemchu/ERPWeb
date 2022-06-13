@@ -1,11 +1,11 @@
 import { Cliente } from "./Cliente";
 import { Empleado } from "./Empleado";
-import { ProductoVendido } from "./ProductoVendido";
+import { ProductoDevuelto } from "./ProductoDevuelto";
 import { Venta } from "./Venta";
 
 export type Devolucion = {
     _id: string,
-    productosDevueltos: ProductoVendido[],
+    productosDevueltos: ProductoDevuelto[],
     dineroDevuelto: number,
     ventaOriginal: Venta,
     tpv: string,
