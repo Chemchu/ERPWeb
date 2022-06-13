@@ -10,8 +10,6 @@ import DevolucionModal from "../../modal/devolucionModal";
 import SkeletonCard from "../../Skeletons/skeletonCard";
 
 const DevolucionesPage = (props: { devoluciones: Devolucion[], clientes: Cliente[] }) => {
-    console.log(props.devoluciones);
-
     if (props.devoluciones == undefined) throw new Error("Props de devoluciones en devolucionesTabs.tsx es undefined");
     if (props.clientes == undefined) throw new Error("Props de clientes en ventasTabs.tsx es undefined");
 
@@ -123,7 +121,7 @@ const DevolucionesPage = (props: { devoluciones: Devolucion[], clientes: Cliente
 }
 
 const FilaReembolso = (props: { devolucion: Devolucion }) => {
-    const fecha = new Date(Number(props.devolucion.createdAt));
+    const fecha = new Date(Number(props.devolucion.ventaOriginal.createdAt));
     const fechaReembolso = new Date(Number(props.devolucion.updatedAt));
 
     return (
@@ -144,8 +142,8 @@ const FilaReembolso = (props: { devolucion: Devolucion }) => {
                 </p>
             </div>
             <div className="py-3 border-gray-200 text-lg">
-                <p className="text-red-500 whitespace-no-wrap">
-                    {props.devolucion.productosDevueltos.length}
+                <p className="whitespace-no-wrap">
+                    {props.devolucion.dineroDevuelto.toFixed(2)}€
                 </p>
             </div>
         </div>
