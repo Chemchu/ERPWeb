@@ -1,20 +1,18 @@
 import { motion } from "framer-motion";
 import { useEffect, useState } from "react";
-import { Devolucion } from "../../../../tipos/Devolucion";
-import { ProductoVendido } from "../../../../tipos/ProductoVendido";
+import useEmpleadoContext from "../../../../context/empleadoContext";
+import { Venta } from "../../../../tipos/Venta";
 import { In } from "../../../../utils/animations";
 import { AddDevolucion } from "../../../../utils/fetches/devolucionesFetches";
 import { Backdrop } from "../../backdrop";
 import ListaDevolucionProductos from "./devolucionListaProductos";
 
-const DevolverVenta = (props: { productos: ProductoVendido[], setModal: Function }) => {
+const DevolverVenta = (props: { venta: Venta, setModal: Function }) => {
     const [ProductosDevolver, setProductosDevolver] = useState<Map<string, number>>(new Map());
+    const { Empleado } = useEmpleadoContext();
 
     const AceptarReembolso = async () => {
-        const devolucion = {
-
-        } as unknown as Devolucion
-        await AddDevolucion(devolucion)
+        await AddDevolucion(props.venta, ProductosDevolver, Empleado)
     }
 
     return (
@@ -31,7 +29,7 @@ const DevolverVenta = (props: { productos: ProductoVendido[], setModal: Function
                         Selecciona los productos a devolver
                     </span>
 
-                    <ListaDevolucionProductos key={`listaKey::${props.productos.length}`} listaProductos={props.productos} productosDevolver={ProductosDevolver} setProductosDevolver={setProductosDevolver} />
+                    <ListaDevolucionProductos key={`listaKey::${props.venta.productos.length}`} listaProductos={props.venta.productos} productosDevolver={ProductosDevolver} setProductosDevolver={setProductosDevolver} />
 
                     <div className="flex gap-4 w-full h-1/6 justify-around items-end text-white">
                         <button className="w-full h-12 rounded-xl bg-red-500 hover:bg-red-600 shadow-lg" onClick={() => props.setModal(false)}>

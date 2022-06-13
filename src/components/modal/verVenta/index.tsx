@@ -207,7 +207,7 @@ const VerVenta = (props: { venta: Venta | undefined, setModal: Function }) => {
                         <AnimatePresence>
                             {
                                 showDevolverModal &&
-                                <DevolverVenta productos={props.venta.productos} setModal={setShowDevolverModal} />
+                                <DevolverVenta venta={props.venta} setModal={setShowDevolverModal} />
                             }
                         </AnimatePresence>
                     </div>

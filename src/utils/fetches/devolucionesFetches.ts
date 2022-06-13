@@ -1,4 +1,7 @@
 import { Devolucion } from "../../tipos/Devolucion";
+import { SesionEmpleado } from "../../tipos/Empleado";
+import { ProductoDevuelto } from "../../tipos/ProductoDevuelto";
+import { Venta } from "../../tipos/Venta";
 import { notifyError } from "../toastify";
 import { CreateDevolucionList } from "../typeCreator";
 
@@ -12,6 +15,7 @@ export const FetchDevoluciones = async (): Promise<Devolucion[]> => {
         }
 
         const devoluciones = await vRes.json();
+
         return CreateDevolucionList(devoluciones.data);
     }
     catch (e) {
@@ -40,19 +44,45 @@ export const FetchDevolucionesByQuery = async (query: string): Promise<Devolucio
     }
 }
 
-export const AddDevolucion = async (devolucion: Devolucion) => {
+export const AddDevolucion = async (venta: Venta, productosDevolver: Map<string, number>, empleado: SesionEmpleado) => {
     try {
+        const productos: ProductoDevuelto[] = []
+        let dineroDevuelto: number = 0;
+
+        venta.productos.forEach((prod) => {
+            const cantidadDevuelta = productosDevolver.get(prod._id)
+            if (!cantidadDevuelta) { return }
+
+            const precio = prod.precioFinal ? prod.precioFinal : prod.precioVenta * ((100 - prod.dto) / 100)
+            dineroDevuelto += prod.cantidadVendida * precio;
+
+            productos.push({
+                _id: prod._id,
+                nombre: prod.nombre,
+                proveedor: prod.proveedor,
+                familia: prod.familia,
+                precioVenta: prod.precioVenta,
+                precioCompra: prod.precioCompra,
+                precioFinal: prod.precioFinal,
+                dto: prod.dto,
+                iva: prod.iva,
+                margen: prod.margen,
+                ean: prod.ean,
+                cantidadDevuelta: cantidadDevuelta
+            })
+        })
+
         const vRes = await fetch(`/api/devoluciones/`, {
             method: 'POST',
             headers: { 'Content-type': 'application/json' },
             body: JSON.stringify({
-                productosDevueltos: devolucion.productosDevueltos,
-                dineroDevuelto: devolucion.dineroDevuelto,
-                ventaId: devolucion.ventaId,
-                tpv: devolucion.tpv,
-                clienteId: devolucion.cliente._id,
-                trabajadorId: devolucion.trabajador._id,
-                modificadoPorId: devolucion.modificadoPor._id,
+                productosDevueltos: productos,
+                dineroDevuelto: dineroDevuelto,
+                trabajadorId: empleado._id,
+                modificadoPorId: empleado._id,
+                clienteId: venta.cliente._id,
+                tpv: empleado.TPV,
+                ventaId: venta._id,
             })
         });
 

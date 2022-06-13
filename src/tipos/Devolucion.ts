@@ -7,7 +7,6 @@ export type Devolucion = {
     _id: string,
     productosDevueltos: ProductoVendido[],
     dineroDevuelto: number,
-    ventaId: string,
     ventaOriginal: Venta,
     tpv: string,
     cliente: Cliente,

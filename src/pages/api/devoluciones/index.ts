@@ -50,7 +50,7 @@ const AddDevolucion = async (req: NextApiRequest, res: NextApiResponse) => {
                         "tpv": req.body.tpv,
                         "clienteId": req.body.clienteId,
                         "trabajadorId": req.body.trabajadorId,
-                        "modificadoPor": req.body.modificadoPorId,
+                        "modificadoPorId": req.body.modificadoPorId,
                     }
                 }
             }

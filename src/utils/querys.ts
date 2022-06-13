@@ -456,7 +456,6 @@ query Devoluciones {
       dto
     }
     dineroDevuelto
-    ventaId
     ventaOriginal {
       _id
       productos {

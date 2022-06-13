@@ -287,7 +287,6 @@ function CreateDevolucion(s: any): Devolucion | undefined {
             cliente: CreateClient(s.cliente) || s.client,
             trabajador: CreateEmployee(s.trabajador),
             modificadoPor: CreateEmployee(s.modificadoPor),
-            ventaId: s.ventaId,
             ventaOriginal: vOriginal,
             tpv: s.tpv,
             createdAt: s.createdAt,
