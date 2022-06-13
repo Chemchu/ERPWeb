@@ -222,7 +222,6 @@ const GenerarFilaProducto = (props: { numFila: number, producto: ProductoVendido
 
     return (
         <>
-            {console.log(props.producto)}
             <div className="flex w-full ">
                 <div className="w-1/4 text-left">
                     {props.producto.nombre}

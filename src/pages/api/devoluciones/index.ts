@@ -45,7 +45,6 @@ const AddDevolucion = async (req: NextApiRequest, res: NextApiResponse) => {
                 variables: {
                     "fields": {
                         "productosDevueltos": req.body.productosDevueltos,
-                        "dineroDevuelto": req.body.dineroDevuelto,
                         "ventaId": req.body.ventaId,
                         "tpv": req.body.tpv,
                         "clienteId": req.body.clienteId,

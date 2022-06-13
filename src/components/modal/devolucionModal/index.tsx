@@ -9,7 +9,6 @@ import { In } from "../../../utils/animations";
 import { FetchTPV } from "../../../utils/fetches/tpvFetches";
 import GenerateQrBase64 from "../../../utils/generateQr";
 import DevolucionTicket from "../../printable/devolucionTicket";
-import Ticket from "../../printable/ticket";
 import { Backdrop } from "../backdrop";
 
 const DevolucionModal = (props: { devolucion: Devolucion | undefined, setModal: Function }) => {
@@ -65,10 +64,8 @@ const DevolucionModal = (props: { devolucion: Devolucion | undefined, setModal: 
         )
     }
 
-    let fecha = new Date(0);
-    let fechaActualizada = new Date(0);
-    fecha.setUTCMilliseconds(Number(props.devolucion.createdAt));
-    fechaActualizada.setUTCMilliseconds(Number(props.devolucion.updatedAt));
+    let fecha = new Date(Number(props.devolucion.createdAt));
+    let fechaVenta = new Date(Number(props.devolucion.ventaOriginal.createdAt));
 
     return (
         <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
@@ -90,6 +87,16 @@ const DevolucionModal = (props: { devolucion: Devolucion | undefined, setModal: 
                                 Resumen de la compra
                                 <div className="flex flex-col pt-4 font-normal">
                                     {/* Detalles de la deovlución */}
+                                    <div>
+                                        <p>ID: {props.devolucion._id}</p>
+                                        <p>Cliente: {props.devolucion.cliente.nombre}</p>
+                                        <p>Empleado: {props.devolucion.trabajador.nombre}</p>
+                                        <p>Fecha de la devolución: {fecha.toLocaleString()}</p>
+                                        <p>Fecha de la venta: {fechaVenta.toLocaleString()}</p>
+                                        <p>TPV: {tpv?.nombre}</p>
+                                        <p>Dinero devuelto: {props.devolucion.dineroDevuelto.toFixed(2)}€</p>
+                                        <p>Venta original: {props.devolucion.ventaOriginal._id}</p>
+                                    </div>
                                 </div>
                             </span>
                             <div className="flex flex-col font-semibold text-right w-1/2 h-full gap-2">
@@ -98,7 +105,8 @@ const DevolucionModal = (props: { devolucion: Devolucion | undefined, setModal: 
                                 </span>
                                 <div className="bg-gray-100 rounded-lg border-2 w-full h-full font-normal overflow-y-scroll">
                                     <div className="flex w-full justify-around p-2 cursor-default">
-                                        <p className="w-2/4 text-left font-semibold">Producto</p>
+                                        <p className="w-1/4 text-left font-semibold">Producto</p>
+                                        <p className="w-1/4 text-center font-semibold">Descuento</p>
                                         <p className="w-1/4 text-center font-semibold">Cantidad</p>
                                         <p className="w-1/4 text-center font-semibold">Total</p>
                                     </div>
@@ -147,14 +155,17 @@ const GenerarFilaDevolucion = (props: { numFila: number, producto: ProductoDevue
     return (
         <>
             <div className="flex w-full ">
-                <div className="w-2/4 text-left">
+                <div className="w-1/4 text-left">
                     {props.producto.nombre}
+                </div>
+                <div className="w-1/4 text-center">
+                    {props.producto.dto}%
                 </div>
                 <div className="w-1/4 text-center">
                     {props.producto.cantidadDevuelta}
                 </div>
                 <div className="w-1/4 text-center">
-                    {(props.producto.precioFinal).toFixed(2)}€
+                    {(props.producto.precioFinal * props.producto.cantidadDevuelta).toFixed(2)}€
                 </div>
             </div>
             <hr />

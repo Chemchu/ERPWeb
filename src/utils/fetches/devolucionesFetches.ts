@@ -47,14 +47,14 @@ export const FetchDevolucionesByQuery = async (query: string): Promise<Devolucio
 export const AddDevolucion = async (venta: Venta, productosDevolver: Map<string, number>, empleado: SesionEmpleado) => {
     try {
         const productos: ProductoDevuelto[] = []
-        let dineroDevuelto: number = 0;
+        console.log("lol AddDevolucion fetcher");
+
 
         venta.productos.forEach((prod) => {
             const cantidadDevuelta = productosDevolver.get(prod._id)
             if (!cantidadDevuelta) { return }
 
-            const precio = prod.precioFinal ? prod.precioFinal : prod.precioVenta * ((100 - prod.dto) / 100)
-            dineroDevuelto += prod.cantidadVendida * precio;
+            const precio = prod.precioFinal ? prod.precioFinal : prod.cantidadVendida * (prod.precioVenta * ((100 - prod.dto) / 100));
 
             productos.push({
                 _id: prod._id,
@@ -63,7 +63,7 @@ export const AddDevolucion = async (venta: Venta, productosDevolver: Map<string,
                 familia: prod.familia,
                 precioVenta: prod.precioVenta,
                 precioCompra: prod.precioCompra,
-                precioFinal: prod.precioFinal,
+                precioFinal: precio,
                 dto: prod.dto,
                 iva: prod.iva,
                 margen: prod.margen,
@@ -77,7 +77,6 @@ export const AddDevolucion = async (venta: Venta, productosDevolver: Map<string,
             headers: { 'Content-type': 'application/json' },
             body: JSON.stringify({
                 productosDevueltos: productos,
-                dineroDevuelto: dineroDevuelto,
                 trabajadorId: empleado._id,
                 modificadoPorId: empleado._id,
                 clienteId: venta.cliente._id,

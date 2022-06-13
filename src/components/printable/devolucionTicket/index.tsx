@@ -9,7 +9,7 @@ const DevolucionTicket = React.forwardRef((props: { devolucion: Devolucion, fech
             <div className="w-full h-5/6 rounded-3xl bg-white z-10 ">
                 <div className="flex flex-col gap-1">
                     <h2 className="text-xl font-semibold text-center ">ERPWeb</h2>
-                    <h2 className="text-lg text-center ">Devolucion</h2>
+                    <h2 className="text-lg text-center ">Devolución</h2>
                     <div className="text-center">Fecha: {new Date(Number(props.fecha)).toLocaleString()}</div>
                     <div className="flex flex-col text-center">
                         <div>Cliente: {props.devolucion.cliente.nombre} </div>
@@ -22,9 +22,10 @@ const DevolucionTicket = React.forwardRef((props: { devolucion: Devolucion, fech
                     <hr />
                     <div className="w-full h-full">
                         <div className="flex w-full justify-around">
-                            <p className="w-2/4 text-left font-semibold">Producto devuelto</p>
-                            <p className="w-1/4 text-center font-semibold">Cantidad devuelta</p>
-                            <p className="w-1/4 text-center font-semibold">Total devuelto</p>
+                            <p className="w-2/5 text-left font-semibold">Producto</p>
+                            <p className="w-1/5 text-center font-semibold">Cantidad</p>
+                            <p className="w-1/5 text-right font-semibold">Subtotal</p>
+                            <p className="w-1/5 text-right font-semibold">Total</p>
                         </div>
                         <div className="flex flex-col gap-2 w-full h-full overflow-y-auto overflow-x-hidden pt-2">
                             {
@@ -62,14 +63,17 @@ export default DevolucionTicket;
 const GenerarFilaProductoDevuelto = (props: { numFila: number, productoDevuelto: ProductoDevuelto }) => {
     return (
         <div className="flex w-full">
-            <div className="w-2/4 text-left">
+            <div className="w-2/5 text-left">
                 {props.productoDevuelto.nombre}
             </div>
-            <div className="w-1/4 text-center">
+            <div className="w-1/5 text-center">
                 {props.productoDevuelto.cantidadDevuelta}
             </div>
-            <div className="w-1/4 text-center">
+            <div className="w-1/5 text-right">
                 {props.productoDevuelto.precioFinal}€
+            </div>
+            <div className="w-1/5 text-right">
+                {props.productoDevuelto.cantidadDevuelta * props.productoDevuelto.precioFinal}€
             </div>
         </div>
     );
