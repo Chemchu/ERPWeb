@@ -10,7 +10,7 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
         case 'POST':
 
         case 'GET':
-            if (query.query) { return await GetDevolucionesByQuery(query, res); }
+            if (Object.keys(query).length > 0) { return await GetDevolucionesByQuery(query, res); }
             else { return await GetDevolucion(req, res); }
 
         default:
@@ -20,7 +20,7 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
 }
 
 const GetDevolucionesByQuery = async (userQuery: queryString.ParsedQuery<string>, res: NextApiResponse) => {
-    if (!userQuery.query) { res.status(300).json({ message: `La query no puede estar vacía` }); }
+    if (Object.keys(userQuery).length <= 0) { res.status(300).json({ message: `La query no puede estar vacía` }); }
 
     const serverRes = await GQLQuery(
         {
