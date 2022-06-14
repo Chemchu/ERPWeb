@@ -1,3 +1,4 @@
+import { Devolucion } from "../tipos/Devolucion";
 import { TipoCobro } from "../tipos/Enums/TipoCobro";
 import { ProductoVendido } from "../tipos/ProductoVendido";
 import { TPVType } from "../tipos/TPV";
@@ -66,25 +67,37 @@ export const GetTarjetaTotal = (Ventas: Venta[]): number => {
     return Number(total.toFixed(2));
 }
 
-export const GetTotalEnCaja = (Ventas: Venta[], Tpv: TPVType): number => {
-    return Ventas.reduce((total: number, v: Venta): number => {
-        if (Tpv._id !== v.tpv) {
+export const GetTotalEnCaja = (Ventas: Venta[], Devoluciones: Devolucion[], Tpv: TPVType): number => {
+    const valorDeVentas = Ventas.reduce((total: number, venta: Venta): number => {
+        if (Tpv._id !== venta.tpv) {
             return total;
         }
-        const tipoVenta = v.tipo as TipoCobro;
+        const tipoVenta = venta.tipo as TipoCobro;
 
         if (tipoVenta === TipoCobro.Efectivo || tipoVenta === TipoCobro.Rapido) {
-            return total + v.precioVentaTotal;
+            return total + venta.precioVentaTotal;
         }
 
         if (tipoVenta === TipoCobro.Fraccionado) {
-            return total + v.dineroEntregadoEfectivo - v.cambio;
+            return total + venta.dineroEntregadoEfectivo - venta.cambio;
         }
 
         if (tipoVenta === TipoCobro.Tarjeta) {
-            return total - v.cambio;
+            return total - venta.cambio;
         }
 
         return Number(total.toFixed(2));
     }, Tpv.cajaInicial);
+
+    return Devoluciones.reduce((total: number, devolucion: Devolucion) => {
+        if (devolucion.tpv !== Tpv._id) { return total }
+
+        const fechaDevolucion = new Date(devolucion.createdAt).valueOf();
+        const fechaTpv = new Date(Tpv.updatedAt).valueOf()
+        if (fechaDevolucion < fechaTpv) { return total }
+
+        const dineroEnCaja = total - devolucion.dineroDevuelto;
+        if (dineroEnCaja < 0) { return 0 }
+        else { return dineroEnCaja }
+    }, valorDeVentas)
 }

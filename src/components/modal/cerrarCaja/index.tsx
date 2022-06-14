@@ -8,6 +8,7 @@ import { SesionEmpleado } from "../../../tipos/Empleado";
 import { TPVType } from "../../../tipos/TPV";
 import { Venta } from "../../../tipos/Venta";
 import { In } from "../../../utils/animations";
+import { FetchDevolucionesByDateRange } from "../../../utils/fetches/devolucionesFetches";
 import { AddCierreTPV, FetchTPV } from "../../../utils/fetches/tpvFetches";
 import { FetchVentasByTPVDate } from "../../../utils/fetches/ventasFetches";
 import GenerateQrBase64 from "../../../utils/generateQr";
@@ -51,12 +52,13 @@ export const CerrarCaja = (props: { Empleado?: SesionEmpleado, setModalOpen: Fun
             if (!tpv) { notifyError("No se ha encontrado la TPV que se quiere cerrar"); return; }
 
             const ventas = await FetchVentasByTPVDate(j.TPV, tpv.updatedAt.toString());
+            const devoluciones = await FetchDevolucionesByDateRange(tpv.updatedAt, new Date(Date.now()));
 
             setVentas(ventas);
             setTPV(tpv);
             setTotalEfectivo(GetEfectivoTotal(ventas).toString());
             setTotalTarjeta(GetTarjetaTotal(ventas).toString());
-            setTotalPrevistoEnCaja(GetTotalEnCaja(ventas, tpv).toString());
+            setTotalPrevistoEnCaja(GetTotalEnCaja(ventas, devoluciones, tpv).toString());
         }
 
         GetVentas(Empleado);

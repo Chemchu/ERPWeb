@@ -49,6 +49,35 @@ export const FetchDevolucionesByQuery = async (userQuery: string): Promise<Devol
     }
 }
 
+export const FetchDevolucionesByDateRange = async (fechaIni: Date, fechaFin: Date): Promise<Devolucion[]> => {
+    try {
+        let fechas: any = new Object;
+        fechas.fechaInicial = fechaIni.valueOf();
+        fechas.fechaFinal = fechaFin.valueOf();
+
+        const f = queryString.stringify(fechas);
+
+        const vRes = await fetch(`/api/devoluciones/${f}`, {
+            headers: { 'Content-type': 'application/json' },
+            method: 'GET',
+        });
+
+        if (!vRes.ok) {
+            notifyError("Error al buscar las devoluciones");
+            return [];
+        }
+
+        const devoluciones = await vRes.json();
+        return CreateDevolucionList(devoluciones.data);
+    }
+    catch (e) {
+        console.error(e);
+        notifyError("Error de conexión");
+        return [];
+    }
+}
+
+
 export const AddDevolucion = async (venta: Venta, productosDevolver: Map<string, number>, empleado: SesionEmpleado): Promise<{ data: any, error: boolean }> => {
     try {
         const productos: ProductoDevuelto[] = []
