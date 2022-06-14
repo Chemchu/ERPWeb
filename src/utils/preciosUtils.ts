@@ -82,22 +82,33 @@ export const GetTotalEnCaja = (Ventas: Venta[], Devoluciones: Devolucion[], Tpv:
             return total + venta.dineroEntregadoEfectivo - venta.cambio;
         }
 
-        if (tipoVenta === TipoCobro.Tarjeta) {
-            return total - venta.cambio;
-        }
-
         return Number(total.toFixed(2));
     }, Tpv.cajaInicial);
 
-    return Devoluciones.reduce((total: number, devolucion: Devolucion) => {
-        if (devolucion.tpv !== Tpv._id) { return total }
+    return valorDeVentas;
 
-        const fechaDevolucion = new Date(devolucion.createdAt).valueOf();
-        const fechaTpv = new Date(Tpv.updatedAt).valueOf()
-        if (fechaDevolucion < fechaTpv) { return total }
+    // console.log("Valor en caja: " + valorDeVentas);
+    // console.log("Número de devoluciones: " + Devoluciones.length);
 
-        const dineroEnCaja = total - devolucion.dineroDevuelto;
-        if (dineroEnCaja < 0) { return 0 }
-        else { return dineroEnCaja }
-    }, valorDeVentas)
+    // const total = Devoluciones.reduce((total: number, devolucion: Devolucion) => {
+    //     if (devolucion.tpv !== Tpv._id) { return total }
+
+    //     if (devolucion.ventaOriginal.tipo === TipoCobro.Efectivo) {
+    //         return total
+    //     }
+    //     if (devolucion.ventaOriginal.tipo === TipoCobro.Rapido) {
+    //         return total
+    //     }
+
+    //     const fechaDevolucion = new Date(devolucion.createdAt).valueOf();
+    //     const fechaTpv = new Date(Tpv.updatedAt).valueOf()
+    //     if (fechaDevolucion < fechaTpv) { return total }
+
+    //     const dineroEnCaja = total - devolucion.ventaOriginal.dineroEntregadoTarjeta;
+    //     if (dineroEnCaja < 0) { return 0 }
+    //     else { return dineroEnCaja }
+    // }, valorDeVentas)
+
+    // console.log("Total tras devolver: " + total);
+    // return total;
 }

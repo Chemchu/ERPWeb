@@ -15,6 +15,7 @@ import GenerateQrBase64 from "../../../utils/generateQr";
 import { GetEfectivoTotal, GetTarjetaTotal, GetTotalEnCaja } from "../../../utils/preciosUtils";
 import { notifyError } from "../../../utils/toastify";
 import { ValidatePositiveFloatingNumber } from "../../../utils/validator";
+import CargandoSpinner from "../../cargandoSpinner";
 import CierrePrintable from "../../printable/cierrePrintable";
 import { Backdrop } from "../backdrop";
 import ContarCaja from "../contarCaja";
@@ -51,8 +52,8 @@ export const CerrarCaja = (props: { Empleado?: SesionEmpleado, setModalOpen: Fun
             const tpv = await FetchTPV(j.TPV, abortController);
             if (!tpv) { notifyError("No se ha encontrado la TPV que se quiere cerrar"); return; }
 
-            const ventas = await FetchVentasByTPVDate(j.TPV, tpv.updatedAt.toString());
             const devoluciones = await FetchDevolucionesByDateRange(tpv.updatedAt, new Date(Date.now()));
+            const ventas = await FetchVentasByTPVDate(j.TPV, tpv.updatedAt.toString());
 
             setVentas(ventas);
             setTPV(tpv);
@@ -109,7 +110,7 @@ export const CerrarCaja = (props: { Empleado?: SesionEmpleado, setModalOpen: Fun
             <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
                 className="h-full w-full">
                 <Backdrop onClick={(e) => { e.stopPropagation(); props.setModalOpen(false) }} >
-                    <motion.div className="h-3/6 w-2/6 m-auto py-2 flex flex-col items-center justify-center bg-white rounded-2xl"
+                    <motion.div className="h-3/6 w-2/6 m-auto py-2 flex flex-col gap-4 items-center justify-center bg-white rounded-2xl"
                         onClick={(e) => e.stopPropagation()}
                         variants={In}
                         initial="hidden"
@@ -117,7 +118,7 @@ export const CerrarCaja = (props: { Empleado?: SesionEmpleado, setModalOpen: Fun
                         exit="exit"
                     >
                         {/* Meter skeletons */}
-                        Cargando...
+                        <CargandoSpinner />
                     </motion.div>
                 </Backdrop>
             </motion.div>

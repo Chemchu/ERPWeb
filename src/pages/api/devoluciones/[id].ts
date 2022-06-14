@@ -28,8 +28,8 @@ const GetDevolucionesByQuery = async (userQuery: queryString.ParsedQuery<string>
             variables: {
                 find: {
                     query: userQuery.query,
-                    fechaInicial: userQuery.fechas ? userQuery.fechas[0] : null,
-                    fechaFinal: userQuery.fechas ? userQuery.fechas[1] : null
+                    fechaInicial: userQuery.fechaInicial || null,
+                    fechaFinal: userQuery.fechaFinal || null
                 },
                 limit: 150
             }

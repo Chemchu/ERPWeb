@@ -13,7 +13,8 @@ import DevolucionTicket from "../../printable/devolucionTicket";
 import { Backdrop } from "../backdrop";
 
 const DevolucionModal = (props: { devolucion: Devolucion | undefined, setModal: Function }) => {
-    const [tpv, setTpv] = useState<TPVType>();
+    const [tpvDevolucion, setTpvDevolucion] = useState<TPVType>();
+    const [tpvVenta, setTpvVenta] = useState<TPVType>();
     const [qrImage, setQrImage] = useState<string>();
     const componentRef = useRef(null);
 
@@ -34,9 +35,10 @@ const DevolucionModal = (props: { devolucion: Devolucion | undefined, setModal: 
                 return;
             }
             const tpvRes = await FetchTPV(props.devolucion.tpv, abortController);
-            const qr = await GenerateQrBase64(props.devolucion._id, abortController);
-            setQrImage(qr);
-            setTpv(tpvRes);
+            const tpvVenta = await FetchTPV(props.devolucion.ventaOriginal.tpv, abortController);
+            setTpvVenta(tpvVenta);
+            setTpvDevolucion(tpvRes);
+            setQrImage(await GenerateQrBase64(props.devolucion._id, abortController));
         }
         fetchData();
 
@@ -84,22 +86,40 @@ const DevolucionModal = (props: { devolucion: Devolucion | undefined, setModal: 
                             Devolución en: {`${fecha.toLocaleString()}`}
                         </span>
                         <div className="flex w-full h-5/6 justify-between align-middle py-6">
-                            <span className="font-semibold w-1/2 h-full">
-                                Resumen de la compra
-                                <div className="flex flex-col pt-4 font-normal">
-                                    {/* Detalles de la deovlución */}
-                                    <div>
-                                        <p>ID: {props.devolucion._id}</p>
-                                        <p>Cliente: {props.devolucion.cliente.nombre}</p>
-                                        <p>Empleado: {props.devolucion.trabajador.nombre}</p>
-                                        <p>Fecha de la devolución: {fecha.toLocaleString()}</p>
-                                        <p>Fecha de la venta: {fechaVenta.toLocaleString()}</p>
-                                        <p>TPV: {tpv?.nombre}</p>
-                                        <p>Dinero devuelto: {props.devolucion.dineroDevuelto.toFixed(2)}€</p>
-                                        <p>Venta original: {props.devolucion.ventaOriginal._id}</p>
+                            <div className="flex flex-col w-1/2">
+                                <span className="font-semibold pb-4 w-full h-full">
+                                    Detalles de la devolución
+                                    <div className="flex flex-col font-normal">
+                                        {/* Detalles de la deovlución */}
+                                        <div>
+                                            <p>ID: {props.devolucion._id}</p>
+                                            <p>Cliente: {props.devolucion.cliente.nombre}</p>
+                                            <p>Empleado: {props.devolucion.trabajador.nombre}</p>
+                                            <p>Fecha de la devolución: {fecha.toLocaleString()}</p>
+                                            <p>TPV: {tpvDevolucion?.nombre}</p>
+                                            <p>Efectivo devuelto: {props.devolucion.dineroDevuelto.toFixed(2)}€</p>
+                                        </div>
                                     </div>
-                                </div>
-                            </span>
+                                </span>
+                                <span className="font-semibold w-full h-full">
+                                    Detalles de la compra original
+                                    <div className="flex flex-col font-normal">
+                                        {/* Detalles de la venta */}
+                                        <div>
+                                            <p>ID: {props.devolucion.ventaOriginal._id}</p>
+                                            <p>Cliente: {props.devolucion.ventaOriginal.cliente.nombre}</p>
+                                            <p>Empleado: {props.devolucion.ventaOriginal.vendidoPor.nombre}</p>
+                                            <p>Fecha de la venta: {fechaVenta.toLocaleString()}</p>
+                                            <p>TPV: {tpvVenta?.nombre}</p>
+                                            <p>Tipo de pago: {props.devolucion.ventaOriginal.tipo}</p>
+                                            <p>Total: {props.devolucion.ventaOriginal.precioVentaTotal.toFixed(2)}€</p>
+                                            <p>Total pagado en efectivo: {props.devolucion.ventaOriginal.dineroEntregadoEfectivo.toFixed(2)}€</p>
+                                            <p>Total pagado en tarjeta: {props.devolucion.ventaOriginal.dineroEntregadoTarjeta.toFixed(2)}€</p>
+                                            <p>Cambio: {props.devolucion.ventaOriginal.cambio.toFixed(2)}€</p>
+                                        </div>
+                                    </div>
+                                </span>
+                            </div>
                             <div className="flex flex-col font-semibold text-right w-1/2 h-full gap-2">
                                 <span>
                                     Lista de productos devueltos
