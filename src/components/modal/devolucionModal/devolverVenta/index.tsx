@@ -4,6 +4,7 @@ import { useRef, useState } from "react";
 import { useReactToPrint } from "react-to-print";
 import useEmpleadoContext from "../../../../context/empleadoContext";
 import { Devolucion } from "../../../../tipos/Devolucion";
+import { TipoCobro } from "../../../../tipos/Enums/TipoCobro";
 import { Venta } from "../../../../tipos/Venta";
 import { In } from "../../../../utils/animations";
 import { AddDevolucion, FetchDevolucionesByQuery } from "../../../../utils/fetches/devolucionesFetches";
@@ -84,6 +85,11 @@ const DevolverVenta = (props: { venta: Venta, setModal: Function, setModalVenta:
                     </span>
 
                     <ListaDevolucionProductos key={`listaKey::${props.venta.productos.length}`} listaProductos={props.venta.productos} productosDevolver={ProductosDevolver} setProductosDevolver={setProductosDevolver} />
+
+                    {
+                        props.venta.tipo === TipoCobro.Fraccionado &&
+                        <span className="italic">Recuerda: si la venta fue fraccionada, toda la devolución se hará en efectivo</span>
+                    }
 
                     <div className="flex gap-4 w-full h-1/6 justify-around items-end text-white">
                         <button className="w-full h-12 rounded-xl bg-red-500 hover:bg-red-600 shadow-lg" onClick={() => props.setModal(false)}>
