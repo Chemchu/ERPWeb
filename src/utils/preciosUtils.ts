@@ -74,15 +74,15 @@ export const GetTotalEnCaja = (Ventas: Venta[], Tpv: TPVType): number => {
         const tipoVenta = v.tipo as TipoCobro;
 
         if (tipoVenta === TipoCobro.Efectivo || tipoVenta === TipoCobro.Rapido) {
-            return total += v.precioVentaTotal;
+            return total + v.precioVentaTotal;
         }
 
         if (tipoVenta === TipoCobro.Fraccionado) {
-            return total += v.dineroEntregadoEfectivo - v.cambio;
+            return total + v.dineroEntregadoEfectivo - v.cambio;
         }
 
         if (tipoVenta === TipoCobro.Tarjeta) {
-            return total -= v.cambio;
+            return total - v.cambio;
         }
 
         return Number(total.toFixed(2));

@@ -204,7 +204,7 @@ export const ModalPagar = (props: { PagoCliente: CustomerPaymentInformation, han
                                                 Efectivo
                                             </div>
                                             <div className="text-xl">
-                                                <InputNumber value={dineroEntregado} setValue={SetDineroClienteEfectivo} />
+                                                <InputNumber value={dineroEntregado} setValue={SetDineroClienteEfectivo} tipo={TipoCobro.Efectivo} valorPendiente={cambio.toFixed(2)} />
                                             </div>
                                         </div>
                                         <div>
@@ -212,7 +212,7 @@ export const ModalPagar = (props: { PagoCliente: CustomerPaymentInformation, han
                                                 Tarjeta
                                             </div>
                                             <div className="text-xl">
-                                                <InputNumber value={dineroEntregadoTarjeta} setValue={SetDineroClienteTarjeta} />
+                                                <InputNumber value={dineroEntregadoTarjeta} setValue={SetDineroClienteTarjeta} tipo={TipoCobro.Tarjeta} valorPendiente={cambio.toFixed(2)} />
                                             </div>
                                         </div>
                                     </div>
