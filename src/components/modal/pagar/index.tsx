@@ -28,7 +28,7 @@ export const ModalPagar = (props: { PagoCliente: CustomerPaymentInformation, han
     const [ClienteActual, SetClienteActual] = useState<Cliente>(props.PagoCliente.cliente);
     const [NombreClienteActual, SetNombreClienteActual] = useState<string>("General");
     const [PagoDelCliente, SetPagoCliente] = useState<CustomerPaymentInformation>(props.PagoCliente);
-    const [qrImage, setQrImage] = useState<string>();
+    const [qrImage, setQrImage] = useState<any>();
     const [fecha, setFecha] = useState<string>();
 
     const { ProductosEnCarrito, SetProductosEnCarrito, SetDtoEfectivo, SetDtoPorcentaje } = useProductEnCarritoContext();
@@ -84,6 +84,7 @@ export const ModalPagar = (props: { PagoCliente: CustomerPaymentInformation, han
         SetDtoEfectivo("0");
         SetDtoPorcentaje("0");
         notifySuccess("Venta realizada correctamente")
+        props.handleModalOpen(false);
     }, []);
 
     const handlePrint = useReactToPrint({
@@ -116,7 +117,6 @@ export const ModalPagar = (props: { PagoCliente: CustomerPaymentInformation, han
             if (!error) {
                 setFecha(data.createdAt);
                 setQrImage(await GenerateQrBase64(data._id, abortController));
-                props.handleModalOpen(false);
             }
             else {
                 setFecha(undefined);
