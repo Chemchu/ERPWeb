@@ -87,12 +87,6 @@ export const VerEmpleado = (props: { empleado: Empleado, setEmpleado: Function, 
                                     </div>
                             }
                         </div>
-                        <AnimatePresence>
-                            {
-                                // showDeleteModal &&
-                                // <BorrarProductoModal showProductModal={props.showModal} showModal={setDeleteModal} setProducto={props.setEmpleado} producto={props.producto} />
-                            }
-                        </AnimatePresence>
                     </div>
                 </motion.div>
             </Backdrop>
