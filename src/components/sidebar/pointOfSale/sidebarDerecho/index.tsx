@@ -191,137 +191,129 @@ const SidebarDerecho = React.memo((props: {
         )
     }
 
-    return (
-        <div className="bg-white rounded-3xl shadow h-full">
-            {
-                ProductosEnCarrito.length <= 0 ?
-                    <div className="grid grid-rows-2 grid-cols-1 h-full">
-                        <div className="flex flex-col gap-2 justify-items-center justify-self-center opacity-25 self-end">
-                            <div className="flex justify-center animate-bounce">
-                                <svg xmlns="http://www.w3.org/2000/svg" className="h-16" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z" />
-                                </svg>
-                            </div>
-                            <p className="self-center">
-                                CARRITO VACÍO
-                            </p>
-                        </div>
-                        {
-                            props.empleadoUsandoTPV ?
-                                <button className="flex gap-2 justify-center self-end pb-4" onClick={() => { props.setShowModalCerrar(true) }}>
-                                    CERRAR CAJA
-                                    <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
-                                    </svg>
-                                </button>
-                                :
-                                <button className="flex gap-2 justify-center self-end pb-4" onClick={() => { props.setShowModalAbrir(true) }}>
-                                    ABRIR CAJA
-                                    <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
-                                    </svg>
-                                </button>
-                        }
+    if (ProductosEnCarrito.length <= 0) {
+        return (
+            <div className="bg-white grid grid-rows-2 grid-cols-1 h-full rounded-3xl shadow">
+                <div className="flex flex-col gap-2 justify-items-center justify-self-center opacity-25 self-end">
+                    <div className="flex justify-center animate-bounce">
+                        <svg xmlns="http://www.w3.org/2000/svg" className="h-16" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z" />
+                        </svg>
                     </div>
-                    :
-                    <div className="flex flex-col h-full">
-                        <div className="text-center">
-                            <div className="grid grid-cols-2">
-                                <div className="pl-8 text-left text-lg py-4 relative">
-                                    {/* Icono carrito */}
-                                    <svg xmlns="http://www.w3.org/2000/svg" className="h-6 inline-block" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z" />
-                                    </svg>
-                                    <div className="text-center absolute text-white w-5 h-5 text-xs p-0 leading-5 rounded-full -right-2 top-3" />
-                                    {` ${ProductosEnCarrito.length}`}
-                                </div>
-                                <div className="px-8 text-right text-lg py-4 relative">
-                                    {/* Boton basura */}
-                                    <button className="text-blue-gray-300 hover:text-red-700 focus:outline-none" onClick={() => { props.setProductosCarrito([]) }}>
-                                        <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6 inline-block" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
-                                        </svg>
-                                    </button>
-                                </div>
-                            </div>
-                        </div>
-                        <div className=" px-2">
-                            <GenerarProductList productosEnCarrito={ProductosEnCarrito} setPropiedadProducto={SetPropiedadProd} />
-                        </div>
-                        <div className="h-1/3 text-center p-4">
-                            <div>
-                                {DescuentoOpen &&
-                                    <div className="h-auto border-t-2 border-2 p-2 border-blue-400 rounded-xl">
-                                        <div className="flex text-left text-sm">
-                                            <div className="flex self-center gap-4">
-                                                <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 9V7a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2m2 4h10a2 2 0 002-2v-6a2 2 0 00-2-2H9a2 2 0 00-2 2v6a2 2 0 002 2zm7-5a2 2 0 11-4 0 2 2 0 014 0z" />
-                                                </svg>
-                                                <div>
-                                                    <input type="text" inputMode="numeric" className="text-xs text-center rounded-lg w-1/2 h-6 shadow" name="DtoEfectivo" value={DtoEfectivo}
-                                                        onChange={(e) => {
-                                                            SetDtoEfectivo(ValidatePositiveFloatingNumber(e.target.value));
-                                                        }}
-                                                    />
-                                                    €
-                                                </div>
-                                            </div>
+                    <p className="self-center">
+                        CARRITO VACÍO
+                    </p>
+                </div>
+                {
+                    props.empleadoUsandoTPV ?
+                        <button className="flex gap-2 justify-center self-end pb-4" onClick={() => { props.setShowModalCerrar(true) }}>
+                            CERRAR CAJA
+                            <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
+                            </svg>
+                        </button>
+                        :
+                        <button className="flex gap-2 justify-center self-end pb-4" onClick={() => { props.setShowModalAbrir(true) }}>
+                            ABRIR CAJA
+                            <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
+                            </svg>
+                        </button>
+                }
+            </div>
+        )
+    }
 
-                                            <div className="flex ml-auto gap-4">
-                                                <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z" />
-                                                </svg>
-                                                <div>
-                                                    <input type="text" inputMode="numeric" className="text-xs text-center rounded-lg w-1/2 h-6 shadow" name="DtoPorcentaje" value={DtoPorcentaje}
-                                                        onChange={(e) => {
-                                                            SetDtoPorcentaje(ValidatePositiveFloatingNumber(e.target.value));
-                                                        }}
-                                                    />
-                                                    %
-                                                </div>
-                                            </div>
-                                        </div>
+    return (
+        <div className="flex flex-col justify-start items-center rounded-3xl bg-white shadow h-full max-h-full">
+            <div className="flex justify-around items-center w-full h-20">
+                <div className="flex gap-2">
+                    <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z" />
+                    </svg>
+                    {` ${ProductosEnCarrito.length}`}
+                </div>
+                <div className="flex justify-center text-blue-gray-300 hover:text-red-700 focus:outline-none cursor-pointer w-10" onClick={() => { props.setProductosCarrito([]) }}>
+                    <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                    </svg>
+                </div>
+
+            </div>
+            <div className="h-full w-full p-2 overflow-y-scroll overflow-x-hidden">
+                <GenerarProductList productosEnCarrito={ProductosEnCarrito} setPropiedadProducto={SetPropiedadProd} />
+            </div>
+            <div className="h-1/4 p-4 w-full">
+                <div>
+                    {DescuentoOpen &&
+                        <div className="h-auto border-t-2 border-2 p-2 border-blue-400 rounded-xl">
+                            <div className="flex text-left text-sm">
+                                <div className="flex self-center gap-4">
+                                    <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 9V7a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2m2 4h10a2 2 0 002-2v-6a2 2 0 00-2-2H9a2 2 0 00-2 2v6a2 2 0 002 2zm7-5a2 2 0 11-4 0 2 2 0 014 0z" />
+                                    </svg>
+                                    <div>
+                                        <input type="text" inputMode="numeric" className="text-xs text-center rounded-lg w-1/2 h-6 shadow" name="DtoEfectivo" value={DtoEfectivo}
+                                            onChange={(e) => {
+                                                SetDtoEfectivo(ValidatePositiveFloatingNumber(e.target.value));
+                                            }}
+                                        />
+                                        €
                                     </div>
-                                }
-                                <div className="flex flex-col text-left text-lg font-semibold hover:text-blue-500 underline cursor-pointer" onClick={() => setDescuentoPupup(!DescuentoOpen)}>
-                                    Descuento
+                                </div>
+
+                                <div className="flex ml-auto gap-4">
+                                    <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z" />
+                                    </svg>
+                                    <div>
+                                        <input type="text" inputMode="numeric" className="text-xs text-center rounded-lg w-1/2 h-6 shadow" name="DtoPorcentaje" value={DtoPorcentaje}
+                                            onChange={(e) => {
+                                                SetDtoPorcentaje(ValidatePositiveFloatingNumber(e.target.value));
+                                            }}
+                                        />
+                                        %
+                                    </div>
                                 </div>
                             </div>
-                            <div className="flex mb-3 text-lg font-semibold">
-                                <div>Total</div>
-                                {
-                                    PrecioTotal !== PrecioTotalFinal ?
-                                        <div className="flex gap-2 justify-end ml-auto">
-                                            <div className="text-right w-full text-red-500 line-through">
-                                                {/*Cambiar en caso de que la cesta tenga productos y calcular el valor total*/}
-                                                {ProductosEnCarrito.length <= 0 ? 0.00 : PrecioTotal.toFixed(2)} €
-                                            </div>
-                                            <div className="text-right w-full">
-                                                {/*Cambiar en caso de que la cesta tenga productos y calcular el valor total*/}
-                                                {ProductosEnCarrito.length <= 0 ? 0.00 : PrecioTotalFinal.toFixed(2)} €
-                                            </div>
-                                        </div>
-                                        :
-                                        <div className="text-right w-full">
-                                            {/*Cambiar en caso de que la cesta tenga productos y calcular el valor total*/}
-                                            {ProductosEnCarrito.length <= 0 ? 0.00 : PrecioTotal.toFixed(2)} €
-                                        </div>
-                                }
-                            </div>
-                            {
-                                ProductosEnCarrito.length > 0 &&
-                                !isNaN(PrecioTotal) &&
-                                <div className="grid grid-cols-1 gap-2 h-auto">
-                                    <motion.button whileTap={{ scale: 0.9 }} className="bg-blue-500 h-12 shadow rounded-lg hover:shadow-lg hover:bg-blue-600 text-white focus:outline-none" onClick={(e) => { setPagarModal(true) }}>PAGAR</motion.button>
-                                    <motion.button whileTap={{ scale: 0.9 }} className="bg-blue-500 h-12 shadow rounded-lg hover:shadow-lg hover:bg-blue-600 text-white focus:outline-none"
-                                        onClick={async () => { await Vender(PagoRapido, ProductosEnCarrito, Empleado, Clientes); }}>
-                                        COBRO RAPIDO
-                                    </motion.button>
-                                </div>
-                            }
                         </div>
+                    }
+                    <div className="text-left text-lg font-semibold hover:text-blue-500 underline cursor-pointer" onClick={() => setDescuentoPupup(!DescuentoOpen)}>
+                        Descuento
                     </div>
-            }
+                </div>
+                <div className="flex text-lg font-semibold">
+                    <div>Total</div>
+                    {
+                        PrecioTotal !== PrecioTotalFinal ?
+                            <div className="flex gap-2 justify-end ml-auto">
+                                <div className="text-right w-full text-red-500 line-through">
+                                    {/*Cambiar en caso de que la cesta tenga productos y calcular el valor total*/}
+                                    {ProductosEnCarrito.length <= 0 ? 0.00 : PrecioTotal.toFixed(2)} €
+                                </div>
+                                <div className="text-right w-full">
+                                    {/*Cambiar en caso de que la cesta tenga productos y calcular el valor total*/}
+                                    {ProductosEnCarrito.length <= 0 ? 0.00 : PrecioTotalFinal.toFixed(2)} €
+                                </div>
+                            </div>
+                            :
+                            <div className="text-right w-full">
+                                {/*Cambiar en caso de que la cesta tenga productos y calcular el valor total*/}
+                                {ProductosEnCarrito.length <= 0 ? 0.00 : PrecioTotal.toFixed(2)} €
+                            </div>
+                    }
+                </div>
+                {
+                    !isNaN(PrecioTotal) &&
+                    <div className="flex flex-col w-full gap-2">
+                        <motion.button whileTap={{ scale: 0.9 }} className="bg-blue-500 h-12 shadow rounded-lg hover:shadow-lg hover:bg-blue-600 text-white focus:outline-none" onClick={(e) => { setPagarModal(true) }}>PAGAR</motion.button>
+                        <motion.button whileTap={{ scale: 0.9 }} className="bg-blue-500 h-12 shadow rounded-lg hover:shadow-lg hover:bg-blue-600 text-white focus:outline-none"
+                            onClick={async () => { await Vender(PagoRapido, ProductosEnCarrito, Empleado, Clientes); }}>
+                            COBRO RAPIDO
+                        </motion.button>
+                    </div>
+                }
+            </div>
             {
                 qrImage && Fecha &&
                 <div style={{ display: "none" }}>
@@ -348,7 +340,7 @@ export default SidebarDerecho;
 
 const GenerarProductList = React.memo((props: { productosEnCarrito: ProductoVendido[], setPropiedadProducto: Function }) => {
     return (
-        <div className="flex flex-col h-full gap-2 overflow-x-hidden overflow-y-scroll">
+        <div className="flex flex-col h-full gap-2">
             {
                 props.productosEnCarrito.map((p: ProductoVendido) => {
                     return (
