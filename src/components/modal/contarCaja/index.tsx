@@ -15,8 +15,6 @@ const ContarCaja = (props: { showItself: Function, setTotal: Function, desglose:
     }
 
     const LimpiarDesglose = () => {
-        // const clearMap = props.desglose;
-        // clearMap.clear()
         props.setDesglose(new Map());
     }
 

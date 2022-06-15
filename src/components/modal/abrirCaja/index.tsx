@@ -1,4 +1,4 @@
-import { motion } from "framer-motion";
+import { AnimatePresence, motion } from "framer-motion";
 import { useEffect, useState } from "react";
 import useEmpleadoContext from "../../../context/empleadoContext";
 import { TPVType } from "../../../tipos/TPV";
@@ -7,12 +7,15 @@ import { FetchTPVsByDisponibilidad, OcuparTPV } from "../../../utils/fetches/tpv
 import { ValidatePositiveFloatingNumber } from "../../../utils/validator";
 import Droplist from "../../elementos/Forms/droplist";
 import { Backdrop } from "../backdrop";
+import ContarCaja from "../contarCaja";
 
 const AbrirCaja = (props: { setShowModal: Function, setEmpleadoUsandoTPV: Function }) => {
     const [tpvs, setTpvs] = useState<TPVType[]>([]);
     const [currentTpvName, setCurrentTpvName] = useState<string>();
     const [cajaInicial, setCajaInicial] = useState<string>('0');
     const { Empleado, SetEmpleado } = useEmpleadoContext();
+    const [showContador, setContador] = useState<boolean>(false);
+    const [desglose, setDesglose] = useState<Map<number, number>>(new Map())
 
     useEffect(() => {
         const abortController = new AbortController();
@@ -79,6 +82,12 @@ const AbrirCaja = (props: { setShowModal: Function, setEmpleadoUsandoTPV: Functi
                                     className="text-right placeholder:text-gray-400 placeholder:italic p-2 border rounded-lg w-full h-full focus:outline-none focus:ring-2 focus:ring-blue-600"
                                     onChange={(e) => { setCajaInicial(ValidatePositiveFloatingNumber(e.target.value)) }} value={cajaInicial} />
                                 <span>€</span>
+                                <div className="flex hover:bg-blue-200 rounded-full cursor-pointer w-8 h-8 items-center justify-center"
+                                    onClick={() => { setContador((isOpen) => !isOpen) }}>
+                                    <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="#4b5563" strokeWidth={2}>
+                                        <path strokeLinecap="round" strokeLinejoin="round" d="M9 7h6m0 10v-3m-3 3h.01M9 17h.01M9 14h.01M12 14h.01M15 11h.01M12 11h.01M9 11h.01M7 21h10a2 2 0 002-2V5a2 2 0 00-2-2H7a2 2 0 00-2 2v14a2 2 0 002 2z" />
+                                    </svg>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -107,6 +116,9 @@ const AbrirCaja = (props: { setShowModal: Function, setEmpleadoUsandoTPV: Functi
                         }
 
                     </div>
+                    <AnimatePresence>
+                        {showContador && <ContarCaja showItself={setContador} desglose={desglose} setDesglose={setDesglose} setTotal={setCajaInicial} />}
+                    </AnimatePresence>
                 </motion.div>
             </Backdrop>
         </motion.div>
