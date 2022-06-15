@@ -85,16 +85,16 @@ const AddCierre = async (req: NextApiRequest, res: NextApiResponse) => {
         }
     })).json();
 
-    const data = JSON.parse(apiResponse.data).addCierreTPV;
+    const data = JSON.parse(apiResponse.data);
 
-    if (data.successful) {
-        res.setHeader('Set-Cookie', `authorization=${data.token}; HttpOnly; Path=/`);
-        res.status(200).json({ message: data.message, successful: data.successful, data: data.addCierreTPV.cierre });
+    if (data.addCierreTPV.successful) {
+        res.setHeader('Set-Cookie', `authorization=${data.addCierreTPV.token}; HttpOnly; Path=/`);
+        res.status(200).json({ message: data.addCierreTPV.message, successful: data.addCierreTPV.successful, data: data.addCierreTPV.cierre });
         return;
     }
     else {
-        res.setHeader('Set-Cookie', `authorization=${data.data.addCierreTPV.token}; HttpOnly; Path=/`);
-        res.status(300).json({ message: data.message, successful: data.successful });
+        res.setHeader('Set-Cookie', `authorization=${data.addCierreTPV.token}; HttpOnly; Path=/`);
+        res.status(300).json({ message: data.addCierreTPV.message, successful: data.addCierreTPV.successful });
         return;
     }
 }

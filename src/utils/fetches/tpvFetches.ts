@@ -101,9 +101,6 @@ export const AddCierreTPV = async (Empleado: SesionEmpleado, setEmpleado: Functi
             });
         const tpvOcupadaJson = await fetchRes.json();
 
-        console.log(tpvOcupadaJson);
-
-
         if (fetchRes.ok) {
             notifySuccess(tpvOcupadaJson.message);
             let e = Empleado;
