@@ -2,6 +2,7 @@ import React, { useState } from "react";
 
 // Component accept text, placeholder values and also pass what type of Input - input, textarea so that we can use it for styling accordingly
 const EditableLabel = (props: {
+    disabled?: boolean,
     text: string,
     setText: React.Dispatch<React.SetStateAction<string>>,
     type: string,
@@ -39,7 +40,7 @@ const EditableLabel = (props: {
     */
     return (
         <section className="cursor-text">
-            {isEditing
+            {isEditing && !Boolean(props.disabled)
                 ?
                 <div
                     onBlur={() => setEditing(false)}

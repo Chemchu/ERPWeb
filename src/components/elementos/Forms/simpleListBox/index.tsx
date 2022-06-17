@@ -1,13 +1,17 @@
-import { Fragment, useState } from 'react'
+import { Fragment, useEffect, useState } from 'react'
 import { Listbox, Transition } from '@headlessui/react'
 import { CheckIcon, SelectorIcon } from '@heroicons/react/solid'
 
 
-export default function SimpleListBox(props: { elementos: string[] }) {
-    const [selected, setSelected] = useState(props.elementos[0]);
+export default function SimpleListBox(props: { disabled?: boolean, elementos: string[], setElemento: Function, defaultValue?: string }) {
+    const [selected, setSelected] = useState(props.defaultValue || props.elementos[0]);
+
+    useEffect(() => {
+        props.setElemento(selected)
+    }, [selected])
 
     return (
-        <Listbox value={selected} onChange={setSelected}>
+        <Listbox disabled={props.disabled} value={selected} onChange={setSelected}>
             <div className="relative mt-1">
                 <Listbox.Button className="focus:outline-none relative w-full cursor-default rounded-lg bg-white py-2 pl-3 pr-10 text-left shadow-md focus-visible:border-indigo-500 focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-opacity-75 focus-visible:ring-offset-2 focus-visible:ring-offset-orange-300 sm:text-sm">
                     <span className="block truncate">{selected}</span>

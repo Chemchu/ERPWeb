@@ -1,7 +1,9 @@
 import { AnimatePresence, motion } from "framer-motion";
 import React, { useEffect } from "react";
 import { useState } from "react";
+import useEmpleadoContext from "../../../context/empleadoContext";
 import { Empleado } from "../../../tipos/Empleado";
+import { Roles } from "../../../tipos/Enums/Roles";
 import { In } from "../../../utils/animations";
 import { UpdateEmpleado } from "../../../utils/fetches/empleadoFetches";
 import EditableLabel from "../../elementos/Forms/editableLabel";
@@ -13,6 +15,8 @@ export const VerEmpleado = (props: { empleado: Empleado, setEmpleado: Function, 
     const [EmpleadoAux, setEmpleadoAux] = useState<Empleado>();
     const [hayCambios, setHayCambios] = useState<boolean>(false);
     const [showDeleteModal, setDeleteModal] = useState<boolean>(false);
+
+    const { Empleado } = useEmpleadoContext();
 
     useEffect(() => {
         if (!EmpleadoAux) { setHayCambios(false); return; }
@@ -51,6 +55,7 @@ export const VerEmpleado = (props: { empleado: Empleado, setEmpleado: Function, 
                     <div className="flex flex-col w-full h-full">
                         <div className="flex self-start font-semibold text-2xl w-full h-auto xl:text-3xl justify-between">
                             <EditableLabel
+                                disabled={Empleado.rol === Roles.Cajero && Empleado._id !== props.empleado._id}
                                 text={Nombre}
                                 setText={setNombre}
                                 cambiosHandler={setHayCambios}
@@ -66,7 +71,7 @@ export const VerEmpleado = (props: { empleado: Empleado, setEmpleado: Function, 
                                 </svg>
                             </motion.button>
                         </div>
-                        <EmpleadoForm setEmpleado={setEmpleadoAux} empleado={props.empleado} setHayCambios={setHayCambios} />
+                        <EmpleadoForm disabled={Empleado.rol === Roles.Cajero && Empleado._id !== props.empleado._id} setEmpleado={setEmpleadoAux} empleado={props.empleado} setHayCambios={setHayCambios} />
                         <div className="flex w-full h-full gap-10 text-white self-end items-end justify-around">
                             <button className="h-12 w-full rounded-xl bg-red-500 hover:bg-red-600 shadow-lg" onClick={() => { props.showModal(false) }}>
                                 Cerrar
