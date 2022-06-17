@@ -20,7 +20,7 @@ export async function middleware(req: NextRequest, ev: NextFetchEvent) {
         }
 
         if (authCookie) {
-            const credentialsValidation = await fetch(`${process.env.ERPBACK_URL}graphql`, {
+            const credentialsValidation = await fetch(`${process.env.ERPBACK_URL}api/graphql`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
