@@ -1,10 +1,3 @@
-import {
-  graphql,
-  GraphQLSchema,
-  GraphQLObjectType,
-  GraphQLString,
-} from 'graphql';
-
 export const ADD_SALE = `
     mutation addVenta($fields: VentaFields!) {
         addVenta(fields: $fields) {
@@ -405,6 +398,7 @@ export const QUERY_EMPLEADOS = `
     apellidos
     rol
     email
+    dni
   }
 }
 `;
