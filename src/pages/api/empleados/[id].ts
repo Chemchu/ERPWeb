@@ -106,15 +106,17 @@ const UpdateEmpleado = async (req: NextApiRequest, res: NextApiResponse) => {
             mutation: UPDATE_EMPLEADO,
             variables: {
                 "id": emp._id,
-                "nombre": emp.nombre,
-                "apellidos": emp.apellidos,
-                "rol": emp.rol,
-                "email": emp.email
+                "empleadoInput": {
+                    "nombre": emp.nombre,
+                    "apellidos": emp.apellidos,
+                    "rol": emp.rol,
+                    "dni": emp.dni,
+                }
             }
         })
         const apiResponse = await serverRes.json();
 
-        const data = JSON.parse(apiResponse.data);
+        const data = JSON.parse(apiResponse.data).updateEmpleado;
         return res.status(data.successful ? 200 : 300).json({ message: data.message, successful: data.successful });
     }
     catch (e) {

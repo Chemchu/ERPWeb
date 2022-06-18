@@ -2,9 +2,10 @@ import { useEffect, useState } from "react";
 import useEmpleadoContext from "../../../../context/empleadoContext";
 import { Empleado } from "../../../../tipos/Empleado";
 import { Roles } from "../../../../tipos/Enums/Roles";
+import { CheckEqualOrMoreAuthority } from "../../../../utils/rolesChecker/roleChecker";
 import SimpleListBox from "../simpleListBox";
 
-const EmpleadoForm = (props: { disabled?: boolean, setEmpleado: Function, empleado?: Empleado, setHayCambios?: Function }) => {
+const EmpleadoForm = (props: { setEmpleado: Function, empleado?: Empleado, setHayCambios?: Function }) => {
     const [Nombre, setNombre] = useState<string>(props.empleado?.nombre || "");
     const [Apellidos, setApellidos] = useState<string>(props.empleado?.apellidos || "");
     const [Correo, setCorreo] = useState<string>(props.empleado?.email || "");
@@ -14,7 +15,7 @@ const EmpleadoForm = (props: { disabled?: boolean, setEmpleado: Function, emplea
 
     useEffect(() => {
         const emp: Empleado = {
-            _id: "Creando",
+            _id: props.empleado ? props.empleado._id : "Creando",
             nombre: Nombre,
             apellidos: Apellidos,
             email: Correo,
@@ -24,6 +25,11 @@ const EmpleadoForm = (props: { disabled?: boolean, setEmpleado: Function, emplea
         props.setEmpleado(emp);
 
     }, [Nombre, Correo, Apellidos, Dni, Rol]);
+
+    let disabled = false;
+    if (props.empleado) {
+        disabled = !CheckEqualOrMoreAuthority(Empleado.rol, Roles[props.empleado.rol as keyof typeof Roles]);
+    }
 
     let roles = [];
     switch (Empleado.rol) {
@@ -57,14 +63,14 @@ const EmpleadoForm = (props: { disabled?: boolean, setEmpleado: Function, emplea
                         <label className="block tracking-wide text-gray-700 font-bold">
                             Nombre
                         </label>
-                        <input disabled={props.disabled} className="appearance-none block w-full bg-gray-200 text-gray-700 border rounded py-3 px-4 leading-tight focus:outline-none focus:bg-white ring-blue-500" type="text" placeholder="Por ejemplo `John Doe`"
+                        <input disabled={disabled} className="appearance-none block w-full bg-gray-200 text-gray-700 border rounded py-3 px-4 leading-tight focus:outline-none focus:bg-white ring-blue-500" type="text" placeholder="Por ejemplo `John Doe`"
                             value={Nombre} onChange={(e) => { setNombre(e.target.value); props.setHayCambios && props.setHayCambios(true); }} />
                     </div>
                     <div className="w-full">
                         <label className="block tracking-wide text-gray-700 font-bold">
                             Correo electrónico
                         </label>
-                        <input disabled={props.disabled} className="appearance-none ring-blue-500 block w-full bg-gray-200 text-gray-700 border border-gray-200 rounded py-3 px-4 leading-tight focus:outline-none focus:bg-white focus:border-gray-500" id="grid-last-name" type="text" placeholder="Su dirección de correo electrónico"
+                        <input disabled={disabled} className="appearance-none ring-blue-500 block w-full bg-gray-200 text-gray-700 border border-gray-200 rounded py-3 px-4 leading-tight focus:outline-none focus:bg-white focus:border-gray-500" id="grid-last-name" type="text" placeholder="Su dirección de correo electrónico"
                             value={Correo} onChange={(e) => { setCorreo(e.target.value); props.setHayCambios && props.setHayCambios(true); }} />
                     </div>
                     {
@@ -80,7 +86,7 @@ const EmpleadoForm = (props: { disabled?: boolean, setEmpleado: Function, emplea
                                 <label className="block tracking-wide text-gray-700 font-bold">
                                     Rol
                                 </label>
-                                <SimpleListBox disabled={props.disabled} elementos={roles} setElemento={setRol} defaultValue={props.empleado.rol} />
+                                <SimpleListBox disabled={disabled} elementos={roles} setElemento={setRol} defaultValue={props.empleado.rol} />
                             </div>
                     }
 
@@ -90,14 +96,14 @@ const EmpleadoForm = (props: { disabled?: boolean, setEmpleado: Function, emplea
                         <label className="block tracking-wide text-gray-700 font-bold">
                             Apellidos
                         </label>
-                        <input disabled={props.disabled} className="appearance-none ring-blue-500 block w-full bg-gray-200 text-gray-700 border rounded py-3 px-4 leading-tight focus:outline-none focus:bg-white" type="text" placeholder="Apellidos del nuevo empleado"
+                        <input disabled={disabled} className="appearance-none ring-blue-500 block w-full bg-gray-200 text-gray-700 border rounded py-3 px-4 leading-tight focus:outline-none focus:bg-white" type="text" placeholder="Apellidos del nuevo empleado"
                             value={Apellidos} onChange={(e) => { setApellidos(e.target.value); props.setHayCambios && props.setHayCambios(true); }} />
                     </div>
                     <div className="w-full">
                         <label className="block tracking-wide text-gray-700 font-bold">
                             DNI o NIE
                         </label>
-                        <input disabled={props.disabled} className="appearance-none ring-blue-500 block w-full bg-gray-200 text-gray-700 border border-gray-200 rounded py-3 px-4 leading-tight focus:outline-none focus:bg-white focus:border-gray-500" id="grid-last-name" type="text" placeholder="Número del documento de identidad"
+                        <input disabled={disabled} className="appearance-none ring-blue-500 block w-full bg-gray-200 text-gray-700 border border-gray-200 rounded py-3 px-4 leading-tight focus:outline-none focus:bg-white focus:border-gray-500" id="grid-last-name" type="text" placeholder="Número del documento de identidad"
                             value={Dni} onChange={(e) => { setDni(e.target.value); props.setHayCambios && props.setHayCambios(true); }} />
                     </div>
                 </div>

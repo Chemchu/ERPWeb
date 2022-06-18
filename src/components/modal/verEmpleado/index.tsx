@@ -27,7 +27,7 @@ export const VerEmpleado = (props: { empleado: Empleado, setEmpleado: Function, 
         if (!empleado) { return; }
 
         const emp: Empleado = {
-            _id: "Creando",
+            _id: empleado._id,
             apellidos: empleado.apellidos,
             email: empleado.email,
             nombre: empleado.nombre,
@@ -35,10 +35,13 @@ export const VerEmpleado = (props: { empleado: Empleado, setEmpleado: Function, 
             dni: empleado.dni,
         }
 
-        const updatedCorrectly = await UpdateEmpleado(emp);
-        if (updatedCorrectly) {
+        const { message, successful } = await UpdateEmpleado(emp);
+        if (successful) {
+            console.log(message);
+
             props.setEmpleado(emp);
             setHayCambios(false);
+            props.showModal(false);
         }
     }
 
@@ -71,7 +74,7 @@ export const VerEmpleado = (props: { empleado: Empleado, setEmpleado: Function, 
                                 </svg>
                             </motion.button>
                         </div>
-                        <EmpleadoForm disabled={Empleado.rol === Roles.Cajero && Empleado._id !== props.empleado._id} setEmpleado={setEmpleadoAux} empleado={props.empleado} setHayCambios={setHayCambios} />
+                        <EmpleadoForm setEmpleado={setEmpleadoAux} empleado={props.empleado} setHayCambios={setHayCambios} />
                         <div className="flex w-full h-full gap-10 text-white self-end items-end justify-around">
                             <button className="h-12 w-full rounded-xl bg-red-500 hover:bg-red-600 shadow-lg" onClick={() => { props.showModal(false) }}>
                                 Cerrar

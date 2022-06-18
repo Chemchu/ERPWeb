@@ -12,6 +12,8 @@ import NuevoBoton from "../../elementos/botones/nuevoBoton";
 import DownloadFile from "../../elementos/botones/downloadFile";
 import useEmpleadoContext from "../../../context/empleadoContext";
 import { FetchEmpleados, FetchEmpleadosByQuery } from "../../../utils/fetches/empleadoFetches";
+import AuthorizationWrapper from "../../authorizationWrapper";
+import { Roles } from "../../../tipos/Enums/Roles";
 
 const arrayNum = [...Array(8)];
 
@@ -154,5 +156,4 @@ const FilaEmpleado = (props: { empleado: Empleado }) => {
     );
 }
 
-
-export default EmpleadosPage;
+export default AuthorizationWrapper([Roles.Administrador, Roles.Gerente], true)(EmpleadosPage);

@@ -413,8 +413,8 @@ export const DELETE_EMPLEADO = `
 `
 
 export const UPDATE_EMPLEADO = `
-    mutation UpdateEmpleado($id: ID!, $nombre: String, $apellidos: String, $rol: String, $email: String) {
-  updateEmpleado(_id: $id, nombre: $nombre, apellidos: $apellidos, rol: $rol, email: $email) {
+mutation Mutation($id: ID!, $empleadoInput: EmpleadoUpdateFields!) {
+  updateEmpleado(_id: $id, empleadoInput: $empleadoInput) {
     message
     successful
   }

@@ -2,9 +2,7 @@ import { motion } from 'framer-motion';
 import Link from 'next/link';
 import React from 'react';
 import useEmpleadoContext from '../../context/empleadoContext';
-import { Roles } from '../../tipos/Enums/Roles';
 import { SidebarOption } from '../../tipos/Enums/SidebarOption';
-import AuthorizationWrapper from '../authorizationWrapper';
 import RequireHigherAuthorization from './RequireHigherAuth';
 
 const Sidebar = React.memo((props: { isCollapsed: boolean, setCollapsed: Function, IndexSeleccionado: SidebarOption, setIndex: React.Dispatch<React.SetStateAction<SidebarOption>> }) => {

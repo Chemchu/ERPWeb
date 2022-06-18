@@ -40,28 +40,26 @@ export const FetchEmpleados = async (): Promise<Empleado[]> => {
     }
 }
 
-export const UpdateEmpleado = async (empleado: Empleado): Promise<Boolean> => {
+export const UpdateEmpleado = async (empleado: Empleado): Promise<{ message: string, successful: boolean }> => {
     try {
-        // const pResponse = await fetch(`/api/productos/${empleado._id}`, {
-        //     method: 'PUT',
-        //     headers: {
-        //         'Content-Type': 'application/json'
-        //     },
-        //     body: JSON.stringify(empleado)
-        // });
+        const pResponse = await fetch(`/api/empleados/${empleado._id}`, {
+            method: 'PUT',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(empleado)
+        });
 
-        // const msg = await pResponse.json();
+        const msg = await pResponse.json();
 
-        // if (!pResponse.ok) { notifyError(msg.message); return false; }
-        // else { notifySuccess(msg.message); return msg.successful; }
-
-        return false;
+        if (!pResponse.ok) { return { message: "Error al actualizar el empleado.", successful: false }; }
+        else { return { message: msg.message, successful: msg.successful }; }
 
     }
     catch (e) {
         console.log(e);
-        notifyError("Error de conexión");
-        return false;
+        notifyError(String(e));
+        return { message: String(e), successful: false };
     }
 }
 
