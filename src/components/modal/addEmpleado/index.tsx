@@ -3,8 +3,7 @@ import { useEffect, useState } from "react";
 import { Empleado } from "../../../tipos/Empleado";
 import { In } from "../../../utils/animations";
 import { AddNewEmpleado } from "../../../utils/fetches/empleadoFetches";
-import { notifyError, notifySuccess } from "../../../utils/toastify";
-import { CreateEmployee } from "../../../utils/typeCreator";
+import { notifyError, notifyLoading } from "../../../utils/toastify";
 import EmpleadoForm from "../../elementos/Forms/empleadoForm";
 import { Backdrop } from "../backdrop";
 
@@ -17,14 +16,10 @@ const AddEmpleado = (props: { showModal: Function }) => {
             notifyError("Los datos del empleado no puede estar vacío");
             return;
         }
-        const { message, successful } = await AddNewEmpleado(Empleado);
-        if (successful) {
-            notifySuccess(message);
+
+        notifyLoading(AddNewEmpleado(Empleado), "Enviando correo electrónico...", () => {
             props.showModal(false);
-        }
-        else {
-            notifyError(message);
-        }
+        })
     }
 
     return (

@@ -53,3 +53,21 @@ export const notifyPromise = (promise: Promise<any>, msgInicial: string, msgExit
         }
     );
 }
+
+export const notifyLoading = (promise: Promise<any>, msgInicial: string, successfulCallback?: Function, failureCallback?: Function) => {
+    const toastId = toast.loading(msgInicial);
+    promise
+        .then((data) => {
+            if (data.successful) {
+                toast.update(toastId, { render: data.message, type: "success", isLoading: false, autoClose: 5000, draggable: true, pauseOnHover: true, closeOnClick: true })
+                if (successfulCallback) { successfulCallback(); }
+            }
+            else {
+                toast.update(toastId, { render: data.message, type: "error", isLoading: false, autoClose: 5000, draggable: true, pauseOnHover: true, closeOnClick: true })
+                if (failureCallback) { failureCallback(); }
+            }
+        })
+        .catch((err) => {
+            toast.update(toastId, { render: err, type: "error", isLoading: false, autoClose: 5000, draggable: true, pauseOnHover: true, closeOnClick: true })
+        });
+}
