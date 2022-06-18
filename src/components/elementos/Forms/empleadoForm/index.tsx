@@ -25,6 +25,19 @@ const EmpleadoForm = (props: { disabled?: boolean, setEmpleado: Function, emplea
 
     }, [Nombre, Correo, Apellidos, Dni, Rol]);
 
+    let roles = [];
+    switch (Empleado.rol) {
+        case Roles.Administrador:
+            roles = [Roles.Cajero, Roles.Gerente, Roles.Administrador]
+            break;
+        case Roles.Gerente:
+            roles = [Roles.Cajero, Roles.Gerente]
+            break;
+        default:
+            roles = [Roles.Cajero]
+            break;
+    }
+
     return (
         <form className="flex flex-col gap-4 w-full pt-10">
             {
@@ -60,14 +73,14 @@ const EmpleadoForm = (props: { disabled?: boolean, setEmpleado: Function, emplea
                                 <label className="block tracking-wide text-gray-700 font-bold">
                                     Rol
                                 </label>
-                                <SimpleListBox elementos={[Roles.Cajero, Roles.Gerente]} setElemento={setRol} />
+                                <SimpleListBox elementos={roles} setElemento={setRol} />
                             </div>
                             :
                             <div className="w-full">
                                 <label className="block tracking-wide text-gray-700 font-bold">
                                     Rol
                                 </label>
-                                <SimpleListBox disabled={props.disabled} elementos={[Roles.Cajero, Roles.Gerente, Roles.Administrador]} setElemento={setRol} defaultValue={props.empleado.rol} />
+                                <SimpleListBox disabled={props.disabled} elementos={roles} setElemento={setRol} defaultValue={props.empleado.rol} />
                             </div>
                     }
 
