@@ -2,6 +2,6 @@
 module.exports = {
   reactStrictMode: false,
   publicRuntimeConfig: {
-    ERPBACK_URL: process.env.ERPBACK_URL,
+    ERPGATEWAY_URL: process.env.ERPGATEWAY_URL,
   },
 }

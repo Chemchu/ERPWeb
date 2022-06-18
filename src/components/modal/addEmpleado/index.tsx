@@ -1,12 +1,11 @@
 import { motion } from "framer-motion";
 import { useEffect, useState } from "react";
 import { Empleado } from "../../../tipos/Empleado";
-import { Producto } from "../../../tipos/Producto";
 import { In } from "../../../utils/animations";
-import { notifyError } from "../../../utils/toastify";
+import { AddNewEmpleado } from "../../../utils/fetches/empleadoFetches";
+import { notifyError, notifySuccess } from "../../../utils/toastify";
 import { CreateEmployee } from "../../../utils/typeCreator";
 import EmpleadoForm from "../../elementos/Forms/empleadoForm";
-import ProductoForm from "../../elementos/Forms/productoForm";
 import { Backdrop } from "../backdrop";
 
 
@@ -14,11 +13,18 @@ const AddEmpleado = (props: { showModal: Function }) => {
     const [Empleado, setEmpleado] = useState<Empleado>();
 
     const CrearEmpleado = async () => {
-        if (!Empleado) {
-            notifyError("Error con el producto");
+        if (!Empleado || Object.keys(Empleado).length === 0) {
+            notifyError("Los datos del empleado no puede estar vacío");
             return;
         }
-        CreateEmployee(Empleado);
+        const { message, successful } = await AddNewEmpleado(Empleado);
+        if (successful) {
+            notifySuccess(message);
+            props.showModal(false);
+        }
+        else {
+            notifyError(message);
+        }
     }
 
     return (

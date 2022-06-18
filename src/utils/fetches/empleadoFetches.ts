@@ -104,3 +104,30 @@ export const FetchEmpleadosByQuery = async (userQuery: string): Promise<Empleado
         return [];
     }
 }
+
+export const AddNewEmpleado = async (empleado: Empleado): Promise<{ message: string, successful: boolean }> => {
+    try {
+        const pResponse = await fetch(`/api/empleados`,
+            {
+                method: 'POST',
+                headers: { 'Content-type': 'application/json' },
+                body: JSON.stringify({
+                    email: empleado.email,
+                    nombre: empleado.nombre,
+                    apellidos: empleado.apellidos,
+                    dni: empleado.dni,
+                    rol: empleado.rol,
+                })
+            });
+
+        if (!pResponse.ok) { notifyError("No se ha podido añadir el empleado"); return { message: "No se ha podido añadir el empleado", successful: false }; }
+
+        const data = await pResponse.json();
+        return { message: data.message, successful: data.successful };
+    }
+    catch (e) {
+        console.log(e);
+        notifyError("Error de conexión");
+        return { message: "No se ha podido añadir el empleado", successful: false };
+    }
+}
