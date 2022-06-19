@@ -70,7 +70,7 @@ export const UpdateProducto = async (producto: Producto): Promise<Boolean> => {
     }
 }
 
-export const CreateProducto = async (producto: Producto): Promise<Boolean> => {
+export const CreateProducto = async (producto: Producto): Promise<{ message: string, successful: boolean }> => {
     try {
         const pResponse = await fetch(`/api/productos/`, {
             method: 'POST',
@@ -81,14 +81,11 @@ export const CreateProducto = async (producto: Producto): Promise<Boolean> => {
         });
 
         const msg = await pResponse.json();
-
-        if (!pResponse.ok) { notifyError(msg.message); return false; }
-        else { notifySuccess(msg.message); return msg.successful; }
+        return { message: msg.message, successful: msg.successful }
     }
     catch (e) {
         console.log(e);
-        notifyError("Error de conexión");
-        return false;
+        return { message: "Error: " + String(e), successful: false };
     }
 }
 

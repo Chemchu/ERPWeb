@@ -1,9 +1,9 @@
 import { motion } from "framer-motion";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { Producto } from "../../../tipos/Producto";
 import { In } from "../../../utils/animations";
 import { CreateProducto } from "../../../utils/fetches/productosFetches";
-import { notifyError } from "../../../utils/toastify";
+import { notifyError, notifyLoading } from "../../../utils/toastify";
 import ProductoForm from "../../elementos/Forms/productoForm";
 import { Backdrop } from "../backdrop";
 
@@ -16,7 +16,9 @@ const AddProducto = (props: { showModal: Function }) => {
             notifyError("Error con el producto");
             return;
         }
-        await CreateProducto(Producto);
+        notifyLoading(CreateProducto(Producto), "Creando producto...", () => {
+            props.showModal(false);
+        });
     }
 
     return (

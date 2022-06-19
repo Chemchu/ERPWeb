@@ -33,8 +33,8 @@ const AddCliente = async (req: NextApiRequest, res: NextApiResponse) => {
         }
     )).json();
 
-    const data = JSON.parse(apiResponse.data)
-    return res.status(data.successful ? 200 : 300).json({ message: data.message, successful: data.successful, data: data.addCliente });
+    const data = JSON.parse(apiResponse.data).addCliente
+    return res.status(data.successful ? 200 : 300).json({ message: data.message, successful: data.successful });
 }
 
 const GetClientes = async (req: NextApiRequest, res: NextApiResponse) => {

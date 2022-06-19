@@ -44,7 +44,7 @@ const AddClientesFromFile = async (req: NextApiRequest, res: NextApiResponse) =>
         }
     )).json();
 
-    const data = JSON.parse(apiResponse.data);
+    const data = JSON.parse(apiResponse.data).addClientesFile;
     return res.status(data.successful ? 200 : 300).json({ message: data.message, successful: data.successful });
 }
 
@@ -64,7 +64,7 @@ const GetClientesFromQuery = async (userQuery: queryString.ParsedQuery<string>, 
 
     const apiResponse = await serverRes.json();
     const data = JSON.parse(apiResponse.data);
-    return res.status(serverRes.ok ? 200 : 300).json({ message: data.successful, data: data.clientes, successful: data.successful == undefined ? serverRes.ok : data.successful });
+    return res.status(serverRes.ok ? 200 : 300).json({ data: data.clientes, successful: data.successful === undefined ? serverRes.ok : data.successful });
 }
 
 const GetClienteFromId = async (req: NextApiRequest, res: NextApiResponse) => {

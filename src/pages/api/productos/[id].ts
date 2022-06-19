@@ -51,7 +51,8 @@ const GetProductosFromQuery = async (userQuery: queryString.ParsedQuery<string>,
     if (!userQuery.query) { res.status(300).json({ message: `La query no puede estar vacía`, successful: false }); }
 
     const serverRes = await GQLQuery({
-        query: QUERY_PRODUCTS, variables: {
+        query: QUERY_PRODUCTS,
+        variables: {
             "find": {
                 "query": userQuery.query
             }
@@ -60,7 +61,7 @@ const GetProductosFromQuery = async (userQuery: queryString.ParsedQuery<string>,
     const apiResponse = await serverRes.json();
     const data = JSON.parse(apiResponse.data);
 
-    return res.status(serverRes.ok ? 200 : 300).json({ message: data.message, productos: data.productos, successful: data.successful ? data.successful : serverRes.ok });
+    return res.status(serverRes.ok ? 200 : 300).json({ productos: data.productos });
 }
 
 const AddProductosFromFile = async (req: NextApiRequest, res: NextApiResponse) => {
@@ -71,7 +72,7 @@ const AddProductosFromFile = async (req: NextApiRequest, res: NextApiResponse) =
         }
     })).json();
 
-    const data = JSON.parse(apiResponse.data);
+    const data = JSON.parse(apiResponse.data).addProductosFile;
     return res.status(data.successful ? 200 : 300).json({ message: data.message, successful: data.successful });
 }
 
@@ -83,7 +84,7 @@ const DeleteProducto = async (req: NextApiRequest, res: NextApiResponse) => {
         }
     })).json();
 
-    const data = JSON.parse(apiResponse.data);
+    const data = JSON.parse(apiResponse.data).deleteProducto;
     return res.status(data.successful ? 200 : 300).json({ message: data.message, successful: data.successful });
 }
 

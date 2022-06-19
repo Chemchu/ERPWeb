@@ -35,26 +35,33 @@ const GetProductos = async (req: NextApiRequest, res: NextApiResponse) => {
 }
 
 const AddProducto = async (req: NextApiRequest, res: NextApiResponse) => {
-    const variables = {
-        "producto": {
-            "nombre": req.body.nombre,
-            "proveedor": req.body.proveedor,
-            "familia": req.body.familia,
-            "precioVenta": req.body.precioVenta,
-            "precioCompra": req.body.precioCompra,
-            "iva": req.body.iva,
-            "margen": req.body.margen,
-            "ean": req.body.ean,
-            "cantidad": req.body.cantidad,
-            "cantidadRestock": req.body.cantidadRestock,
-            "alta": req.body.alta
-        }
-    }
-    const serverRes = await GQLMutate({ mutation: ADD_PRODUCT, variables: variables });
-    const apiResponse = await serverRes.json();
+    try {
+        const serverRes = await GQLMutate({
+            mutation: ADD_PRODUCT,
+            variables: {
+                "producto": {
+                    "nombre": req.body.nombre,
+                    "proveedor": req.body.proveedor,
+                    "familia": req.body.familia,
+                    "precioVenta": req.body.precioVenta,
+                    "precioCompra": req.body.precioCompra,
+                    "iva": req.body.iva,
+                    "margen": req.body.margen,
+                    "ean": req.body.ean,
+                    "cantidad": req.body.cantidad,
+                    "cantidadRestock": req.body.cantidadRestock,
+                    "alta": req.body.alta
+                }
+            }
+        });
+        const apiResponse = await serverRes.json();
 
-    const data = JSON.parse(apiResponse.data);
-    return res.status(serverRes.ok ? 200 : 300).json({ message: data.message, successful: data.successful ? data.successful : serverRes.ok, data: data.producto });
+        const data = JSON.parse(apiResponse.data);
+        return res.status(data.addProducto.successful ? 200 : 300).json({ message: data.addProducto.message, successful: data.addProducto.successful || false });
+    }
+    catch (err) {
+        return res.status(500).json({ message: "Error al intentar crear el producto", successful: false });
+    }
 }
 
 export default handler;
