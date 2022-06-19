@@ -1,6 +1,6 @@
 import getJwtFromString from "../../hooks/jwt";
 import { Empleado } from "../../tipos/Empleado";
-import { notifyError } from "../toastify";
+import { notifyError, notifySuccess } from "../toastify";
 import { CreateEmployee, CreateEmployeeList } from "../typeCreator";
 import queryString from 'query-string';
 
@@ -118,7 +118,7 @@ export const AddNewEmpleado = async (empleado: Empleado): Promise<{ message: str
                 })
             });
 
-        if (!pResponse.ok) { notifyError("No se ha podido añadir el empleado"); return { message: "No se ha podido añadir el empleado", successful: false }; }
+        if (!pResponse.ok) { return { message: "No se ha podido añadir el empleado", successful: false }; }
 
         const data = await pResponse.json();
         return { message: data.message, successful: data.successful };
@@ -127,5 +127,26 @@ export const AddNewEmpleado = async (empleado: Empleado): Promise<{ message: str
         console.log(e);
         notifyError("Error de conexión");
         return { message: "No se ha podido añadir el empleado", successful: false };
+    }
+}
+
+export const DeleteEmpleado = async (empleadoId: string): Promise<Boolean> => {
+    try {
+        const pResponse = await fetch(`/api/empleados/${empleadoId}`, {
+            method: 'DELETE',
+            headers: {
+                'Content-Type': 'application/json'
+            }
+        });
+
+        const msg = await pResponse.json();
+
+        if (!pResponse.ok) { notifyError(msg.message); return false; }
+        else { notifySuccess(msg.message); return msg.successful; }
+    }
+    catch (e) {
+        console.log(e);
+        notifyError("Error de conexión");
+        return false;
     }
 }

@@ -79,6 +79,7 @@ const EmpleadosPage = (props: { Empleados: Empleado[] }) => {
 
 const TablaEmpleado = (props: { Empleados?: Empleado[] }) => {
     const [currentPage, setCurrentPage] = useState<number>(1);
+    const [empleados, setEmpleados] = useState<Empleado[]>(props.Empleados || [])
 
     const elementsPerPage = 50;
     const numPages = Math.ceil(props.Empleados ? (props.Empleados.length / elementsPerPage) : 30);
@@ -90,15 +91,15 @@ const TablaEmpleado = (props: { Empleados?: Empleado[] }) => {
         setCurrentPage(page);
     }
 
-    if (props.Empleados) {
+    if (empleados) {
         return (
             <>
                 <div className="h-full w-full border overflow-y-scroll">
                     {
-                        props.Empleados.slice((elementsPerPage * (currentPage - 1)), currentPage * elementsPerPage).map((emp: Empleado, index) => {
+                        empleados.slice((elementsPerPage * (currentPage - 1)), currentPage * elementsPerPage).map((emp: Empleado, index) => {
                             return (
                                 <div key={`FilaProdTable${emp._id}`}>
-                                    <FilaEmpleado empleado={emp} />
+                                    <FilaEmpleado empleado={emp} setEmpleados={setEmpleados} />
                                 </div>
                             );
                         })
@@ -131,7 +132,7 @@ const TablaEmpleado = (props: { Empleados?: Empleado[] }) => {
     )
 }
 
-const FilaEmpleado = (props: { empleado: Empleado }) => {
+const FilaEmpleado = (props: { empleado: Empleado, setEmpleados: Function }) => {
     const [showModal, setModal] = useState<boolean>(false);
     const [empleado, setEmpleado] = useState<Empleado>(props.empleado);
 
@@ -149,7 +150,7 @@ const FilaEmpleado = (props: { empleado: Empleado }) => {
                 </div>
             </div>
             <AnimatePresence>
-                {showModal && <VerEmpleado showModal={setModal} empleado={empleado} setEmpleado={setEmpleado} />}
+                {showModal && <VerEmpleado showModal={setModal} empleado={empleado} setEmpleado={setEmpleado} setEmpleados={props.setEmpleados} />}
             </AnimatePresence>
         </div>
 

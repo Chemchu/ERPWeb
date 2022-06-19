@@ -10,11 +10,6 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
         const query = queryString.parse(req.query.id.toString());
 
         switch (method) {
-            case 'POST':
-                if (req.query.id === "file") {
-                    return await AddEmpleadosFromFile(req, res);
-                }
-
             case 'GET':
                 if (query.query) { return await GetEmpleadosFromQuery(query, res); }
                 else { return await GetEmpleadoFromId(req, res); }
@@ -70,21 +65,6 @@ const GetEmpleadosFromQuery = async (userQuery: queryString.ParsedQuery<string>,
     return res.status(serverRes.ok ? 200 : 300).json({ message: data.message, data: data.empleados, successful: data.successful });
 }
 
-const AddEmpleadosFromFile = async (req: NextApiRequest, res: NextApiResponse) => {
-    // const response = await GQLFetcher.mutate({
-    //     mutation: ADD_EMPLEADO_FILE,
-    //     variables: {
-    //         csv: JSON.stringify(req.body)
-    //     }
-    // });
-
-    // if (response.data.addProductosFile.successful) {
-    //     return res.status(200).json({ message: response.data.addProductosFile.message });
-    // }
-
-    return res.status(300).json({ message: `Fallo al añadir los empleados desde el archivo` });
-}
-
 const DeleteEmpleado = async (req: NextApiRequest, res: NextApiResponse) => {
     const serverRes = await GQLMutate({
         mutation: DELETE_EMPLEADO,
@@ -94,8 +74,8 @@ const DeleteEmpleado = async (req: NextApiRequest, res: NextApiResponse) => {
     })
     const apiResponse = await serverRes.json();
 
-    const data = JSON.parse(apiResponse)
-    return res.status(data.successful ? 200 : 300).json({ message: data.message, successful: data.successful });
+    const data = JSON.parse(apiResponse.data)
+    return res.status(data.deleteEmpleado.successful ? 200 : 300).json({ message: data.deleteEmpleado.message, successful: data.deleteEmpleado.successful });
 }
 
 const UpdateEmpleado = async (req: NextApiRequest, res: NextApiResponse) => {

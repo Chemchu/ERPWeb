@@ -6,11 +6,13 @@ import { Empleado } from "../../../tipos/Empleado";
 import { Roles } from "../../../tipos/Enums/Roles";
 import { In } from "../../../utils/animations";
 import { UpdateEmpleado } from "../../../utils/fetches/empleadoFetches";
+import { notifyLoading } from "../../../utils/toastify";
 import EditableLabel from "../../elementos/Forms/editableLabel";
 import EmpleadoForm from "../../elementos/Forms/empleadoForm";
 import { Backdrop } from "../backdrop";
+import BorrarEmpleadoModal from "../borrarEmpleadoModal";
 
-export const VerEmpleado = (props: { empleado: Empleado, setEmpleado: Function, showModal: Function }) => {
+export const VerEmpleado = (props: { empleado: Empleado, setEmpleado: Function, setEmpleados: Function, showModal: Function }) => {
     const [Nombre, setNombre] = useState<string>(props.empleado.nombre || "");
     const [EmpleadoAux, setEmpleadoAux] = useState<Empleado>();
     const [hayCambios, setHayCambios] = useState<boolean>(false);
@@ -35,14 +37,11 @@ export const VerEmpleado = (props: { empleado: Empleado, setEmpleado: Function, 
             dni: empleado.dni,
         }
 
-        const { message, successful } = await UpdateEmpleado(emp);
-        if (successful) {
-            console.log(message);
-
+        notifyLoading(UpdateEmpleado(emp), "Actualizando..", () => {
             props.setEmpleado(emp);
             setHayCambios(false);
             props.showModal(false);
-        }
+        })
     }
 
     return (
@@ -95,6 +94,12 @@ export const VerEmpleado = (props: { empleado: Empleado, setEmpleado: Function, 
                                     </div>
                             }
                         </div>
+                        <AnimatePresence>
+                            {
+                                showDeleteModal &&
+                                <BorrarEmpleadoModal showModal={setDeleteModal} showEmpleadoModal={props.showModal} setEmpleados={props.setEmpleados} empleado={props.empleado} />
+                            }
+                        </AnimatePresence>
                     </div>
                 </motion.div>
             </Backdrop>
