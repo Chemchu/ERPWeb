@@ -14,28 +14,13 @@ import { FetchEmpleados } from "../../../utils/fetches/empleadoFetches";
 import { FetchTPVs } from "../../../utils/fetches/tpvFetches";
 
 const Empleados = (props: { EmpleadoSesion: SesionEmpleado }) => {
-    const [EmpleadosList, SetEmpleados] = useState<Empleado[]>([]);
-    const [tpvs, SetTpvs] = useState<ITPV[]>([]);
     const { Empleado, SetEmpleado } = useEmpleadoContext();
 
     useEffect(() => {
         if (Object.keys(Empleado).length === 0) {
             SetEmpleado(props.EmpleadoSesion)
         }
-        const GetAllData = async () => {
-            SetEmpleados(await FetchEmpleados());
-            SetTpvs(await FetchTPVs());
-        }
-        GetAllData();
     }, []);
-
-    if (EmpleadosList.length <= 0) {
-        return (
-            <div>
-                Cargando..
-            </div>
-        )
-    }
 
     return (
         <Tab.Group as="div" className="flex flex-col w-full h-full pt-3 pr-2">
@@ -81,7 +66,7 @@ const Empleados = (props: { EmpleadoSesion: SesionEmpleado }) => {
                         'focus:outline-none ring-white ring-opacity-60'
                     )}
                 >
-                    <EmpleadosPage Empleados={EmpleadosList} />
+                    <EmpleadosPage />
                 </Tab.Panel>
                 <Tab.Panel
                     key={"EnDesarrollo"}
