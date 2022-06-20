@@ -9,12 +9,10 @@ import { Paginador } from "../../elementos/Forms/paginador";
 import VerVenta from "../../modal/verVenta";
 import SkeletonCard from "../../Skeletons/skeletonCard";
 import UploadFileRestricted from "../../elementos/botones/uploadFileRestricted";
-import { FetchVenta, FetchVentaByQuery, FetchVentasByDateRange } from "../../../utils/fetches/ventasFetches";
+import { FetchVenta, FetchVentaByQuery, FetchVentas, FetchVentasByDateRange } from "../../../utils/fetches/ventasFetches";
 
-const SalesPage = (props: { ventas: Venta[], clientes: Cliente[] }) => {
-    if (props.ventas == undefined) throw new Error("Props de ventas en ventasTabs.tsx es undefined");
-    if (props.clientes == undefined) throw new Error("Props de clientes en ventasTabs.tsx es undefined");
-
+const SalesPage = () => {
+    const [Ventas, setVentas] = useState<Venta[]>([]);
     const [CurrentPage, setCurrentPage] = useState<number>(1);
     const [CurrentVenta, setCurrentVenta] = useState<Venta>();
     const [showModalEditarVenta, setShowModal] = useState<boolean>();
@@ -22,6 +20,15 @@ const SalesPage = (props: { ventas: Venta[], clientes: Cliente[] }) => {
     const [filtro, setFiltro] = useState<string>("");
     const [dateRange, setDateRange] = useState<Date[] | null[]>([null, null]);
     const [startDate, endDate] = dateRange;
+    const [isLoading, setLoading] = useState<boolean>(true);
+
+    useEffect(() => {
+        const GetAllData = async () => {
+            setVentas(await FetchVentas());
+            setLoading(false);
+        }
+        GetAllData();
+    }, []);
 
     useEffect(() => {
         if (!filtro) {
@@ -42,7 +49,7 @@ const SalesPage = (props: { ventas: Venta[], clientes: Cliente[] }) => {
     }, [dateRange])
 
     const elementsPerPage = 70;
-    const numPages = props.ventas.length <= 0 ? 1 : Math.ceil(props.ventas.length / elementsPerPage);
+    const numPages = Ventas.length <= 0 ? 1 : Math.ceil(Ventas.length / elementsPerPage);
     const arrayNum = [...Array(8)];
 
     const setPaginaActual = (page: number) => {
@@ -105,26 +112,31 @@ const SalesPage = (props: { ventas: Venta[], clientes: Cliente[] }) => {
             </div>
             <div className="h-full w-full pb-4 border overflow-y-scroll">
                 {
-                    props.ventas.length <= 0 ?
+                    isLoading ?
                         arrayNum.map((e, i) => <SkeletonCard key={`skeletonprops.ventas-${i}`} />)
                         :
-                        VentasFiltradas && (filtro || dateRange) ?
-                            VentasFiltradas.slice((elementsPerPage * (CurrentPage - 1)), CurrentPage * elementsPerPage).map((v) => {
-                                return (
-                                    <div className="hover:bg-blue-200 cursor-pointer" key={`FilaProdTable${v._id}`} onClick={() => { setCurrentVenta(v); setShowModal(true) }}>
-                                        <FilaVenta key={`FilaVenta${v._id}`} venta={v} />
-                                    </div>
-                                );
-                            })
+                        Ventas.length <= 0 ?
+                            <div className="flex justify-center items-center w-full h-full text-xl">
+                                No se ha encontrado registro de ventas en el sistema
+                            </div>
                             :
-                            props.ventas.slice((elementsPerPage * (CurrentPage - 1)), CurrentPage * elementsPerPage).map((v) => {
-                                return (
-                                    <div className="hover:bg-blue-200 cursor-pointer"
-                                        key={`FilaProdTable${v._id}`} onClick={() => { setCurrentVenta(v); setShowModal(true) }}>
-                                        <FilaVenta key={`FilaVenta${v._id}`} venta={v} />
-                                    </div>
-                                );
-                            })
+                            VentasFiltradas && (filtro || dateRange) ?
+                                VentasFiltradas.slice((elementsPerPage * (CurrentPage - 1)), CurrentPage * elementsPerPage).map((v) => {
+                                    return (
+                                        <div className="hover:bg-blue-200 cursor-pointer" key={`FilaProdTable${v._id}`} onClick={() => { setCurrentVenta(v); setShowModal(true) }}>
+                                            <FilaVenta key={`FilaVenta${v._id}`} venta={v} />
+                                        </div>
+                                    );
+                                })
+                                :
+                                Ventas.slice((elementsPerPage * (CurrentPage - 1)), CurrentPage * elementsPerPage).map((v) => {
+                                    return (
+                                        <div className="hover:bg-blue-200 cursor-pointer"
+                                            key={`FilaProdTable${v._id}`} onClick={() => { setCurrentVenta(v); setShowModal(true) }}>
+                                            <FilaVenta key={`FilaVenta${v._id}`} venta={v} />
+                                        </div>
+                                    );
+                                })
                 }
             </div>
             <div className="flex w-full pt-2 items-center justify-center">

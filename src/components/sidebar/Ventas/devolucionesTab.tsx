@@ -2,17 +2,15 @@ import { AnimatePresence } from "framer-motion";
 import React, { useEffect, useState } from "react";
 import { Cliente } from "../../../tipos/Cliente";
 import { Devolucion } from "../../../tipos/Devolucion";
-import { FetchDevolucionesByQuery } from "../../../utils/fetches/devolucionesFetches";
+import { FetchDevoluciones, FetchDevolucionesByQuery } from "../../../utils/fetches/devolucionesFetches";
 import { notifyWarn } from "../../../utils/toastify";
 import DateRange from "../../elementos/Forms/dateRange";
 import { Paginador } from "../../elementos/Forms/paginador";
 import DevolucionModal from "../../modal/devolucionModal";
 import SkeletonCard from "../../Skeletons/skeletonCard";
 
-const DevolucionesPage = (props: { devoluciones: Devolucion[], clientes: Cliente[] }) => {
-    if (props.devoluciones == undefined) throw new Error("Props de devoluciones en devolucionesTabs.tsx es undefined");
-    if (props.clientes == undefined) throw new Error("Props de clientes en ventasTabs.tsx es undefined");
-
+const DevolucionesPage = () => {
+    const [Devoluciones, setDevoluciones] = useState<Devolucion[]>([]);
     const [CurrentPage, setCurrentPage] = useState<number>(1);
     const [CurrentDevolucion, setCurrentDevolucion] = useState<Devolucion>();
     const [showModalEditarVenta, setShowModal] = useState<boolean>();
@@ -20,6 +18,16 @@ const DevolucionesPage = (props: { devoluciones: Devolucion[], clientes: Cliente
     const [filtro, setFiltro] = useState<string>("");
     const [dateRange, setDateRange] = useState([null, null]);
     const [startDate, endDate] = dateRange;
+    const [isLoading, setLoading] = useState<boolean>(true);
+
+    useEffect(() => {
+        const GetAllData = async () => {
+            setDevoluciones(await FetchDevoluciones());
+            setLoading(false);
+        }
+
+        GetAllData();
+    }, []);
 
     useEffect(() => {
         if (!filtro) {
@@ -29,7 +37,7 @@ const DevolucionesPage = (props: { devoluciones: Devolucion[], clientes: Cliente
 
 
     const elementsPerPage = 20;
-    const numPages = props.devoluciones.length <= 0 ? 1 : Math.ceil(props.devoluciones.length / elementsPerPage);
+    const numPages = Devoluciones.length <= 0 ? 1 : Math.ceil(Devoluciones.length / elementsPerPage);
     const arrayNum = [...Array(8)];
 
     const setPaginaActual = (page: number) => {
@@ -84,26 +92,31 @@ const DevolucionesPage = (props: { devoluciones: Devolucion[], clientes: Cliente
             </div>
             <div className="h-full w-full pb-4 border overflow-y-scroll">
                 {
-                    props.devoluciones.length <= 0 ?
+                    isLoading ?
                         arrayNum.map((e, i) => <SkeletonCard key={`skeletonprops.ventas-${i}`} />)
                         :
-                        DevolucionesFiltradas && filtro ?
-                            DevolucionesFiltradas.slice((elementsPerPage * (CurrentPage - 1)), CurrentPage * elementsPerPage).map((v) => {
-                                return (
-                                    <div key={`FilaProdTable${v._id}`} onClick={() => { setCurrentDevolucion(v); setShowModal(true) }}>
-                                        <FilaReembolso key={`FilaReembolso${v._id}`} devolucion={v} />
-                                    </div>
-                                );
-                            })
+                        Devoluciones.length <= 0 ?
+                            <div className="flex justify-center items-center w-full h-full text-xl">
+                                No se ha encontrado registro de devoluciones en el sistema
+                            </div>
                             :
-                            props.devoluciones.slice((elementsPerPage * (CurrentPage - 1)), CurrentPage * elementsPerPage).map((v) => {
-                                return (
-                                    <div className="hover:bg-gray-200 cursor-pointer"
-                                        key={`FilaProdTable${v._id}`} onClick={() => { setCurrentDevolucion(v); setShowModal(true) }}>
-                                        <FilaReembolso key={`FilaReembolso${v._id}`} devolucion={v} />
-                                    </div>
-                                );
-                            })
+                            DevolucionesFiltradas && filtro ?
+                                DevolucionesFiltradas.slice((elementsPerPage * (CurrentPage - 1)), CurrentPage * elementsPerPage).map((v) => {
+                                    return (
+                                        <div key={`FilaProdTable${v._id}`} onClick={() => { setCurrentDevolucion(v); setShowModal(true) }}>
+                                            <FilaReembolso key={`FilaReembolso${v._id}`} devolucion={v} />
+                                        </div>
+                                    );
+                                })
+                                :
+                                Devoluciones.slice((elementsPerPage * (CurrentPage - 1)), CurrentPage * elementsPerPage).map((v) => {
+                                    return (
+                                        <div className="hover:bg-gray-200 cursor-pointer"
+                                            key={`FilaProdTable${v._id}`} onClick={() => { setCurrentDevolucion(v); setShowModal(true) }}>
+                                            <FilaReembolso key={`FilaReembolso${v._id}`} devolucion={v} />
+                                        </div>
+                                    );
+                                })
                 }
             </div>
             <div className="flex pt-2 items-center justify-center">

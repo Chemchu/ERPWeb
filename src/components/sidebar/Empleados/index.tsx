@@ -132,7 +132,7 @@ const EmpleadosPage = () => {
                         Rol
                     </div>
                 </div>
-                <div className="flex justify-center items-center text-xl h-full w-full border">
+                <div className="flex justify-center items-center text-xl h-full w-full border overflow-y-scroll">
                     No se ha encontrado registros de empleados en el sistema
                 </div>
                 <AnimatePresence>

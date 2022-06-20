@@ -15,21 +15,12 @@ import { FetchDevoluciones } from '../../../utils/fetches/devolucionesFetches';
 import { FetchVentas } from '../../../utils/fetches/ventasFetches';
 
 const Ventas = (props: { EmpleadoSesion: SesionEmpleado }) => {
-    const [Ventas, setVentas] = useState<Venta[]>([]);
-    const [Devoluciones, setDevoluciones] = useState<Devolucion[]>([]);
-    const [Clientes,] = useState<Cliente[]>([]);
     const { Empleado, SetEmpleado } = useEmpleadoContext();
 
     useEffect(() => {
         if (Object.keys(Empleado).length === 0) {
             SetEmpleado(props.EmpleadoSesion)
         }
-        const GetAllData = async () => {
-            setVentas(await FetchVentas());
-            setDevoluciones(await FetchDevoluciones());
-        }
-
-        GetAllData();
     }, []);
 
     return (
@@ -76,7 +67,7 @@ const Ventas = (props: { EmpleadoSesion: SesionEmpleado }) => {
                         'focus:outline-none ring-white ring-opacity-60'
                     )}
                 >
-                    <SalesPage ventas={Ventas} clientes={Clientes} />
+                    <SalesPage />
                 </Tab.Panel>
 
                 <Tab.Panel
@@ -86,7 +77,7 @@ const Ventas = (props: { EmpleadoSesion: SesionEmpleado }) => {
                         'focus:outline-none ring-white ring-opacity-60'
                     )}
                 >
-                    <DevolucionesPage devoluciones={Devoluciones} clientes={Clientes} />
+                    <DevolucionesPage />
                 </Tab.Panel>
             </Tab.Panels>
         </Tab.Group >

@@ -143,7 +143,7 @@ const CierrePage = () => {
                         Ventas totales
                     </div>
                 </div>
-                <div className="flex justify-center items-center h-full w-full border-2 rounded-b text-xl">
+                <div className="flex justify-center items-center h-full w-full border-2 rounded-b text-xl overflow-y-scroll">
                     No hay registros de cierres en la base de datos
                 </div>
                 <div className="flex pt-2 items-center justify-center">
