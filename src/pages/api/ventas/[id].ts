@@ -13,7 +13,7 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
             }
 
         case 'GET':
-            if (query.query) { return await GetSalesByQuery(query, res); }
+            if (Object.keys(query).length > 0) { return await GetSalesByQuery(query, res); }
             else { return await GetSale(req, res); }
 
         default:

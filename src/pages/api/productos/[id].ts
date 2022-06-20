@@ -16,7 +16,7 @@ const handler = async (req: NextApiRequest, res: NextApiResponse): Promise<void>
                 }
 
             case 'GET':
-                if (query.query) { return await GetProductosFromQuery(query, res); }
+                if (Object.keys(query).length > 0) { return await GetProductosFromQuery(query, res); }
                 else { return await GetProductoFromId(req, res); }
 
             case 'PUT':

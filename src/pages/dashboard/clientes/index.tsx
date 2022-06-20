@@ -12,17 +12,12 @@ import { Roles } from "../../../tipos/Enums/Roles";
 import { FetchClientes } from "../../../utils/fetches/clienteFetches";
 
 const Clientes = (props: { EmpleadoSesion: SesionEmpleado }) => {
-    const [Clientes, SetClientes] = useState<Cliente[]>([]);
     const { Empleado, SetEmpleado } = useEmpleadoContext();
 
     useEffect(() => {
         if (Object.keys(Empleado).length === 0) {
             SetEmpleado(props.EmpleadoSesion)
         }
-        const GetAllData = async () => {
-            SetClientes(await FetchClientes());
-        }
-        GetAllData();
     }, []);
 
     return (
@@ -70,7 +65,7 @@ const Clientes = (props: { EmpleadoSesion: SesionEmpleado }) => {
                         'focus:outline-none ring-white ring-opacity-60'
                     )}
                 >
-                    <ClientesPage Clientes={Clientes} />
+                    <ClientesPage />
                 </Tab.Panel>
 
                 <Tab.Panel

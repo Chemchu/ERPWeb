@@ -11,7 +11,7 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
 
         switch (method) {
             case 'GET':
-                if (query.query) { return await GetEmpleadosFromQuery(query, res); }
+                if (Object.keys(query).length > 0) { return await GetEmpleadosFromQuery(query, res); }
                 else { return await GetEmpleadoFromId(req, res); }
 
             case 'PUT':

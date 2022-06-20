@@ -4,7 +4,7 @@ import useEmpleadoContext from "../../../context/empleadoContext";
 import { Cierre } from "../../../tipos/Cierre";
 import { TipoDocumento } from "../../../tipos/Enums/TipoDocumentos";
 import { ITPV } from "../../../tipos/TPV";
-import { FetchCierres } from "../../../utils/fetches/cierresFetches";
+import { FetchCierres, FetchCierresByQuery } from "../../../utils/fetches/cierresFetches";
 import { notifyWarn } from "../../../utils/toastify";
 import DownloadFile from "../../elementos/botones/downloadFile";
 import UploadFileRestricted from "../../elementos/botones/uploadFileRestricted";
@@ -51,9 +51,8 @@ const CierrePage = () => {
 
     const Filtrar = async (f: string) => {
         if (f === "") { setCierresFiltradas(undefined); return; }
-        if (!f.match('^[0-9a-fA-F]{24}$')) { notifyWarn("Cierre inválido"); return; }
 
-        //setCierresFiltradas(await FetchProductoByQuery(f));
+        setCierresFiltradas(await FetchCierresByQuery(f));
     }
 
     if (isLoading) {
@@ -63,9 +62,7 @@ const CierrePage = () => {
                     <UploadFileRestricted tipoDocumento={TipoDocumento.Cierres} />
                     <DownloadFile tipoDocumento={TipoDocumento.Cierres} />
                     <DateRange dateRange={dateRange} setDateRange={setDateRange} endDate={endDate} startDate={startDate} />
-                    <input disabled autoFocus={true} className="rounded-lg border appearance-none shadow-lg w-max-72 xl:w-96 h-full py-2 px-4 bg-white text-gray-700 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-600" placeholder="ID del cierre"
-                        onChange={(e) => { setFiltro(e.target.value); }} onKeyPress={async (e) => { }} />
-
+                    <input disabled autoFocus={true} className="rounded-lg border appearance-none shadow-lg w-max-72 xl:w-96 h-full py-2 px-4 bg-white text-gray-700 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-600" placeholder="ID del cierre" />
                     {
                         filtro ?
                             <button className="px-4 py-2 font-semibold text-white bg-blue-500 rounded-lg shadow-md hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-400 focus:ring-offset-2 focus:ring-offset-purple-200"

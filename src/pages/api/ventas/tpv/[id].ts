@@ -7,10 +7,6 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
         case 'GET':
             return await GetSaleByTPV(req, res);
 
-        case 'DELETE':
-
-            break;
-
         default:
             res.setHeader('Allow', ['GET', 'DELETE']);
             res.status(405).end(`Method ${req.method} Not Allowed`);

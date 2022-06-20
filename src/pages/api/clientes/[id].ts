@@ -14,7 +14,7 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
                 }
 
             case 'GET':
-                if (query.query) { return await GetClientesFromQuery(query, res); }
+                if (Object.keys(query).length > 0) { return await GetClientesFromQuery(query, res); }
                 return await GetClienteFromId(req, res);
 
             case 'PUT':
