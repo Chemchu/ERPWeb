@@ -1,11 +1,11 @@
 import { SesionEmpleado } from "../../tipos/Empleado";
-import { TPVType } from "../../tipos/TPV";
+import { ITPV } from "../../tipos/TPV";
 import { notifyError, notifySuccess } from "../toastify";
 import { CreateCierreList, CreateTPV, CreateTPVsList } from "../typeCreator";
 import queryString from 'query-string';
 import { Cierre } from "../../tipos/Cierre";
 
-export const FetchTPV = async (TPVId: string, abortController: AbortController): Promise<TPVType | undefined> => {
+export const FetchTPV = async (TPVId: string, abortController: AbortController): Promise<ITPV | undefined> => {
     if (!TPVId) { throw "ID de la TPV no puede ser undefined"; }
 
     try {
@@ -24,7 +24,7 @@ export const FetchTPV = async (TPVId: string, abortController: AbortController):
     }
 }
 
-export const FetchTPVs = async (): Promise<TPVType[]> => {
+export const FetchTPVs = async (): Promise<ITPV[]> => {
     try {
         const fetchTPV = await fetch(`/api/tpv/`);
 
@@ -121,7 +121,7 @@ export const AddCierreTPV = async (Empleado: SesionEmpleado, setEmpleado: Functi
 
 }
 
-export const FetchTPVsByDisponibilidad = async (isTpvFree: boolean, abortController: AbortController): Promise<TPVType[] | undefined> => {
+export const FetchTPVsByDisponibilidad = async (isTpvFree: boolean, abortController: AbortController): Promise<ITPV[] | undefined> => {
     try {
         const f = queryString.stringify({ isTpvFree: isTpvFree });
         const fetchTPV = await fetch(`/api/tpv/${f}`, { signal: abortController.signal });

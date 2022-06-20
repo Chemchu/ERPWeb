@@ -5,7 +5,7 @@ import { Empleado } from "../tipos/Empleado";
 import { Producto } from "../tipos/Producto";
 import { ProductoDevuelto } from "../tipos/ProductoDevuelto";
 import { ProductoVendido } from "../tipos/ProductoVendido";
-import { TPVType } from "../tipos/TPV";
+import { ITPV } from "../tipos/TPV";
 import { Venta } from "../tipos/Venta";
 
 function CreateProduct(p: any): Producto | undefined {
@@ -209,8 +209,8 @@ export function CreateEmployee(employee: any): Empleado {
     return res;
 }
 
-export function CreateTPV(tpv: any): TPVType {
-    let res: TPVType = {
+export function CreateTPV(tpv: any): ITPV {
+    let res: ITPV = {
         _id: tpv._id,
         nombre: tpv.nombre,
         enUsoPor: tpv.enUsoPor,
@@ -223,8 +223,8 @@ export function CreateTPV(tpv: any): TPVType {
     return res;
 }
 
-export function CreateTPVsList(tpvs: any): TPVType[] {
-    let res: TPVType[] = [];
+export function CreateTPVsList(tpvs: any): ITPV[] {
+    let res: ITPV[] = [];
     tpvs.forEach((t: any) => {
         const tpv = CreateTPV(t);
 

@@ -1,40 +1,21 @@
 import { Tab } from "@headlessui/react";
 import { GetServerSideProps } from "next";
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import CierrePage from "../../../components/sidebar/Cierres";
 import useEmpleadoContext from "../../../context/empleadoContext";
 import getJwtFromString from "../../../hooks/jwt";
 import DashboardLayout from "../../../layout";
-import { Cierre } from "../../../tipos/Cierre";
 import { SesionEmpleado } from "../../../tipos/Empleado";
 import { Roles } from "../../../tipos/Enums/Roles";
-import { TPVType } from "../../../tipos/TPV";
-import { FetchCierres } from "../../../utils/fetches/cierresFetches";
-import { FetchTPVs } from "../../../utils/fetches/tpvFetches";
 
 const Cierres = (props: { EmpleadoSesion: SesionEmpleado }) => {
-    const [CierresList, SetCierres] = useState<Cierre[]>([]);
-    const [tpvs, SetTpvs] = useState<TPVType[]>([]);
     const { Empleado, SetEmpleado } = useEmpleadoContext();
 
     useEffect(() => {
         if (Object.keys(Empleado).length === 0) {
             SetEmpleado(props.EmpleadoSesion)
         }
-        const GetAllData = async () => {
-            SetCierres(await FetchCierres());
-            SetTpvs(await FetchTPVs());
-        }
-        GetAllData();
     }, []);
-
-    if (CierresList.length <= 0) {
-        return (
-            <div>
-                Cargando..
-            </div>
-        )
-    }
 
     return (
         <Tab.Group as="div" className="flex flex-col w-full h-full pt-3 pr-2">
@@ -64,7 +45,7 @@ const Cierres = (props: { EmpleadoSesion: SesionEmpleado }) => {
                         'focus:outline-none ring-white ring-opacity-60'
                     )}
                 >
-                    <CierrePage cierres={CierresList} tpvs={tpvs} />
+                    <CierrePage />
                 </Tab.Panel>
             </Tab.Panels>
         </Tab.Group >

@@ -3,7 +3,7 @@ import React, { useEffect, useRef, useState } from "react";
 import { useReactToPrint } from "react-to-print";
 import { CustomerPaymentInformation } from "../../../tipos/CustomerPayment";
 import { ProductoVendido } from "../../../tipos/ProductoVendido";
-import { TPVType } from "../../../tipos/TPV";
+import { ITPV } from "../../../tipos/TPV";
 import { Venta } from "../../../tipos/Venta";
 import { In } from "../../../utils/animations";
 import { FetchTPV } from "../../../utils/fetches/tpvFetches";
@@ -13,7 +13,7 @@ import { Backdrop } from "../backdrop";
 import DevolverVenta from "../devolucionModal/devolverVenta";
 
 const VerVenta = (props: { venta: Venta | undefined, setModal: Function }) => {
-    const [tpv, setTpv] = useState<TPVType>();
+    const [tpv, setTpv] = useState<ITPV>();
     const componentRef = useRef(null);
     const [PagoDelCliente, setPago] = useState<CustomerPaymentInformation>();
     const [qrImage, setQrImage] = useState<string>();

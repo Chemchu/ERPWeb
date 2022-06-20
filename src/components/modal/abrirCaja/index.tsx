@@ -1,7 +1,7 @@
 import { AnimatePresence, motion } from "framer-motion";
 import { useEffect, useState } from "react";
 import useEmpleadoContext from "../../../context/empleadoContext";
-import { TPVType } from "../../../tipos/TPV";
+import { ITPV } from "../../../tipos/TPV";
 import { In } from "../../../utils/animations";
 import { FetchTPVsByDisponibilidad, OcuparTPV } from "../../../utils/fetches/tpvFetches";
 import { ValidatePositiveFloatingNumber } from "../../../utils/validator";
@@ -10,7 +10,7 @@ import { Backdrop } from "../backdrop";
 import ContarCaja from "../contarCaja";
 
 const AbrirCaja = (props: { setShowModal: Function, setEmpleadoUsandoTPV: Function }) => {
-    const [tpvs, setTpvs] = useState<TPVType[]>([]);
+    const [tpvs, setTpvs] = useState<ITPV[]>([]);
     const [currentTpvName, setCurrentTpvName] = useState<string>();
     const [cajaInicial, setCajaInicial] = useState<string>('0');
     const { Empleado, SetEmpleado } = useEmpleadoContext();
@@ -39,7 +39,7 @@ const AbrirCaja = (props: { setShowModal: Function, setEmpleadoUsandoTPV: Functi
     }, [tpvs]);
 
     const AbrirTPV = async () => {
-        const tpv: TPVType | undefined = tpvs.find((t) => {
+        const tpv: ITPV | undefined = tpvs.find((t) => {
             return t.nombre === currentTpvName
         });
         const cInicial: number = parseFloat(Number(cajaInicial).toFixed(2));

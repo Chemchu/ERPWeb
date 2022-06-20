@@ -5,7 +5,7 @@ import { useReactToPrint } from "react-to-print";
 import useEmpleadoContext from "../../../context/empleadoContext";
 import { Cierre } from "../../../tipos/Cierre";
 import { SesionEmpleado } from "../../../tipos/Empleado";
-import { TPVType } from "../../../tipos/TPV";
+import { ITPV } from "../../../tipos/TPV";
 import { Venta } from "../../../tipos/Venta";
 import { In } from "../../../utils/animations";
 import { FetchDevolucionesByDateRange } from "../../../utils/fetches/devolucionesFetches";
@@ -22,7 +22,7 @@ import ContarCaja from "../contarCaja";
 
 export const CerrarCaja = (props: { Empleado?: SesionEmpleado, setModalOpen: Function, setEmpleadoUsandoTPV: Function }) => {
     const [Ventas, setVentas] = useState<Venta[]>();
-    const [Tpv, setTPV] = useState<TPVType>();
+    const [Tpv, setTPV] = useState<ITPV>();
     const [TotalEfectivo, setTotalEfectivo] = useState<string>();
     const [TotalTarjeta, setTotalTarjeta] = useState<string>();
     const [TotalPrevistoEnCaja, setTotalPrevistoEnCaja] = useState<string>();

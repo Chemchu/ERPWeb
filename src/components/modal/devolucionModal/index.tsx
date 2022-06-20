@@ -4,7 +4,7 @@ import { useReactToPrint } from "react-to-print";
 import { CustomerPaymentInformation } from "../../../tipos/CustomerPayment";
 import { Devolucion } from "../../../tipos/Devolucion";
 import { ProductoDevuelto } from "../../../tipos/ProductoDevuelto";
-import { TPVType } from "../../../tipos/TPV";
+import { ITPV } from "../../../tipos/TPV";
 import { In } from "../../../utils/animations";
 import { FetchTPV } from "../../../utils/fetches/tpvFetches";
 import GenerateQrBase64 from "../../../utils/generateQr";
@@ -13,8 +13,8 @@ import DevolucionTicket from "../../printable/devolucionTicket";
 import { Backdrop } from "../backdrop";
 
 const DevolucionModal = (props: { devolucion: Devolucion | undefined, setModal: Function }) => {
-    const [tpvDevolucion, setTpvDevolucion] = useState<TPVType>();
-    const [tpvVenta, setTpvVenta] = useState<TPVType>();
+    const [tpvDevolucion, setTpvDevolucion] = useState<ITPV>();
+    const [tpvVenta, setTpvVenta] = useState<ITPV>();
     const [qrImage, setQrImage] = useState<string>();
     const componentRef = useRef(null);
 
