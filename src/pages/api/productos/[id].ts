@@ -1,84 +1,124 @@
 import { NextApiRequest, NextApiResponse } from "next"
-import { envInformation } from "../../../utils/envInfo";
-import { ADD_PRODUCT, ADD_PRODUCTOS_FILE, QUERY_PRODUCT } from "../../../utils/querys";
-import GQLFetcher from "../../../utils/serverFetcher";
+import { ADD_PRODUCT, ADD_PRODUCTOS_FILE, DELETE_PRODUCT, QUERY_PRODUCT, QUERY_PRODUCTS, UPDATE_PRODUCT } from "../../../utils/querys";
+import GQLQuery, { GQLMutate } from "../../../utils/serverFetcher";
+import queryString from 'query-string';
+import { Producto } from "../../../tipos/Producto";
 
-const handler = async (req: NextApiRequest, res: NextApiResponse) => {
+const handler = async (req: NextApiRequest, res: NextApiResponse): Promise<void> => {
     try {
         const method = req.method;
-        let fetchResult;
-        let response;
+        const query = queryString.parse(req.query.id.toString());
 
         switch (method) {
             case 'POST':
                 if (req.query.id === "file") {
-                    response = await GQLFetcher.mutate({
-                        mutation: ADD_PRODUCTOS_FILE,
-                        variables: {
-                            csv: JSON.stringify(req.body)
-                        }
-                    });
-
+                    return await AddProductosFromFile(req, res);
                 }
-                else {
-                    response = await GQLFetcher.mutate({
-                        mutation: ADD_PRODUCT,
-                        variables: {
-                            "precioVenta": req.body.precioVenta,
-                            "ean": req.query.id,
-                            "iva": req.body.iva,
-                            "proveedor": req.body.proveedor,
-                            "familia": req.body.familia,
-                            "nombre": req.body.nombre,
-                            "precioCompra": req.body.precioCompra,
-                            "margen": req.body.margen,
-                            "cantidad": req.body.cantidad,
-                            "cantidadRestock": req.body.cantidadRestock,
-                            "alta": req.body.alta
-                        }
-                    });
-                }
-
-                if (response.errors) {
-                    res.status(300).json({ message: `Fallo al añadir el producto: ${response.errors[0]}` });
-                    return;
-                }
-
-                if (response.data.successful) {
-                    res.status(200).json({ message: response.data.message });
-                    return;
-                }
-
-                res.status(300).json({ message: `Fallo al añadir el producto: ${response.data.message}` });
-                return;
 
             case 'GET':
-                fetchResult = await GQLFetcher.query(
-                    {
-                        query: QUERY_PRODUCT,
-                        variables: {
-                            "find": {
-                                "_id": req.query.id
-                            }
-                        }
-                    }
-                );
+                if (Object.keys(query).length > 0) { return await GetProductosFromQuery(query, res); }
+                else { return await GetProductoFromId(req, res); }
 
-                if (!fetchResult.errors) {
-                    res.status(200).json({ message: `Producto encontrado` });
-                    return;
-                }
+            case 'PUT':
+                return await UpdateProducto(req, res);
 
-                res.status(300).json({ message: `Fallo al añadir el producto` });
-                return;
+            case 'DELETE':
+                return await DeleteProducto(req, res);
         }
 
-        res.status(300).json({ message: `Fallo al pedir el producto` });
-        return;
     }
     catch (err) {
         console.log(err);
-        res.status(500).json({ message: `${err}` });
+        return res.status(500).json({ message: `${err}` });
+    }
+}
+
+const GetProductoFromId = async (req: NextApiRequest, res: NextApiResponse) => {
+    const serverRes = await GQLQuery({
+        query: QUERY_PRODUCT, variables: {
+            "find": {
+                "_id": req.query.id
+            }
+        }
+    });
+    const apiResponse = await serverRes.json();
+    const data = JSON.parse(apiResponse.data);
+
+    return res.status(serverRes.ok ? 200 : 300).json({ message: data.message, data: data.producto, successful: data.successful ? data.successful : serverRes.ok });
+}
+
+const GetProductosFromQuery = async (userQuery: queryString.ParsedQuery<string>, res: NextApiResponse) => {
+    if (!userQuery.query) { res.status(300).json({ message: `La query no puede estar vacía`, successful: false }); }
+
+    const serverRes = await GQLQuery({
+        query: QUERY_PRODUCTS,
+        variables: {
+            "find": {
+                "query": userQuery.query
+            }
+        }
+    })
+    const apiResponse = await serverRes.json();
+    const data = JSON.parse(apiResponse.data);
+
+    return res.status(serverRes.ok ? 200 : 300).json({ productos: data.productos });
+}
+
+const AddProductosFromFile = async (req: NextApiRequest, res: NextApiResponse) => {
+    const apiResponse = await (await GQLMutate({
+        mutation: ADD_PRODUCTOS_FILE,
+        variables: {
+            csv: JSON.stringify(req.body)
+        }
+    })).json();
+
+    const data = JSON.parse(apiResponse.data).addProductosFile;
+    return res.status(data.successful ? 200 : 300).json({ message: data.message, successful: data.successful });
+}
+
+const DeleteProducto = async (req: NextApiRequest, res: NextApiResponse) => {
+    const apiResponse = await (await GQLMutate({
+        mutation: DELETE_PRODUCT,
+        variables: {
+            "id": req.query.id
+        }
+    })).json();
+
+    const data = JSON.parse(apiResponse.data).deleteProducto;
+    return res.status(data.successful ? 200 : 300).json({ message: data.message, successful: data.successful });
+}
+
+const UpdateProducto = async (req: NextApiRequest, res: NextApiResponse) => {
+    try {
+        const prod: Producto = req.body;
+        const apiResponse = await (await GQLMutate({
+            mutation: UPDATE_PRODUCT,
+            variables: {
+                "producto": {
+                    "_id": prod._id,
+                    "nombre": prod.nombre,
+                    "proveedor": prod.proveedor,
+                    "familia": prod.familia,
+                    "precioVenta": prod.precioVenta,
+                    "precioCompra": prod.precioCompra,
+                    "iva": prod.iva,
+                    "margen": prod.margen,
+                    "promociones": prod.promociones,
+                    "ean": prod.ean,
+                    "cantidad": prod.cantidad,
+                    "cantidadRestock": prod.cantidadRestock,
+                    "alta": prod.alta
+                }
+            }
+        })).json();
+
+        const data = JSON.parse(apiResponse.data);
+        return res.status(data.successful ? 200 : 300).json({ message: data.message, successful: data.successful });
+
+    }
+    catch (e) {
+        console.log(e);
+        return res.status(500).json({ message: `Error interno: respuesta no válida por parte del servidor.`, successful: false });
     }
 }
 

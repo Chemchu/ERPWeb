@@ -1,32 +1,28 @@
+import { GetServerSideProps } from "next";
 import React, { useEffect, useState } from "react";
-import UploadFile from "../../components/Forms/uploadFile";
-import getJwt from "../../hooks/jwt";
+import useEmpleadoContext from "../../context/empleadoContext";
+import getJwtFromString from "../../hooks/jwt";
 import DashboardLayout from "../../layout";
-import { TipoDocumento } from "../../tipos/Enums/TipoDocumentos";
-import { JWT } from "../../tipos/JWT";
+import { SesionEmpleado } from "../../tipos/Empleado";
+import { Roles } from "../../tipos/Enums/Roles";
 
-const Home = () => {
-  const [jwt, setJwt] = useState<JWT>();
-  const [userName, setUserName] = useState<string>();
+const Home = (props: { EmpleadoSesion: SesionEmpleado }) => {
+  const [saludo, setSaludo] = useState<string>();
+  const { Empleado, SetEmpleado } = useEmpleadoContext();
 
   useEffect(() => {
-    let unmounted = false;
-    setJwt(getJwt());
-
-    return () => {
-      unmounted
+    if (Object.keys(Empleado).length === 0) {
+      SetEmpleado(props.EmpleadoSesion);
     }
+    const GetData = async () => {
+      setSaludo(`${saludos[Math.floor(Math.random() * (saludos.length - 0))]}`);
+    }
+    GetData()
   }, []);
-
-  useEffect(() => {
-    if (!jwt) { return; }
-    setUserName(jwt.nombre.charAt(0).toUpperCase() + jwt.nombre.slice(1));
-
-  }, [jwt]);
 
   const saludos = ['Bienvenido otra vez', 'Hola', 'Saludos'];
 
-  if (!jwt) {
+  if (!Empleado.nombre) {
     return (
       <div>
         Cargando...
@@ -37,13 +33,32 @@ const Home = () => {
   return (
     <div className="flex flex-col p-2 text-gray-700">
       <h1 className="text-4xl">
-        {`${saludos[Math.floor(Math.random() * (saludos.length - 0))]}, ${userName}`}
+        {`${saludo},  ${Empleado.nombre.charAt(0).toUpperCase() + Empleado.nombre.slice(1)}`}
       </h1>
-      <UploadFile tipoDocumento={TipoDocumento.Productos} />
     </div>
   )
 }
 
 Home.PageLayout = DashboardLayout;
+
+export const getServerSideProps: GetServerSideProps = async (context) => {
+
+  const jwt = getJwtFromString(context.req.cookies.authorization);
+
+  let emp: SesionEmpleado = {
+    _id: jwt._id,
+    apellidos: jwt.apellidos,
+    email: jwt.email,
+    nombre: jwt.nombre,
+    rol: Roles[jwt.rol as keyof typeof Roles] || Roles.Cajero,
+  }
+  jwt.TPV ? emp.TPV = jwt.TPV : null;
+
+  return {
+    props: {
+      EmpleadoSesion: emp as SesionEmpleado
+    }
+  }
+}
 
 export default Home;

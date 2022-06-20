@@ -1,3 +1,5 @@
+import { Producto } from "../tipos/Producto";
+
 // Aplica un descuento de efectivo (descontar 5€ de una compra por ejemplo)
 export const ApplyDtoCash = (totalValue: number, dto: number): number => {
     totalValue - dto <= 0 ? totalValue = 0 : totalValue = totalValue - dto;
@@ -33,28 +35,59 @@ export const ValidateSearchString = (cadena: string): string => {
     else return "";
 }
 
+export const IsEAN13 = (cadena: string) => {
+    const reg = new RegExp("^[0-9]{13}$");
+
+    return reg.test(cadena);
+}
+
 export const ValidatePositiveFloatingNumber = (inputNumber: string): string => {
     const valuePostRegex = inputNumber.match(new RegExp("[+]?([0-9]+([.][0-9]*)?|[.][0-9]+)"))?.[0];
+
     if (valuePostRegex === undefined) { return ""; }
 
     return valuePostRegex;
 }
 
 export const ValidatePositiveIntegerNumber = (inputNumber: string): string => {
-    const valuePostRegex = inputNumber.match(new RegExp("^[+]?\d+?$"))?.[0];
+    const valuePostRegex = inputNumber.match(new RegExp("^[0-9]*"))?.[0];
+
     if (valuePostRegex === undefined) { return ""; }
 
     return valuePostRegex;
 }
 
 export const IsPositiveFloatingNumber = (input: string): boolean => {
-    let res = new RegExp('^$|[+]?([0-9]+([.][0-9]*)?|[.][0-9]+)').test(input);
+    let res = new RegExp("^$|[+]?([0-9]+([.][0-9]*)?|[.][0-9]+)").test(input);
 
     return res;
 }
 
 export const IsPositiveIntegerNumber = (input: string): boolean => {
-    let res = new RegExp('^$|^[0-9]+$').test(input);
+    if (input === "") { return true }
 
-    return res;
+    let reg = new RegExp(/^([0-9]*)/);
+    const match = input.match(reg);
+
+    if (isNaN(Number(input))) { return false }
+    if (match === null) { return false }
+    if (match[0] === "") { return false }
+    if (isNaN(Number(match[0]))) { return false }
+
+    return Boolean(match[0]);
+}
+
+export const IsValidProduct = (p: Producto): boolean => {
+    if (!p.nombre) { return false; }
+    if (!p.cantidad) { return false; }
+    if (!p.cantidadRestock) { return false; }
+    if (!p.ean) { return false; }
+    if (!p.familia) { return false; }
+    if (!p.iva) { return false; }
+    if (!p.margen) { return false; }
+    if (!p.precioCompra) { return false; }
+    if (!p.precioVenta) { return false; }
+    if (!p.proveedor) { return false; }
+
+    return true;
 }

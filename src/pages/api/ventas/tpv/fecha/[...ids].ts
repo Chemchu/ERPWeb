@@ -1,13 +1,8 @@
 import { NextApiRequest, NextApiResponse } from "next"
 import { QUERY_SALES } from "../../../../../utils/querys";
-import GQLFetcher from "../../../../../utils/serverFetcher";
+import GQLQuery from "../../../../../utils/serverFetcher";
 
 const handler = async (req: NextApiRequest, res: NextApiResponse) => {
-    // const session = await getSession({ req })
-    // if (!session) {
-    //     return res.status(401).json({ message: "Not signed in" });
-    // }
-
     switch (req.method) {
         case 'GET':
             return await GetSaleByTPVDate(req, res);
@@ -22,25 +17,23 @@ const GetSaleByTPVDate = async (req: NextApiRequest, res: NextApiResponse) => {
     try {
         const { ids } = req.query;
 
-        const fetchResult = await GQLFetcher.query({
+        const serverRes = await GQLQuery({
             query: QUERY_SALES,
             variables: {
                 find: {
                     tpv: ids[0],
                     createdAt: ids[1]
                 }
-            },
-            fetchPolicy: "no-cache"
+            }
         });
+        const apiResponse = await serverRes.json();
 
-        if (fetchResult.error) {
-            return res.status(300).json({ message: `Fallo al pedir la lista de ventas por TPV` });
-        }
-        return res.status(200).json({ message: `Lista de ventas por TPV encontrada`, ventas: JSON.stringify(fetchResult.data.ventas) });
+        const data = JSON.parse(apiResponse.data);
+        return res.status(serverRes.ok ? 200 : 300).json({ message: data.message, data: data.ventas, successful: data.successful });
     }
     catch (err) {
         console.log(err);
-        return res.status(500).json({ message: `Error: ${err}` });
+        return res.status(500).json({ message: `Error: ${err}`, successful: false });
     }
 }
 

@@ -1,9 +1,9 @@
 import React, { useContext, createContext } from 'react';
-import { Empleado } from '../../tipos/Empleado';
+import { SesionEmpleado } from '../../tipos/Empleado';
 
 type EmpleadoContextualizado = {
-    Empleado: Empleado,
-    SetEmpleado: React.Dispatch<React.SetStateAction<Empleado>>,
+    Empleado: SesionEmpleado,
+    SetEmpleado: Function,
 }
 
 //Context
@@ -11,7 +11,7 @@ const AppContext = createContext<EmpleadoContextualizado>({} as EmpleadoContextu
 
 //Provider
 export const EmpleadoContextProvider = ({ children }: { children: React.ReactNode }) => {
-    const [Empleado, SetEmpleado] = React.useState<Empleado>({} as Empleado);
+    const [Empleado, SetEmpleado] = React.useState<SesionEmpleado>({} as SesionEmpleado);
 
     const values: EmpleadoContextualizado = {
         Empleado: Empleado,

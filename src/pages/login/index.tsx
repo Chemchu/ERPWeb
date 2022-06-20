@@ -1,8 +1,8 @@
 import { motion } from 'framer-motion';
-import React, { useEffect, useState } from 'react';
-import { SplitLetters } from '../../components/compAnimados/SplitText';
+import React, { useState } from 'react';
+import { SplitLetters } from '../../components/elementos/compAnimados/SplitText';
 import Router from 'next/router';
-import Cookies from 'js-cookie';
+import { notifySuccess } from '../../utils/toastify';
 
 const container = {
     hidden: { opacity: 0, scale: 0 },
@@ -76,9 +76,9 @@ export const LoginForm = () => {
             body: JSON.stringify({ email: userEmail, password: userPassword })
         });
 
-        const loginResponse = await res.json();
-        if (loginResponse.token) {
-            Cookies.set("authorization", loginResponse.token);
+        if (res.status === 200) {
+            const json = await res.json();
+            notifySuccess(json.message)
             return Router.push("/dashboard");
         }
 
@@ -166,7 +166,6 @@ export const LoginForm = () => {
 }
 
 export async function getServerSideProps() {
-
     return {
         props: {
             video: `/video/marketVideo-${Math.floor(Math.random() * 5)}.mp4`,

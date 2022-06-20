@@ -2,11 +2,12 @@ import { AnimatePresence, motion } from "framer-motion";
 import { useRouter } from "next/router";
 import React, { useState } from "react";
 import Sidebar from "../components/sidebar";
-import NextNProgress from "nextjs-progressbar";
+import NextProgress from "next-progress";
 import { ProductCarritoContextProvider } from "../context/productosEnCarritoContext";
 import { EmpleadoContextProvider } from "../context/empleadoContext";
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import { SidebarOption } from "../tipos/Enums/SidebarOption";
 
 const variants = {
     initial: {
@@ -29,10 +30,9 @@ const variants = {
     },
 }
 
-
 const DashboardLayout = React.memo(({ children }: { children: React.ReactNode }) => {
     const [isSidebarCollapsed, setSidebarCollapsed] = useState<boolean>(false);
-    const [IndexSidebar, setSidebarIndex] = useState<number>(0);
+    const [IndexSidebar, setSidebarIndex] = useState<SidebarOption>(SidebarOption.Inicio);
 
     {/* router.route es lo que hace que funcione el exit del AnimatePresence */ }
     const router = useRouter();
@@ -41,15 +41,13 @@ const DashboardLayout = React.memo(({ children }: { children: React.ReactNode })
         <EmpleadoContextProvider>
             <ProductCarritoContextProvider>
                 {
-                    <main className="bg-gray-100 dark:bg-gray-800 h-full w-full overflow-hidden" >
-                        <NextNProgress />
+                    <main className="dark:bg-gray-800 h-full w-full overflow-hidden bg_food" >
+                        <NextProgress />
                         <div className="flex items-start w-full h-full justify-start">
-                            <Sidebar isCollapsed={isSidebarCollapsed} setCollapsed={setSidebarCollapsed} IndexSeleccionado={IndexSidebar} />
-                            <AnimatePresence exitBeforeEnter>
-                                <motion.div key={router.route} className="w-full h-full" initial={variants.initial} animate={variants.animate} exit={variants.exit}>
-                                    {children}
-                                </motion.div>
-                            </AnimatePresence>
+                            <Sidebar isCollapsed={isSidebarCollapsed} setCollapsed={setSidebarCollapsed} IndexSeleccionado={IndexSidebar} setIndex={setSidebarIndex} />
+                            <motion.div key={router.route} className="w-full h-full" initial={variants.initial} animate={variants.animate} exit={variants.exit}>
+                                {children}
+                            </motion.div>
                             <ToastContainer
                                 position="bottom-right"
                                 autoClose={3000}

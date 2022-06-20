@@ -13,13 +13,14 @@ export async function middleware(req: NextRequest, ev: NextFetchEvent) {
         }
 
         const authCookie = req.cookies.authorization.split(" ")[1];
+
         if (IsJwtExpired(authCookie)) {
             url.pathname = "/login";
             return NextResponse.rewrite(url).clearCookie("authorization");
         }
 
         if (authCookie) {
-            const credentialsValidation = await (await fetch(`${process.env.ERPBACK_URL}graphql`, {
+            const credentialsValidation = await fetch(`${process.env.ERPGATEWAY_URL}api/graphql`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -36,10 +37,14 @@ export async function middleware(req: NextRequest, ev: NextFetchEvent) {
                         }
                     }
                 )
-            })).json();
+            })
+            const credJson = await credentialsValidation.json();
+            const authHealth = JSON.parse(credJson.data);
 
-            if (!credentialsValidation.data.validateJwt.validado) { url.pathname = "/login"; return NextResponse.rewrite(url).clearCookie("authorization"); }
+            if (!authHealth.validateJwt.validado) { url.pathname = "/login"; return NextResponse.rewrite(url).clearCookie("authorization"); }
             if (req.nextUrl.pathname === '/login') { url.pathname = "/dashboard"; return NextResponse.rewrite(url); }
+
+            return NextResponse.next();
         }
     }
     catch (err) {
@@ -50,7 +55,7 @@ export async function middleware(req: NextRequest, ev: NextFetchEvent) {
 
 const IsJwtExpired = (Jwt: string): boolean => {
     let base64Payload = Jwt.split('.')[1];
-    let payload = Buffer.from(base64Payload, 'base64');
+    let payload = atob(base64Payload);
     const exp = JSON.parse(payload.toString()).exp;
 
     const expDate = new Date(0).setSeconds(exp);

@@ -1,227 +1,179 @@
-import { AnimatePresence, motion } from "framer-motion";
-import React, { useState } from "react";
+import { AnimatePresence } from "framer-motion";
+import React, { useEffect, useState } from "react";
 import { Producto } from "../../../tipos/Producto";
-import { CheckBox } from "../../Forms/checkbox";
-import { Paginador } from "../../Forms/paginador";
+import { Paginador } from "../../elementos/Forms/paginador";
 import SkeletonCard from "../../Skeletons/skeletonCard";
-import EditarProducto from "../../modal/editarProducto";
+import VerProducto from "../../modal/verProducto";
+import { notifyWarn } from "../../../utils/toastify";
+import UploadFile from "../../elementos/botones/uploadFile";
+import { TipoDocumento } from "../../../tipos/Enums/TipoDocumentos";
+import DownloadFile from "../../elementos/botones/downloadFile";
+import AddProducto from "../../modal/addProducto";
+import NuevoBoton from "../../elementos/botones/nuevoBoton";
+import { FetchProductoByQuery, FetchProductos } from "../../../utils/fetches/productosFetches";
 
-const variants = {
-    initial: {
-        opacity: 0
-    },
-    animate: {
-        opacity: 1,
-        transition: {
-            duration: 1,
-            ease: "easeInOut",
-        },
-    },
-    exit: {
-        y: '-100vh',
-        opacity: 0,
-        transition: {
-            ease: [0.87, 0, 0.13, 1],
-            duration: 1
+const arrayNum = [...Array(8)];
+
+const ProductPage = () => {
+    const [filtro, setFiltro] = useState<string>("");
+    const [ProductosFiltrados, setProductosFiltradas] = useState<Producto[] | undefined>();
+    const [addProdModal, setAddProdModal] = useState<boolean>(false);
+    const [Productos, SetProductos] = useState<Producto[]>([]);
+    const [isLoading, setLoading] = useState<boolean>(true);
+
+    useEffect(() => {
+        const GetAllData = async () => {
+            SetProductos(await FetchProductos());
+            setLoading(false);
         }
-    },
-    exitFadeOut: {
-        opacity: 0,
-        transition: {
-            ease: "easeInOut",
-            duration: 1
+        GetAllData();
+    }, []);
+
+    useEffect(() => {
+        if (filtro === "") {
+            setProductosFiltradas(undefined);
         }
-    },
+    }, [filtro])
+
+    const Filtrar = async (f: string) => {
+        if (f === "") { return; }
+        if (!f.match('^[-_a-zA-Z0-9.\s ]*$')) { notifyWarn("Producto inválido"); return; }
+
+        setProductosFiltradas(await FetchProductoByQuery(f));
+    }
+
+    return (
+        <div className="flex flex-col h-full w-full bg-white rounded-b-2xl rounded-r-2xl p-4 shadow-lg border-x">
+            <div className="flex w-full h-auto py-4">
+                <div className="flex gap-4 w-full h-full justify-start">
+                    <NuevoBoton accionEvent={() => setAddProdModal(true)} />
+                    <UploadFile tipoDocumento={TipoDocumento.Productos} />
+                    <DownloadFile tipoDocumento={TipoDocumento.Productos} />
+                </div>
+                <div className="flex gap-2">
+                    <input autoFocus={true} className="rounded-lg border appearance-none shadow-lg w-40 xl:w-96 h-full py-2 px-4 bg-white text-gray-700 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-600" placeholder="Buscar..."
+                        onChange={(e) => { setFiltro(e.target.value); }} onKeyPress={async (e) => { e.key === "Enter" && await Filtrar(filtro) }} />
+
+                    {
+                        filtro ?
+                            <button className="px-4 py-2 font-semibold text-white bg-blue-500 rounded-lg shadow-md hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-400 focus:ring-offset-2 focus:ring-offset-purple-200"
+                                onClick={async (e) => { e.preventDefault(); await Filtrar(filtro) }}>
+                                Filtrar
+                            </button>
+                            :
+                            <button disabled className="px-4 py-2 font-semibold text-white bg-blue-300 rounded-lg shadow-md cursor-default">
+                                Filtrar
+                            </button>
+                    }
+                </div>
+            </div>
+            <div className="flex justify-between border-t-2 border-x-2 rounded-t-2xl px-5 py-2">
+                <div className="text-left text-sm font-semibold w-2/5">
+                    Nombre
+                </div>
+
+                <div className="text-left text-sm font-semibold w-1/5">
+                    Precio
+                </div>
+                <div className="text-left text-sm font-semibold w-1/5 ">
+                    Familia
+                </div>
+                <div className="text-right text-sm font-semibold w-1/5">
+                    Cantidad
+                </div>
+            </div>
+            {
+                isLoading ?
+                    arrayNum.map((n, i) => {
+                        return (
+                            <SkeletonCard key={`SkeletonProdList-${i}`} />
+                        );
+                    }) :
+                    ProductosFiltrados ?
+                        <TablaProductos Productos={ProductosFiltrados} SetProductos={SetProductos} />
+                        :
+                        <TablaProductos Productos={Productos} SetProductos={SetProductos} />
+            }
+            <AnimatePresence>
+                {addProdModal && <AddProducto showModal={setAddProdModal} />}
+            </AnimatePresence>
+        </div>
+    );
 }
 
-const ProductPage = (props: { productos: Producto[], serverUp: boolean }) => {
+const TablaProductos = (props: { Productos: Producto[], SetProductos: Function }) => {
     const [currentPage, setCurrentPage] = useState<number>(1);
-    const [selectedProducts, setSelectedProducts] = useState<number[]>([]);
-    const [allChecked, setAllChecked] = useState<boolean>(false);
 
-    const elementsPerPage = 10;
-    const numPages = Math.ceil(props.productos.length / elementsPerPage);
+    const elementsPerPage = 50;
+    const numPages = Math.ceil(props.Productos.length / elementsPerPage);
 
     const setPaginaActual = (page: number) => {
         if (page < 1) { return; }
         if (page > numPages) { return; }
 
         setCurrentPage(page);
-        setAllBoxesChecked(false);
     }
-
-    function range(start: number, end: number) {
-        if (start >= end) return [];
-
-        let res: number[] = [];
-        for (var i = start; i <= end; i++) {
-            res.push(i);
-        }
-        return res;
-    }
-
-    const setAllBoxesChecked = (checked: boolean) => {
-        setAllChecked(checked);
-
-        if (checked) {
-            let indexes = range(0, elementsPerPage - 1);
-            setSelectedProducts(indexes);
-        }
-        else {
-            setSelectedProducts([]);
-        }
-    }
-
-    const arrayNum = [...Array(8)];
 
     return (
-        <div className="flex flex-col h-screen w-full antialiased px-8 py-8" >
-            <h2 className="text-2xl leading-tight">
-                Productos
-            </h2>
-            <div className="flex mb-1 sm:mb-0 justify-between w-full pt-4">
-                <div className="flex gap-4 self-center">
-                    <button className="flex flex-shrink-0 gap-2 px-4 py-2 text-base font-semibold text-white bg-green-500 rounded-lg shadow-md hover:bg-green-600 focus:outline-none focus:ring-2 focus:ring-green-600 focus:ring-offset-2 focus:ring-offset-blue-200">
-                        Añadir
-                        <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v3m0 0v3m0-3h3m-3 0H9m12 0a9 9 0 11-18 0 9 9 0 0118 0z" />
-                        </svg>
-                    </button>
-                    {
-                        selectedProducts.length > 0 && <motion.button initial={variants.initial} animate={variants.animate} exit={variants.exitFadeOut} className="flex flex-shrink-0 gap-2 px-4 py-2 text-base font-semibold text-white bg-red-500 rounded-lg shadow-md hover:bg-red-600 focus:outline-none focus:ring-2 focus:ring-red-600 focus:ring-offset-2 focus:ring-offset-red-200">
-                            Borrar
-                            <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
-                            </svg>
-                        </motion.button>
-                    }
-                    {
-                        selectedProducts.length > 0 && <motion.button initial={variants.initial} animate={variants.animate} exit={variants.exitFadeOut} className="flex flex-shrink-0 gap-2 px-4 py-2 text-base font-semibold text-white bg-yellow-500 rounded-lg shadow-md hover:bg-yellow-600 focus:outline-none focus:ring-2 focus:ring-yellow-600 focus:ring-offset-2 focus:ring-offset-yellow-200"
-                            onClick={() => { setAllBoxesChecked(false) }}>
-                            Cancelar
-                            <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z" />
-                            </svg>
-                        </motion.button>
-                    }
-                </div>
-                <div className="text-end">
-                    <div className="flex flex-col md:flex-row w-3/4 md:w-full max-w-sm md:space-x-3 space-y-3 md:space-y-0 justify-center">
-                        <input type="text" id="form-subscribe-Filter" className="rounded-lg flex-1 appearance-none border border-gray-300 w-full py-2 px-4 bg-white text-gray-700 placeholder-gray-400 shadow-sm text-base focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-transparent" placeholder="Producto a buscar..." />
-                        <button className="flex-shrink-0 px-4 py-2 text-base font-semibold text-white bg-blue-500 rounded-lg shadow-md hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 focus:ring-offset-blue-200">
-                            Filtrar
-                        </button>
-                    </div>
-                </div>
+        <>
+            <div className="h-full w-full border-2 rounded-b overflow-y-scroll">
+                {
+                    props.Productos.length <= 0 ?
+                        <div className="flex justify-center items-center h-full w-full text-xl">
+                            No se ha encontrado registros de productos en el sistema
+                        </div>
+                        :
+                        props.Productos.slice((elementsPerPage * (currentPage - 1)), currentPage * elementsPerPage).map((p, index) => {
+                            return (
+                                <div key={`FilaProdTable${p._id}`}>
+                                    <FilaProducto producto={p} productos={props.Productos} setAllProductos={props.SetProductos} />
+                                </div>
+                            );
+                        })
+                }
             </div>
-            <div className="flex flex-col h-full w-full mt-4 pb-20">
-                <div className={`bg-white grid ${selectedProducts.length > 0 ? "grid-cols-6" : "grid-cols-5"} justify-evenly rounded-t-xl border-b-2`}>
-                    {selectedProducts.length > 0 && <div className="px-5 py-3  text-gray-800 text-left text-sm font-semibold">
-                        <CheckBox isChecked={allChecked} setChecked={setAllBoxesChecked} />
-                    </div>}
-                    <div className={`${selectedProducts.length > 0 ? "" : "px-5"} py-3 text-gray-800 text-left text-sm font-semibold`}>
-                        Nombre
-                    </div>
-                    <div className="py-3  text-gray-800 text-left text-sm font-semibold">
-                        Familia
-                    </div>
-                    <div className="py-3  text-gray-800 text-left text-sm font-semibold">
-                        Precio
-                    </div>
-                    <div className="py-3  text-gray-800 text-left text-sm font-semibold">
-                        Cantidad
-                    </div>
-                </div>
-                <div className="bg-white flex flex-col border-b-4 overflow-scroll overflow-x-hidden">
-                    {
-                        props.productos.length <= 0 ?
-                            arrayNum.map((n, i) => {
-                                return (
-                                    <SkeletonCard key={`SkeletonProdList-${i}`} />
-                                );
-                            })
-                            :
-                            props.productos.slice((elementsPerPage * (currentPage - 1)), currentPage * elementsPerPage).map((p, index) => {
-                                return (
-                                    <div key={`FilaProdTable${p._id}`}>
-                                        <FilaProducto listIndex={index} selectedProductos={selectedProducts} setAllChecks={setAllChecked} producto={p} setSelection={setSelectedProducts} />
-                                    </div>
-                                );
-                            })
-                    }
-                </div>
-                <div className="bg-white flex flex-row p-5 items-center justify-center rounded-b-xl shadow-lg">
-                    <Paginador numPages={numPages} paginaActual={currentPage} maxPages={10} cambiarPaginaActual={setPaginaActual} />
-                </div>
+            <div className="flex pt-2 items-center justify-center">
+                <Paginador numPages={numPages} paginaActual={currentPage} maxPages={10} cambiarPaginaActual={setPaginaActual} />
             </div>
-        </div>
-    );
+        </>
+    )
 }
 
-const FilaProducto = (props: { listIndex: number, producto: Producto, selectedProductos: number[], setSelection: Function, setAllChecks: Function }) => {
+const FilaProducto = (props: { producto: Producto, productos: Producto[], setAllProductos: Function }) => {
     const [showModal, setModal] = useState<boolean>(false);
+    const [producto, setProducto] = useState<Producto>(props.producto);
 
-    const CloseModalProducto = () => {
-        setModal(false);
-    }
+    const SetCurrentProduct = (p: Producto | null) => {
+        if (p === null) {
+            const prods = props.productos.filter((p) => { return p._id !== producto._id });
+            props.setAllProductos(prods);
 
-    const SetCheckBox = (isChecked: boolean) => {
-        if (isChecked) {
-            props.setSelection([...props.selectedProductos, props.listIndex]);
+            return;
         }
-        else {
-            props.setAllChecks(isChecked);
-            props.setSelection(props.selectedProductos.filter(p => p != props.listIndex));
-        }
+
+        setProducto(p);
     }
 
     return (
-        <div className="hover:bg-gray-200 cursor-pointer">
-            <div className="grid grid-cols-5 w-full justify-evenly gap-x-6 border-t"
-                onClick={() => { props.selectedProductos.includes(props.listIndex) ? props.setSelection(props.selectedProductos.filter(p => p != props.listIndex)) : props.setSelection([...props.selectedProductos, props.listIndex]) }} >
-                <div className="flex px-5 py-5 border-gray-200 text-sm">
-                    {
-                        props.selectedProductos.length > 0 && <div className="flex pr-2">
-                            {
-                                props.selectedProductos.includes(props.listIndex) ?
-                                    <CheckBox isChecked={true} setChecked={SetCheckBox} />
-                                    :
-                                    <CheckBox isChecked={false} setChecked={SetCheckBox} />
-                            }
-                        </div>
-                    }
-                    <p className="text-gray-900 whitespace-no-wrap inline-block">
-                        {props.producto.nombre}
-                    </p>
+        <div className="hover:bg-blue-200">
+            <div className="flex justify-between border-b px-5 py-2 cursor-pointer" onClick={() => { setModal(true) }}>
+                <div className="w-2/5 text-sm text-left">
+                    {producto.nombre}
                 </div>
-                <div className="flex pr-6 self-center border-gray-200 text-sm">
-                    <p className="text-gray-900 whitespace-no-wrap">
-                        {props.producto.familia}
-                    </p>
+                <div className="w-1/5 text-sm text-left">
+                    {producto.precioVenta.toFixed(2)}€
                 </div>
-                <div className="flex pr-6 self-center border-gray-200 text-base">
-                    <p className="text-gray-900 whitespace-no-wrap">
-                        {props.producto.precioVenta.toFixed(2)}€
-                    </p>
+                <div className="w-1/5 text-base text-left">
+                    {producto.familia}
                 </div>
-                <div className="flex pr-6 self-center border-gray-200 text-sm">
-                    <span className={`relative inline-block px-3 py-1 font-semibold ${props.producto.cantidad > 0 ? " text-green-900" : "text-red-900"} leading-tight`}>
-                        <span aria-hidden="true" className={`absolute inset-0 ${props.producto.cantidad > 0 ? "bg-green-200" : "bg-red-200"} opacity-50 rounded-full`}>
-                        </span>
-                        <span className="relative">
-                            {props.producto.cantidad ? props.producto.cantidad : 0}
-                        </span>
+                <div className="w-1/5 text-sm text-right">
+                    <span className={`w-full px-3 py-1 rounded-full ${producto.cantidad > 0 ? " text-green-900 bg-green-300" : "text-red-900 bg-red-300"}`}>
+                        {producto.cantidad ? producto.cantidad : 0}
                     </span>
                 </div>
-                <button className="flex pr-6 justify-end self-center gap-2 border-gray-200 text-base" onClick={(e) => { e.stopPropagation(); setModal(true); }}>
-                    Editar
-                    <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
-                    </svg>
-                </button>
             </div>
             <AnimatePresence>
-                {showModal && <EditarProducto handleClose={CloseModalProducto} product={props.producto} />}
+                {showModal && <VerProducto showModal={setModal} producto={producto} setProducto={SetCurrentProduct} />}
             </AnimatePresence>
         </div>
 

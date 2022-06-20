@@ -10,5 +10,5 @@ const getEnvironmentVariable = (environmentVariable: string): string => {
 };
 
 export const envInformation = {
-  ERPBACK_URL: getEnvironmentVariable("ERPBACK_URL")
+  ERPGATEWAY_URL: getEnvironmentVariable("ERPGATEWAY_URL")
 };

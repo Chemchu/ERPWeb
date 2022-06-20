@@ -3,73 +3,48 @@ import React, { useEffect, useRef, useState } from "react";
 import { useReactToPrint } from "react-to-print";
 import useEmpleadoContext from "../../../context/empleadoContext";
 import useProductEnCarritoContext from "../../../context/productosEnCarritoContext";
-import getJwt from "../../../hooks/jwt";
 import { Cliente } from "../../../tipos/Cliente";
 import { CustomerPaymentInformation } from "../../../tipos/CustomerPayment";
 import { TipoCobro } from "../../../tipos/Enums/TipoCobro";
-import { AddVenta, FetchClientes } from "../../../utils/fetches";
 import { CalcularCambio } from "../../../utils/preciosUtils";
 import { ValidatePositiveFloatingNumber } from "../../../utils/validator";
-import Dropdown from "../../Forms/dropdown";
-import { Input } from "../../Forms/input/input";
-import { InputNumber } from "../../Forms/input/inputDinero";
-import Ticket from "../../ticket";
+import Dropdown from "../../elementos/Forms/dropdown";
+import { InputNumber } from "../../elementos/Forms/input/inputDinero";
+import Ticket from "../../printable/ticket";
 import { Backdrop } from "../backdrop";
 import { notifyError, notifySuccess } from "../../../utils/toastify";
-import { JWT } from "../../../tipos/JWT";
 import GenerateQrBase64 from "../../../utils/generateQr";
-
-const In = {
-    hidden: {
-        scale: 0,
-        opacity: 0
-    },
-    visible: {
-        scale: 1,
-        opacity: 1,
-        transition: {
-            duration: 0.1,
-            type: "spring",
-            damping: 15,
-            stifness: 500
-        }
-    },
-    exit: {
-        y: "-100vh",
-        opacity: 0,
-        transition: {
-            duration: 0.25,
-        }
-    }
-}
+import { In } from "../../../utils/animations";
+import { FetchClientes } from "../../../utils/fetches/clienteFetches";
+import { AddVenta } from "../../../utils/fetches/ventasFetches";
 
 export const ModalPagar = (props: { PagoCliente: CustomerPaymentInformation, handleModalOpen: Function, AllClientes?: Cliente[] }) => {
-    const [jwt, setJwt] = useState<JWT>();
     const [dineroEntregado, setDineroEntregado] = useState<string>("0");
     const [dineroEntregadoTarjeta, setDineroEntregadoTarjeta] = useState<string>("0");
     const [cambio, setCambio] = useState<number>(props.PagoCliente.cambio);
     const { Empleado } = useEmpleadoContext();
 
     const [Clientes, SetClientes] = useState<Cliente[]>([]);
-    const [ClienteActual, SetClienteActual] = useState<string>("General");
+    const [ClienteActual, SetClienteActual] = useState<Cliente>(props.PagoCliente.cliente);
+    const [NombreClienteActual, SetNombreClienteActual] = useState<string>("General");
     const [PagoDelCliente, SetPagoCliente] = useState<CustomerPaymentInformation>(props.PagoCliente);
-    const [qrImage, setQrImage] = useState<string>();
+    const [qrImage, setQrImage] = useState<any>();
     const [fecha, setFecha] = useState<string>();
 
-    const { ProductosEnCarrito, SetProductosEnCarrito } = useProductEnCarritoContext();
+    const { ProductosEnCarrito, SetProductosEnCarrito, SetDtoEfectivo, SetDtoPorcentaje } = useProductEnCarritoContext();
     const [serverUp, setServerStatus] = useState<boolean>(false);
 
     const componentRef = useRef(null);
 
     useEffect(() => {
         let isUnmounted = false;
-        setJwt(getJwt());
         if (props.AllClientes) {
             SetClientes(props.AllClientes);
             setServerStatus(true);
         }
         else {
             FetchClientes().then((r) => {
+
                 if (!isUnmounted) {
                     SetClientes(r)
                     setServerStatus(true);
@@ -90,13 +65,26 @@ export const ModalPagar = (props: { PagoCliente: CustomerPaymentInformation, han
         }
     }, [qrImage]);
 
+    useEffect(() => {
+        const cliente = Clientes.find((c) => {
+            return c.nombre === NombreClienteActual
+        })
+        if (cliente) {
+            SetClienteActual(cliente)
+        }
+    }, [NombreClienteActual])
+
     const reactToPrintContent = React.useCallback(() => {
         return componentRef.current;
     }, []);
 
+    // Se encarga de limpiar el carrito y los descuentos
     const onAfterPrintHandler = React.useCallback(() => {
         SetProductosEnCarrito([]);
+        SetDtoEfectivo("0");
+        SetDtoPorcentaje("0");
         notifySuccess("Venta realizada correctamente")
+        props.handleModalOpen(false);
     }, []);
 
     const handlePrint = useReactToPrint({
@@ -119,16 +107,16 @@ export const ModalPagar = (props: { PagoCliente: CustomerPaymentInformation, han
         setCambio(CalcularCambio(PagoDelCliente.precioTotal, Number(dineroEntregado), Number(dinero)))
     }
 
-    const AddSale = async (pagoCliente: CustomerPaymentInformation) => {
+    const RealizarVenta = async (pagoCliente: CustomerPaymentInformation) => {
+        const abortController = new AbortController();
         try {
             UpdatePaymentInfo();
-            if (!jwt) { notifyError("Error con la autenticación"); return; }
-            const { data, error } = await AddVenta(pagoCliente, ProductosEnCarrito, Empleado, Clientes, jwt);
+            if (!Empleado || !Empleado.TPV) { notifyError("Error con la autenticación"); return; }
+            const { data, error } = await AddVenta(pagoCliente, ProductosEnCarrito, Empleado, Clientes, Empleado.TPV);
 
             if (!error) {
                 setFecha(data.createdAt);
-                setQrImage(await GenerateQrBase64(data._id));
-                props.handleModalOpen(false);
+                setQrImage(await GenerateQrBase64(data._id, abortController));
             }
             else {
                 setFecha(undefined);
@@ -138,6 +126,7 @@ export const ModalPagar = (props: { PagoCliente: CustomerPaymentInformation, han
         }
         catch (err) {
             console.log(err);
+            abortController.abort();
             notifyError("Error al realizar la venta")
         }
     }
@@ -150,7 +139,7 @@ export const ModalPagar = (props: { PagoCliente: CustomerPaymentInformation, han
         p.pagoEnTarjeta = Number(dineroEntregadoTarjeta);
         p.cambio = cambio;
 
-        const cliente = Clientes.find((c) => c.nombre == ClienteActual);
+        const cliente = Clientes.find((c) => c.nombre == NombreClienteActual);
         if (!cliente) { p.cliente = Clientes[0] }
         else { p.cliente = cliente }
 
@@ -181,26 +170,26 @@ export const ModalPagar = (props: { PagoCliente: CustomerPaymentInformation, han
                                     <div className="text-2xl font-semibold">Datos cliente</div>
                                     <hr />
                                     <div className="flex flex-col justify-between mt-4 px-2 text-lg text-center">
-                                        <label className="text-left">Seleccionar cliente</label>
-                                        <Dropdown elementos={Clientes.map((c) => { return c.nombre })} selectedElemento={ClienteActual} setElemento={SetClienteActual} />
+                                        <label className="text-left font-semibold">Buscar cliente</label>
+                                        <Dropdown elementos={Clientes.map((c) => { return c.nombre })} selectedElemento={NombreClienteActual} setElemento={SetNombreClienteActual} />
                                     </div>
                                 </div>
-                                <div className="flex flex-col px-2 pt-6 justify-items-start w-full">
+                                <div className="flex flex-col gap-2 px-2 pt-6 justify-items-start w-full">
                                     <div className="text-left">
-                                        <h1 className="text-lg">Nombre completo</h1>
-                                        <Input placeholder="Nombre del cliente" />
+                                        <h1 className="text-lg font-semibold">Nombre completo</h1>
+                                        <label className="text-base" htmlFor="NombreCompleto">{ClienteActual?.nombre}</label>
                                     </div>
                                     <div className="text-left">
-                                        <h1 className="text-lg">Dirección</h1>
-                                        <Input placeholder="Ejem.: Calle Alcalá 14" />
+                                        <h1 className="text-lg font-semibold">Dirección </h1>
+                                        <label className="text-base" htmlFor="NombreCompleto">{ClienteActual?.calle}</label>
                                     </div>
                                     <div className="text-left">
-                                        <h1 className="text-lg">NIF</h1>
-                                        <Input placeholder="Número de identificación fiscal" />
+                                        <h1 className="text-lg font-semibold">CIF </h1>
+                                        <label className="text-base" htmlFor="NombreCompleto">{ClienteActual?.nif}</label>
                                     </div>
                                     <div className="text-left">
-                                        <h1 className="text-lg">Código postal</h1>
-                                        <Input placeholder="Ejem.: 46006" />
+                                        <h1 className="text-lg font-semibold">Código postal </h1>
+                                        <label className="text-base" htmlFor="NombreCompleto">{ClienteActual?.cp}</label>
                                     </div>
                                 </div>
                             </div>
@@ -215,7 +204,7 @@ export const ModalPagar = (props: { PagoCliente: CustomerPaymentInformation, han
                                                 Efectivo
                                             </div>
                                             <div className="text-xl">
-                                                <InputNumber value={dineroEntregado} setValue={SetDineroClienteEfectivo} />
+                                                <InputNumber value={dineroEntregado} setValue={SetDineroClienteEfectivo} tipo={TipoCobro.Efectivo} valorPendiente={cambio.toFixed(2)} />
                                             </div>
                                         </div>
                                         <div>
@@ -223,7 +212,7 @@ export const ModalPagar = (props: { PagoCliente: CustomerPaymentInformation, han
                                                 Tarjeta
                                             </div>
                                             <div className="text-xl">
-                                                <InputNumber value={dineroEntregadoTarjeta} setValue={SetDineroClienteTarjeta} />
+                                                <InputNumber value={dineroEntregadoTarjeta} setValue={SetDineroClienteTarjeta} tipo={TipoCobro.Tarjeta} valorPendiente={cambio.toFixed(2)} />
                                             </div>
                                         </div>
                                     </div>
@@ -239,7 +228,7 @@ export const ModalPagar = (props: { PagoCliente: CustomerPaymentInformation, han
                                         <div className="text-4xl font-semibold">{isNaN(Number(dineroEntregado) + Number(dineroEntregadoTarjeta)) ? "0.00" : (Number(dineroEntregado) + Number(dineroEntregadoTarjeta)).toFixed(2)}€</div>
                                     </div>
                                     <div>
-                                        <div>{cambio < 0 ? 'Pendiente' : 'Cambio'}</div>
+                                        <div>{Number(cambio.toFixed(2)) < 0 ? 'Pendiente' : 'Cambio'}</div>
                                         <div className={`text-4xl font-semibold ${cambio < 0 ? "text-red-500" : "text-green-500"}`}>{cambio.toFixed(2)}€</div>
                                     </div>
                                 </div>
@@ -253,8 +242,8 @@ export const ModalPagar = (props: { PagoCliente: CustomerPaymentInformation, han
                             </button>
                             {
                                 serverUp ?
-                                    cambio >= 0 ?
-                                        <button className="bg-blue-500 hover:bg-blue-600 text-white w-full h-12 hover:shadow-lg rounded-lg flex items-center justify-center" onClick={async () => { await AddSale(PagoDelCliente); }} >
+                                    Number(cambio.toFixed(2)) >= 0 ?
+                                        <button className="bg-blue-500 hover:bg-blue-600 text-white w-full h-12 hover:shadow-lg rounded-lg flex items-center justify-center" onClick={async () => { await RealizarVenta(PagoDelCliente); }} >
                                             <div className="text-lg">COMPLETAR VENTA</div>
                                         </button>
                                         :

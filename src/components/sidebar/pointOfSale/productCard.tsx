@@ -8,7 +8,7 @@ import { ValidatePositiveFloatingNumber } from '../../../utils/validator';
 const ProductCard = React.memo((props: { Prod: Producto }) => {
     return (
         <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.9 }}
-            className="flex flex-col shadow-lg h-40 w-full rounded-xl p-2 mx-1 my-3 cursor-pointer border 
+            className="flex flex-col shadow-lg h-40 w-full rounded-xl p-1 cursor-pointer border 
                 bg-white hover:shadow-2xl hover:bg-blue-400 hover:border-blue-700 hover:text-white">
             <div className="flex flex-col justify-between divide-y-2 divide-slate-200 p-2 h-full w-full">
                 <div className="lg:text-base sm:text-base xs:text-sm text-left ">{props.Prod.nombre}</div>
@@ -46,7 +46,7 @@ export const ProductSelectedCard = React.memo((props: { producto: ProductoVendid
                             <div className="grid grid-rows-2 text-left">
                                 <p className="text-sm truncate font-semibold">{props.producto.nombre}</p>
                                 {
-                                    isNaN(Number(props.producto.dto)) || Number(props.producto.dto) == 0 ?
+                                    isNaN(Number(props.producto.dto)) || Number(props.producto.dto) === 0 ?
                                         <p className="text-xs block">{(props.producto.precioVenta * Number(props.producto.cantidadVendida)).toFixed(2)}€</p>
                                         :
                                         <div className="flex-grow-0">
@@ -64,7 +64,8 @@ export const ProductSelectedCard = React.memo((props: { producto: ProductoVendid
                         </svg>
                     </button>
                 </div>
-                {isOpen &&
+                {
+                    isOpen &&
                     <div className="flex mt-1 p-2 gap-4 bg-blue-200 rounded-lg" onClick={(e) => e.stopPropagation()}>
                         <div>
                             <div className="font-semibold">
@@ -107,7 +108,6 @@ export const ProductSelectedCard = React.memo((props: { producto: ProductoVendid
                                 <> %</>
                             </div>
                         </div>
-
                     </div>
                 }
             </div>

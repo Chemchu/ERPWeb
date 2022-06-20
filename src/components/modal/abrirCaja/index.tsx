@@ -1,108 +1,64 @@
-import { useMutation } from "@apollo/client";
-import { motion } from "framer-motion";
-import Cookies from "js-cookie";
+import { AnimatePresence, motion } from "framer-motion";
 import { useEffect, useState } from "react";
-import getJwt from "../../../hooks/jwt";
-import { JWT } from "../../../tipos/JWT";
-import { OCUPY_TPV } from "../../../utils/querys";
+import useEmpleadoContext from "../../../context/empleadoContext";
+import { ITPV } from "../../../tipos/TPV";
+import { In } from "../../../utils/animations";
+import { FetchTPVsByDisponibilidad, OcuparTPV } from "../../../utils/fetches/tpvFetches";
 import { ValidatePositiveFloatingNumber } from "../../../utils/validator";
-import Dropdown from "../../Forms/dropdown";
+import Droplist from "../../elementos/Forms/droplist";
 import { Backdrop } from "../backdrop";
-
-const In = {
-    hidden: {
-        scale: 0,
-        opacity: 0
-    },
-    visible: {
-        scale: 1,
-        opacity: 1,
-        transition: {
-            duration: 0.1,
-            type: "spring",
-            damping: 15,
-            stifness: 500
-        }
-    },
-    exit: {
-        y: "-100vh",
-        opacity: 0,
-        transition: {
-            duration: 0.25,
-        }
-    }
-}
+import ContarCaja from "../contarCaja";
 
 const AbrirCaja = (props: { setShowModal: Function, setEmpleadoUsandoTPV: Function }) => {
-    const [tpvs, setTpvs] = useState<Map<string, string>>(new Map());
-    const [currentTpv, setCurrentTpv] = useState<string>();
+    const [tpvs, setTpvs] = useState<ITPV[]>([]);
+    const [currentTpvName, setCurrentTpvName] = useState<string>();
     const [cajaInicial, setCajaInicial] = useState<string>('0');
-    const [ocuparTpv, { data, error }] = useMutation(OCUPY_TPV);
-    const [jwt, setJwt] = useState<JWT>();
+    const { Empleado, SetEmpleado } = useEmpleadoContext();
+    const [showContador, setContador] = useState<boolean>(false);
+    const [desglose, setDesglose] = useState<Map<number, number>>(new Map())
 
     useEffect(() => {
-        const TpvsAbiertas = async (): Promise<Map<string, string>> => {
-            const res = await fetch(`/api/tpv`);
-            const Response = await res.json();
-
-            if (Response.tpvs) {
-                // Transforma el string en TPV Map<string, string> 
-                return new Map(JSON.parse(Response.tpvs));
-            }
-
-            return new Map();
+        const abortController = new AbortController();
+        const TpvsAbiertas = async () => {
+            const tpvs = await FetchTPVsByDisponibilidad(true, abortController);
+            if (tpvs) { setTpvs(tpvs); }
         }
 
-        let isUnmounted = false;
-        setJwt(getJwt());
-        TpvsAbiertas().then(r => {
-            if (!isUnmounted) {
-                setTpvs(r);
-            }
-        });
+        TpvsAbiertas();
 
         return (() => {
-            isUnmounted = true;
+            abortController.abort();
         })
     }, []);
 
     useEffect(() => {
         // Selecciona el primer TPV libre
-        setCurrentTpv(tpvs.values().next().value)
+        if (tpvs.length > 0) {
+            setCurrentTpvName(tpvs[0].nombre)
+        }
     }, [tpvs]);
 
-    useEffect(() => {
-        if (!error && data) {
-            Cookies.set("authorization", data.ocupyTPV.token)
-            props.setShowModal(false);
-            props.setEmpleadoUsandoTPV(true);
-        }
-
-    }, [data])
-
     const AbrirTPV = async () => {
-        let tpvID: string = "undefined";
-        tpvs.forEach((value: string, key: string) => {
-            if (value === currentTpv) {
-                tpvID = key;
-            }
+        const tpv: ITPV | undefined = tpvs.find((t) => {
+            return t.nombre === currentTpvName
         });
+        const cInicial: number = parseFloat(Number(cajaInicial).toFixed(2));
 
-        const cInicial: number = parseFloat(Number(cajaInicial).toFixed(2))
-        ocuparTpv({
-            variables: {
-                "idEmpleado": jwt?._id,
-                "idTpv": tpvID,
-                "cajaInicial": cInicial
+        if (tpv?._id) {
+            const res = await OcuparTPV(tpv._id, Empleado, cInicial, SetEmpleado);
+
+            if (res) {
+                props.setShowModal(false);
+                props.setEmpleadoUsandoTPV(true);
             }
-        });
+        }
     }
 
     return (
         <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}>
             <Backdrop >
                 <motion.div variants={In} initial="hidden" animate="visible" exit="exit"
-                    className="flex flex-col h-3/5 w-3/5 bg-white rounded-xl  items-center">
+                    className="flex flex-col h-3/6 w-3/6 max-h-96 max-w-lg bg-white rounded-xl  items-center">
                     <div className="text-2xl justify-self-start pt-4 w">
                         TPV Cerrada
                     </div>
@@ -112,8 +68,8 @@ const AbrirCaja = (props: { setShowModal: Function, setEmpleadoUsandoTPV: Functi
                             <div className="self-center ">
                                 Selecciona la TPV
                             </div>
-                            <div className="self-center justify-end">
-                                <Dropdown selectedElemento={tpvs ? tpvs.values().next().value : "Cargando..."} elementos={Array.from(tpvs.values())} setElemento={setCurrentTpv} />
+                            <div className="w-full self-center justify-end">
+                                <Droplist selectedElemento={currentTpvName ? currentTpvName : "Cargando..."} elementos={tpvs.map((a) => { return a.nombre; })} setElemento={setCurrentTpvName} />
                             </div>
                         </div>
 
@@ -121,12 +77,17 @@ const AbrirCaja = (props: { setShowModal: Function, setEmpleadoUsandoTPV: Functi
                             <div className="self-center">
                                 Caja inicial
                             </div>
-                            <div className="flex gap-2 self-center justify-end ml-auto">
+                            <div className="flex gap-2 self-center ml-auto items-center">
                                 <input type="text" inputMode="numeric" name="cajaInicial" id="cajaInicial" placeholder=" Por ejemplo 350.50"
-                                    className="text-right border border-gray-500 rounded-md justify-self-end w-60 appearance-none outline-blue-500"
+                                    className="text-right placeholder:text-gray-400 placeholder:italic p-2 border rounded-lg w-full h-full focus:outline-none focus:ring-2 focus:ring-blue-600"
                                     onChange={(e) => { setCajaInicial(ValidatePositiveFloatingNumber(e.target.value)) }} value={cajaInicial} />
-                                €
-
+                                <span>€</span>
+                                <div className="flex hover:bg-blue-200 rounded-full cursor-pointer w-8 h-8 items-center justify-center"
+                                    onClick={() => { setContador((isOpen) => !isOpen) }}>
+                                    <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="#4b5563" strokeWidth={2}>
+                                        <path strokeLinecap="round" strokeLinejoin="round" d="M9 7h6m0 10v-3m-3 3h.01M9 17h.01M9 14h.01M12 14h.01M15 11h.01M12 11h.01M9 11h.01M7 21h10a2 2 0 002-2V5a2 2 0 00-2-2H7a2 2 0 00-2 2v14a2 2 0 002 2z" />
+                                    </svg>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -139,7 +100,7 @@ const AbrirCaja = (props: { setShowModal: Function, setEmpleadoUsandoTPV: Functi
                             </div>
                         </div>
                         {
-                            Number(cajaInicial) > 0 && currentTpv && tpvs ?
+                            Number(cajaInicial) > 0 && currentTpvName && tpvs ?
                                 <div className="flex h-10 w-32 m-auto bg-blue-500 hover:bg-blue-600 rounded-2xl cursor-pointer items-center justify-center shadow-lg"
                                     onClick={AbrirTPV}>
                                     <div>
@@ -155,6 +116,9 @@ const AbrirCaja = (props: { setShowModal: Function, setEmpleadoUsandoTPV: Functi
                         }
 
                     </div>
+                    <AnimatePresence>
+                        {showContador && <ContarCaja showItself={setContador} desglose={desglose} setDesglose={setDesglose} setTotal={setCajaInicial} />}
+                    </AnimatePresence>
                 </motion.div>
             </Backdrop>
         </motion.div>

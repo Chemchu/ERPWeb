@@ -7,6 +7,7 @@ export type Venta = {
     productos: ProductoVendido[],
     dineroEntregadoEfectivo: number,
     dineroEntregadoTarjeta: number,
+    precioVentaTotalSinDto: number,
     precioVentaTotal: number,
     cambio: number,
     cliente: Cliente,

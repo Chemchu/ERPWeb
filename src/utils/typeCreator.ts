@@ -1,9 +1,11 @@
 import { Cierre } from "../tipos/Cierre";
 import { Cliente } from "../tipos/Cliente";
+import { Devolucion } from "../tipos/Devolucion";
 import { Empleado } from "../tipos/Empleado";
 import { Producto } from "../tipos/Producto";
+import { ProductoDevuelto } from "../tipos/ProductoDevuelto";
 import { ProductoVendido } from "../tipos/ProductoVendido";
-import { TPVType } from "../tipos/TPV";
+import { ITPV } from "../tipos/TPV";
 import { Venta } from "../tipos/Venta";
 
 function CreateProduct(p: any): Producto | undefined {
@@ -14,6 +16,7 @@ function CreateProduct(p: any): Producto | undefined {
             _id: p._id,
             alta: p.alta,
             cantidad: p.cantidad | 0,
+            cantidadRestock: p.cantidadRestock | 0,
             descripcion: p.descripcion ? p.descripcion : "",
             ean: p.ean,
             familia: p.familia,
@@ -23,7 +26,9 @@ function CreateProduct(p: any): Producto | undefined {
             precioCompra: p.precioCompra,
             precioVenta: p.precioVenta,
             tags: p.tags,
-            promociones: p.promociones
+            promociones: p.promociones,
+            proveedor: p.proveedor,
+            margen: p.margen
         } as unknown as Producto
 
         return producto;
@@ -59,6 +64,7 @@ function CreateSale(s: any): Venta | undefined {
             productos: CreateProductoVendidoList(s.productos),
             dineroEntregadoEfectivo: s.dineroEntregadoEfectivo,
             dineroEntregadoTarjeta: s.dineroEntregadoTarjeta,
+            precioVentaTotalSinDto: s.preprecioVentaTotalSinDto,
             precioVentaTotal: s.precioVentaTotal,
             cambio: s.cambio,
             cliente: CreateClient(s.cliente) || s.client,
@@ -69,7 +75,7 @@ function CreateSale(s: any): Venta | undefined {
             descuentoPorcentaje: s.descuentoPorcentaje || 0,
             tpv: s.tpv,
             createdAt: s.createdAt,
-            updatedAt: s.updatedAt
+            updatedAt: s.updatedAt,
         }
 
         return venta;
@@ -91,6 +97,7 @@ function CreateProductoVendido(s: any): ProductoVendido | undefined {
             margen: s.margen,
             precioCompra: s.precioCompra,
             precioVenta: s.precioVenta,
+            precioFinal: s.precioVenta * ((100 - s.dto) / 100),
             cantidadVendida: Number(s.cantidadVendida),
             dto: s.dto || 0
         }
@@ -130,6 +137,8 @@ export function CreateCierre(c: any): Cierre | undefined {
 }
 
 export function CreateProductList(pList: any[]): Producto[] {
+    if (!pList) { throw "Lista de productos indefinida"; }
+
     let res: Producto[] = [];
     pList.forEach((p: any) => {
         const prod = CreateProduct(p);
@@ -156,14 +165,21 @@ export function CreateClientList(cList: any[]): Cliente[] {
 export function CreateSalesList(sList: any[]): Venta[] {
     if (sList === undefined) { return [] as Venta[]; }
 
-    let res: Venta[] = [];
-    sList.forEach((c: any) => {
-        const venta = CreateSale(c);
+    try {
+        let res: Venta[] = [];
+        sList.forEach((c: any) => {
+            const venta = CreateSale(c);
 
-        if (venta) res.push(venta);
-    });
+            if (venta) res.push(venta);
+        });
 
-    return res;
+        return res;
+    }
+    catch (e) {
+        console.log(e);
+        return []
+    }
+
 }
 
 export function CreateProductoVendidoList(pList: any[]): ProductoVendido[] {
@@ -193,8 +209,8 @@ export function CreateEmployee(employee: any): Empleado {
     return res;
 }
 
-export function CreateTPV(tpv: any): TPVType {
-    let res: TPVType = {
+export function CreateTPV(tpv: any): ITPV {
+    let res: ITPV = {
         _id: tpv._id,
         nombre: tpv.nombre,
         enUsoPor: tpv.enUsoPor,
@@ -203,6 +219,17 @@ export function CreateTPV(tpv: any): TPVType {
         createdAt: tpv.createdAt,
         updatedAt: tpv.updatedAt
     }
+
+    return res;
+}
+
+export function CreateTPVsList(tpvs: any): ITPV[] {
+    let res: ITPV[] = [];
+    tpvs.forEach((t: any) => {
+        const tpv = CreateTPV(t);
+
+        if (tpv) res.push(tpv);
+    });
 
     return res;
 }
@@ -216,4 +243,94 @@ export function CreateCierreList(cierres: any): Cierre[] {
     });
 
     return res;
+}
+
+export function CreateEmployeeList(empleados: any): Empleado[] {
+    let res: Empleado[] = [];
+    empleados.forEach((emp: any) => {
+        const empleado = CreateEmployee(emp);
+
+        if (empleado) res.push(empleado);
+    });
+
+    return res;
+}
+
+export function CreateDevolucionList(dList: any[]): Devolucion[] {
+    if (dList === undefined) { return [] as Devolucion[]; }
+
+    try {
+        let res: Devolucion[] = [];
+        dList.forEach((d: any) => {
+            const dev = CreateDevolucion(d);
+
+            if (dev) res.push(dev);
+        });
+
+        return res;
+    }
+    catch (e) {
+        console.log(e);
+        return []
+    }
+
+}
+
+function CreateDevolucion(s: any): Devolucion | undefined {
+    try {
+        const vOriginal = CreateSale(s.ventaOriginal);
+        if (!vOriginal) { return undefined; }
+
+        let dev: Devolucion = {
+            _id: s._id,
+            productosDevueltos: CreateProductoDevueltoList(s.productosDevueltos),
+            dineroDevuelto: s.dineroDevuelto,
+            cliente: CreateClient(s.cliente) || s.client,
+            trabajador: CreateEmployee(s.trabajador),
+            modificadoPor: CreateEmployee(s.modificadoPor),
+            ventaOriginal: vOriginal,
+            tpv: s.tpv,
+            createdAt: s.createdAt,
+            updatedAt: s.updatedAt,
+        }
+
+        return dev;
+    }
+    catch (e) {
+        return undefined;
+    }
+}
+
+export function CreateProductoDevueltoList(pList: any[]): ProductoDevuelto[] {
+    let res: ProductoDevuelto[] = [];
+    pList.forEach((p: any) => {
+        const prod = CreateProductoDevuelto(p);
+
+        if (prod) res.push(prod);
+    });
+
+    return res;
+}
+
+function CreateProductoDevuelto(s: any): ProductoDevuelto | undefined {
+    try {
+        let prod: ProductoDevuelto = {
+            _id: s._id,
+            nombre: s.nombre,
+            proveedor: s.proveedor,
+            familia: s.familia,
+            precioVenta: s.precioVenta,
+            precioCompra: s.precioCompra,
+            precioFinal: s.precioFinal,
+            iva: s.iva,
+            margen: s.margen,
+            ean: s.ean,
+            cantidadDevuelta: s.cantidadDevuelta,
+            dto: s.dto || 0
+        }
+        return prod;
+    }
+    catch (e) {
+        return undefined;
+    }
 }
