@@ -19,10 +19,12 @@ const ProductPage = () => {
     const [ProductosFiltrados, setProductosFiltradas] = useState<Producto[] | undefined>();
     const [addProdModal, setAddProdModal] = useState<boolean>(false);
     const [Productos, SetProductos] = useState<Producto[]>([]);
+    const [isLoading, setLoading] = useState<boolean>(true);
 
     useEffect(() => {
         const GetAllData = async () => {
             SetProductos(await FetchProductos());
+            setLoading(false);
         }
         GetAllData();
     }, []);
@@ -32,7 +34,6 @@ const ProductPage = () => {
             setProductosFiltradas(undefined);
         }
     }, [filtro])
-
 
     const Filtrar = async (f: string) => {
         if (f === "") { return; }
@@ -82,10 +83,16 @@ const ProductPage = () => {
                 </div>
             </div>
             {
-                ProductosFiltrados ?
-                    <TablaProductos Productos={ProductosFiltrados} SetProductos={SetProductos} />
-                    :
-                    <TablaProductos Productos={Productos} SetProductos={SetProductos} />
+                isLoading ?
+                    arrayNum.map((n, i) => {
+                        return (
+                            <SkeletonCard key={`SkeletonProdList-${i}`} />
+                        );
+                    }) :
+                    ProductosFiltrados ?
+                        <TablaProductos Productos={ProductosFiltrados} SetProductos={SetProductos} />
+                        :
+                        <TablaProductos Productos={Productos} SetProductos={SetProductos} />
             }
             <AnimatePresence>
                 {addProdModal && <AddProducto showModal={setAddProdModal} />}
@@ -112,11 +119,9 @@ const TablaProductos = (props: { Productos: Producto[], SetProductos: Function }
             <div className="h-full w-full border-2 rounded-b overflow-y-scroll">
                 {
                     props.Productos.length <= 0 ?
-                        arrayNum.map((n, i) => {
-                            return (
-                                <SkeletonCard key={`SkeletonProdList-${i}`} />
-                            );
-                        })
+                        <div className="flex justify-center items-center h-full w-full text-xl">
+                            No se ha encontrado registros de productos en el sistema
+                        </div>
                         :
                         props.Productos.slice((elementsPerPage * (currentPage - 1)), currentPage * elementsPerPage).map((p, index) => {
                             return (
