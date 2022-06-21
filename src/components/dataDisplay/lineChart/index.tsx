@@ -9,6 +9,7 @@ import {
     Title,
     Tooltip,
     Legend,
+    Filler
 } from 'chart.js';
 
 ChartJS.register(
@@ -18,7 +19,8 @@ ChartJS.register(
     LineElement,
     Title,
     Tooltip,
-    Legend
+    Legend,
+    Filler
 );
 
 const LineChart = (props: { titulo: string, labels?: string[], data: number[] }) => {
@@ -29,6 +31,7 @@ const LineChart = (props: { titulo: string, labels?: string[], data: number[] })
                 position: 'top' as const,
             }
         },
+
     };
     const data = formatDataset(props.data, props.titulo, props.labels);
 

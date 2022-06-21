@@ -37,7 +37,9 @@ const Home = (props: { EmpleadoSesion: SesionEmpleado }) => {
         {`${saludo},  ${Empleado.nombre.charAt(0).toUpperCase() + Empleado.nombre.slice(1)}`}
       </h1>
 
-      <LineChart titulo="Ventas por hora" data={[33, 53, 85, 41, 44, 65]} labels={["Jan", "Feb", "Mar", "Apr", "May", "Jun"]} />
+      <div className="w-96 h-96">
+        <LineChart titulo="Ventas por hora" data={[33, 53, 85, 41, 44, 65]} labels={["Jan", "Feb", "Mar", "Apr", "May", "Jun"]} />
+      </div>
     </div>
   )
 }
