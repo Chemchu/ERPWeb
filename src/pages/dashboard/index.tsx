@@ -1,10 +1,13 @@
 import { GetServerSideProps } from "next";
 import React, { useEffect, useState } from "react";
+import LineChart from "../../components/dataDisplay/lineChart";
 import useEmpleadoContext from "../../context/empleadoContext";
 import getJwtFromString from "../../hooks/jwt";
 import DashboardLayout from "../../layout";
 import { SesionEmpleado } from "../../tipos/Empleado";
 import { Roles } from "../../tipos/Enums/Roles";
+
+const saludos = ['Bienvenido otra vez', 'Hola', 'Saludos'];
 
 const Home = (props: { EmpleadoSesion: SesionEmpleado }) => {
   const [saludo, setSaludo] = useState<string>();
@@ -20,8 +23,6 @@ const Home = (props: { EmpleadoSesion: SesionEmpleado }) => {
     GetData()
   }, []);
 
-  const saludos = ['Bienvenido otra vez', 'Hola', 'Saludos'];
-
   if (!Empleado.nombre) {
     return (
       <div>
@@ -35,6 +36,8 @@ const Home = (props: { EmpleadoSesion: SesionEmpleado }) => {
       <h1 className="text-4xl">
         {`${saludo},  ${Empleado.nombre.charAt(0).toUpperCase() + Empleado.nombre.slice(1)}`}
       </h1>
+
+      <LineChart titulo="Ventas por hora" data={[33, 53, 85, 41, 44, 65]} labels={["Jan", "Feb", "Mar", "Apr", "May", "Jun"]} />
     </div>
   )
 }
