@@ -49,12 +49,12 @@ export async function middleware(req: NextRequest, ev: NextFetchEvent) {
             console.info("4. Va a recuperar el JSON del servidor")
             const credJson = await credentialsValidation.json();
             const authHealth = JSON.parse(credJson.data);
-            console.info("AuthHealth: " + authHealth)
+            console.info(authHealth)
 
             if (!authHealth.validateJwt.validado) { url.pathname = "/login"; return NextResponse.rewrite(url).clearCookie("authorization"); }
             if (req.nextUrl.pathname === '/login') { url.pathname = "/dashboard"; return NextResponse.rewrite(url); }
 
-            console.log("4. Va a hacer redirect");
+            console.log("5. Va a hacer redirect");
 
             return NextResponse.next();
         }
@@ -72,6 +72,9 @@ const IsJwtExpired = (Jwt: string): boolean => {
     let base64Payload = Jwt.split('.')[1];
     let payload = atob(base64Payload);
     const exp = JSON.parse(payload.toString()).exp;
+
+    console.log(exp);
+
 
     const expDate = new Date(0).setSeconds(exp);
     return expDate <= Date.now();
