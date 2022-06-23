@@ -3,7 +3,7 @@ import { NextFetchEvent, NextRequest, NextResponse } from 'next/server'
 export async function middleware(req: NextRequest, ev: NextFetchEvent) {
     try {
         console.info("-----------------------------------");
-        console.info("Entra en middleware");
+        console.info("1. Entra en middleware");
 
         if (req.nextUrl.pathname === '/') { return NextResponse.next(); }
 
@@ -17,7 +17,7 @@ export async function middleware(req: NextRequest, ev: NextFetchEvent) {
 
         const authCookie = req.cookies.authorization.split(" ")[1];
 
-        console.info("Va a comprobar si el JWT está caducado");
+        console.info("2. Va a comprobar si el JWT está caducado");
 
         if (IsJwtExpired(authCookie)) {
             url.pathname = "/login";
@@ -26,7 +26,7 @@ export async function middleware(req: NextRequest, ev: NextFetchEvent) {
 
 
         if (authCookie) {
-            console.info("Va a hacer fetch al servidor con el token");
+            console.info("3. Va a hacer fetch al servidor con el token");
             const credentialsValidation = await fetch(`${process.env.ERPGATEWAY_URL}api/graphql`, {
                 method: 'POST',
                 headers: {
@@ -46,18 +46,21 @@ export async function middleware(req: NextRequest, ev: NextFetchEvent) {
                 )
             })
 
-            console.info("Va a recuperar el JSON del servidor")
+            console.info("4. Va a recuperar el JSON del servidor")
             const credJson = await credentialsValidation.json();
             const authHealth = JSON.parse(credJson.data);
-
+            console.info("AuthHealth: " + authHealth)
 
             if (!authHealth.validateJwt.validado) { url.pathname = "/login"; return NextResponse.rewrite(url).clearCookie("authorization"); }
             if (req.nextUrl.pathname === '/login') { url.pathname = "/dashboard"; return NextResponse.rewrite(url); }
 
+            console.log("4. Va a hacer redirect");
+
             return NextResponse.next();
         }
     }
-    catch (err) {
+    catch (err: any) {
+        console.log("Error!!")
         console.log(err);
 
         const url = req.nextUrl.clone();
