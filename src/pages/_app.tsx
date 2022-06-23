@@ -5,7 +5,7 @@ import React from 'react'
 
 type AppPropsConPageLayout = AppProps & {
   Component: AppProps['Component'] & {
-    PageLayout?: React.ComponentType
+    PageLayout?: any
   }
 }
 

@@ -28,4 +28,5 @@ const Etiqueta = React.forwardRef((props: { nombre: string, ean: string, precio:
     );
 });
 
+Etiqueta.displayName = "Etiqueta"
 export default Etiqueta;

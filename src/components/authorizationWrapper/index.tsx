@@ -15,9 +15,8 @@ const ComprobarAutorizaciones = (requiredAuthorities: Roles[]): boolean => {
 };
 
 const AuthorizationWrapper = (rolesAutorizados: Roles[], showMessage?: boolean) => {
-
     return (WrappedComponent: Function) => {
-        return (props: any) => {
+        const result = (props: any) => {
             if (!ComprobarAutorizaciones(rolesAutorizados)) {
                 if (showMessage) {
                     return (
@@ -36,7 +35,11 @@ const AuthorizationWrapper = (rolesAutorizados: Roles[], showMessage?: boolean) 
                 <WrappedComponent {...props} />
             );
         };
+
+        result.displayName = "result"
+        return result;
     };
 };
 
+AuthorizationWrapper.displayName = 'AuthorizationWrapper';
 export default AuthorizationWrapper;
