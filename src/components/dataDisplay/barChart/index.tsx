@@ -1,31 +1,28 @@
-import { Line } from "react-chartjs-2";
-import formatLineDataset from "../../../utils/datasetFormater/formatDataset";
+import { Bar } from "react-chartjs-2";
+import formatLineDataset, { formatBarDataset } from "../../../utils/datasetFormater/formatDataset";
 import {
     Chart as ChartJS,
     CategoryScale,
     LinearScale,
-    PointElement,
-    LineElement,
+    BarElement,
     Title,
     Tooltip,
     Legend,
-    Filler
 } from 'chart.js';
 
 ChartJS.register(
     CategoryScale,
     LinearScale,
-    PointElement,
-    LineElement,
+    BarElement,
     Title,
     Tooltip,
-    Legend,
-    Filler
+    Legend
 );
 
-const LineChart = (props: { titulo: string, labels?: string[], data: number[] }) => {
+const BarChart = (props: { titulo: string, labels?: string[], data: number[] }) => {
     let delayed = false;
     const options = {
+        indexAxis: 'y' as const,
         animation: {
             onComplete: () => {
                 delayed = true;
@@ -50,16 +47,12 @@ const LineChart = (props: { titulo: string, labels?: string[], data: number[] })
         },
 
     };
-    const data = formatLineDataset(props.data, props.titulo, props.labels);
-
+    const data = formatBarDataset(props.data, props.titulo, props.labels);
     return (
         <div className="rounded-lg shadow-lg hover:shadow-xl p-2 ">
-            <Line
-                options={options}
-                data={data}
-            />
+            <Bar data={data} options={options} />
         </div>
     )
 }
 
-export default LineChart;
+export default BarChart;

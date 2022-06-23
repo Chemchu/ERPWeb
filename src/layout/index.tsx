@@ -41,24 +41,24 @@ const DashboardLayout = React.memo(({ children }: { children: React.ReactNode })
         <EmpleadoContextProvider>
             <ProductCarritoContextProvider>
                 {
-                    <main className="dark:bg-gray-800 h-full w-full overflow-hidden bg_food" >
+                    <main className="dark:bg-gray-800 h-full w-full overflow-hidden bg_food">
                         <NextProgress />
                         <div className="flex items-start w-full h-full justify-start">
                             <Sidebar isCollapsed={isSidebarCollapsed} setCollapsed={setSidebarCollapsed} IndexSeleccionado={IndexSidebar} setIndex={setSidebarIndex} />
                             <motion.div key={router.route} className="w-full h-full" initial={variants.initial} animate={variants.animate} exit={variants.exit}>
                                 {children}
                             </motion.div>
-                            <ToastContainer
-                                position="bottom-right"
-                                autoClose={3000}
-                                hideProgressBar={false}
-                                newestOnTop={false}
-                                closeOnClick
-                                rtl={false}
-                                draggable
-                                pauseOnHover={false}
-                            />
                         </div>
+                        <ToastContainer
+                            position="bottom-right"
+                            autoClose={3000}
+                            hideProgressBar={false}
+                            newestOnTop={false}
+                            closeOnClick
+                            rtl={false}
+                            draggable
+                            pauseOnHover={false}
+                        />
                     </main >
                 }
             </ProductCarritoContextProvider>
