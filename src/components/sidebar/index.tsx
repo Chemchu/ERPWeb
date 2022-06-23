@@ -1,7 +1,6 @@
 import { motion } from 'framer-motion';
-import Link from 'next/link';
+import Link from 'next/dist/client/link';
 import React from 'react';
-import useEmpleadoContext from '../../context/empleadoContext';
 import { SidebarOption } from '../../tipos/Enums/SidebarOption';
 import RequireHigherAuthorization from './RequireHigherAuth';
 
