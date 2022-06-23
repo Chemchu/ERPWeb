@@ -167,8 +167,6 @@ const OpenedSidebar = (props: { setCollapsed: Function, IndexSeleccionado: Sideb
 }
 
 const CollapsedSidebar = (props: { setCollapsed: Function, IndexSeleccionado: SidebarOption, setIndex: Function }) => {
-    const { Empleado } = useEmpleadoContext();
-
     return (
         <motion.div initial={{ x: "-10vh", opacity: 0 }} animate={{ x: 0, opacity: 1 }} exit={{ x: "-10vh", opacity: 0 }}
             className='w-auto h-screen p-2'>
