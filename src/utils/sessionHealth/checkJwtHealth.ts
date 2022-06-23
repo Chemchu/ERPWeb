@@ -1,20 +1,22 @@
-import { NextFetchEvent, NextRequest, NextResponse } from 'next/server'
+import { NextRequest } from "next/server";
 
-export async function middleware(req: NextRequest, ev: NextFetchEvent) {
+const CheckJWTHealth = async (req: NextRequest) => {
     try {
-        if (req.nextUrl.pathname === '/') { return NextResponse.next(); }
+        // if (req.nextUrl.pathname === '/') { return NextResponse.next(); }
 
         const url = req.nextUrl.clone();
         if (!req.cookies.authorization) {
-            if (req.nextUrl.pathname.includes("dashboard")) { url.pathname = "/login"; return NextResponse.rewrite(url); }
+            // if (req.nextUrl.pathname.includes("dashboard")) { url.pathname = "/login"; return NextResponse.rewrite(url); }
 
-            return NextResponse.next();
+            // return NextResponse.next();
+            return false;
         }
 
         const authCookie = req.cookies.authorization.split(" ")[1];
         if (IsJwtExpired(authCookie)) {
-            url.pathname = "/login";
-            return NextResponse.rewrite(url).clearCookie("authorization");
+            // url.pathname = "/login";
+            // return NextResponse.rewrite(url).clearCookie("authorization");
+            return false;
         }
 
         if (authCookie) {
@@ -35,17 +37,15 @@ export async function middleware(req: NextRequest, ev: NextFetchEvent) {
                 })
             })
 
-            console.info("4. Va a recuperar el JSON del servidor")
             const credJson = await credentialsValidation.json();
             const authHealth = JSON.parse(credJson.data);
-            console.info(authHealth)
 
-            if (!authHealth.validateJwt.validado) { url.pathname = "/login"; return NextResponse.rewrite(url).clearCookie("authorization"); }
-            if (req.nextUrl.pathname === '/login') { url.pathname = "/dashboard"; return NextResponse.rewrite(url); }
+            // if (!authHealth.validateJwt.validado) { url.pathname = "/login"; return NextResponse.rewrite(url).clearCookie("authorization"); }
+            if (!authHealth.validateJwt.validado) { url.pathname = "/login"; return false }
+            if (req.nextUrl.pathname === '/login') { url.pathname = "/dashboard"; return true; }
 
-            console.log("5. Va a hacer redirect");
-
-            return NextResponse.next();
+            // return NextResponse.next();
+            return true;
         }
     }
     catch (err: any) {
@@ -53,13 +53,13 @@ export async function middleware(req: NextRequest, ev: NextFetchEvent) {
         console.log(err);
 
         const url = req.nextUrl.clone();
-        url.pathname = "/serverError"; return NextResponse.rewrite(url);
+        url.pathname = "/serverError"; return false;
     }
 }
 
 const IsJwtExpired = (Jwt: string): boolean => {
     let base64Payload = Jwt.split('.')[1];
-    let payload = atob(base64Payload);
+    let payload = Buffer.from(base64Payload, "base64");
     const exp = JSON.parse(payload.toString()).exp;
 
     const expDate = new Date(0).setSeconds(exp);
