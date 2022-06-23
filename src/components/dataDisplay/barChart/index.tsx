@@ -49,7 +49,7 @@ const BarChart = (props: { titulo: string, labels?: string[], data: number[] }) 
     };
     const data = formatBarDataset(props.data, props.titulo, props.labels);
     return (
-        <div className="rounded-lg shadow-lg hover:shadow-xl p-2 ">
+        <div className="rounded-lg shadow-lg hover:shadow-xl p-2">
             <Bar data={data} options={options} />
         </div>
     )
