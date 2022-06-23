@@ -2,13 +2,9 @@ import { NextFetchEvent, NextRequest, NextResponse } from 'next/server'
 
 export async function middleware(req: NextRequest, ev: NextFetchEvent) {
     try {
-        console.info("-----------------------------------");
-        console.info("1. Entra en middleware");
-
         if (req.nextUrl.pathname === '/') { return NextResponse.next(); }
 
         const url = req.nextUrl.clone();
-
         if (!req.cookies.authorization) {
             if (req.nextUrl.pathname.includes("dashboard")) { url.pathname = "/login"; return NextResponse.rewrite(url); }
 
@@ -16,34 +12,27 @@ export async function middleware(req: NextRequest, ev: NextFetchEvent) {
         }
 
         const authCookie = req.cookies.authorization.split(" ")[1];
-
-        console.info("2. Va a comprobar si el JWT está caducado");
-
         if (IsJwtExpired(authCookie)) {
             url.pathname = "/login";
             return NextResponse.rewrite(url).clearCookie("authorization");
         }
 
-
         if (authCookie) {
-            console.info("3. Va a hacer fetch al servidor con el token");
             const credentialsValidation = await fetch(`${process.env.ERPGATEWAY_URL}api/graphql`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
                 },
-                body: JSON.stringify(
-                    {
-                        query: `query ValidateJwt($jwt: String!) {
+                body: JSON.stringify({
+                    query: `query ValidateJwt($jwt: String!) {
                             validateJwt(jwt: $jwt) {
                                 validado
                             }
                         }`,
-                        variables: {
-                            jwt: authCookie
-                        }
+                    variables: {
+                        jwt: authCookie
                     }
-                )
+                })
             })
 
             console.info("4. Va a recuperar el JSON del servidor")
@@ -72,9 +61,6 @@ const IsJwtExpired = (Jwt: string): boolean => {
     let base64Payload = Jwt.split('.')[1];
     let payload = atob(base64Payload);
     const exp = JSON.parse(payload.toString()).exp;
-
-    console.log(exp);
-
 
     const expDate = new Date(0).setSeconds(exp);
     return expDate <= Date.now();
