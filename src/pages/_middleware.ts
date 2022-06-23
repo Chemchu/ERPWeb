@@ -48,6 +48,8 @@ export async function middleware(req: NextRequest, ev: NextFetchEvent) {
         }
     }
     catch (err) {
+        console.log(err);
+
         const url = req.nextUrl.clone();
         url.pathname = "/serverError"; return NextResponse.rewrite(url);
     }
