@@ -43,10 +43,18 @@ const PuntoDeVenta = (props: { isEmpleadoUsingTPV: boolean, EmpleadoSesion: Sesi
 
 PuntoDeVenta.PageLayout = DashboardLayout;
 
-// No se está actualizando el EmpleadoSesion al cambiar el header de la cookie cuando abres la caja
 
-export const getServerSideProps: GetServerSideProps = async (ctx) => {
-    const jwt = getJwtFromString(ctx.req.cookies.authorization);
+export const getServerSideProps: GetServerSideProps = async (context) => {
+    const [jwt, isValidCookie] = getJwtFromString(context.req.cookies.authorization);
+
+    if (!isValidCookie) {
+        return {
+            redirect: {
+                permanent: false,
+                destination: `/login`
+            },
+        };
+    }
     let emp: SesionEmpleado = {
         _id: jwt._id,
         apellidos: jwt.apellidos,

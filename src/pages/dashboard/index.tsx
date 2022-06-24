@@ -67,8 +67,16 @@ const Home = (props: { EmpleadoSesion: SesionEmpleado }) => {
 Home.PageLayout = DashboardLayout;
 
 export const getServerSideProps: GetServerSideProps = async (context) => {
+  const [jwt, isValidCookie] = getJwtFromString(context.req.cookies.authorization);
 
-  const jwt = getJwtFromString(context.req.cookies.authorization);
+  if (!isValidCookie) {
+    return {
+      redirect: {
+        permanent: false,
+        destination: `/login`
+      },
+    };
+  }
 
   let emp: SesionEmpleado = {
     _id: jwt._id,

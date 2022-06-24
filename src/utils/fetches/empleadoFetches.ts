@@ -70,7 +70,8 @@ export const FetchCurrentUser = async (): Promise<Empleado> => {
 
         if (!fetchRes.ok) { notifyError(empleadoJson.message); return {} as Empleado; }
 
-        const empJwt = getJwtFromString(empleadoJson.token);
+        const [empJwt, isCookieValid] = getJwtFromString(empleadoJson.token);
+        if (!isCookieValid) { return {} as Empleado } // --> Puede causar bug
 
         return CreateEmployee(empJwt);
     }
