@@ -131,7 +131,9 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
         nombre: jwt.nombre,
         rol: Roles[jwt.rol as keyof typeof Roles],
     }
-    jwt.TPV ? emp.TPV = jwt.TPV : null;
+    if (jwt.TPV) {
+        emp.TPV = jwt.TPV
+    }
 
     return {
         props: {

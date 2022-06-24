@@ -3,6 +3,8 @@ import React, { useState } from 'react';
 import { SplitLetters } from '../../components/elementos/compAnimados/SplitText';
 import Router from 'next/router';
 import { notifySuccess } from '../../utils/toastify';
+import { GetServerSideProps } from 'next';
+import getJwtFromString from '../../hooks/jwt';
 
 const container = {
     hidden: { opacity: 0, scale: 0 },
@@ -165,7 +167,18 @@ export const LoginForm = () => {
     );
 }
 
-export async function getServerSideProps() {
+export const getServerSideProps: GetServerSideProps = async (context) => {
+    const [, isValidCookie] = getJwtFromString(context.req.cookies.authorization);
+
+    if (isValidCookie) {
+        return {
+            redirect: {
+                permanent: false,
+                destination: `/dashboard`
+            },
+        };
+    }
+
     return {
         props: {
             video: `/video/marketVideo-${Math.floor(Math.random() * 5)}.mp4`,

@@ -1,4 +1,4 @@
-import { GetServerSideProps } from "next";
+import { GetServerSideProps, InferGetServerSidePropsType } from "next";
 import React, { useEffect, useState } from "react";
 import SummaryCard from "../../components/dataDisplay/summaryCard";
 import FinanceCard from "../../components/dataDisplay/finaceCard";
@@ -85,7 +85,10 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
     nombre: jwt.nombre,
     rol: Roles[jwt.rol as keyof typeof Roles] || Roles.Cajero,
   }
-  jwt.TPV ? emp.TPV = jwt.TPV : null;
+
+  if (jwt.TPV) {
+    emp.TPV = jwt.TPV
+  }
 
   return {
     props: {
