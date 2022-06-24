@@ -181,7 +181,7 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
 
     return {
         props: {
-            video: `/video/marketVideo-${Math.floor(Math.random() * 5)}.mp4`,
+            video: `/video/marketVideo-0.mp4`,
         },
     }
 }
