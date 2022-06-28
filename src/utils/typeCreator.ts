@@ -5,6 +5,7 @@ import { Empleado } from "../tipos/Empleado";
 import { Producto } from "../tipos/Producto";
 import { ProductoDevuelto } from "../tipos/ProductoDevuelto";
 import { ProductoVendido } from "../tipos/ProductoVendido";
+import { Summary, VentasPorHora } from "../tipos/Summary";
 import { ITPV } from "../tipos/TPV";
 import { Venta } from "../tipos/Venta";
 
@@ -329,6 +330,53 @@ function CreateProductoDevuelto(s: any): ProductoDevuelto | undefined {
             dto: s.dto || 0
         }
         return prod;
+    }
+    catch (e) {
+        return undefined;
+    }
+}
+
+export function CreateSummary(s: any): Summary | undefined {
+    try {
+        let summary: Summary = {
+            beneficio: s.beneficio,
+            cantidadProductosVendidos: s.cantidadProductosVendidos,
+            dineroDescontado: s.dineroDescontado,
+            ivaPagado: s.ivaPagado,
+            mediaCantidadVenida: s.mediaCantidadVenida,
+            mediaVentas: s.mediaVentas,
+            numVentas: s.numVentas,
+            totalVentas: s.totalVentas,
+            ventasPorHora: CreateVentasPorHoraList(s.ventasPorHora),
+        }
+        return summary;
+    }
+    catch (e) {
+        return undefined;
+    }
+}
+
+export function CreateVentasPorHoraList(pList: any[]): VentasPorHora[] {
+    let res: VentasPorHora[] = [];
+    pList.forEach((p: any) => {
+        const ventasPorHora = CreateVentasPorHora(p);
+
+        if (ventasPorHora) res.push(ventasPorHora);
+    });
+
+    return res;
+}
+
+function CreateVentasPorHora(s: any): VentasPorHora | undefined {
+    try {
+        let ventasHora: VentasPorHora = {
+            beneficioHora: s.beneficioHora,
+            dineroDescontadoHora: s.dineroDescontadoHora,
+            hora: s.hora,
+            productosVendidosHora: s.productosVendidosHora,
+            totalVentaHora: s.totalVentaHora,
+        }
+        return ventasHora;
     }
     catch (e) {
         return undefined;
