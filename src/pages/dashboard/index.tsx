@@ -12,6 +12,7 @@ import { Roles } from "../../tipos/Enums/Roles";
 import BarChart from "../../components/dataDisplay/barChart";
 import { Summary } from "../../tipos/Summary";
 import { FetchResumenDiario } from "../../utils/fetches/analisisFetches";
+import AreaChart from "../../components/dataDisplay/areaChart";
 
 const saludos = ['Bienvenido otra vez', 'Hola', 'Saludos'];
 
@@ -54,7 +55,9 @@ const Home = (props: { EmpleadoSesion: SesionEmpleado }) => {
         <div className="flex flex-col gap-2">
           <SummaryCard titulo="Ventas totales" valorEfectivo={50} valorTarjeta={27.37} />
           <div className="grid grid-cols-2 xl:grid-cols-3 h-full w-full">
-            <LineChart titulo="Ventas del día" data={[33, 53, 85, 41, 44, 65, 3, 60]} labels={["09:00", "10:00", "11:00", "12:00", "13:00", "14:00", "15:00", "16:00", "17:00", "18:00", "19:00", "20:00", "21:00", "22:00"]} />
+            <div>
+              <LineChart titulo="Ventas del día" data={[33, 53, 85, 41, 44, 65, 3, 60]} labels={["09:00", "10:00", "11:00", "12:00", "13:00", "14:00", "15:00", "16:00", "17:00", "18:00", "19:00", "20:00", "21:00", "22:00"]} />
+            </div>
             <div className="" id="ventasSemana">
               <LineChart titulo="Ventas de la semana" data={[33, 53, 85, 41, 44, 65, 3]} labels={["Lunes", "Martes", "Miércoles", "Jueves", "Viernes", "Sábado", "Domingo"]} />
             </div>
@@ -64,6 +67,9 @@ const Home = (props: { EmpleadoSesion: SesionEmpleado }) => {
           </div>
           <div className="w-40">
             <FinanceCard titulo="Ventas" valor={500.34} crecimiento={5.4} />
+          </div>
+          <div className="w-1/2">
+            <AreaChart />
           </div>
         </div>
       </div>
