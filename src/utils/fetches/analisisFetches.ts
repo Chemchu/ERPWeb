@@ -4,7 +4,7 @@ import { CreateSummary } from "../typeCreator";
 
 export const FetchResumenDiario = async (fecha: Date): Promise<Summary | undefined> => {
     try {
-        const crResponse = await fetch(`/api/cierres/${fecha.getMilliseconds()}`);
+        const crResponse = await fetch(`/api/estadisticas/summary/${fecha.getTime()}`);
 
         if (!crResponse.ok) { notifyError("Error al buscar el resumen diario"); return undefined; }
         const crJson = await crResponse.json();
