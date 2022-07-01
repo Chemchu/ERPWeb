@@ -348,6 +348,8 @@ export function CreateSummary(s: any): Summary | undefined {
             numVentas: s.numVentas,
             totalVentas: s.totalVentas,
             ventasPorHora: CreateVentasPorHoraList(s.ventasPorHora),
+            totalEfectivo: s.totalEfectivo,
+            totalTarjeta: s.totalTarjeta
         }
         return summary;
     }
@@ -375,6 +377,8 @@ function CreateVentasPorHora(s: any): VentasPorHora | undefined {
             hora: s.hora,
             productosVendidosHora: s.productosVendidosHora,
             totalVentaHora: s.totalVentaHora,
+            totalEfectivoHora: s.totalEfectivoHora,
+            totalTarjetaHora: s.totalTarjetaHora
         }
         return ventasHora;
     }

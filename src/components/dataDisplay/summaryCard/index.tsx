@@ -1,11 +1,18 @@
-const SummaryCard = (props: { titulo: string, valorEfectivo: number | undefined, valorTarjeta: number | undefined }) => {
+import { Summary } from "../../../tipos/Summary";
+import SkeletonCard from "../../Skeletons/skeletonCard";
+
+const SummaryCard = (props: { titulo: string, data: Summary | undefined }) => {
     // Incremento porcentual: ((valorFinal - valorInicial) / valorInicial ) * 100
 
-    if (!props.valorEfectivo) {
-        return <></>
-    }
-    if (!props.valorTarjeta) {
-        return <></>
+    if (!props.data) {
+        return (
+            <div className="w-full border rounded-xl mx-auto">
+                <div className="flex animate-pulse items-center h-full px-6 py-3 gap-10">
+                    <div className="bg-gray-300 w-8 h-8 rounded-lg" />
+                    <div className="w-full h-8 bg-gray-300 rounded-lg" />
+                </div>
+            </div>
+        )
     }
 
     return (
@@ -16,7 +23,7 @@ const SummaryCard = (props: { titulo: string, valorEfectivo: number | undefined,
                         {props.titulo}
                     </span>
                     <span className="text-black text-4xl md:text-5xl mt-2 font-black block">
-                        {(props.valorEfectivo + props.valorTarjeta).toFixed(2)}
+                        {(props.data.totalVentas).toFixed(2)}
                         <span className="text-xl">
                             €
                         </span>
@@ -27,7 +34,7 @@ const SummaryCard = (props: { titulo: string, valorEfectivo: number | undefined,
                         Efectivo
                     </span>
                     <span className="text-black text-4xl md:text-5xl mt-2 font-black block">
-                        {(props.valorEfectivo).toFixed(2)}
+                        {(props.data.totalEfectivo).toFixed(2)}
                         <span className="text-xl">
                             €
                         </span>
@@ -38,7 +45,7 @@ const SummaryCard = (props: { titulo: string, valorEfectivo: number | undefined,
                         Tarjeta
                     </span>
                     <span className="text-black text-4xl md:text-5xl mt-2 font-black block">
-                        {(props.valorTarjeta).toFixed(2)}
+                        {(props.data.totalTarjeta).toFixed(2)}
                         <span className="text-xl">
                             €
                         </span>
