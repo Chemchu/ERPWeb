@@ -1,9 +1,6 @@
 import { Summary } from "../../../tipos/Summary";
-import SkeletonCard from "../../Skeletons/skeletonCard";
 
 const SummaryCard = (props: { titulo: string, data: Summary | undefined }) => {
-    // Incremento porcentual: ((valorFinal - valorInicial) / valorInicial ) * 100
-
     if (!props.data) {
         return (
             <div className="w-full border rounded-xl mx-auto">

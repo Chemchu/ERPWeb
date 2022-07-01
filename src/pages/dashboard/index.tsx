@@ -18,7 +18,8 @@ const saludos = ['Bienvenido otra vez', 'Hola', 'Saludos'];
 const Home = (props: { EmpleadoSesion: SesionEmpleado }) => {
   const [saludo, setSaludo] = useState<string>();
   const { Empleado, SetEmpleado } = useEmpleadoContext();
-  const [summary, setSummary] = useState<Summary | undefined>(undefined);
+  const [summaryToday, setSummaryToday] = useState<Summary | undefined>(undefined);
+  const [summaryYesterday, setSummaryYesterday] = useState<Summary | undefined>(undefined);
 
   useEffect(() => {
     if (Object.keys(Empleado).length === 0) {
@@ -29,7 +30,12 @@ const Home = (props: { EmpleadoSesion: SesionEmpleado }) => {
       setSaludo(`${saludos[Math.floor(Math.random() * (saludos.length - 0))]}`);
     }
     const GetSummaryData = async () => {
-      setSummary(await FetchResumenDiario(new Date(Date.now())))
+      const hoy = new Date()
+      const ayer = new Date();
+      ayer.setDate(ayer.getDate() - 1);
+
+      setSummaryToday(await FetchResumenDiario(hoy))
+      setSummaryYesterday(await FetchResumenDiario(ayer))
     }
     GetData()
     GetSummaryData()
@@ -50,15 +56,31 @@ const Home = (props: { EmpleadoSesion: SesionEmpleado }) => {
           {`${saludo},  ${Empleado.nombre.charAt(0).toUpperCase() + Empleado.nombre.slice(1)}`}
         </h1>
         <div className="flex flex-col w-full gap-3">
-          <SummaryCard titulo="Ventas totales" data={summary} />
-          <div className="w-1/2 h-full">
-            <VentasDelDia data={summary} titulo="Ventas del día" ejeX="totalVentaHora" ejeY="hora" nombreEjeX="Vendido" color={Color.BLUE} />
+          <SummaryCard titulo="Ventas totales" data={summaryToday} />
+          <div className="flex w-full justify-between gap-4">
+            <div className="w-1/2 h-full">
+              <VentasDelDia data={summaryToday} titulo="Ventas de hoy" ejeX="totalVentaHora" ejeY="hora" nombreEjeX="Vendido" color={Color.GREEN} colorID={"verde"} />
+            </div>
+            <div className="w-1/2 h-full">
+              <VentasDelDia data={summaryYesterday} titulo="Ventas de ayer" ejeX="totalVentaHora" ejeY="hora" nombreEjeX="Vendido" color={Color.BLUE} colorID={"azul"} />
+            </div>
+          </div>
+          <div className="flex gap-2">
+            <div className="w-40">
+              <FinanceCard titulo="Ventas" data={summaryToday} />
+            </div>
+            <div className="w-40">
+              <FinanceCard titulo="Ventas" data={summaryToday} />
+            </div>
+            <div className="w-40">
+              <FinanceCard titulo="Ventas" data={summaryToday} />
+            </div>
+            <div className="w-40">
+              <FinanceCard titulo="Ventas" data={summaryToday} />
+            </div>
           </div>
           <div className="w-1/2">
             <BarChart titulo="Ventas por familias (hoy)" data={[33, 53, 85]} labels={["Bebida", "Bollería salada", "Panadería"]} />
-          </div>
-          <div className="w-40">
-            <FinanceCard titulo="Ventas" data={summary} />
           </div>
         </div>
       </div>

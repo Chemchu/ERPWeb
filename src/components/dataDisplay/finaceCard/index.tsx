@@ -1,6 +1,8 @@
 import { Summary } from "../../../tipos/Summary";
 
 const FinanceCard = (props: { titulo: string, data: Summary | undefined }) => {
+    // Incremento porcentual: ((valorFinal - valorInicial) / valorInicial ) * 100
+
     if (!props.data) {
         return (
             <div className="w-full border rounded-xl mx-auto">
@@ -26,7 +28,7 @@ const FinanceCard = (props: { titulo: string, data: Summary | undefined }) => {
             </div>
             <div className="flex flex-col items-center">
                 <p className="text-gray-700 dark:text-gray-100 text-4xl text-left font-bold my-4">
-                    {props.data.totalVentas}
+                    {props.data.totalVentas.toFixed(2)}
                     <span className="text-sm">
                         €
                     </span>
