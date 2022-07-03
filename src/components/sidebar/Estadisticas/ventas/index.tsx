@@ -30,11 +30,11 @@ const EstadisticasVentasPage = () => {
 
     return (
         <div className="flex flex-col gap-4 h-full w-full bg-white rounded-b-2xl rounded-r-2xl p-4 shadow-lg border-x overflow-y-scroll">
-            <div id="filtros" className="flex justify-end w-full z-20 ">
+            {/* <div id="filtros" className="flex justify-end w-full z-20 ">
                 <div className="w-40">
                     <SimpleListBox elementos={["Hoy", "Última semana", "Último mes", "Último año"]} setElemento={setTimeRange} defaultValue={"Hoy"} />
                 </div>
-            </div>
+            </div> */}
             <div className="flex flex-wrap gap-2 justify-between">
                 <div className="xl:w-72 w-40">
                     <FinanceCard titulo="Ventas" dataActual={summaryToday?.totalVentas.toFixed(2)} dataPrevio={summaryYesterday?.totalVentas.toFixed(2)} />
