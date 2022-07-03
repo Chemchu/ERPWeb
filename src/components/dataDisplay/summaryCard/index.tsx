@@ -16,7 +16,7 @@ const SummaryCard = (props: { titulo: string, data: Summary | undefined }) => {
         <div className="md:p-6 p-4 bg-white shadow-lg hover:shadow-xl rounded-lg flex justify-between dark:bg-gray-800 md:items-center md:flex-row flex-col gap-12">
             <div className="flex text-gray-700 justify-between w-full">
                 <div>
-                    <span className="text-bold text-gray-700 dark:text-gray-400 block">
+                    <span className="text-bold text-xl text-gray-700 dark:text-gray-400 block">
                         {props.titulo}
                     </span>
                     <span className="text-4xl md:text-5xl mt-2 font-black block">
@@ -27,7 +27,7 @@ const SummaryCard = (props: { titulo: string, data: Summary | undefined }) => {
                     </span>
                 </div>
                 <div>
-                    <span className="text-left md:block">
+                    <span className="text-left text-xl md:block">
                         Efectivo
                     </span>
                     <span className="text-4xl md:text-5xl mt-2 font-black block">
@@ -38,7 +38,7 @@ const SummaryCard = (props: { titulo: string, data: Summary | undefined }) => {
                     </span>
                 </div>
                 <div>
-                    <span className="text-left md:block">
+                    <span className="text-left text-xl md:block">
                         Tarjeta
                     </span>
                     <span className="text-4xl md:text-5xl mt-2 font-black block">

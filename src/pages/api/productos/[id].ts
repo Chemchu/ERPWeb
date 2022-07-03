@@ -112,7 +112,7 @@ const UpdateProducto = async (req: NextApiRequest, res: NextApiResponse) => {
             }
         })).json();
 
-        const data = JSON.parse(apiResponse.data);
+        const data = JSON.parse(apiResponse.data).updateProducto;
         return res.status(data.successful ? 200 : 300).json({ message: data.message, successful: data.successful });
 
     }
