@@ -65,6 +65,7 @@ const Home = (props: { EmpleadoSesion: SesionEmpleado }) => {
               <FinanceCard titulo="Beneficio" dataActual={summaryToday?.beneficio.toFixed(2)} dataPrevio={summaryYesterday?.beneficio.toFixed(2)} />
             </div>
             <div className="xl:w-72 w-40">
+              {/* <FinanceCard titulo="Tickets" unidad="uds" dataActual={String(summaryToday?.numVentas)} dataPrevio={String(summaryYesterday?.numVentas)} /> */}
               <FinanceCard titulo="Tickets" unidad="uds" dataActual={String(summaryToday?.numVentas)} dataPrevio={String(summaryYesterday?.numVentas)} />
             </div>
             <div className="xl:w-72 w-40">
@@ -79,9 +80,6 @@ const Home = (props: { EmpleadoSesion: SesionEmpleado }) => {
               <VentasDelDia data={summaryYesterday} titulo="Ventas de ayer" ejeX="totalVentaHora" ejeY="hora" nombreEjeX="Vendido" color={Color.BLUE} colorID={"azul"} />
             </div>
           </div>
-          {/* <div className="w-1/2">
-            <BarChart titulo="Ventas por familias (hoy)" data={[33, 53, 85]} labels={["Bebida", "Bollería salada", "Panadería"]} />
-          </div> */}
         </div>
       </div>
     </div>

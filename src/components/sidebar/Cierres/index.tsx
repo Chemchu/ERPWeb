@@ -58,7 +58,7 @@ const CierrePage = () => {
     if (isLoading) {
         return (
             <div className="flex flex-col h-full w-full bg-white rounded-b-2xl rounded-r-2xl p-4 shadow-lg border-x">
-                <div className="flex w-full h-auto py-4 gap-2 justify-end">
+                <div className="flex w-full h-auto py-4 gap-2 justify-end ">
                     <UploadFileRestricted tipoDocumento={TipoDocumento.Cierres} />
                     <DownloadFile tipoDocumento={TipoDocumento.Cierres} />
                     <DateRange dateRange={dateRange} setDateRange={setDateRange} endDate={endDate} startDate={startDate} />
@@ -154,10 +154,13 @@ const CierrePage = () => {
     }
 
     return (
+        // <div className="flex flex-col h-full w-full bg-white rounded-b-2xl rounded-r-2xl p-4 shadow-lg border-x">ey</div>
         <div className="flex flex-col h-full w-full bg-white rounded-b-2xl rounded-r-2xl p-4 shadow-lg border-x">
             <div className="flex w-full h-auto py-4 gap-2 justify-end">
-                <UploadFileRestricted tipoDocumento={TipoDocumento.Cierres} />
-                <DownloadFile tipoDocumento={TipoDocumento.Cierres} />
+                <div className="flex gap-2 justify-start w-full">
+                    <UploadFileRestricted tipoDocumento={TipoDocumento.Cierres} />
+                    <DownloadFile tipoDocumento={TipoDocumento.Cierres} />
+                </div>
                 <DateRange dateRange={dateRange} setDateRange={setDateRange} endDate={endDate} startDate={startDate} />
                 <input autoFocus={true} className="rounded-lg border appearance-none shadow-lg w-max-72 xl:w-96 h-full py-2 px-4 bg-white text-gray-700 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-600" placeholder="ID del cierre"
                     onChange={(e) => { setFiltro(e.target.value); }} onKeyPress={async (e) => { }} />
@@ -174,38 +177,25 @@ const CierrePage = () => {
                         </button>
                 }
             </div>
-            <div className="flex justify-between border-t-2 border-x-2 rounded-t-2xl px-5 py-2">
-                <div className="text-left text-sm font-semibold w-1/4">
-                    TPV
-                </div>
+            <div className="flex flex-col w-full h-4/5 ">
+                <div className="flex justify-between border-t-2 border-x-2 rounded-t-2xl px-5 py-2">
+                    <div className="text-left text-sm font-semibold w-1/4">
+                        TPV
+                    </div>
 
-                <div className="text-left text-sm font-semibold w-1/4">
-                    Fecha
+                    <div className="text-left text-sm font-semibold w-1/4">
+                        Fecha
+                    </div>
+                    <div className="text-right text-sm font-semibold w-1/4 ">
+                        Trabajador
+                    </div>
+                    <div className="text-right text-sm font-semibold w-1/4">
+                        Ventas totales
+                    </div>
                 </div>
-                <div className="text-right text-sm font-semibold w-1/4 ">
-                    Trabajador
+                <div className="h-full w-full border-2 rounded-b overflow-y-scroll">
+                    <TablaCierre CierresList={CierresList} currentPage={currentPage} Tpvs={Tpvs} />
                 </div>
-                <div className="text-right text-sm font-semibold w-1/4">
-                    Ventas totales
-                </div>
-            </div>
-            <div className="h-full w-full border-2 rounded-b overflow-y-scroll">
-                {
-                    CierresList.length <= 0 ?
-                        arrayNum.map((n, i) => {
-                            return (
-                                <SkeletonCard key={`SkeletonProdList-${i}`} />
-                            );
-                        })
-                        :
-                        CierresList.slice((elementsPerPage * (currentPage - 1)), currentPage * elementsPerPage).map((p, index) => {
-                            return (
-                                <div key={`FilaProdTable${p._id}`}>
-                                    <FilaCierre cierre={p} tpvs={Tpvs} />
-                                </div>
-                            );
-                        })
-                }
             </div>
             <div className="flex pt-2 items-center justify-center">
                 <Paginador numPages={numPages} paginaActual={currentPage} maxPages={10} cambiarPaginaActual={setPaginaActual} />
@@ -215,6 +205,31 @@ const CierrePage = () => {
 }
 
 export default CierrePage;
+
+const TablaCierre = (props: { CierresList: Cierre[], currentPage: number, Tpvs: ITPV[] }) => {
+    return (
+        <>
+            {
+                props.CierresList.length <= 0 ?
+                    arrayNum.map((n, i) => {
+                        return (
+                            <div>
+                                <SkeletonCard key={`SkeletonProdList-${i}`} />
+                            </div>
+                        );
+                    })
+                    :
+                    props.CierresList.slice((elementsPerPage * (props.currentPage - 1)), props.currentPage * elementsPerPage).map((p, index) => {
+                        return (
+                            <div className="w-full h-10" key={`FilaProdTable${p._id}`}>
+                                <FilaCierre cierre={p} tpvs={props.Tpvs} />
+                            </div>
+                        );
+                    })
+            }
+        </>
+    )
+}
 
 const FilaCierre = (props: { cierre: Cierre, tpvs: ITPV[] }) => {
     const [showModal, setModal] = useState<boolean>(false);
@@ -240,6 +255,5 @@ const FilaCierre = (props: { cierre: Cierre, tpvs: ITPV[] }) => {
                 {showModal && <VerCierre showModal={setModal} cierre={props.cierre} tpv={tpv} />}
             </AnimatePresence>
         </div>
-
     );
 }
