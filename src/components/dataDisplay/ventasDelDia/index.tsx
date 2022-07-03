@@ -4,7 +4,6 @@ import { NameType, ValueType } from 'recharts/types/component/DefaultTooltipCont
 import { Color } from '../../../tipos/Enums/Color';
 import { Summary } from '../../../tipos/Summary';
 
-
 const VentasDelDia = (props: { data: Summary | undefined, titulo: string, ejeX: string, ejeY: string, nombreEjeX: string, color: Color, colorID: string }) => {
     const CustomTooltip = ({ active, payload, label, }: TooltipProps<ValueType, NameType>) => {
         if (active) {
@@ -33,14 +32,6 @@ const VentasDelDia = (props: { data: Summary | undefined, titulo: string, ejeX: 
         )
     }
 
-    if (props.data.ventasPorHora.length <= 0) {
-        return (
-            <div className='flex justify-center w-full rounded-xl border-x border-b shadow-xl hover:shadow-2xl p-6'>
-                <span>No se han encontrado datos</span>
-            </div>
-        )
-    }
-
     return (
         <div className='w-full rounded-xl border-x border-b shadow-xl hover:shadow-2xl'>
             <div className='flex justify-center py-4 font-semibold text-gray-600'>
@@ -49,7 +40,7 @@ const VentasDelDia = (props: { data: Summary | undefined, titulo: string, ejeX: 
             <div className='w-full h-full '>
                 <ResponsiveContainer width="100%" height="100%" minHeight={250}>
                     <AChart data={props.data.ventasPorHora}
-                        margin={{ top: 0, right: 30, left: -20, bottom: 10 }}>
+                        margin={{ top: 0, right: 30, left: 0, bottom: 10 }}>
                         <defs>
                             <linearGradient id={props.colorID} x1="0" y1="0" x2="0" y2="1">
                                 <stop offset="5%" stopColor={props.color} stopOpacity={0.9} />

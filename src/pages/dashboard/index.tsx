@@ -50,13 +50,27 @@ const Home = (props: { EmpleadoSesion: SesionEmpleado }) => {
   }
 
   return (
-    <div className="w-full h-screen py-3">
+    <div className="w-full h-screen py-3 text-gray-700">
       <div className="flex flex-col gap-8 w-full h-full p-4 overflow-y-scroll bg-white rounded-2xl border shadow-lg">
         <h1 className="text-4xl">
           {`${saludo},  ${Empleado.nombre.charAt(0).toUpperCase() + Empleado.nombre.slice(1)}`}
         </h1>
         <div className="flex flex-col w-full gap-3">
           <SummaryCard titulo="Ventas totales" data={summaryToday} />
+          <div className="flex flex-wrap gap-2 justify-between">
+            <div className="xl:w-72 w-40">
+              <FinanceCard titulo="Ventas" dataActual={summaryToday?.totalVentas.toFixed(2)} dataPrevio={summaryYesterday?.totalVentas.toFixed(2)} />
+            </div>
+            <div className="xl:w-72 w-40">
+              <FinanceCard titulo="Beneficio" dataActual={summaryToday?.beneficio.toFixed(2)} dataPrevio={summaryYesterday?.beneficio.toFixed(2)} />
+            </div>
+            <div className="xl:w-72 w-40">
+              <FinanceCard titulo="Tickets" unidad="uds" dataActual={String(summaryToday?.numVentas)} dataPrevio={String(summaryYesterday?.numVentas)} />
+            </div>
+            <div className="xl:w-72 w-40">
+              <FinanceCard titulo="IVA" dataActual={summaryToday?.ivaPagado.toFixed(2)} dataPrevio={summaryYesterday?.ivaPagado.toFixed(2)} />
+            </div>
+          </div>
           <div className="flex w-full justify-between gap-4">
             <div className="w-1/2 h-full">
               <VentasDelDia data={summaryToday} titulo="Ventas de hoy" ejeX="totalVentaHora" ejeY="hora" nombreEjeX="Vendido" color={Color.GREEN} colorID={"verde"} />
@@ -65,23 +79,9 @@ const Home = (props: { EmpleadoSesion: SesionEmpleado }) => {
               <VentasDelDia data={summaryYesterday} titulo="Ventas de ayer" ejeX="totalVentaHora" ejeY="hora" nombreEjeX="Vendido" color={Color.BLUE} colorID={"azul"} />
             </div>
           </div>
-          <div className="flex gap-2">
-            <div className="w-40">
-              <FinanceCard titulo="Ventas" data={summaryToday} />
-            </div>
-            <div className="w-40">
-              <FinanceCard titulo="Ventas" data={summaryToday} />
-            </div>
-            <div className="w-40">
-              <FinanceCard titulo="Ventas" data={summaryToday} />
-            </div>
-            <div className="w-40">
-              <FinanceCard titulo="Ventas" data={summaryToday} />
-            </div>
-          </div>
-          <div className="w-1/2">
+          {/* <div className="w-1/2">
             <BarChart titulo="Ventas por familias (hoy)" data={[33, 53, 85]} labels={["Bebida", "Bollería salada", "Panadería"]} />
-          </div>
+          </div> */}
         </div>
       </div>
     </div>

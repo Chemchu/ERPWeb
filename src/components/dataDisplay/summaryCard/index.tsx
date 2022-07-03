@@ -14,12 +14,12 @@ const SummaryCard = (props: { titulo: string, data: Summary | undefined }) => {
 
     return (
         <div className="md:p-6 p-4 bg-white shadow-lg hover:shadow-xl rounded-lg flex justify-between dark:bg-gray-800 md:items-center md:flex-row flex-col gap-12">
-            <div className="flex justify-between w-full">
+            <div className="flex text-gray-700 justify-between w-full">
                 <div>
                     <span className="text-bold text-gray-700 dark:text-gray-400 block">
                         {props.titulo}
                     </span>
-                    <span className="text-black text-4xl md:text-5xl mt-2 font-black block">
+                    <span className="text-4xl md:text-5xl mt-2 font-black block">
                         {(props.data.totalVentas).toFixed(2)}
                         <span className="text-xl">
                             €
@@ -30,7 +30,7 @@ const SummaryCard = (props: { titulo: string, data: Summary | undefined }) => {
                     <span className="text-left md:block">
                         Efectivo
                     </span>
-                    <span className="text-black text-4xl md:text-5xl mt-2 font-black block">
+                    <span className="text-4xl md:text-5xl mt-2 font-black block">
                         {(props.data.totalEfectivo).toFixed(2)}
                         <span className="text-xl">
                             €
@@ -41,7 +41,7 @@ const SummaryCard = (props: { titulo: string, data: Summary | undefined }) => {
                     <span className="text-left md:block">
                         Tarjeta
                     </span>
-                    <span className="text-black text-4xl md:text-5xl mt-2 font-black block">
+                    <span className="text-4xl md:text-5xl mt-2 font-black block">
                         {(props.data.totalTarjeta).toFixed(2)}
                         <span className="text-xl">
                             €
