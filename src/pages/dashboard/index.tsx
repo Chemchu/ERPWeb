@@ -66,7 +66,7 @@ const Home = (props: { EmpleadoSesion: SesionEmpleado }) => {
             </div>
             <div className="xl:w-72 w-40">
               {/* <FinanceCard titulo="Tickets" unidad="uds" dataActual={String(summaryToday?.numVentas)} dataPrevio={String(summaryYesterday?.numVentas)} /> */}
-              <FinanceCard titulo="Tickets" unidad="uds" dataActual={String(summaryToday?.numVentas)} dataPrevio={String(summaryYesterday?.numVentas)} />
+              <FinanceCard titulo="Tickets" unidad="uds" dataActual={summaryToday && String(summaryToday?.numVentas)} dataPrevio={summaryToday && String(summaryYesterday?.numVentas)} />
             </div>
             <div className="xl:w-72 w-40">
               <FinanceCard titulo="IVA" dataActual={summaryToday?.ivaPagado.toFixed(2)} dataPrevio={summaryYesterday?.ivaPagado.toFixed(2)} />

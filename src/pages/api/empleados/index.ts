@@ -1,5 +1,4 @@
 import { NextApiRequest, NextApiResponse } from "next";
-import { json } from "stream/consumers";
 import { QUERY_EMPLEADOS } from "../../../utils/querys";
 import GQLQuery from "../../../utils/serverFetcher";
 
@@ -48,8 +47,7 @@ const AddEmpleado = async (req: NextApiRequest, res: NextApiResponse) => {
             dni: req.body.dni,
             rol: req.body.rol,
         })
-    })
-
+    });
     const apiResponse = await serverRes.json();
 
     const data = JSON.parse(apiResponse.data);
