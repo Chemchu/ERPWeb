@@ -17,7 +17,7 @@ const Stats = (props: { EmpleadoSesion: SesionEmpleado }) => {
             SetEmpleado(props.EmpleadoSesion)
         }
 
-    });
+    }, []);
     return (
         <div className="w-full h-full p-2">
             <Tab.Group as="div" className="flex flex-col w-full h-full">

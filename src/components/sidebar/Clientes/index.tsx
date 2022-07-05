@@ -27,7 +27,7 @@ const ClientesPage = () => {
             setLoading(false);
         }
         GetAllData();
-    });
+    }, []);
 
     useEffect(() => {
         if (filtro === "") { setClientesFiltrados(undefined); return; }

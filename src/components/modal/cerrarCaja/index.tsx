@@ -67,7 +67,7 @@ export const CerrarCaja = (props: { Empleado?: SesionEmpleado, setModalOpen: Fun
         return () => {
             abortController.abort();
         }
-    })
+    }, [])
 
     useEffect(() => {
         if (qrImage) {

@@ -15,7 +15,7 @@ const Cierres = (props: { EmpleadoSesion: SesionEmpleado }) => {
         if (Object.keys(Empleado).length === 0) {
             SetEmpleado(props.EmpleadoSesion)
         }
-    });
+    }, []);
 
     return (
         <Tab.Group as="div" className="flex flex-col w-full h-full pt-2 pr-2">

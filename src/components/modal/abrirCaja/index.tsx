@@ -29,7 +29,7 @@ const AbrirCaja = (props: { setShowModal: Function, setEmpleadoUsandoTPV: Functi
         return (() => {
             abortController.abort();
         })
-    });
+    }, []);
 
     useEffect(() => {
         // Selecciona el primer TPV libre

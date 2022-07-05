@@ -24,7 +24,7 @@ const VerCierre = (props: { showModal: Function, cierre: Cierre, tpv: string }) 
         return (() => {
             abortController.abort();
         });
-    });
+    }, []);
 
     const reactToPrintContent = React.useCallback(() => {
         return componentRef.current;

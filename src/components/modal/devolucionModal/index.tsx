@@ -45,7 +45,7 @@ const DevolucionModal = (props: { devolucion: Devolucion | undefined, setModal: 
         return () => {
             abortController.abort();
         }
-    })
+    }, [])
 
 
     if (!props.devolucion) {

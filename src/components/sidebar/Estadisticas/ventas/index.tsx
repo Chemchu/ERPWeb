@@ -26,7 +26,7 @@ const EstadisticasVentasPage = () => {
             setSummaryYesterday(await FetchResumenDiario(ayer))
         }
         GetSummaryData()
-    })
+    }, [])
 
     return (
         <div className="flex flex-col gap-4 h-full w-full bg-white rounded-b-2xl rounded-r-2xl p-4 shadow-lg border-x overflow-y-scroll">

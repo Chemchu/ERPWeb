@@ -5,6 +5,7 @@ import { Cierre } from "../../../tipos/Cierre";
 import { TipoDocumento } from "../../../tipos/Enums/TipoDocumentos";
 import { ITPV } from "../../../tipos/TPV";
 import { FetchCierres, FetchCierresByQuery } from "../../../utils/fetches/cierresFetches";
+import { notifyWarn } from "../../../utils/toastify";
 import DownloadFile from "../../elementos/botones/downloadFile";
 import UploadFileRestricted from "../../elementos/botones/uploadFileRestricted";
 import DateRange from "../../elementos/Forms/dateRange";
@@ -37,7 +38,7 @@ const CierrePage = () => {
             setLoading(false);
         }
         GetAllData();
-    });
+    }, []);
 
     const numPages = Math.ceil(CierresList.length / elementsPerPage);
 
