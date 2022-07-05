@@ -27,7 +27,7 @@ const ProductPage = () => {
             setLoading(false);
         }
         GetAllData();
-    }, []);
+    });
 
     useEffect(() => {
         if (filtro === "") {

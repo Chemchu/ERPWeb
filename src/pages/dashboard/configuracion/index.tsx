@@ -17,7 +17,7 @@ const ConfiguracionPage = (props: { EmpleadoSesion: SesionEmpleado }) => {
             SetEmpleado(props.EmpleadoSesion)
         }
 
-    }, []);
+    });
 
     return (
         <Tab.Group as="div" className="flex flex-col w-full h-full pt-3 pr-2">

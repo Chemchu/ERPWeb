@@ -30,7 +30,7 @@ const EmpleadosPage = () => {
             setLoading(false);
         }
         GetAllData();
-    }, []);
+    });
 
     useEffect(() => {
         if (filtro === "") { setEmpleadosFiltrados(undefined); }

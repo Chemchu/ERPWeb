@@ -27,7 +27,7 @@ const DevolucionesPage = () => {
         }
 
         GetAllData();
-    }, []);
+    });
 
     useEffect(() => {
         if (!filtro) {

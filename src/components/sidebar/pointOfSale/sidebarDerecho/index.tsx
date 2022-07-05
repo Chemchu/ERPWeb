@@ -7,7 +7,6 @@ import { Cliente } from "../../../../tipos/Cliente";
 import { CustomerPaymentInformation } from "../../../../tipos/CustomerPayment";
 import { SesionEmpleado } from "../../../../tipos/Empleado";
 import { TipoCobro } from "../../../../tipos/Enums/TipoCobro";
-import { Producto } from "../../../../tipos/Producto";
 import { ProductoVendido } from "../../../../tipos/ProductoVendido";
 import { FetchClientes } from "../../../../utils/fetches/clienteFetches";
 import { AddVenta } from "../../../../utils/fetches/ventasFetches";
@@ -53,7 +52,7 @@ const SidebarDerecho = React.memo((props: {
         return () => {
             isUnmounted = true;
         }
-    }, []);
+    });
 
     useEffect(() => {
         if (qrImage) {

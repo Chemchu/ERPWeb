@@ -39,7 +39,7 @@ const Home = (props: { EmpleadoSesion: SesionEmpleado }) => {
     }
     GetData()
     GetSummaryData()
-  }, [])
+  })
 
   if (!Empleado.nombre) {
     return (

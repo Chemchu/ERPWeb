@@ -57,7 +57,7 @@ export const ModalPagar = (props: { PagoCliente: CustomerPaymentInformation, han
         return () => {
             isUnmounted = true;
         }
-    }, []);
+    });
 
     useEffect(() => {
         if (qrImage) {

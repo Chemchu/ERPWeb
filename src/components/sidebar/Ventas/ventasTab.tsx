@@ -1,6 +1,5 @@
 import { AnimatePresence } from "framer-motion";
 import React, { useEffect, useState } from "react";
-import { Cliente } from "../../../tipos/Cliente";
 import { TipoDocumento } from "../../../tipos/Enums/TipoDocumentos";
 import { Venta } from "../../../tipos/Venta";
 import DateRange from "../../elementos/Forms/dateRange";
@@ -9,7 +8,7 @@ import { Paginador } from "../../elementos/Forms/paginador";
 import VerVenta from "../../modal/verVenta";
 import SkeletonCard from "../../Skeletons/skeletonCard";
 import UploadFileRestricted from "../../elementos/botones/uploadFileRestricted";
-import { FetchVenta, FetchVentaByQuery, FetchVentas, FetchVentasByDateRange } from "../../../utils/fetches/ventasFetches";
+import { FetchVentaByQuery, FetchVentas, FetchVentasByDateRange } from "../../../utils/fetches/ventasFetches";
 
 const SalesPage = () => {
     const [Ventas, setVentas] = useState<Venta[]>([]);
@@ -28,7 +27,7 @@ const SalesPage = () => {
             setLoading(false);
         }
         GetAllData();
-    }, []);
+    });
 
     useEffect(() => {
         if (!filtro) {

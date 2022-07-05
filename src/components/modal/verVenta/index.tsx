@@ -60,7 +60,7 @@ const VerVenta = (props: { venta: Venta | undefined, setModal: Function }) => {
         return () => {
             abortController.abort();
         }
-    }, [])
+    })
 
 
     if (!props.venta) {
