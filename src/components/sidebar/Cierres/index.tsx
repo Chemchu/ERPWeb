@@ -213,8 +213,8 @@ const TablaCierre = (props: { CierresList: Cierre[], currentPage: number, Tpvs: 
                 props.CierresList.length <= 0 ?
                     arrayNum.map((n, i) => {
                         return (
-                            <div>
-                                <SkeletonCard key={`SkeletonProdList-${i}`} />
+                            <div key={`SkeletonProdList-${i}`} >
+                                <SkeletonCard />
                             </div>
                         );
                     })
