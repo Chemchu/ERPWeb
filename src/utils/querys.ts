@@ -32,7 +32,6 @@ export const ADD_CIERRE = `
       }
       apertura
       cierre
-      numVentas
       ventasEfectivo
       ventasTarjeta
       ventasTotales
@@ -367,7 +366,6 @@ export const QUERY_CIERRES = `
       rol
       email
     }
-    numVentas
     ventasEfectivo
     ventasTarjeta
     ventasTotales
@@ -536,3 +534,12 @@ export const ADD_DEVOLUCION = `
   }
 }
 `
+
+export const ADD_CIERRES_FILE = `
+    mutation AddCierresFile($csv: String!) {
+      addCierresFile(csv: $csv) {
+        message
+        successful
+      }
+    }
+`;

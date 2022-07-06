@@ -68,7 +68,7 @@ const VerCierre = (props: { showModal: Function, cierre: Cierre, tpv: string }) 
                                     Ventas en tarjeta: {props.cierre.ventasTarjeta}€
                                 </span>
                                 <span>
-                                    Beneficio: {props.cierre.beneficio}€ (Server calculando mal el beneficio)
+                                    Beneficio: {props.cierre.beneficio}€
                                 </span>
                                 <span>
                                     Caja inicial: {props.cierre.cajaInicial}€

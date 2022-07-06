@@ -1,6 +1,6 @@
 import { NextApiRequest, NextApiResponse } from "next";
-import { QUERY_CIERRES } from "../../../utils/querys";
-import GQLQuery from "../../../utils/serverFetcher";
+import { ADD_CIERRES_FILE, QUERY_CIERRES } from "../../../utils/querys";
+import GQLQuery, { GQLMutate } from "../../../utils/serverFetcher";
 import queryString from 'query-string';
 
 const handler = async (req: NextApiRequest, res: NextApiResponse) => {
@@ -14,6 +14,10 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
                 else {
                     return res.status(300).json({ message: `Las consulta no puede estar vacía`, successful: false });
                 }
+            case 'POST':
+                if (req.query.id === "file") {
+                    return await AddCierresFromFile(req, res);
+                }
         }
 
         return res.status(300).json({ message: `Solo se acepta metodo GET`, successful: false });
@@ -21,6 +25,23 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
     catch (err) {
         console.log(err);
         return res.status(500).json({ message: `${err}` });
+    }
+}
+
+const AddCierresFromFile = async (req: NextApiRequest, res: NextApiResponse) => {
+    try {
+        const apiResponse = await (await GQLMutate({
+            mutation: ADD_CIERRES_FILE,
+            variables: {
+                csv: JSON.stringify(req.body)
+            }
+        })).json();
+
+        const data = JSON.parse(apiResponse.data).addCierresFile;
+        return res.status(data.successful ? 200 : 300).json({ message: data.message, successful: data.successful });
+    }
+    catch (err) {
+
     }
 }
 

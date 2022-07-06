@@ -1,7 +1,7 @@
 import useEmpleadoContext from "../../../../context/empleadoContext";
 import { Roles } from "../../../../tipos/Enums/Roles";
 import { TipoDocumento } from "../../../../tipos/Enums/TipoDocumentos";
-import { notifyError, notifyPromise, notifySuccess } from "../../../../utils/toastify";
+import { notifyError, notifyPromise } from "../../../../utils/toastify";
 
 const UploadFileRestricted = (props: { extension?: string, tipoDocumento: TipoDocumento }) => {
     const { Empleado } = useEmpleadoContext();
