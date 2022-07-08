@@ -5,7 +5,6 @@ import queryString from 'query-string';
 
 const handler = async (req: NextApiRequest, res: NextApiResponse) => {
     const query = queryString.parse(req.query.id.toString());
-
     switch (req.method) {
         case 'POST':
             if (req.query.id === "file") {
@@ -23,15 +22,21 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
 }
 
 const AddVentaFromFile = async (req: NextApiRequest, res: NextApiResponse) => {
-    const apiResponse = await (await GQLMutate({
-        mutation: ADD_SALES_FILE,
-        variables: {
-            ventasJson: JSON.stringify(req.body)
-        }
-    })).json();
+    try {
+        const apiResponse = await (await GQLMutate({
+            mutation: ADD_SALES_FILE,
+            variables: {
+                ventasJson: JSON.stringify(req.body)
+            }
+        })).json();
 
-    const data = JSON.parse(apiResponse.data)
-    return res.status(data.successful ? 200 : 300).json({ message: data.message, successful: data.successful });
+        const data = JSON.parse(apiResponse.data)
+        return res.status(data.successful ? 200 : 300).json({ message: data.message, successful: data.successful });
+    }
+    catch (err) {
+        console.log(err);
+        return res.status(500).json({ message: "Error interno. Si el archivo es muy grande, todavía se estará añadiendo. Espere unos minutos", successful: false });
+    }
 }
 
 const GetSale = async (req: NextApiRequest, res: NextApiResponse) => {
@@ -97,7 +102,7 @@ const GetSalesByQuery = async (userQuery: queryString.ParsedQuery<string>, res: 
 export const config = {
     api: {
         bodyParser: {
-            sizeLimit: '50mb',
+            sizeLimit: '150mb',
         },
     },
 }

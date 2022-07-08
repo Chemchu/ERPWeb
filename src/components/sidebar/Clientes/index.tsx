@@ -68,13 +68,13 @@ const ClientesPage = () => {
                 </div>
             </div>
             <div className="flex justify-between border-t border-x rounded-t-2xl px-5 py-2">
-                <div className="text-left text-sm font-semibold w-1/3">
+                <div className="text-left font-semibold w-1/3">
                     Nombre
                 </div>
-                <div className="text-left text-sm font-semibold w-1/3">
+                <div className="text-left font-semibold w-1/3">
                     CIF
                 </div>
-                <div className="text-left text-sm font-semibold w-1/3">
+                <div className="text-left font-semibold w-1/3">
                     Dirección
                 </div>
             </div>
@@ -112,13 +112,13 @@ const ClientesPage = () => {
                     </div>
                 </div>
                 <div className="flex justify-between border-t border-x rounded-t-2xl px-5 py-2">
-                    <div className="text-left text-sm font-semibold w-1/3">
+                    <div className="text-left font-semibold w-1/3">
                         Nombre
                     </div>
-                    <div className="text-left text-sm font-semibold w-1/3">
+                    <div className="text-left font-semibold w-1/3">
                         CIF
                     </div>
-                    <div className="text-left text-sm font-semibold w-1/3">
+                    <div className="text-left font-semibold w-1/3">
                         Dirección
                     </div>
                 </div>
@@ -159,13 +159,13 @@ const ClientesPage = () => {
                 </div>
             </div>
             <div className="flex justify-between border-t border-x rounded-t-2xl px-5 py-2">
-                <div className="text-left text-sm font-semibold w-1/3">
+                <div className="text-left font-semibold w-1/3">
                     Nombre
                 </div>
-                <div className="text-left text-sm font-semibold w-1/3">
+                <div className="text-left font-semibold w-1/3">
                     CIF
                 </div>
-                <div className="text-left text-sm font-semibold w-1/3">
+                <div className="text-left font-semibold w-1/3">
                     Dirección
                 </div>
             </div>
@@ -235,13 +235,13 @@ const FilaCliente = (props: { cliente: Cliente, setClientes: Dispatch<SetStateAc
     return (
         <div className="hover:bg-gray-200">
             <div className="flex justify-between border-b px-5 py-2 cursor-pointer" onClick={() => { setModal(true) }}>
-                <div className="w-1/3 text-sm text-left">
+                <div className="w-1/3 text-left">
                     {cliente.nombre}
                 </div>
-                <div className="w-1/3 text-sm text-left">
+                <div className="w-1/3 text-left">
                     {cliente.nif}
                 </div>
-                <div className="w-1/3 text-base text-left">
+                <div className="w-1/3 text-left">
                     {cliente.calle}
                 </div>
             </div>

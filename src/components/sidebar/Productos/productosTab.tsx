@@ -67,33 +67,7 @@ const ProductPage = () => {
                     }
                 </div>
             </div>
-            <div className="flex justify-between border-t-2 border-x-2 rounded-t-2xl px-5 py-2">
-                <div className="text-left text-sm font-semibold w-2/5">
-                    Nombre
-                </div>
-
-                <div className="text-left text-sm font-semibold w-1/5">
-                    Precio
-                </div>
-                <div className="text-left text-sm font-semibold w-1/5 ">
-                    Familia
-                </div>
-                <div className="text-right text-sm font-semibold w-1/5">
-                    Cantidad
-                </div>
-            </div>
-            {
-                isLoading ?
-                    arrayNum.map((n, i) => {
-                        return (
-                            <SkeletonCard key={`SkeletonProdList-${i}`} />
-                        );
-                    }) :
-                    ProductosFiltrados ?
-                        <TablaProductos Productos={ProductosFiltrados} SetProductos={SetProductos} />
-                        :
-                        <TablaProductos Productos={Productos} SetProductos={SetProductos} />
-            }
+            <TablaProductos isLoading={isLoading} Productos={ProductosFiltrados || Productos} SetProductos={SetProductos} />
             <AnimatePresence>
                 {addProdModal && <AddProducto showModal={setAddProdModal} />}
             </AnimatePresence>
@@ -101,7 +75,7 @@ const ProductPage = () => {
     );
 }
 
-const TablaProductos = (props: { Productos: Producto[], SetProductos: Function }) => {
+const TablaProductos = (props: { isLoading: boolean, Productos: Producto[], SetProductos: Function }) => {
     const [currentPage, setCurrentPage] = useState<number>(1);
 
     const elementsPerPage = 50;
@@ -116,25 +90,53 @@ const TablaProductos = (props: { Productos: Producto[], SetProductos: Function }
 
     return (
         <>
-            <div className="h-full w-full border-2 rounded-b overflow-y-scroll">
-                {
-                    props.Productos.length <= 0 ?
-                        <div className="flex justify-center items-center h-full w-full text-xl">
-                            No se ha encontrado registros de productos en el sistema
-                        </div>
-                        :
-                        props.Productos.slice((elementsPerPage * (currentPage - 1)), currentPage * elementsPerPage).map((p, index) => {
+            <div className="flex justify-between border-t-2 border-x-2 rounded-t-2xl px-5 py-2">
+                <div className="text-left font-semibold w-2/5">
+                    Nombre
+                </div>
+
+                <div className="text-left font-semibold w-1/5">
+                    Precio
+                </div>
+                <div className="text-left font-semibold w-1/5 ">
+                    Familia
+                </div>
+                <div className="text-right font-semibold w-1/5">
+                    Cantidad
+                </div>
+            </div>
+            {
+                props.isLoading ?
+                    <div className="h-full w-full border-2 rounded-b overflow-y-scroll">
+                        {arrayNum.map((n, i) => {
                             return (
-                                <div key={`FilaProdTable${p._id}`}>
-                                    <FilaProducto producto={p} productos={props.Productos} setAllProductos={props.SetProductos} />
-                                </div>
+                                <SkeletonCard key={`SkeletonProdList-${i}`} />
                             );
-                        })
-                }
-            </div>
-            <div className="flex pt-2 items-center justify-center">
-                <Paginador numPages={numPages} paginaActual={currentPage} maxPages={10} cambiarPaginaActual={setPaginaActual} />
-            </div>
+                        })}
+                    </div>
+                    :
+                    <>
+                        <div className="h-full w-full border-2 rounded-b overflow-y-scroll">
+                            {
+                                props.Productos.length <= 0 ?
+                                    <div className="flex justify-center items-center h-full w-full text-xl">
+                                        No se ha encontrado registros de productos en el sistema
+                                    </div>
+                                    :
+                                    props.Productos.slice((elementsPerPage * (currentPage - 1)), currentPage * elementsPerPage).map((p, index) => {
+                                        return (
+                                            <div key={`FilaProdTable${p._id}`}>
+                                                <FilaProducto producto={p} productos={props.Productos} setAllProductos={props.SetProductos} />
+                                            </div>
+                                        );
+                                    })
+                            }
+                        </div>
+                        <div className="flex pt-2 items-center justify-center">
+                            <Paginador numPages={numPages} paginaActual={currentPage} maxPages={10} cambiarPaginaActual={setPaginaActual} />
+                        </div>
+                    </>
+            }
         </>
     )
 }
@@ -157,16 +159,16 @@ const FilaProducto = (props: { producto: Producto, productos: Producto[], setAll
     return (
         <div className="hover:bg-blue-200">
             <div className="flex justify-between border-b px-5 py-2 cursor-pointer" onClick={() => { setModal(true) }}>
-                <div className="w-2/5 text-sm text-left">
+                <div className="w-2/5 text-left truncate">
                     {producto.nombre}
                 </div>
-                <div className="w-1/5 text-sm text-left">
+                <div className="w-1/5 text-left">
                     {producto.precioVenta.toFixed(2)}€
                 </div>
-                <div className="w-1/5 text-base text-left">
+                <div className="w-1/5 text-left truncate">
                     {producto.familia}
                 </div>
-                <div className="w-1/5 text-sm text-right">
+                <div className="w-1/5 text-right">
                     <span className={`w-full px-3 py-1 rounded-full ${producto.cantidad > 0 ? " text-green-900 bg-green-300" : "text-red-900 bg-red-300"}`}>
                         {producto.cantidad ? producto.cantidad : 0}
                     </span>

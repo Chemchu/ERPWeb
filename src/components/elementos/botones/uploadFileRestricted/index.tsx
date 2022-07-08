@@ -1,7 +1,7 @@
 import useEmpleadoContext from "../../../../context/empleadoContext";
 import { Roles } from "../../../../tipos/Enums/Roles";
 import { TipoDocumento } from "../../../../tipos/Enums/TipoDocumentos";
-import { notifyError, notifyPromise } from "../../../../utils/toastify";
+import { notifyError, notifyLoading, notifyPromise } from "../../../../utils/toastify";
 
 const UploadFileRestricted = (props: { extension?: string, tipoDocumento: TipoDocumento }) => {
     const { Empleado } = useEmpleadoContext();
@@ -32,7 +32,7 @@ const UploadFileRestricted = (props: { extension?: string, tipoDocumento: TipoDo
                 resolve(json.message)
             });
 
-            notifyPromise(res, "Añadiendo documentos...");
+            notifyLoading(res, "Añadiendo documentos...")
         }
         catch (e) {
             console.log(e);

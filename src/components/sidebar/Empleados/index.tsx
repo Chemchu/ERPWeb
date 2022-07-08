@@ -69,13 +69,13 @@ const EmpleadosPage = () => {
                     </div>
                 </div>
                 <div className="flex justify-between border-t border-x rounded-t-2xl px-5 py-2">
-                    <div className="text-left text-sm font-semibold w-1/3">
+                    <div className="text-left font-semibold w-1/3">
                         Nombre
                     </div>
-                    <div className="text-left text-sm font-semibold w-1/3">
+                    <div className="text-left font-semibold w-1/3">
                         Correo
                     </div>
-                    <div className="text-left text-sm font-semibold w-1/3">
+                    <div className="text-left font-semibold w-1/3">
                         Rol
                     </div>
                 </div>
@@ -122,13 +122,13 @@ const EmpleadosPage = () => {
                     </div>
                 </div>
                 <div className="flex justify-between border-t border-x rounded-t-2xl px-5 py-2">
-                    <div className="text-left text-sm font-semibold w-1/3">
+                    <div className="text-left font-semibold w-1/3">
                         Nombre
                     </div>
-                    <div className="text-left text-sm font-semibold w-1/3">
+                    <div className="text-left font-semibold w-1/3">
                         Correo
                     </div>
-                    <div className="text-left text-sm font-semibold w-1/3">
+                    <div className="text-left font-semibold w-1/3">
                         Rol
                     </div>
                 </div>
@@ -168,13 +168,13 @@ const EmpleadosPage = () => {
                 </div>
             </div>
             <div className="flex justify-between border-t border-x rounded-t-2xl px-5 py-2">
-                <div className="text-left text-sm font-semibold w-1/3">
+                <div className="text-left font-semibold w-1/3">
                     Nombre
                 </div>
-                <div className="text-left text-sm font-semibold w-1/3">
+                <div className="text-left font-semibold w-1/3">
                     Correo
                 </div>
-                <div className="text-left text-sm font-semibold w-1/3">
+                <div className="text-left font-semibold w-1/3">
                     Rol
                 </div>
             </div>
@@ -227,13 +227,13 @@ const FilaEmpleado = (props: { empleado: Empleado, setEmpleados: Function }) => 
     return (
         <div className="hover:bg-gray-200">
             <div className="flex justify-between border-b px-5 py-2 cursor-pointer" onClick={() => { setModal(true) }}>
-                <div className="w-1/3 text-sm text-left">
+                <div className="w-1/3 text-left">
                     {empleado.nombre}
                 </div>
-                <div className="w-1/3 text-sm text-left">
+                <div className="w-1/3 text-left">
                     {empleado.email}
                 </div>
-                <div className="w-1/3 text-base text-left">
+                <div className="w-1/3 text-left">
                     {empleado.rol}
                 </div>
             </div>

@@ -178,17 +178,17 @@ const CierrePage = () => {
             </div>
             <div className="flex flex-col w-full h-4/5 ">
                 <div className="flex justify-between border-t-2 border-x-2 rounded-t-2xl px-5 py-2">
-                    <div className="text-left text-sm font-semibold w-1/4">
+                    <div className="text-left font-semibold w-1/4">
                         TPV
                     </div>
 
-                    <div className="text-left text-sm font-semibold w-1/4">
+                    <div className="text-left font-semibold w-1/4">
                         Fecha
                     </div>
-                    <div className="text-right text-sm font-semibold w-1/4 ">
+                    <div className="text-right font-semibold w-1/4 ">
                         Trabajador
                     </div>
-                    <div className="text-right text-sm font-semibold w-1/4">
+                    <div className="text-right font-semibold w-1/4">
                         Ventas totales
                     </div>
                 </div>
@@ -237,16 +237,16 @@ const FilaCierre = (props: { cierre: Cierre, tpvs: ITPV[] }) => {
     return (
         <div className="hover:bg-blue-200">
             <div className="flex justify-between border-b px-5 py-2 cursor-pointer" onClick={() => { setModal(true) }}>
-                <div className="w-1/4 text-sm text-left">
+                <div className="w-1/4 text-left">
                     {tpv}
                 </div>
-                <div className="w-1/4 text-sm text-left">
+                <div className="w-1/4 text-left">
                     {new Date(Number(props.cierre.cierre)).toLocaleString()}
                 </div>
-                <div className="w-1/4 text-base text-right">
+                <div className="w-1/4 text-right">
                     {props.cierre.cerradoPor.nombre}
                 </div>
-                <div className="w-1/4 text-sm text-right">
+                <div className="w-1/4 text-right">
                     {props.cierre.ventasTotales.toFixed(2)}€
                 </div>
             </div>
