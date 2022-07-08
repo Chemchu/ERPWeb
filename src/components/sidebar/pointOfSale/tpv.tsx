@@ -6,6 +6,7 @@ import ProductCard from "./productCard";
 import useProductEnCarritoContext from "../../../context/productosEnCarritoContext";
 import SkeletonProductCard from "../../Skeletons/skeletonProductCard";
 import SidebarDerecho from "./sidebarDerecho";
+import { motion } from "framer-motion";
 
 const TPV = (props: { productos: Producto[], empleadoUsandoTPV: boolean, setEmpleadoUsandoTPV: Function, setShowModalCerrar: Function, setShowModalAbrir: Function }) => {
     const [ProductosFiltrados, setProductosFiltrados] = useState<Producto[]>(props.productos);
@@ -140,19 +141,21 @@ const TPV = (props: { productos: Producto[], empleadoUsandoTPV: boolean, setEmpl
                                 Familias[0] !== undefined &&
                                 <div className="px-4">
                                     <div className="flex w-full max-h-20 py-2 gap-4 overflow-y-hidden overflow-x-scroll justify-start text-center">
-                                        <button key={"Todos"} id={"Todos"} className="flex bg-blue-400 hover:bg-blue-500 text-white rounded-xl w-auto py-1 px-2"
+                                        <motion.button whileTap={{ scale: 0.9 }} whileHover={{ scale: 1.1 }}
+                                            key={"Todos"} id={"Todos"} className="flex bg-blue-400 hover:bg-blue-500 text-white rounded-md w-auto max-w-lg py-1 px-2"
                                             onClick={() => setProductosFiltrados(props.productos)}>
-                                            <span className="self-center p-1">Todos</span>
-                                        </button>
+                                            <span className="self-center p-1">TODOS</span>
+                                        </motion.button>
                                         {
                                             Familias.map(f => {
                                                 return (
-                                                    <button key={f} id={f} className="flex bg-blue-400 hover:bg-blue-500 text-white rounded-xl w-auto py-1 px-2"
+                                                    <motion.button whileTap={{ scale: 0.9 }} whileHover={{ scale: 1.1 }}
+                                                        key={f} id={f} className="flex bg-blue-400 hover:bg-blue-500 text-white rounded-md w-auto max-w-lg py-1 px-2"
                                                         onClick={(e) => setProductosFiltrados(props.productos.filter(p => p.familia === e.currentTarget.id))}>
-                                                        <span className="self-center p-1">
+                                                        <span className="self-center w-full p-1 truncate">
                                                             {f}
                                                         </span>
-                                                    </button>
+                                                    </motion.button>
                                                 )
                                             })
                                         }

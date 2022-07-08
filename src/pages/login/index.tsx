@@ -2,10 +2,8 @@ import { motion } from 'framer-motion';
 import React, { useState } from 'react';
 import { SplitLetters } from '../../components/elementos/compAnimados/SplitText';
 import Router from 'next/router';
-import { notifyLoading, notifySuccess } from '../../utils/toastify';
 import { GetServerSideProps } from 'next';
 import getJwtFromString from '../../hooks/jwt';
-import { ToastContainer } from 'react-toastify';
 
 const container = {
     hidden: { opacity: 0, scale: 0 },

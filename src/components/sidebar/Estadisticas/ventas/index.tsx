@@ -10,11 +10,12 @@ import { FetchResumenDiario } from "../../../../utils/fetches/analisisFetches";
 import VentasDelDia from "../../../dataDisplay/ventasDelDia";
 import { Color } from "../../../../tipos/Enums/Color";
 import SimpleListBox from "../../../elementos/Forms/simpleListBox";
+import { Tiempos } from "../../../../tipos/Enums/Tiempos";
 
 const EstadisticasVentasPage = () => {
     const [summaryToday, setSummaryToday] = useState<Summary | undefined>(undefined);
     const [summaryYesterday, setSummaryYesterday] = useState<Summary | undefined>(undefined);
-    const [timeRange, setTimeRange] = useState<string>("")
+    const [timeRange, setTimeRange] = useState<Tiempos>(Tiempos.Hoy)
 
     useEffect(() => {
         const GetSummaryData = async () => {
@@ -28,13 +29,65 @@ const EstadisticasVentasPage = () => {
         GetSummaryData()
     }, [])
 
+    useEffect(() => {
+        const GetSummaryData = async () => {
+            let inicial = new Date()
+            switch (timeRange) {
+                case Tiempos.Hoy:
+                    break;
+                case Tiempos.Ayer:
+                    inicial.setDate(inicial.getDate() - 1);
+                    break;
+                case Tiempos.EstaSemana:
+                    inicial.setDate(inicial.getDate() - 7); // Arreglar
+                    break;
+                case Tiempos.SemanaPasada:
+                    inicial.setDate(inicial.getDate() - 7);
+                    break;
+                case Tiempos.EsteMes:
+
+                    break;
+
+                case Tiempos.MesPasado:
+
+                    break;
+
+                case Tiempos.EsteTrimestre:
+
+                    break;
+
+                case Tiempos.TrimestePasado:
+
+                    break;
+
+                case Tiempos.EsteAnyo:
+
+                    break;
+
+                case Tiempos.AnyoPasado:
+
+                    break;
+
+                default:
+                    break;
+            }
+            const final = new Date();
+            final.setDate(final.getDate() - 1);
+
+            setSummaryToday(await FetchResumenDiario(inicial))
+            setSummaryYesterday(await FetchResumenDiario(final))
+        }
+        GetSummaryData()
+    }, [timeRange])
+
     return (
         <div className="flex flex-col gap-4 h-full w-full bg-white rounded-b-2xl rounded-r-2xl p-4 shadow-lg border-x overflow-y-scroll">
-            {/* <div id="filtros" className="flex justify-end w-full z-20 ">
-                <div className="w-40">
-                    <SimpleListBox elementos={["Hoy", "Última semana", "Último mes", "Último año"]} setElemento={setTimeRange} defaultValue={"Hoy"} />
+            <div id="filtros" className="flex justify-end w-full z-20 ">
+                <div className="xl:w-72 w-52">
+                    <SimpleListBox elementos={[Tiempos.Hoy, Tiempos.Ayer, Tiempos.EstaSemana, Tiempos.SemanaPasada, Tiempos.EsteMes,
+                    Tiempos.MesPasado, Tiempos.EsteTrimestre, Tiempos.TrimestePasado, Tiempos.EsteAnyo, Tiempos.AnyoPasado]} setElemento={setTimeRange} defaultValue={Tiempos.Hoy} />
                 </div>
-            </div> */}
+            </div>
             <div className="flex flex-wrap gap-2 justify-between">
                 <div className="xl:w-72 w-40">
                     <FinanceCard titulo="Ventas" dataActual={summaryToday?.totalVentas.toFixed(2)} dataPrevio={summaryYesterday?.totalVentas.toFixed(2)} />
@@ -62,12 +115,12 @@ const EstadisticasVentasPage = () => {
                 </div>
             </div>
             <div className="flex w-full justify-between gap-4">
-                <div className="w-1/2 h-full">
-                    <VentasDelDia data={summaryToday} titulo="Ventas de hoy" ejeX="totalVentaHora" ejeY="hora" nombreEjeX="Vendido" color={Color.GREEN} colorID={"verde"} />
+                <div className="w-full h-full">
+                    <VentasDelDia data={summaryToday} titulo={timeRange} ejeX="totalVentaHora" ejeY="hora" nombreEjeX="Vendido" color={Color.GREEN} colorID={"verde"} />
                 </div>
-                <div className="w-1/2 h-full">
+                {/* <div className="w-1/2 h-full">
                     <VentasDelDia data={summaryYesterday} titulo="Ventas de ayer" ejeX="totalVentaHora" ejeY="hora" nombreEjeX="Vendido" color={Color.BLUE} colorID={"azul"} />
-                </div>
+                </div> */}
             </div>
             <AnimatePresence>
                 {/* {showModal && <AddEmpleado showModal={setModal} />} */}
