@@ -338,6 +338,8 @@ function CreateProductoDevuelto(s: any): ProductoDevuelto | undefined {
 
 export function CreateSummary(s: any): Summary | undefined {
     try {
+        console.log(s);
+
         let summary: Summary = {
             beneficio: s.beneficio,
             cantidadProductosVendidos: s.cantidadProductosVendidos,

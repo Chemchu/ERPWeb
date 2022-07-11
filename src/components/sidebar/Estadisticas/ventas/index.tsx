@@ -91,6 +91,8 @@ const EstadisticasVentasPage = () => {
     }, [timeRange])
 
     useEffect(() => {
+        console.log(summary);
+
         setLoading(false);
     }, [summary])
 

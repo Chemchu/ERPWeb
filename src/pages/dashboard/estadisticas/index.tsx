@@ -35,76 +35,19 @@ const Stats = (props: { EmpleadoSesion: SesionEmpleado }) => {
                         }
                     >
                         <span className='text-xl'>
-                            Ventas
+                            Resumen
                         </span>
                     </Tab>
-
-                    <Tab
-                        key={"Productos"}
-                        className={(props: { selected: any }) =>
-                            classNames(
-                                'w-1/4 h-full text-sm rounded-t-2xl border-t border-x',
-                                'focus:outline-none ring-white ring-opacity-60',
-                                props.selected
-                                    ? 'bg-white shadow-lg'
-                                    : 'bg-gray-200 hover:bg-blue-400 hover:text-white'
-                            )
-                        }
-                    >
-                        <span className='text-xl'>
-                            Productos
-                        </span>
-                    </Tab>
-
-                    <Tab
-                        key={"Clientes"}
-                        className={(props: { selected: any }) =>
-                            classNames(
-                                'w-1/4 h-full text-sm rounded-t-2xl border-t border-x',
-                                'focus:outline-none ring-white ring-opacity-60',
-                                props.selected
-                                    ? 'bg-white shadow-lg'
-                                    : 'bg-gray-200 hover:bg-blue-400 hover:text-white'
-                            )
-                        }
-                    >
-                        <span className='text-xl'>
-                            Clientes
-                        </span>
-                    </Tab>
-
                 </Tab.List>
                 <Tab.Panels className="flex flex-col h-90v w-full pr-2 ">
                     <Tab.Panel
-                        key={"Ventas"}
+                        key={"Resumen"}
                         className={classNames(
                             'pb-3 h-full w-full',
                             'focus:outline-none ring-white ring-opacity-60'
                         )}
                     >
                         <EstadisticasVentasPage />
-                    </Tab.Panel>
-
-                    <Tab.Panel
-                        key={"Productos"}
-                        className={classNames(
-                            'pb-3 h-full w-full',
-                            'focus:outline-none ring-white ring-opacity-60'
-                        )}
-                    >
-                        {/* <EstadisticasPage /> */}
-                        <EnDesarrolloPage />
-                    </Tab.Panel>
-
-                    <Tab.Panel
-                        key={"Clientes"}
-                        className={classNames(
-                            'pb-3 h-full w-full',
-                            'focus:outline-none ring-white ring-opacity-60'
-                        )}
-                    >
-                        {/* <EstadisticasPage /> */}
-                        <EnDesarrolloPage />
                     </Tab.Panel>
                 </Tab.Panels>
             </Tab.Group >
