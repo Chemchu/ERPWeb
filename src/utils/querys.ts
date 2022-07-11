@@ -9,9 +9,11 @@ export const ADD_SALE = `
     }
 `;
 
-export const ADD_CIERRE = `
-    mutation Mutation($cierre: CierreTPVInput!) {
+export const ADD_CIERRE = `mutation AddCierreTPV($cierre: CierreTPVInput!) {
   addCierreTPV(cierre: $cierre) {
+    message
+    successful
+    token
     cierre {
       _id
       tpv
@@ -40,11 +42,7 @@ export const ADD_CIERRE = `
       dineroRetirado
       fondoDeCaja
       beneficio
-      nota
     }
-    message
-    successful
-    token
   }
 }
 `;

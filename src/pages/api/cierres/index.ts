@@ -43,18 +43,17 @@ const GetCierres = async (req: NextApiRequest, res: NextApiResponse) => {
 }
 
 const AddCierre = async (req: NextApiRequest, res: NextApiResponse) => {
-    const Empleado: SesionEmpleado = req.body.Empleado;
-    const TotalEfectivo = req.body.TotalEfectivo;
-    const TotalTarjeta = req.body.TotalTarjeta;
-    const DineroRetirado = req.body.DineroRetirado;
-    const TotalPrevistoEnCaja = req.body.TotalPrevistoEnCaja;
-    const TotalRealEnCaja = req.body.TotalRealEnCaja;
-    const Ventas = req.body.NumVentas;
-    const Tpv = req.body.TPV;
+    try {
+        const Empleado: SesionEmpleado = req.body.Empleado;
+        const TotalEfectivo = req.body.TotalEfectivo;
+        const TotalTarjeta = req.body.TotalTarjeta;
+        const DineroRetirado = req.body.DineroRetirado;
+        const TotalPrevistoEnCaja = req.body.TotalPrevistoEnCaja;
+        const TotalRealEnCaja = req.body.TotalRealEnCaja;
+        const Ventas = req.body.NumVentas;
+        const Tpv = req.body.TPV;
 
-    const apiResponse = await (await GQLMutate({
-        mutation: ADD_CIERRE,
-        variables: {
+        const variables = {
             "cierre": {
                 "tpv": Empleado.TPV,
                 "cajaInicial": Tpv.cajaInicial,
@@ -83,18 +82,29 @@ const AddCierre = async (req: NextApiRequest, res: NextApiResponse) => {
                 "dineroRealEnCaja": Number(TotalRealEnCaja)
             }
         }
-    })).json();
+        const apiResponse = await (await GQLMutate({
+            mutation: ADD_CIERRE,
+            variables: variables
+        })).json();
 
-    const data = JSON.parse(apiResponse.data);
+        console.log(apiResponse);
 
-    if (data.addCierreTPV.successful) {
-        res.setHeader('Set-Cookie', `authorization=${data.addCierreTPV.token}; HttpOnly; Path=/`);
-        res.status(200).json({ message: data.addCierreTPV.message, successful: data.addCierreTPV.successful, data: data.addCierreTPV.cierre });
-        return;
+        const data = JSON.parse(apiResponse.data);
+
+        if (data.addCierreTPV.successful) {
+            res.setHeader('Set-Cookie', `authorization=${data.addCierreTPV.token}; HttpOnly; Path=/`);
+            res.status(200).json({ message: data.addCierreTPV.message, successful: data.addCierreTPV.successful, data: data.addCierreTPV.cierre });
+            return;
+        }
+        else {
+            res.setHeader('Set-Cookie', `authorization=${data.addCierreTPV.token}; HttpOnly; Path=/`);
+            res.status(300).json({ message: data.addCierreTPV.message, successful: data.addCierreTPV.successful });
+            return;
+        }
     }
-    else {
-        res.setHeader('Set-Cookie', `authorization=${data.addCierreTPV.token}; HttpOnly; Path=/`);
-        res.status(300).json({ message: data.addCierreTPV.message, successful: data.addCierreTPV.successful });
+    catch (err) {
+        console.log(err);
+        res.status(300).json({ message: err, successful: false });
         return;
     }
 }

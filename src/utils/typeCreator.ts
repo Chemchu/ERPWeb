@@ -338,10 +338,10 @@ function CreateProductoDevuelto(s: any): ProductoDevuelto | undefined {
 
 export function CreateSummary(s: any): Summary | undefined {
     try {
-        console.log(s);
-
         let summary: Summary = {
             beneficio: s.beneficio,
+            productosMasVendidos: s.productosMasVendidos,
+            familiasMasVendidas: s.familiasMasVendidas,
             cantidadProductosVendidos: s.cantidadProductosVendidos,
             dineroDescontado: s.dineroDescontado,
             ivaPagado: s.ivaPagado,
@@ -356,6 +356,8 @@ export function CreateSummary(s: any): Summary | undefined {
         return summary;
     }
     catch (e) {
+        console.log(e);
+
         return undefined;
     }
 }
@@ -375,6 +377,8 @@ function CreateVentasPorHora(s: any): VentasPorHora | undefined {
     try {
         let ventasHora: VentasPorHora = {
             beneficioHora: s.beneficioHora,
+            productosMasVendidosHora: s.productosMasVendidosHora,
+            familiasMasVendidasHora: s.familiasMasVendidasHora,
             dineroDescontadoHora: s.dineroDescontadoHora,
             hora: s.hora,
             productosVendidosHora: s.productosVendidosHora,

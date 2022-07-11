@@ -12,6 +12,8 @@ import { Color } from "../../../../tipos/Enums/Color";
 import SimpleListBox from "../../../elementos/Forms/simpleListBox";
 import { Tiempos } from "../../../../tipos/Enums/Tiempos";
 import DateRange from "../../../elementos/Forms/dateRange";
+import ProductosMasVendidosStats from "../../../dataDisplay/productosMasVendidosStats";
+import FamiliasMasVendidasStats from "../../../dataDisplay/familiasMasVendidasStats";
 
 const EstadisticasVentasPage = () => {
     const [titulo, setTitulo] = useState<string>(Tiempos.Hoy)
@@ -91,8 +93,6 @@ const EstadisticasVentasPage = () => {
     }, [timeRange])
 
     useEffect(() => {
-        console.log(summary);
-
         setLoading(false);
     }, [summary])
 
@@ -107,7 +107,7 @@ const EstadisticasVentasPage = () => {
             </div>
             {
                 !isLoading &&
-                <div className="flex flex-wrap gap-2 justify-between xl:justify-center">
+                <div className="flex flex-wrap gap-2 justify-start xl:justify-center">
                     <div className="xl:w-72 w-44">
                         <FinanceCard titulo="Ventas" dataActual={summary?.totalVentas.toFixed(2)} dataPrevio={summary?.totalVentas.toFixed(2)} />
                     </div>
@@ -124,13 +124,7 @@ const EstadisticasVentasPage = () => {
                         <FinanceCard titulo="Beneficio" dataActual={summary?.beneficio.toFixed(2)} dataPrevio={summary?.beneficio.toFixed(2)} />
                     </div>
                     <div className="xl:w-72 w-44">
-                        <FinanceCard titulo="IVA" dataActual={summary?.ivaPagado.toFixed(2)} dataPrevio={summary?.ivaPagado.toFixed(2)} />
-                    </div>
-                    <div className="xl:w-72 w-44">
                         <FinanceCard titulo="Cantidad" unidad="uds" dataActual={String(summary?.cantidadProductosVendidos)} dataPrevio={String(summary?.cantidadProductosVendidos)} />
-                    </div>
-                    <div className="xl:w-72 w-44">
-                        <FinanceCard titulo="Descuentos" unidad="€" dataActual={summary?.dineroDescontado.toFixed(2)} dataPrevio={summary?.dineroDescontado.toFixed(2)} />
                     </div>
                 </div>
             }
@@ -143,12 +137,22 @@ const EstadisticasVentasPage = () => {
                         </svg>
                     </div>
                     :
-                    <div className="flex w-full justify-between gap-4">
+                    <div className="flex flex-col w-full justify-between gap-4">
+                        {
+                            summary &&
+                            <div className="flex gap-4">
+                                <div className="w-1/2 h-full">
+                                    <ProductosMasVendidosStats titulo="Productos más vendidos" data={summary?.productosMasVendidos} />
+                                </div>
+                                <div className="w-1/2 h-full">
+                                    <FamiliasMasVendidasStats titulo="Familias más vendidas" data={summary?.familiasMasVendidas} />
+                                </div>
+                            </div>
+                        }
                         <div className="w-full h-full">
                             <VentasDelDia data={summary} titulo={titulo} ejeX="totalVentaHora" ejeY="hora" nombreEjeX="Vendido" color={Color.GREEN} colorID={"verde"} />
                         </div>
                     </div>
-
             }
         </div>
     );

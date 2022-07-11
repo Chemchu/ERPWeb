@@ -7,7 +7,6 @@ import getJwtFromString from "../../hooks/jwt";
 import DashboardLayout from "../../layout";
 import { SesionEmpleado } from "../../tipos/Empleado";
 import { Roles } from "../../tipos/Enums/Roles";
-import BarChart from "../../components/dataDisplay/barChart";
 import { Summary } from "../../tipos/Summary";
 import { FetchResumenDiario } from "../../utils/fetches/analisisFetches";
 import { Color } from "../../tipos/Enums/Color";

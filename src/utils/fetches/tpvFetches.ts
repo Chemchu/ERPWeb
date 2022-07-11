@@ -80,6 +80,8 @@ export const AddCierreTPV = async (Empleado: SesionEmpleado, setEmpleado: Functi
         const Tpv = await FetchTPV(Empleado.TPV, abortController);
         if (!Tpv) { return undefined; }
 
+        console.log("Entra");
+
         const fetchRes = await fetch(`/api/cierres/`,
             {
                 method: 'POST',
@@ -101,13 +103,13 @@ export const AddCierreTPV = async (Empleado: SesionEmpleado, setEmpleado: Functi
             });
         const tpvOcupadaJson = await fetchRes.json();
 
-        if (fetchRes.ok) {
+        if (tpvOcupadaJson.successful) {
             notifySuccess(tpvOcupadaJson.message);
             let e = Empleado;
             e.TPV = undefined;
             setEmpleado(e);
         }
-        else { notifyError(tpvOcupadaJson.message); }
+        else { notifyError(tpvOcupadaJson.message); return undefined }
 
         const cierre = CreateCierreList([tpvOcupadaJson.data])[0];
         return cierre;
