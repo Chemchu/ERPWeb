@@ -19,9 +19,9 @@ export const FetchResumenDiario = async (fecha: Date): Promise<Summary | undefin
     }
 }
 
-export const FetchResumenRango = async (fecha: Date): Promise<Summary | undefined> => {
+export const FetchResumenRango = async (fechaInicial: Date, fechaFinal: Date): Promise<Summary | undefined> => {
     try {
-        const crResponse = await fetch(`/api/estadisticas/summary/${fecha.getTime()}`);
+        const crResponse = await fetch(`/api/estadisticas/summary/${fechaInicial.getTime()}&${fechaFinal.getTime()}`);
 
         if (!crResponse.ok) { notifyError("Error al buscar el resumen diario"); return undefined; }
         const crJson = await crResponse.json();

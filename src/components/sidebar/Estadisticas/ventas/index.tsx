@@ -6,125 +6,148 @@ import { Roles } from "../../../../tipos/Enums/Roles";
 import { Summary } from "../../../../tipos/Summary";
 import AuthorizationWrapper from "../../../authorizationWrapper";
 import FinanceCard from "../../../dataDisplay/finaceCard";
-import { FetchResumenDiario } from "../../../../utils/fetches/analisisFetches";
+import { FetchResumenDiario, FetchResumenRango } from "../../../../utils/fetches/analisisFetches";
 import VentasDelDia from "../../../dataDisplay/ventasDelDia";
 import { Color } from "../../../../tipos/Enums/Color";
 import SimpleListBox from "../../../elementos/Forms/simpleListBox";
 import { Tiempos } from "../../../../tipos/Enums/Tiempos";
+import DateRange from "../../../elementos/Forms/dateRange";
 
 const EstadisticasVentasPage = () => {
-    const [summaryToday, setSummaryToday] = useState<Summary | undefined>(undefined);
-    const [summaryYesterday, setSummaryYesterday] = useState<Summary | undefined>(undefined);
+    const [titulo, setTitulo] = useState<string>(Tiempos.Hoy)
+    const [summary, setSummary] = useState<Summary | undefined>(undefined);
     const [timeRange, setTimeRange] = useState<Tiempos>(Tiempos.Hoy)
+    const [isLoading, setLoading] = useState<boolean>(true);
+    const [dateRange, setDateRange] = useState([null, null]);
+    const [startDate, endDate] = dateRange;
 
     useEffect(() => {
         const GetSummaryData = async () => {
-            const hoy = new Date()
-            const ayer = new Date();
-            ayer.setDate(ayer.getDate() - 1);
+            const fechaInicial = new Date()
+            const fechaFinal = new Date();
+            fechaInicial.setDate(fechaInicial.getDate() - 1);
+            fechaFinal.setDate(fechaFinal.getDate());
 
-            setSummaryToday(await FetchResumenDiario(hoy))
-            setSummaryYesterday(await FetchResumenDiario(ayer))
+            setSummary(await FetchResumenRango(fechaInicial, fechaFinal))
         }
         GetSummaryData()
     }, [])
 
     useEffect(() => {
+        const GetData = async () => {
+            if (dateRange[0] && dateRange[1]) {
+                setLoading(true)
+                setTitulo("Fecha seleccionada")
+                setSummary(await FetchResumenRango(dateRange[0], dateRange[1]))
+            }
+
+            if (dateRange[0] == null && dateRange[1] == null) {
+                setSummary(await FetchResumenDiario(new Date()))
+            }
+        }
+
+        GetData()
+    }, [dateRange])
+
+    useEffect(() => {
         const GetSummaryData = async () => {
+            setLoading(true)
             let inicial = new Date()
+            let final = new Date()
+
             switch (timeRange) {
                 case Tiempos.Hoy:
-                    break;
+                    setSummary(await FetchResumenDiario(inicial))
+                    return;
                 case Tiempos.Ayer:
                     inicial.setDate(inicial.getDate() - 1);
-                    break;
+                    setSummary(await FetchResumenDiario(inicial));
+                    return;
                 case Tiempos.EstaSemana:
-                    inicial.setDate(inicial.getDate() - 7); // Arreglar
+                    inicial = new Date(inicial.setDate(inicial.getDate() - inicial.getDay() + 1));
+                    final = new Date(final.setDate(final.getDate() - final.getDay() + 7));
                     break;
                 case Tiempos.SemanaPasada:
-                    inicial.setDate(inicial.getDate() - 7);
+                    inicial = new Date(inicial.setDate((inicial.getDate() - 7) - inicial.getDay() + 1));
+                    final = new Date(final.setDate((final.getDate() - 7) - final.getDay() + 7));
                     break;
                 case Tiempos.EsteMes:
-
+                    inicial = new Date(inicial.getFullYear(), inicial.getMonth(), 1);
+                    final = new Date(final.getFullYear(), final.getMonth() + 1, 0);
                     break;
 
                 case Tiempos.MesPasado:
-
-                    break;
-
-                case Tiempos.EsteTrimestre:
-
-                    break;
-
-                case Tiempos.TrimestePasado:
-
-                    break;
-
-                case Tiempos.EsteAnyo:
-
-                    break;
-
-                case Tiempos.AnyoPasado:
-
+                    inicial = new Date(inicial.getFullYear(), inicial.getMonth() - 1, 1);
+                    final = new Date(final.getFullYear(), final.getMonth(), 0);
                     break;
 
                 default:
                     break;
             }
-            const final = new Date();
-            final.setDate(final.getDate() - 1);
-
-            setSummaryToday(await FetchResumenDiario(inicial))
-            setSummaryYesterday(await FetchResumenDiario(final))
+            setTitulo(timeRange)
+            setSummary(await FetchResumenRango(inicial, final))
         }
         GetSummaryData()
     }, [timeRange])
 
+    useEffect(() => {
+        setLoading(false);
+    }, [summary])
+
     return (
         <div className="flex flex-col gap-4 h-full w-full bg-white rounded-b-2xl rounded-r-2xl p-4 shadow-lg border-x overflow-y-scroll">
-            <div id="filtros" className="flex justify-end w-full z-20 ">
+            <div id="filtros" className="flex justify-end w-full z-20 gap-4">
+                <DateRange dateRange={dateRange} setDateRange={setDateRange} endDate={endDate} startDate={startDate} isClearable={true} />
                 <div className="xl:w-72 w-52">
                     <SimpleListBox elementos={[Tiempos.Hoy, Tiempos.Ayer, Tiempos.EstaSemana, Tiempos.SemanaPasada, Tiempos.EsteMes,
-                    Tiempos.MesPasado, Tiempos.EsteTrimestre, Tiempos.TrimestePasado, Tiempos.EsteAnyo, Tiempos.AnyoPasado]} setElemento={setTimeRange} defaultValue={Tiempos.Hoy} />
+                    Tiempos.MesPasado]} setElemento={setTimeRange} defaultValue={Tiempos.Hoy} />
                 </div>
             </div>
-            <div className="flex flex-wrap gap-2 justify-between">
-                <div className="xl:w-72 w-40">
-                    <FinanceCard titulo="Ventas" dataActual={summaryToday?.totalVentas.toFixed(2)} dataPrevio={summaryYesterday?.totalVentas.toFixed(2)} />
+            {
+                !isLoading &&
+                <div className="flex flex-wrap gap-2 justify-between xl:justify-center">
+                    <div className="xl:w-72 w-44">
+                        <FinanceCard titulo="Ventas" dataActual={summary?.totalVentas.toFixed(2)} dataPrevio={summary?.totalVentas.toFixed(2)} />
+                    </div>
+                    <div className="xl:w-72 w-44">
+                        <FinanceCard titulo="Efectivo" unidad="€" dataActual={summary?.totalEfectivo.toFixed(2)} dataPrevio={summary?.totalEfectivo.toFixed(2)} />
+                    </div>
+                    <div className="xl:w-72 w-44">
+                        <FinanceCard titulo="Tarjeta" unidad="€" dataActual={summary?.totalTarjeta.toFixed(2)} dataPrevio={summary?.totalTarjeta.toFixed(2)} />
+                    </div>
+                    <div className="xl:w-72 w-44">
+                        <FinanceCard titulo="Tickets" unidad="uds" dataActual={String(summary?.numVentas)} dataPrevio={String(summary?.numVentas)} />
+                    </div>
+                    <div className="xl:w-72 w-44">
+                        <FinanceCard titulo="Beneficio" dataActual={summary?.beneficio.toFixed(2)} dataPrevio={summary?.beneficio.toFixed(2)} />
+                    </div>
+                    <div className="xl:w-72 w-44">
+                        <FinanceCard titulo="IVA" dataActual={summary?.ivaPagado.toFixed(2)} dataPrevio={summary?.ivaPagado.toFixed(2)} />
+                    </div>
+                    <div className="xl:w-72 w-44">
+                        <FinanceCard titulo="Cantidad" unidad="uds" dataActual={String(summary?.cantidadProductosVendidos)} dataPrevio={String(summary?.cantidadProductosVendidos)} />
+                    </div>
+                    <div className="xl:w-72 w-44">
+                        <FinanceCard titulo="Descuentos" unidad="€" dataActual={summary?.dineroDescontado.toFixed(2)} dataPrevio={summary?.dineroDescontado.toFixed(2)} />
+                    </div>
                 </div>
-                <div className="xl:w-72 w-40">
-                    <FinanceCard titulo="Efectivo" unidad="€" dataActual={summaryToday?.totalEfectivo.toFixed(2)} dataPrevio={summaryYesterday?.totalEfectivo.toFixed(2)} />
-                </div>
-                <div className="xl:w-72 w-40">
-                    <FinanceCard titulo="Tarjeta" unidad="€" dataActual={summaryToday?.totalTarjeta.toFixed(2)} dataPrevio={summaryYesterday?.totalTarjeta.toFixed(2)} />
-                </div>
-                <div className="xl:w-72 w-40">
-                    <FinanceCard titulo="Tickets" unidad="uds" dataActual={String(summaryToday?.numVentas)} dataPrevio={String(summaryYesterday?.numVentas)} />
-                </div>
-                <div className="xl:w-72 w-40">
-                    <FinanceCard titulo="Beneficio" dataActual={summaryToday?.beneficio.toFixed(2)} dataPrevio={summaryYesterday?.beneficio.toFixed(2)} />
-                </div>
-                <div className="xl:w-72 w-40">
-                    <FinanceCard titulo="IVA" dataActual={summaryToday?.ivaPagado.toFixed(2)} dataPrevio={summaryYesterday?.ivaPagado.toFixed(2)} />
-                </div>
-                <div className="xl:w-72 w-40">
-                    <FinanceCard titulo="Cantidad" unidad="uds" dataActual={String(summaryToday?.cantidadProductosVendidos)} dataPrevio={String(summaryYesterday?.cantidadProductosVendidos)} />
-                </div>
-                <div className="xl:w-72 w-40">
-                    <FinanceCard titulo="Descuentos" unidad="€" dataActual={summaryToday?.dineroDescontado.toFixed(2)} dataPrevio={summaryYesterday?.dineroDescontado.toFixed(2)} />
-                </div>
-            </div>
-            <div className="flex w-full justify-between gap-4">
-                <div className="w-full h-full">
-                    <VentasDelDia data={summaryToday} titulo={timeRange} ejeX="totalVentaHora" ejeY="hora" nombreEjeX="Vendido" color={Color.GREEN} colorID={"verde"} />
-                </div>
-                {/* <div className="w-1/2 h-full">
-                    <VentasDelDia data={summaryYesterday} titulo="Ventas de ayer" ejeX="totalVentaHora" ejeY="hora" nombreEjeX="Vendido" color={Color.BLUE} colorID={"azul"} />
-                </div> */}
-            </div>
-            <AnimatePresence>
-                {/* {showModal && <AddEmpleado showModal={setModal} />} */}
-            </AnimatePresence>
+            }
+            {
+                isLoading ?
+                    <div className="w-full h-full flex items-center justify-center">
+                        <svg role="status" className="w-1/5 h-1/5 mr-2 text-gray-200 animate-spin dark:text-gray-600 fill-blue-600" viewBox="0 0 100 101" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M100 50.5908C100 78.2051 77.6142 100.591 50 100.591C22.3858 100.591 0 78.2051 0 50.5908C0 22.9766 22.3858 0.59082 50 0.59082C77.6142 0.59082 100 22.9766 100 50.5908ZM9.08144 50.5908C9.08144 73.1895 27.4013 91.5094 50 91.5094C72.5987 91.5094 90.9186 73.1895 90.9186 50.5908C90.9186 27.9921 72.5987 9.67226 50 9.67226C27.4013 9.67226 9.08144 27.9921 9.08144 50.5908Z" fill="currentColor" />
+                            <path d="M93.9676 39.0409C96.393 38.4038 97.8624 35.9116 97.0079 33.5539C95.2932 28.8227 92.871 24.3692 89.8167 20.348C85.8452 15.1192 80.8826 10.7238 75.2124 7.41289C69.5422 4.10194 63.2754 1.94025 56.7698 1.05124C51.7666 0.367541 46.6976 0.446843 41.7345 1.27873C39.2613 1.69328 37.813 4.19778 38.4501 6.62326C39.0873 9.04874 41.5694 10.4717 44.0505 10.1071C47.8511 9.54855 51.7191 9.52689 55.5402 10.0491C60.8642 10.7766 65.9928 12.5457 70.6331 15.2552C75.2735 17.9648 79.3347 21.5619 82.5849 25.841C84.9175 28.9121 86.7997 32.2913 88.1811 35.8758C89.083 38.2158 91.5421 39.6781 93.9676 39.0409Z" fill="currentFill" />
+                        </svg>
+                    </div>
+                    :
+                    <div className="flex w-full justify-between gap-4">
+                        <div className="w-full h-full">
+                            <VentasDelDia data={summary} titulo={titulo} ejeX="totalVentaHora" ejeY="hora" nombreEjeX="Vendido" color={Color.GREEN} colorID={"verde"} />
+                        </div>
+                    </div>
+
+            }
         </div>
     );
 }
