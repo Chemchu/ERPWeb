@@ -73,14 +73,12 @@ export const OcuparTPV = async (tpvId: string, emp: SesionEmpleado, cajaInicial:
 }
 
 export const AddCierreTPV = async (Empleado: SesionEmpleado, setEmpleado: Function, TotalEfectivo: number, TotalTarjeta: number, DineroRetirado: number,
-    TotalPrevistoEnCaja: number, TotalRealEnCaja: number, NumVentas: number, abortController: AbortController): Promise<Cierre | undefined> => {
+    TotalPrevistoEnCaja: number, TotalRealEnCaja: number, abortController: AbortController): Promise<Cierre | undefined> => {
     try {
         if (!Empleado.TPV) { return undefined; }
 
         const Tpv = await FetchTPV(Empleado.TPV, abortController);
         if (!Tpv) { return undefined; }
-
-        console.log("Entra");
 
         const fetchRes = await fetch(`/api/cierres/`,
             {
@@ -90,7 +88,6 @@ export const AddCierreTPV = async (Empleado: SesionEmpleado, setEmpleado: Functi
                 },
                 body: JSON.stringify({
                     Empleado: Empleado,
-                    NumVentas: NumVentas,
                     TotalEfectivo: TotalEfectivo,
                     TotalTarjeta: TotalTarjeta,
                     ventasTotales: TotalEfectivo + TotalTarjeta,
