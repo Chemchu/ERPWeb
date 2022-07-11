@@ -57,18 +57,17 @@ const Home = (props: { EmpleadoSesion: SesionEmpleado }) => {
         <div className="flex flex-col w-full gap-3">
           <SummaryCard titulo="Ventas totales" data={summaryToday} />
           <div className="flex flex-wrap gap-2 justify-between">
-            <div className="xl:w-72 w-40">
+            <div className="xl:w-72 w-44">
               <FinanceCard titulo="Ventas" dataActual={summaryToday?.totalVentas.toFixed(2)} dataPrevio={summaryYesterday?.totalVentas.toFixed(2)} />
             </div>
-            <div className="xl:w-72 w-40">
+            <div className="xl:w-72 w-44">
               <FinanceCard titulo="Beneficio" dataActual={summaryToday?.beneficio.toFixed(2)} dataPrevio={summaryYesterday?.beneficio.toFixed(2)} />
             </div>
-            <div className="xl:w-72 w-40">
-              {/* <FinanceCard titulo="Tickets" unidad="uds" dataActual={String(summaryToday?.numVentas)} dataPrevio={String(summaryYesterday?.numVentas)} /> */}
+            <div className="xl:w-72 w-44">
               <FinanceCard titulo="Tickets" unidad="uds" dataActual={summaryToday && String(summaryToday?.numVentas)} dataPrevio={summaryToday && String(summaryYesterday?.numVentas)} />
             </div>
-            <div className="xl:w-72 w-40">
-              <FinanceCard titulo="IVA" dataActual={summaryToday?.ivaPagado.toFixed(2)} dataPrevio={summaryYesterday?.ivaPagado.toFixed(2)} />
+            <div className="xl:w-72 w-44">
+              <FinanceCard titulo="Productos" unidad="uds" dataActual={summaryToday && String(summaryToday?.cantidadProductosVendidos)} dataPrevio={summaryYesterday && String(summaryYesterday?.cantidadProductosVendidos)} />
             </div>
           </div>
           <div className="flex w-full justify-between gap-4">

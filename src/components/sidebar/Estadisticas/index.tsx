@@ -1,21 +1,22 @@
 import { AnimatePresence } from "framer-motion";
 import { useEffect, useState } from "react";
-import useEmpleadoContext from "../../../../context/empleadoContext";
-import { Empleado } from "../../../../tipos/Empleado";
-import { Roles } from "../../../../tipos/Enums/Roles";
-import { Summary } from "../../../../tipos/Summary";
-import AuthorizationWrapper from "../../../authorizationWrapper";
-import FinanceCard from "../../../dataDisplay/finaceCard";
-import { FetchResumenDiario, FetchResumenRango } from "../../../../utils/fetches/analisisFetches";
-import VentasDelDia from "../../../dataDisplay/ventasDelDia";
-import { Color } from "../../../../tipos/Enums/Color";
-import SimpleListBox from "../../../elementos/Forms/simpleListBox";
-import { Tiempos } from "../../../../tipos/Enums/Tiempos";
-import DateRange from "../../../elementos/Forms/dateRange";
-import ProductosMasVendidosStats from "../../../dataDisplay/productosMasVendidosStats";
-import FamiliasMasVendidasStats from "../../../dataDisplay/familiasMasVendidasStats";
+import useEmpleadoContext from "../../../context/empleadoContext";
+import { Empleado } from "../../../tipos/Empleado";
+import { Roles } from "../../../tipos/Enums/Roles";
+import { Summary } from "../../../tipos/Summary";
+import AuthorizationWrapper from "../../authorizationWrapper";
+import FinanceCard from "../../dataDisplay/finaceCard";
+import { FetchResumenDiario, FetchResumenRango } from "../../../utils/fetches/analisisFetches";
+import VentasDelDia from "../../dataDisplay/ventasDelDia";
+import { Color } from "../../../tipos/Enums/Color";
+import SimpleListBox from "../../elementos/Forms/simpleListBox";
+import { Tiempos } from "../../../tipos/Enums/Tiempos";
+import DateRange from "../../elementos/Forms/dateRange";
+import ProductosMasVendidosStats from "../../dataDisplay/productosMasVendidosStats";
+import FamiliasMasVendidasStats from "../../dataDisplay/familiasMasVendidasStats";
 
-const EstadisticasVentasPage = () => {
+const EstadisticasPage = () => {
+    const [mounted, setMounted] = useState<boolean>(false)
     const [titulo, setTitulo] = useState<string>(Tiempos.Hoy)
     const [summary, setSummary] = useState<Summary | undefined>(undefined);
     const [timeRange, setTimeRange] = useState<Tiempos>(Tiempos.Hoy)
@@ -26,16 +27,19 @@ const EstadisticasVentasPage = () => {
     useEffect(() => {
         const GetSummaryData = async () => {
             const fechaInicial = new Date()
-            const fechaFinal = new Date();
-            fechaInicial.setDate(fechaInicial.getDate() - 1);
-            fechaFinal.setDate(fechaFinal.getDate());
+            fechaInicial.setDate(fechaInicial.getDate());
 
-            setSummary(await FetchResumenRango(fechaInicial, fechaFinal))
+            setSummary(await FetchResumenDiario(fechaInicial))
         }
+
         GetSummaryData()
+        setMounted(true)
     }, [])
 
+
     useEffect(() => {
+        if (!mounted) { return; }
+
         const GetData = async () => {
             if (dateRange[0] && dateRange[1]) {
                 setLoading(true)
@@ -44,6 +48,7 @@ const EstadisticasVentasPage = () => {
             }
 
             if (dateRange[0] == null && dateRange[1] == null) {
+                console.log("Lol");
                 setSummary(await FetchResumenDiario(new Date()))
             }
         }
@@ -52,6 +57,8 @@ const EstadisticasVentasPage = () => {
     }, [dateRange])
 
     useEffect(() => {
+        if (!mounted) { return; }
+
         const GetSummaryData = async () => {
             setLoading(true)
             let inicial = new Date()
@@ -159,4 +166,4 @@ const EstadisticasVentasPage = () => {
 }
 
 
-export default AuthorizationWrapper([Roles.Administrador, Roles.Gerente], true)(EstadisticasVentasPage);
+export default AuthorizationWrapper([Roles.Administrador, Roles.Gerente], true)(EstadisticasPage);

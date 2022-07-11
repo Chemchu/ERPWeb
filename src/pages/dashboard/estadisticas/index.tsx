@@ -1,8 +1,7 @@
 import { Tab } from "@headlessui/react";
 import { GetServerSideProps } from "next";
 import { useEffect } from "react";
-import EnDesarrolloPage from "../../../components/enDesarrollo";
-import EstadisticasVentasPage from "../../../components/sidebar/Estadisticas/ventas";
+import EstadisticasPage from "../../../components/sidebar/Estadisticas";
 import useEmpleadoContext from "../../../context/empleadoContext";
 import getJwtFromString from "../../../hooks/jwt";
 import DashboardLayout from "../../../layout";
@@ -47,7 +46,7 @@ const Stats = (props: { EmpleadoSesion: SesionEmpleado }) => {
                             'focus:outline-none ring-white ring-opacity-60'
                         )}
                     >
-                        <EstadisticasVentasPage />
+                        <EstadisticasPage />
                     </Tab.Panel>
                 </Tab.Panels>
             </Tab.Group >
