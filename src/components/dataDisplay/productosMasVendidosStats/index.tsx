@@ -56,7 +56,23 @@ const ProductosMasVendidosStats = (props: { titulo: string, data: ProductoMasVen
                     </Bar>
                 </BarChart>
             </ResponsiveContainer>
-            {activeItem && <p className="content">{`${activeItem.nombre}: ${activeItem.cantidadVendida} unidades`}</p>}
+            {
+                activeItem &&
+                <div className="border-2 rounded-md border-blue-400">
+                    <p className="flex w-full h-full justify-around">
+                        <span className="w-full border-b-2 border-r-2 border-blue-400">Producto</span>
+                        <span className="w-full border-b-2 border-blue-400">{`${activeItem.nombre}`}</span>
+                    </p>
+                    <p className="flex w-full h-full justify-around">
+                        <span className="w-full border-b-2 border-r-2 border-blue-400">Cantidad vendida</span>
+                        <span className="w-full border-b-2 border-blue-400">{`${activeItem.cantidadVendida} ${activeItem.cantidadVendida === 1 ? "unidad" : "unidades"} `}</span>
+                    </p>
+                    <p className="flex w-full h-full justify-around">
+                        <span className="w-full border-r-2 border-blue-400">Familia</span>
+                        <span className="w-full border-blue-400">{`${activeItem.familia}`}</span>
+                    </p>
+                </div>
+            }
         </div>
     )
 }

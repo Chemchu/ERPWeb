@@ -22,7 +22,7 @@ const FamiliasMasVendidasStats = (props: { titulo: string, data: FamiliaMasVendi
                     {
                         payload &&
                         <>
-                            <p className="label text-xl font-semibold">{`${payload[0].payload.nombre}`}</p>
+                            <p className="label text-xl font-semibold">{`${payload[0].payload.familia}`}</p>
                             <p className="label text-base">{`Cantidad vendida: ${label} unidades`}</p>
                         </>
                     }
@@ -56,7 +56,19 @@ const FamiliasMasVendidasStats = (props: { titulo: string, data: FamiliaMasVendi
                     </Bar>
                 </BarChart>
             </ResponsiveContainer>
-            {activeItem && <p className="content">{`${activeItem.familia}: ${activeItem.cantidadVendida}`}</p>}
+            {
+                activeItem &&
+                <div className="border-2 rounded-md border-blue-400">
+                    <p className="flex w-full h-full justify-around">
+                        <span className="w-full border-b-2 border-r-2 border-blue-400">Familia</span>
+                        <span className="w-full border-b-2 border-blue-400">{`${activeItem.familia}`}</span>
+                    </p>
+                    <p className="flex w-full h-full justify-around">
+                        <span className="w-full border-r-2 border-blue-400">Cantidad vendida</span>
+                        <span className="w-full border-blue-400">{`${activeItem.cantidadVendida} ${activeItem.cantidadVendida === 1 ? "unidad" : "unidades"} `}</span>
+                    </p>
+                </div>
+            }
         </div>
     )
 }
