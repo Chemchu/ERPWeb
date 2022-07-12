@@ -190,6 +190,10 @@ const TablaEmpleado = (props: { Empleados?: Empleado[] }) => {
     const [currentPage, setCurrentPage] = useState<number>(1);
     const [empleados, setEmpleados] = useState<Empleado[]>(props.Empleados || [])
 
+    useEffect(() => {
+        setEmpleados(props.Empleados || []);
+    }, [props.Empleados])
+
     const elementsPerPage = 50;
     const numPages = Math.ceil(props.Empleados ? (props.Empleados.length / elementsPerPage) : 30);
 
