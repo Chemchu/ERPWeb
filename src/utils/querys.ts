@@ -352,8 +352,8 @@ export const OCUPY_TPV = `
 `;
 
 export const QUERY_CIERRES = `
-    query CierresTPVs {
-  cierresTPVs {
+    query CierresTPVs($find: CierresTPVFind) {
+  cierresTPVs(find: $find) {
     _id
     tpv
     cajaInicial

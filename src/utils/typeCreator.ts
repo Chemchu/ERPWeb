@@ -119,7 +119,6 @@ export function CreateCierre(c: any): Cierre | undefined {
             apertura: c.apertura,
             cierre: c.cierre,
             cajaInicial: c.cajaInicial,
-            numVentas: c.numVentas,
             ventasEfectivo: c.ventasEfectivo,
             ventasTarjeta: c.ventasTarjeta,
             ventasTotales: c.ventasTotales,

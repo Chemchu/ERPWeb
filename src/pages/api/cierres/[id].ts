@@ -51,15 +51,15 @@ const GetCierresFromQuery = async (userQuery: queryString.ParsedQuery<string>, r
             query: QUERY_CIERRES,
             variables: {
                 "find": {
-                    "fechaInicial": userQuery.fechaInicial || null,
-                    "fechaFinal": userQuery.fechaFinal || null,
+                    "fechaInicial": userQuery.fechas ? userQuery.fechas[0] : null,
+                    "fechaFinal": userQuery.fechas ? userQuery.fechas[1] : null,
                     "query": userQuery.query || null
                 }
             }
         })).json();
 
-        const data = JSON.parse(apiResponse.data).cierresTPVs;
-        return res.status(apiResponse.successful ? 200 : 300).json({ message: data.message, successful: data.successful, data: data.data });
+        const data = JSON.parse(apiResponse.data);
+        return res.status(200).json({ message: "Cierres encontrados", successful: true, data: data.cierresTPVs });
     }
     catch (err) {
         console.log(err);

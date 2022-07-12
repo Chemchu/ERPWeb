@@ -8,7 +8,6 @@ export type Cierre = {
     apertura: string,
     cierre: string,
     cajaInicial: number,
-    numVentas: number,
     ventasEfectivo: number,
     ventasTarjeta: number,
     ventasTotales: number,

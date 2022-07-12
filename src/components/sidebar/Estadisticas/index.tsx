@@ -36,7 +36,6 @@ const EstadisticasPage = () => {
         setMounted(true)
     }, [])
 
-
     useEffect(() => {
         if (!mounted) { return; }
 
@@ -48,7 +47,6 @@ const EstadisticasPage = () => {
             }
 
             if (dateRange[0] == null && dateRange[1] == null) {
-                console.log("Lol");
                 setSummary(await FetchResumenDiario(new Date()))
             }
         }
