@@ -141,7 +141,7 @@ const SidebarDerecho = React.memo((props: {
                         dto: Number(dtoAjustado)
                     } as unknown as ProductoVendido;
 
-                    if (precioVenta) {
+                    if (precioVenta !== undefined) {
                         prodAlCarrito.precioVenta = String(precioVenta)
                     }
 
