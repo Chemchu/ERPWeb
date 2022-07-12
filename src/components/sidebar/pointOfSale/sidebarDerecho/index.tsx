@@ -360,12 +360,22 @@ SidebarDerecho.displayName = 'SidebarDerecho';
 export default SidebarDerecho;
 
 const GenerarProductList = React.memo((props: { productosEnCarrito: ProductoVendido[], setPropiedadProducto: Function }) => {
+    const messagesEndRef = useRef<null | HTMLDivElement>(null)
+    const scrollToBottom = () => {
+        if (messagesEndRef.current == null) { return }
+        messagesEndRef.current.scrollIntoView({ behavior: "smooth" })
+    }
+
+    useEffect(scrollToBottom, [props.productosEnCarrito]);
+
     return (
         <div className="flex flex-col h-full gap-2">
             {
                 props.productosEnCarrito.map((p: ProductoVendido) => {
                     return (
-                        <ProductSelectedCard key={`${p._id}`} producto={p} setPropiedadProd={props.setPropiedadProducto} />
+                        <div key={`${p._id}`} ref={messagesEndRef}>
+                            <ProductSelectedCard producto={p} setPropiedadProd={props.setPropiedadProducto} />
+                        </div>
                     );
                 })
             }
