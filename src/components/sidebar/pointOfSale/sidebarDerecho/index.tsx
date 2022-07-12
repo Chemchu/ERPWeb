@@ -46,8 +46,8 @@ const SidebarDerecho = React.memo((props: {
             if (!isUnmounted) {
                 SetClientes(r)
             }
-        }).catch(() => {
-            console.log("Error gus")
+        }).catch((err) => {
+            console.log(err)
         });
 
         return () => {
@@ -111,7 +111,7 @@ const SidebarDerecho = React.memo((props: {
 
     // Se accede a la lista de productos actualizada usando "functional state update" de react
     // Es para evitar muchos rerenders
-    const SetPropiedadProd = useCallback((idProd: string, cantidad: string, dto: string) => {
+    const SetPropiedadProd = useCallback((idProd: string, cantidad: string, dto: string, precioVenta?: string) => {
         if (!IsPositiveIntegerNumber(String(cantidad))) { return; }
         if (!IsPositiveFloatingNumber(dto)) { return; }
 
@@ -137,9 +137,13 @@ const SidebarDerecho = React.memo((props: {
                         margen: prodEnCarrito.margen,
                         precioCompra: prodEnCarrito.precioCompra,
                         precioVenta: prodEnCarrito.precioVenta,
-                        precioFinal: prodEnCarrito.precioVenta * ((100 - Number(dtoAjustado)) / 100),
+                        precioFinal: Number(prodEnCarrito.precioVenta) * ((100 - Number(dtoAjustado)) / 100),
                         dto: Number(dtoAjustado)
                     } as unknown as ProductoVendido;
+
+                    if (precioVenta) {
+                        prodAlCarrito.precioVenta = String(precioVenta)
+                    }
 
                     let ProductosEnCarritoUpdated = prevCarrito;
                     ProductosEnCarritoUpdated[prodIndex] = prodAlCarrito;

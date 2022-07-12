@@ -218,7 +218,7 @@ const VerVenta = (props: { venta: Venta | undefined, setModal: Function }) => {
 }
 
 const GenerarFilaProducto = (props: { numFila: number, producto: ProductoVendido }) => {
-    const precio = props.producto.precioFinal || props.producto.precioVenta * ((100 - props.producto.dto) / 100);
+    const precio = props.producto.precioFinal || Number(props.producto.precioVenta) * ((100 - props.producto.dto) / 100);
 
     return (
         <>

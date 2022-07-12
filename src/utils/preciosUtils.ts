@@ -9,10 +9,10 @@ export const AplicarDescuentos = (productos: ProductoVendido[], descuentoEfectiv
 
     precioTotal = productos.reduce((total: number, p: ProductoVendido) => {
         if (p.dto) {
-            return total += ((100 - Number(p.dto)) / 100) * (Number(p.cantidadVendida) * p.precioVenta);
+            return total += ((100 - Number(p.dto)) / 100) * (Number(p.cantidadVendida) * Number(p.precioVenta));
         }
         else {
-            return total += (Number(p.cantidadVendida) * p.precioVenta);
+            return total += (Number(p.cantidadVendida) * Number(p.precioVenta));
         }
     }, 0)
     const dtoEfectivo = descuentoEfectivo > precioTotal ? precioTotal : descuentoEfectivo;
@@ -24,7 +24,7 @@ export const AplicarDescuentos = (productos: ProductoVendido[], descuentoEfectiv
 
 export const PrecioTotalCarrito = (productos: ProductoVendido[]): number => {
     const precio = productos.reduce((total: number, p: ProductoVendido) => {
-        return total += (Number(p.cantidadVendida) * p.precioVenta);
+        return total += (Number(p.cantidadVendida) * Number(p.precioVenta));
     }, 0);
 
     return Number(precio.toFixed(2));
