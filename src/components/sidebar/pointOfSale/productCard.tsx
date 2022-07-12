@@ -64,33 +64,37 @@ export const ProductSelectedCard = React.memo((props: { producto: ProductoVendid
                 </div>
                 {
                     isOpen &&
-                    <div className="flex mt-1 p-2 gap-2 w-full h-full bg-blue-200 rounded-lg justify-around" onClick={(e) => e.stopPropagation()}>
-                        <div className='flex flex-col w-full items-center'>
-                            <div className="font-semibold">
+                    <div className="flex mt-1 p-2 gap-2 w-full h-full bg-blue-200 rounded-lg items-center" onClick={(e) => e.stopPropagation()}>
+                        <div className='flex flex-col w-full items-start'>
+                            <div className="font-semibold text-sm">
                                 Cantidad
                             </div>
-                            <div className="flex gap-2">
-                                <motion.button whileTap={{ scale: 0.9 }} id={props.producto._id} className="rounded-lg text-center w-8 h-8 py-1 text-white bg-gray-500 hover:bg-gray-700 focus:outline-none"
-                                    onClick={(e) => {
-                                        e.stopPropagation();
-                                        props.setPropiedadProd(props.producto._id, (Number(props.producto.cantidadVendida) + 1).toString(), props.producto.dto);
-                                    }}>
-                                    <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-3 inline-block" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
-                                    </svg>
-                                </motion.button>
-                                <motion.button whileTap={{ scale: 0.9 }} className="rounded-lg text-center w-8 h-8 py-1 text-white bg-gray-500 hover:bg-gray-700 focus:outline-none"
+                            <div className="flex w-full justify-between">
+                                <motion.button whileTap={{ scale: 0.9 }} id={props.producto._id} className="flex justify-center items-center rounded-md w-6 h-6 bg-gray-500 hover:bg-gray-600 focus:outline-none"
                                     onClick={(e) => {
                                         e.stopPropagation();
                                         props.setPropiedadProd(props.producto._id, (Number(props.producto.cantidadVendida) - 1).toString(), props.producto.dto);
                                     }}>
-                                    <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-3 inline-block" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M20 12H4" />
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#ffffff" strokeWidth="3" strokeLinecap="butt" strokeLinejoin="bevel">
+                                        <line x1="5" y1="12" x2="19" y2="12">
+                                        </line>
+                                    </svg>
+                                </motion.button>
+                                <motion.button whileTap={{ scale: 0.9 }} className="flex justify-center items-center rounded-md w-6 h-6 bg-gray-500 hover:bg-gray-600 focus:outline-none"
+                                    onClick={(e) => {
+                                        e.stopPropagation();
+                                        props.setPropiedadProd(props.producto._id, (Number(props.producto.cantidadVendida) + 1).toString(), props.producto.dto);
+                                    }}>
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#FFFFFF" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round">
+                                        <line x1="12" y1="5" x2="12" y2="19">
+                                        </line>
+                                        <line x1="5" y1="12" x2="19" y2="12">
+                                        </line>
                                     </svg>
                                 </motion.button>
                             </div>
                         </div>
-                        <div className='flex flex-col items-center font-semibold w-full'>
+                        <div className='flex flex-col font-semibold text-sm w-full items-center'>
                             <span>Precio</span>
                             <input type="text" inputMode="numeric" className="text-xs text-center rounded-lg w-10 h-6 shadow"
                                 value={props.producto.precioVenta} onClick={(e) => { e.stopPropagation(); }} onChange={(e) => {
@@ -98,9 +102,9 @@ export const ProductSelectedCard = React.memo((props: { producto: ProductoVendid
                                     props.setPropiedadProd(props.producto._id, props.producto.cantidadVendida, props.producto.dto, ValidatePositiveFloatingNumber(e.target.value));
                                 }} />
                         </div>
-                        <div className="flex flex-col font-semibold w-full">
+                        <div className="flex flex-col font-semibold text-sm w-full  items-end">
                             <div>Descuento</div>
-                            <div className="inline-block align-middle grid-rows-1 self-end">
+                            <div className="inline-block align-middle grid-rows-1">
                                 <input type="text" inputMode="numeric" className="text-xs text-center rounded-lg w-10 h-6 shadow"
                                     value={props.producto.dto} onClick={(e) => { e.stopPropagation(); }} onChange={(e) => {
                                         e.stopPropagation();

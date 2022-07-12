@@ -310,11 +310,28 @@ const SidebarDerecho = React.memo((props: {
                 {
                     !isNaN(PrecioTotal) &&
                     <div className="flex flex-col w-full gap-2">
-                        <motion.button whileTap={{ scale: 0.9 }} className="bg-blue-500 h-12 shadow rounded-lg hover:shadow-lg hover:bg-blue-600 text-white focus:outline-none" onClick={(e) => { setPagarModal(true) }}>PAGAR</motion.button>
-                        <motion.button whileTap={{ scale: 0.9 }} className="bg-blue-500 h-12 shadow rounded-lg hover:shadow-lg hover:bg-blue-600 text-white focus:outline-none"
-                            onClick={async () => { await Vender(PagoRapido, ProductosEnCarrito, Empleado, Clientes); }}>
-                            COBRO RAPIDO
-                        </motion.button>
+                        {
+                            PrecioTotal > 0 ?
+                                <>
+                                    <motion.button disabled={PrecioTotal <= 0} whileTap={{ scale: 0.9 }} className={`bg-blue-500 h-12 shadow rounded-lg hover:shadow-lg hover:bg-blue-600 text-white focus:outline-none`} onClick={(e) => { setPagarModal(true) }}>
+                                        PAGAR
+                                    </motion.button>
+                                    <motion.button disabled={PrecioTotal <= 0} whileTap={{ scale: 0.9 }} className="bg-blue-500 h-12 shadow rounded-lg hover:shadow-lg hover:bg-blue-600 text-white focus:outline-none"
+                                        onClick={async () => { await Vender(PagoRapido, ProductosEnCarrito, Empleado, Clientes); }}>
+                                        COBRO RAPIDO
+                                    </motion.button>
+                                </>
+                                :
+                                <>
+                                    <motion.button disabled className={`bg-blue-400 h-12 shadow rounded-lg text-white focus:outline-none`}>
+                                        PAGAR
+                                    </motion.button>
+                                    <motion.button disabled className="bg-blue-400 h-12 shadow rounded-lg text-white focus:outline-none">
+                                        COBRO RAPIDO
+                                    </motion.button>
+                                </>
+                        }
+
                     </div>
                 }
             </div>
