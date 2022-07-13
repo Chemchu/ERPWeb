@@ -17,8 +17,17 @@ const MermaPage = () => {
     const [Mermas, setMermas] = useState<Merma[]>([]);
     const [MermasFiltradas, setMermasFiltradas] = useState<Merma[] | undefined>();
     const [addMermaModal, setAddMermaModal] = useState<boolean>(false);
+    const [isLoading, setLoading] = useState<boolean>(true);
+    const [isMounted, setMounted] = useState<boolean>(false);
 
     useEffect(() => {
+        setMounted(true)
+        setLoading(false)
+    }, [])
+
+
+    useEffect(() => {
+        if (!isMounted) { return; }
         if (filtro === "") {
             setMermasFiltradas(undefined);
         }
@@ -72,10 +81,14 @@ const MermaPage = () => {
                 </div>
             </div>
             {
-                MermasFiltradas ?
-                    <TablaMerma Mermas={MermasFiltradas} SetMermas={setMermas} />
+                isLoading ?
+                    arrayNum.map((n, i) => {
+                        return (
+                            <SkeletonCard key={`SkeletonProdList-${i}`} />
+                        );
+                    })
                     :
-                    <TablaMerma Mermas={Mermas} SetMermas={setMermas} />
+                    <TablaMerma Mermas={MermasFiltradas || Mermas} SetMermas={setMermas} />
             }
             <AnimatePresence>
                 {addMermaModal && <AddProducto showModal={setAddMermaModal} />}
@@ -102,11 +115,12 @@ const TablaMerma = (props: { Mermas: Merma[], SetMermas: Function }) => {
             <div className="h-full w-full border-2 rounded-b overflow-y-scroll">
                 {
                     props.Mermas.length <= 0 ?
-                        arrayNum.map((n, i) => {
-                            return (
-                                <SkeletonCard key={`SkeletonProdList-${i}`} />
-                            );
-                        })
+                        // <div className="flex justify-center items-center h-full w-full text-xl">
+                        //     No se ha encontrado registros de mermas en el sistema
+                        // </div>
+                        <div className="flex justify-center items-center h-full w-full text-xl">
+                            Página en desarrollo!
+                        </div>
                         :
                         props.Mermas.slice((elementsPerPage * (currentPage - 1)), currentPage * elementsPerPage).map((p, index) => {
                             return (
