@@ -23,6 +23,8 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
 
 const AddVentaFromFile = async (req: NextApiRequest, res: NextApiResponse) => {
     try {
+        console.log(req.body);
+
         const apiResponse = await (await GQLMutate({
             mutation: ADD_SALES_FILE,
             variables: {
@@ -31,6 +33,8 @@ const AddVentaFromFile = async (req: NextApiRequest, res: NextApiResponse) => {
         })).json();
 
         const data = JSON.parse(apiResponse.data)
+        console.log(data);
+
         return res.status(data.successful ? 200 : 300).json({ message: data.message, successful: data.successful });
     }
     catch (err) {

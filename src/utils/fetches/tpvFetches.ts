@@ -15,6 +15,8 @@ export const FetchTPV = async (TPVId: string, abortController: AbortController):
         if (!fetchTPV.ok) { notifyError("Error al buscar la TPV"); return undefined; }
 
         const tpvJson = await fetchTPV.json();
+        console.log(tpvJson);
+
         return CreateTPV(tpvJson.data);
     }
     catch (e) {
