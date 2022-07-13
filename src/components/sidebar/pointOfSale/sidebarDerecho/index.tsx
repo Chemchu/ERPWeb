@@ -23,12 +23,13 @@ const SidebarDerecho = React.memo((props: {
     setProductosCarrito: React.Dispatch<React.SetStateAction<ProductoVendido[]>>, empleadoUsandoTPV: boolean,
     setShowModalCerrar: Function, setShowModalAbrir: Function
 }) => {
-    const { ProductosEnCarrito, SetProductosEnCarrito } = useProductEnCarritoContext();
+    const { ProductosEnCarrito, } = useProductEnCarritoContext();
     const { Empleado } = useEmpleadoContext();
     const [DescuentoOpen, setDescuentoPupup] = useState<boolean>(false);
     const { DtoEfectivo, SetDtoEfectivo, DtoPorcentaje, SetDtoPorcentaje } = useProductEnCarritoContext()
     const [PrecioTotal, setPrecioTotal] = useState<number>(PrecioTotalCarrito(ProductosEnCarrito));
     const [PrecioTotalFinal, setPrecioTotalFinal] = useState<number>(AplicarDescuentos(ProductosEnCarrito, Number(DtoEfectivo), Number(DtoPorcentaje)));
+    const [isVentaValida, setIsVentaValida] = useState<boolean>(false)
 
     const [showModalPagar, setPagarModal] = useState(false);
     const [PagoRapido, setPagoRapido] = useState<CustomerPaymentInformation>();
@@ -54,6 +55,20 @@ const SidebarDerecho = React.memo((props: {
             isUnmounted = true;
         }
     }, []);
+
+    useEffect(() => {
+        for (let i = 0; i < ProductosEnCarrito.length; i++) {
+            if (ProductosEnCarrito[i].cantidadVendida <= 0) {
+                setIsVentaValida(false)
+                return;
+            }
+            if (Number(ProductosEnCarrito[i].precioVenta) <= 0) {
+                setIsVentaValida(false)
+                return;
+            }
+        }
+        setIsVentaValida(true)
+    }, [ProductosEnCarrito])
 
     useEffect(() => {
         if (qrImage) {
@@ -117,9 +132,8 @@ const SidebarDerecho = React.memo((props: {
 
         props.setProductosCarrito((prevCarrito) => {
             const prodEnCarrito = prevCarrito.find(p => p._id == idProd);
-
             if (prodEnCarrito) {
-                if (Number(cantidad) === 0) {
+                if (Number(cantidad) === 0 && cantidad !== "") {
                     return prevCarrito.filter(p => p._id != idProd);
                 }
 
@@ -311,7 +325,8 @@ const SidebarDerecho = React.memo((props: {
                     !isNaN(PrecioTotal) &&
                     <div className="flex flex-col w-full gap-2">
                         {
-                            PrecioTotal > 0 ?
+                            PrecioTotal > 0 &&
+                                isVentaValida ?
                                 <>
                                     <motion.button disabled={PrecioTotal <= 0} whileTap={{ scale: 0.9 }} className={`bg-blue-500 h-12 shadow rounded-lg hover:shadow-lg hover:bg-blue-600 text-white focus:outline-none`} onClick={(e) => { setPagarModal(true) }}>
                                         PAGAR

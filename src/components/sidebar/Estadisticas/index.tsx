@@ -43,7 +43,10 @@ const EstadisticasPage = () => {
             if (dateRange[0] && dateRange[1]) {
                 setLoading(true)
                 setTitulo("Fecha seleccionada")
-                setSummary(await FetchResumenRango(dateRange[0], dateRange[1]))
+
+                const final: Date = dateRange[1]
+                const fechaFinal = new Date(final.setDate(final.getDate() - 1))
+                setSummary(await FetchResumenRango(dateRange[0], fechaFinal))
             }
 
             if (dateRange[0] == null && dateRange[1] == null) {

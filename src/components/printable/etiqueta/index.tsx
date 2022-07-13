@@ -10,12 +10,11 @@ const Etiqueta = React.forwardRef((props: { nombre: string, ean: string, precio:
         catch (e) {
             notifyWarn("EAN inválido. El código de barras no estará en la etiqueta");
         }
-
     }, [])
 
     return (
         <div className="flex flex-col gap-1 items-center bg-white rounded-2xl w-full h-auto text-sm p-2" ref={ref}>
-            <div className="flex justify-between w-full text-center">
+            <div className="flex justify-between w-full text-center text-lg">
                 <span className="text-left w-full">
                     {props.nombre}
                 </span>

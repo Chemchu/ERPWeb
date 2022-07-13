@@ -69,7 +69,7 @@ export const ProductSelectedCard = React.memo((props: { producto: ProductoVendid
                             <div className="font-semibold text-sm">
                                 Cantidad
                             </div>
-                            <div className="flex w-full justify-between">
+                            <div className="flex gap-2 w-full justify-start">
                                 <motion.button whileTap={{ scale: 0.9 }} id={props.producto._id} className="flex justify-center items-center rounded-md w-6 h-6 bg-gray-500 hover:bg-gray-600 focus:outline-none"
                                     onClick={(e) => {
                                         e.stopPropagation();
