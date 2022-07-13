@@ -11,5 +11,4 @@ export type Producto = {
     alta: boolean,
     cantidad: number,
     cantidadRestock: number
-    promociones?: string[],
 }

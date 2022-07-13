@@ -36,15 +36,14 @@ const ProductoForm = (props: { setProducto: Function, producto?: Producto, setHa
     useEffect(() => {
         if (!PrecioCompra || isNaN(Number(PrecioCompra))) { setPrecioVenta(""); return; }
         if (!Iva || isNaN(Number(Iva))) { setPrecioVenta(""); return; }
-        if (!Margen || isNaN(Number(Margen))) { setPrecioVenta(""); return; }
+        if (!PrecioVenta || isNaN(Number(PrecioVenta))) { setPrecioVenta(""); return; }
 
         const precioCompra = Number(PrecioCompra);
-        const iva = precioCompra * (Number(Iva) / 100);
-        const margen = (precioCompra + iva) * (Number(Margen) / 100);
-        const precioVenta = (precioCompra + iva + margen).toFixed(2);
+        const precioConIva = precioCompra + precioCompra * (Number(Iva) / 100)
+        const margen = ((Number(PrecioVenta) - precioConIva) / precioConIva) * 100
 
-        setPrecioVenta(precioVenta);
-    }, [PrecioCompra, Iva, Margen]);
+        setMargen(margen.toFixed(2));
+    }, [PrecioCompra, Iva, PrecioVenta]);
 
     return (
         <form className="flex gap-10 w-full pt-10">
@@ -119,20 +118,20 @@ const ProductoForm = (props: { setProducto: Function, producto?: Producto, setHa
                 </div>
                 <div className="w-full">
                     <label className="block tracking-wide text-gray-700 font-bold">
-                        Margen
+                        Precio de venta
                     </label>
-                    <div className="flex gap-2 items-center">
-                        <input className="appearance-none ring-blue-500 block w-full bg-gray-200 text-gray-700 border border-gray-200 rounded py-3 px-4 leading-tight focus:outline-none focus:bg-white focus:border-gray-500" id="grid-zip" type="text" placeholder="Margen de beneficio"
-                            value={Margen} onChange={(e) => { setMargen(ValidatePositiveFloatingNumber(e.target.value)); props.setHayCambios && props.setHayCambios(true); }} />
-                        <span>%</span>
-                    </div>
+                    <input className="appearance-none ring-blue-500 block w-full bg-gray-200 text-gray-700 border border-gray-200 rounded py-3 px-4 leading-tight focus:outline-none focus:bg-white focus:border-gray-500" id="grid-zip" type="text" placeholder="Precio de venta al público"
+                        value={PrecioVenta} onChange={(e) => { setPrecioVenta(ValidatePositiveFloatingNumber(e.target.value)); props.setHayCambios && props.setHayCambios(true); }} />
                 </div>
                 <div className="w-full">
                     <label className="block tracking-wide text-gray-700 font-bold">
-                        Precio de venta
+                        Margen
                     </label>
-                    <input disabled className="appearance-none ring-blue-500 block w-full bg-gray-200 text-gray-700 border border-gray-200 rounded py-3 px-4 leading-tight focus:outline-none focus:bg-white focus:border-gray-500" id="grid-zip" type="text"
-                        value={PrecioVenta} />
+                    <div className="flex gap-2 items-center">
+                        <input disabled className="appearance-none ring-blue-500 block w-full bg-gray-200 text-gray-700 border border-gray-200 rounded py-3 px-4 leading-tight focus:outline-none focus:bg-white focus:border-gray-500" id="grid-zip" type="text" placeholder="Margen de beneficio"
+                            value={Margen} />
+                        <span>%</span>
+                    </div>
                 </div>
                 <div className="w-full">
                     <label className="block tracking-wide text-gray-700 font-bold">

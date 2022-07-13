@@ -5,7 +5,6 @@ import { useReactToPrint } from "react-to-print";
 import { Producto } from "../../../tipos/Producto";
 import { In } from "../../../utils/animations";
 import { notifyError } from "../../../utils/toastify";
-import { IsValidProduct } from "../../../utils/validator";
 import Etiqueta from "../../printable/etiqueta";
 import EditableLabel from "../../elementos/Forms/editableLabel";
 import ProductoForm from "../../elementos/Forms/productoForm";

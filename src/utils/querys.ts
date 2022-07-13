@@ -58,7 +58,6 @@ export const QUERY_PRODUCTS = `
             precioCompra
             iva
             margen
-            promociones
             ean
             cantidad
             cantidadRestock

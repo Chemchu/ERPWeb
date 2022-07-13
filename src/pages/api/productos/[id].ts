@@ -103,7 +103,6 @@ const UpdateProducto = async (req: NextApiRequest, res: NextApiResponse) => {
                     "precioCompra": prod.precioCompra,
                     "iva": prod.iva,
                     "margen": prod.margen,
-                    "promociones": prod.promociones,
                     "ean": prod.ean,
                     "cantidad": prod.cantidad,
                     "cantidadRestock": prod.cantidadRestock,
