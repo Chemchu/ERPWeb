@@ -79,17 +79,17 @@ const GetSale = async (req: NextApiRequest, res: NextApiResponse) => {
 }
 
 const GetSalesByQuery = async (userQuery: queryString.ParsedQuery<string>, res: NextApiResponse) => {
-    if (!userQuery.query) { res.status(300).json({ message: `La query no puede estar vacía` }); }
+    if (Object.keys(userQuery).length === 0) { res.status(300).json({ message: `La query no puede estar vacía` }); }
     const serverRes = await GQLQuery(
         {
             query: QUERY_SALES,
             variables: {
                 "find": {
                     "query": userQuery.query,
-                    "fechaInicial": userQuery.fechas ? userQuery.fechas[0] : null,
-                    "fechaFinal": userQuery.fechas ? userQuery.fechas[1] : null
+                    "fechaInicial": userQuery.fechaInicial ? userQuery.fechaInicial : null,
+                    "fechaFinal": userQuery.fechaFinal ? userQuery.fechaFinal : null
                 },
-                "limit": 1
+                "limit": 10000
             }
         }
     );
