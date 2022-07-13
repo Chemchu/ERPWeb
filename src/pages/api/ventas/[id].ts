@@ -106,7 +106,7 @@ const GetSalesByQuery = async (userQuery: queryString.ParsedQuery<string>, res: 
 export const config = {
     api: {
         bodyParser: {
-            sizeLimit: '150mb',
+            sizeLimit: '50mb',
         },
     },
 }

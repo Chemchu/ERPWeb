@@ -108,7 +108,6 @@ export const AddVenta = async (pagoCliente: CustomerPaymentInformation, producto
 
         const addventaRespone = await fetch(`/api/ventas/`, {
             headers: {
-                'Accept': 'application/json',
                 'Content-Type': 'application/json'
             },
             method: "POST",

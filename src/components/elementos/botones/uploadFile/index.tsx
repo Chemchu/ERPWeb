@@ -22,6 +22,8 @@ const UploadFile = (props: { extension?: string, tipoDocumento: TipoDocumento })
 
             const text = await f.text();
 
+            console.log(text);
+
             const res = new Promise(async (resolve) => {
                 const response = await fetch(`/api/${props.tipoDocumento.toLowerCase()}/file`, {
                     headers: { 'Content-Type': 'application/json' },
