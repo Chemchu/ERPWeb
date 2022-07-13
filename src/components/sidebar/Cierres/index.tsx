@@ -35,8 +35,8 @@ const CierrePage = () => {
         const GetAllData = async () => {
             SetCierres(await FetchCierres());
             SetTpvs(await FetchTPVs());
-            setLoading(false);
             setMounted(true);
+            setLoading(false);
         }
         GetAllData();
     }, []);
@@ -176,38 +176,34 @@ const CierrePage = () => {
                         Ventas totales
                     </div>
                 </div>
-                {
-                    CierresFiltrados && CierresFiltrados?.length <= 0 ?
-                        <div className="flex justify-center items-center h-full w-full border-2 rounded-b text-xl overflow-y-scroll">
-                            No hay registros de cierres en la base de datos
-                        </div>
-                        :
-                        <div className="h-full w-full border-2 rounded-b overflow-y-scroll">
-                            <TablaCierre CierresList={CierresFiltrados || CierresList} currentPage={currentPage} Tpvs={Tpvs} />
-                        </div>
-                }
+                <div className="h-full w-full border-2 rounded-b overflow-y-scroll">
+                    <TablaCierre CierresList={CierresFiltrados || CierresList} currentPage={currentPage} Tpvs={Tpvs} />
+                </div>
             </div>
             <div className="flex pt-2 items-center justify-center">
                 <Paginador numPages={numPages} paginaActual={currentPage} maxPages={10} cambiarPaginaActual={setPaginaActual} />
             </div>
-        </div>
+        </div >
     );
 }
 
 export default CierrePage;
 
 const TablaCierre = (props: { CierresList: Cierre[], currentPage: number, Tpvs: ITPV[] }) => {
+    if (!props.CierresList) {
+        return (
+            <div className="flex justify-center items-center h-full w-full border-2 rounded-b text-xl overflow-y-scroll">
+                No hay registros de cierres en la base de datos
+            </div>
+        )
+    }
     return (
         <>
             {
                 props.CierresList.length <= 0 ?
-                    arrayNum.map((n, i) => {
-                        return (
-                            <div key={`SkeletonProdList-${i}`} >
-                                <SkeletonCard />
-                            </div>
-                        );
-                    })
+                    <div className="flex justify-center items-center h-full w-full border-2 rounded-b text-xl overflow-y-scroll">
+                        No hay registros de cierres en la base de datos
+                    </div>
                     :
                     props.CierresList.slice((elementsPerPage * (props.currentPage - 1)), props.currentPage * elementsPerPage).map((p, index) => {
                         return (
