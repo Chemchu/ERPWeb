@@ -29,7 +29,7 @@ const UploadFileRestricted = (props: { extension?: string, tipoDocumento: TipoDo
                     body: JSON.stringify(text)
                 });
                 const json = await response.json();
-                resolve(json.message)
+                resolve({ message: json.message, successful: json.successful })
             });
 
             notifyLoading(res, "Añadiendo documentos...")

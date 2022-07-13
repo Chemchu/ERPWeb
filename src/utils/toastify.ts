@@ -59,9 +59,6 @@ export const notifyLoading = (promise: Promise<any>, msgInicial: string, success
     promise
         .then(async (response) => {
             let data = response;
-            if (Boolean(data.headers)) {
-                data = await response.json()
-            }
 
             if (data.successful) {
                 toast.update(toastId, { render: data.message, type: "success", isLoading: false, autoClose: 5000, draggable: true, pauseOnHover: true, closeOnClick: true })
