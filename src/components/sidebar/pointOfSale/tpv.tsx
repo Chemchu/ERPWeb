@@ -8,12 +8,23 @@ import SkeletonProductCard from "../../Skeletons/skeletonProductCard";
 import SidebarDerecho from "./sidebarDerecho";
 import { motion } from "framer-motion";
 
+const frequenceRateTyping = 200;
+
 const TPV = (props: { productos: Producto[], empleadoUsandoTPV: boolean, setEmpleadoUsandoTPV: Function, setShowModalCerrar: Function, setShowModalAbrir: Function }) => {
     const [ProductosFiltrados, setProductosFiltrados] = useState<Producto[]>(props.productos);
+    const [dirtyInput, setDirtyInput] = useState<string>("")
     const [Filtro, setFiltro] = useState<string>("");
     const { ProductosEnCarrito, SetProductosEnCarrito } = useProductEnCarritoContext();
     const [Familias, setFamilias] = useState<string[]>([]);
-    const [isPending, startTransition] = useTransition();
+    const [, startTransition] = useTransition();
+
+    useEffect(() => {
+        const delayDebounceFn = setTimeout(() => {
+            Filtrar(dirtyInput)
+        }, frequenceRateTyping)
+
+        return () => clearTimeout(delayDebounceFn)
+    }, [dirtyInput])
 
     useEffect(() => {
         function uniq_fast(a: Producto[]) {
@@ -47,9 +58,16 @@ const TPV = (props: { productos: Producto[], empleadoUsandoTPV: boolean, setEmpl
                 let productosFiltrados: Producto[];
                 if (stringValidated === "") productosFiltrados = props.productos;
                 else {
-                    productosFiltrados = ProductosFiltrados.filter((p: Producto) => {
-                        return p.nombre.toUpperCase().includes(stringValidated.toUpperCase()) || p.ean === stringValidated.toUpperCase()
-                    });
+                    if (cadena.length < Filtro.length) {
+                        productosFiltrados = props.productos.filter((p: Producto) => {
+                            return p.nombre.toUpperCase().includes(stringValidated.toUpperCase()) || p.ean === stringValidated.toUpperCase()
+                        });
+                    }
+                    else {
+                        productosFiltrados = ProductosFiltrados.filter((p: Producto) => {
+                            return p.nombre.toUpperCase().includes(stringValidated.toUpperCase()) || p.ean === stringValidated.toUpperCase()
+                        });
+                    }
                 }
 
                 if (IsEAN13(stringValidated)) {
@@ -62,7 +80,6 @@ const TPV = (props: { productos: Producto[], empleadoUsandoTPV: boolean, setEmpl
                     setFiltro(stringValidated);
                 }
             })
-
         }
         catch (err) {
             setProductosFiltrados([]);
@@ -74,9 +91,7 @@ const TPV = (props: { productos: Producto[], empleadoUsandoTPV: boolean, setEmpl
 
     if (!props.empleadoUsandoTPV) {
         return (<div className="antialiased overflow-hidden text-gray-800">
-            {/* Página principal del POS */}
             <div className="grid grid-cols-3 bg-gray-100">
-                {/* Menú tienda, donde se muestran los productos */}
                 <div className="col-span-2 h-screen">
                     <div className="flex flex-col h-full w-full py-4">
                         <div className="flex px-2 flex-row relative">
@@ -122,8 +137,8 @@ const TPV = (props: { productos: Producto[], empleadoUsandoTPV: boolean, setEmpl
                                 </svg>
                             </div>
                             <input className="bg-white rounded-3xl shadow text-lg full w-full h-16 py-4 pl-16 transition-shadow focus:shadow-2xl focus:outline-none" placeholder="Buscar producto o código de barras..."
-                                onChange={(e) => { Filtrar(e.target.value) }}
-                                value={Filtro} />
+                                onChange={(e) => { setDirtyInput(e.target.value); }}
+                                value={dirtyInput} />
                         </div>
                         {
                             props.productos.length <= 0 ?

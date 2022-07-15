@@ -11,7 +11,7 @@ import { SesionEmpleado } from "../../../tipos/Empleado";
 import { Roles } from "../../../tipos/Enums/Roles";
 import { FetchClientes } from "../../../utils/fetches/clienteFetches";
 
-const Clientes = (props: { EmpleadoSesion: SesionEmpleado }) => {
+const Proveedores = (props: { EmpleadoSesion: SesionEmpleado }) => {
     const { Empleado, SetEmpleado } = useEmpleadoContext();
 
     useEffect(() => {
@@ -24,7 +24,7 @@ const Clientes = (props: { EmpleadoSesion: SesionEmpleado }) => {
         <Tab.Group as="div" className="flex flex-col w-full h-full pt-3 pr-2">
             <Tab.List className="flex gap-1 h-10">
                 <Tab
-                    key={"Clientes"}
+                    key={"ProveedoresTab"}
                     className={(props: { selected: any }) =>
                         classNames(
                             'w-1/4 h-full text-sm rounded-t-2xl border-t border-x',
@@ -36,27 +36,27 @@ const Clientes = (props: { EmpleadoSesion: SesionEmpleado }) => {
                     }
                 >
                     <span className='text-xl'>
-                        Clientes
+                        Proveedores
                     </span>
                 </Tab>
 
             </Tab.List>
             <Tab.Panels className="flex flex-col h-90v w-full pr-2">
                 <Tab.Panel
-                    key={"Configuracion"}
+                    key={"ProveedoresContent"}
                     className={classNames(
                         'pb-3 h-full w-full',
                         'focus:outline-none ring-white ring-opacity-60'
                     )}
                 >
-                    <ClientesPage />
+                    <EnDesarrolloPage />
                 </Tab.Panel>
             </Tab.Panels>
         </Tab.Group >
     );
 }
 
-Clientes.PageLayout = DashboardLayout;
+Proveedores.PageLayout = DashboardLayout;
 
 export const getServerSideProps: GetServerSideProps = async (context) => {
     const [jwt, isValidCookie] = getJwtFromString(context.req.cookies.authorization);
@@ -87,7 +87,7 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
     }
 }
 
-export default Clientes;
+export default Proveedores;
 
 function classNames(...classes: any) {
     return classes.filter(Boolean).join(' ')
