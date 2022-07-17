@@ -9,10 +9,10 @@ export const AplicarDescuentos = (productos: ProductoVendido[], descuentoEfectiv
 
     precioTotal = productos.reduce((total: number, p: ProductoVendido) => {
         if (p.dto) {
-            return total += ((100 - Number(p.dto)) / 100) * (Number(p.cantidadVendida) * p.precioVenta);
+            return total += ((100 - Number(p.dto)) / 100) * (Number(p.cantidadVendida) * Number(p.precioVenta));
         }
         else {
-            return total += (Number(p.cantidadVendida) * p.precioVenta);
+            return total += (Number(p.cantidadVendida) * Number(p.precioVenta));
         }
     }, 0)
     const dtoEfectivo = descuentoEfectivo > precioTotal ? precioTotal : descuentoEfectivo;
@@ -24,7 +24,7 @@ export const AplicarDescuentos = (productos: ProductoVendido[], descuentoEfectiv
 
 export const PrecioTotalCarrito = (productos: ProductoVendido[]): number => {
     const precio = productos.reduce((total: number, p: ProductoVendido) => {
-        return total += (Number(p.cantidadVendida) * p.precioVenta);
+        return total += (Number(p.cantidadVendida) * Number(p.precioVenta));
     }, 0);
 
     return Number(precio.toFixed(2));
@@ -68,6 +68,7 @@ export const GetTarjetaTotal = (Ventas: Venta[]): number => {
 }
 
 export const GetTotalEnCaja = (Ventas: Venta[], Devoluciones: Devolucion[], Tpv: ITPV): number => {
+
     const valorDeVentas = Ventas.reduce((total: number, venta: Venta): number => {
         if (Tpv._id !== venta.tpv) {
             return total;
@@ -82,33 +83,10 @@ export const GetTotalEnCaja = (Ventas: Venta[], Devoluciones: Devolucion[], Tpv:
             return total + venta.dineroEntregadoEfectivo - venta.cambio;
         }
 
+        console.log(total);
+
         return Number(total.toFixed(2));
     }, Tpv.cajaInicial);
 
     return valorDeVentas;
-
-    // console.log("Valor en caja: " + valorDeVentas);
-    // console.log("Número de devoluciones: " + Devoluciones.length);
-
-    // const total = Devoluciones.reduce((total: number, devolucion: Devolucion) => {
-    //     if (devolucion.tpv !== Tpv._id) { return total }
-
-    //     if (devolucion.ventaOriginal.tipo === TipoCobro.Efectivo) {
-    //         return total
-    //     }
-    //     if (devolucion.ventaOriginal.tipo === TipoCobro.Rapido) {
-    //         return total
-    //     }
-
-    //     const fechaDevolucion = new Date(devolucion.createdAt).valueOf();
-    //     const fechaTpv = new Date(Tpv.updatedAt).valueOf()
-    //     if (fechaDevolucion < fechaTpv) { return total }
-
-    //     const dineroEnCaja = total - devolucion.ventaOriginal.dineroEntregadoTarjeta;
-    //     if (dineroEnCaja < 0) { return 0 }
-    //     else { return dineroEnCaja }
-    // }, valorDeVentas)
-
-    // console.log("Total tras devolver: " + total);
-    // return total;
 }

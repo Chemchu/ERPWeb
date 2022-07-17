@@ -85,14 +85,14 @@ export const AddDevolucion = async (venta: Venta, productosDevolver: Map<string,
             const cantidadDevuelta = productosDevolver.get(prod._id)
             if (!cantidadDevuelta) { return }
 
-            const precio = prod.precioFinal ? prod.precioFinal : prod.cantidadVendida * (prod.precioVenta * ((100 - prod.dto) / 100));
+            const precio = prod.precioFinal ? prod.precioFinal : prod.cantidadVendida * (Number(prod.precioVenta) * ((100 - prod.dto) / 100));
 
             productos.push({
                 _id: prod._id,
                 nombre: prod.nombre,
                 proveedor: prod.proveedor,
                 familia: prod.familia,
-                precioVenta: prod.precioVenta,
+                precioVenta: Number(prod.precioVenta),
                 precioCompra: prod.precioCompra,
                 precioFinal: precio,
                 dto: prod.dto,

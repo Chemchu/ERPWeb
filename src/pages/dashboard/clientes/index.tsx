@@ -39,22 +39,6 @@ const Clientes = (props: { EmpleadoSesion: SesionEmpleado }) => {
                         Clientes
                     </span>
                 </Tab>
-                <Tab
-                    key={"Proveedores"}
-                    className={(props: { selected: any }) =>
-                        classNames(
-                            'w-1/4 h-full text-sm rounded-t-2xl border-t border-x',
-                            'focus:outline-none  ring-white ring-opacity-60',
-                            props.selected
-                                ? 'bg-white shadow-md'
-                                : 'bg-gray-200 hover:bg-blue-400 hover:text-white'
-                        )
-                    }
-                >
-                    <span className='text-xl'>
-                        Proveedores
-                    </span>
-                </Tab>
 
             </Tab.List>
             <Tab.Panels className="flex flex-col h-90v w-full pr-2">
@@ -67,16 +51,6 @@ const Clientes = (props: { EmpleadoSesion: SesionEmpleado }) => {
                 >
                     <ClientesPage />
                 </Tab.Panel>
-
-                <Tab.Panel
-                    key={"Proveedores"}
-                    className={classNames(
-                        'pb-3 h-full w-full',
-                        'focus:outline-none ring-white ring-opacity-60'
-                    )}
-                >
-                    <EnDesarrolloPage />
-                </Tab.Panel>
             </Tab.Panels>
         </Tab.Group >
     );
@@ -85,7 +59,16 @@ const Clientes = (props: { EmpleadoSesion: SesionEmpleado }) => {
 Clientes.PageLayout = DashboardLayout;
 
 export const getServerSideProps: GetServerSideProps = async (context) => {
-    const jwt = getJwtFromString(context.req.cookies.authorization);
+    const [jwt, isValidCookie] = getJwtFromString(context.req.cookies.authorization);
+
+    if (!isValidCookie) {
+        return {
+            redirect: {
+                permanent: false,
+                destination: `/login`
+            },
+        };
+    }
     let emp: SesionEmpleado = {
         _id: jwt._id,
         apellidos: jwt.apellidos,
@@ -93,7 +76,9 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
         nombre: jwt.nombre,
         rol: Roles[jwt.rol as keyof typeof Roles] || Roles.Cajero,
     }
-    jwt.TPV ? emp.TPV = jwt.TPV : null;
+    if (jwt.TPV) {
+        emp.TPV = jwt.TPV
+    }
 
     return {
         props: {

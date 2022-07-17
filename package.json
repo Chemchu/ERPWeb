@@ -13,6 +13,7 @@
     "@heroicons/react": "^1.0.6",
     "@types/react": "^18.0.10",
     "@types/react-dom": "^18.0.5",
+    "@types/recharts": "^1.8.23",
     "babel-preset-next": "^1.4.0",
     "chart.js": "^3.8.0",
     "framer-motion": "^6.3.11",
@@ -20,13 +21,15 @@
     "jsbarcode": "^3.11.5",
     "next": "^12.1.6",
     "next-progress": "^2.2.0",
+    "next-pwa": "^5.5.4",
     "query-string": "^7.1.1",
     "react": "^18.1.0",
     "react-chartjs-2": "^4.2.0",
     "react-datepicker": "^4.7.0",
     "react-dom": "^18.1.0",
     "react-to-print": "^2.14.4",
-    "react-toastify": "^9.0.4"
+    "react-toastify": "^9.0.4",
+    "recharts": "^2.1.12"
   },
   "devDependencies": {
     "@types/node": "16.11.11",

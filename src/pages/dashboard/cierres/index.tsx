@@ -18,7 +18,7 @@ const Cierres = (props: { EmpleadoSesion: SesionEmpleado }) => {
     }, []);
 
     return (
-        <Tab.Group as="div" className="flex flex-col w-full h-full pt-3 pr-2">
+        <Tab.Group as="div" className="flex flex-col w-full h-full pt-2 pr-2">
             <Tab.List className="flex gap-1 h-10 pr-10">
                 <Tab
                     key={"Cierres"}
@@ -55,7 +55,16 @@ const Cierres = (props: { EmpleadoSesion: SesionEmpleado }) => {
 Cierres.PageLayout = DashboardLayout;
 
 export const getServerSideProps: GetServerSideProps = async (context) => {
-    const jwt = getJwtFromString(context.req.cookies.authorization);
+    const [jwt, isValidCookie] = getJwtFromString(context.req.cookies.authorization);
+
+    if (!isValidCookie) {
+        return {
+            redirect: {
+                permanent: false,
+                destination: `/login`
+            },
+        };
+    }
     let emp: SesionEmpleado = {
         _id: jwt._id,
         apellidos: jwt.apellidos,
@@ -63,7 +72,10 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
         nombre: jwt.nombre,
         rol: Roles[jwt.rol as keyof typeof Roles] || Roles.Cajero,
     }
-    jwt.TPV ? emp.TPV = jwt.TPV : null;
+
+    if (jwt.TPV) {
+        emp.TPV = jwt.TPV
+    }
 
     return {
         props: {

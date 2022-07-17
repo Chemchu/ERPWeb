@@ -22,7 +22,7 @@ export const FetchCierres = async (): Promise<Cierre[]> => {
     }
 }
 
-export const FetchCierresByQuery = async (userQuery: string, fechas?: string[]): Promise<Cierre[]> => {
+export const FetchCierresByQuery = async (userQuery?: string, fechas?: string[]): Promise<Cierre[]> => {
     try {
         let query: any = new Object;
         query.query = userQuery;
@@ -31,16 +31,15 @@ export const FetchCierresByQuery = async (userQuery: string, fechas?: string[]):
         let cierresRes = [] as Cierre[];
 
         const crResponse = await fetch(`/api/cierres/${queryObject}`);
-
         if (!crResponse.ok) { notifyError("Error al buscar los cierres de caja"); return []; }
-        const crJson = await crResponse.json();
 
+        const crJson = await crResponse.json();
         cierresRes = CreateCierreList(crJson.data);
         return cierresRes;
     }
     catch (e) {
         console.error(e);
-        notifyError("Error de conexión");
+        notifyError(String(e));
         return [];
     }
 }

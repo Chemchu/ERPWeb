@@ -85,7 +85,16 @@ const Ventas = (props: { EmpleadoSesion: SesionEmpleado }) => {
 }
 
 export const getServerSideProps: GetServerSideProps = async (context) => {
-    const jwt = getJwtFromString(context.req.cookies.authorization);
+    const [jwt, isValidCookie] = getJwtFromString(context.req.cookies.authorization);
+
+    if (!isValidCookie) {
+        return {
+            redirect: {
+                permanent: false,
+                destination: `/login`
+            },
+        };
+    }
     let emp: SesionEmpleado = {
         _id: jwt._id,
         apellidos: jwt.apellidos,
@@ -93,7 +102,9 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
         nombre: jwt.nombre,
         rol: Roles[jwt.rol as keyof typeof Roles] || Roles.Cajero,
     }
-    jwt.TPV ? emp.TPV = jwt.TPV : null;
+    if (jwt.TPV) {
+        emp.TPV = jwt.TPV
+    }
 
     return {
         props: {

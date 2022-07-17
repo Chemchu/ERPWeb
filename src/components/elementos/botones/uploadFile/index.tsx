@@ -1,7 +1,7 @@
 import useEmpleadoContext from "../../../../context/empleadoContext";
 import { Roles } from "../../../../tipos/Enums/Roles";
 import { TipoDocumento } from "../../../../tipos/Enums/TipoDocumentos";
-import { notifyError, notifyPromise, notifySuccess } from "../../../../utils/toastify";
+import { notifyError, notifyLoading, notifyPromise, notifySuccess } from "../../../../utils/toastify";
 
 const UploadFile = (props: { extension?: string, tipoDocumento: TipoDocumento }) => {
     const { Empleado } = useEmpleadoContext();
@@ -29,10 +29,10 @@ const UploadFile = (props: { extension?: string, tipoDocumento: TipoDocumento })
                     body: JSON.stringify(text)
                 });
                 const json = await response.json();
-                resolve(json.message)
+                resolve({ message: json.message, successful: json.successful })
             });
 
-            notifyPromise(res, "Añadiendo documentos...");
+            notifyLoading(res, "Añadiendo documentos...");
         }
         catch (e) {
             console.log(e);

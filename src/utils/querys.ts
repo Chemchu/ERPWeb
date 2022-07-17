@@ -9,9 +9,11 @@ export const ADD_SALE = `
     }
 `;
 
-export const ADD_CIERRE = `
-    mutation Mutation($cierre: CierreTPVInput!) {
+export const ADD_CIERRE = `mutation AddCierreTPV($cierre: CierreTPVInput!) {
   addCierreTPV(cierre: $cierre) {
+    message
+    successful
+    token
     cierre {
       _id
       tpv
@@ -32,7 +34,6 @@ export const ADD_CIERRE = `
       }
       apertura
       cierre
-      numVentas
       ventasEfectivo
       ventasTarjeta
       ventasTotales
@@ -41,11 +42,7 @@ export const ADD_CIERRE = `
       dineroRetirado
       fondoDeCaja
       beneficio
-      nota
     }
-    message
-    successful
-    token
   }
 }
 `;
@@ -61,7 +58,6 @@ export const QUERY_PRODUCTS = `
             precioCompra
             iva
             margen
-            promociones
             ean
             cantidad
             cantidadRestock
@@ -355,8 +351,8 @@ export const OCUPY_TPV = `
 `;
 
 export const QUERY_CIERRES = `
-    query CierresTPVs {
-  cierresTPVs {
+    query CierresTPVs($find: CierresTPVFind) {
+  cierresTPVs(find: $find) {
     _id
     tpv
     cajaInicial
@@ -367,7 +363,6 @@ export const QUERY_CIERRES = `
       rol
       email
     }
-    numVentas
     ventasEfectivo
     ventasTarjeta
     ventasTotales
@@ -536,3 +531,12 @@ export const ADD_DEVOLUCION = `
   }
 }
 `
+
+export const ADD_CIERRES_FILE = `
+    mutation AddCierresFile($csv: String!) {
+      addCierresFile(csv: $csv) {
+        message
+        successful
+      }
+    }
+`;

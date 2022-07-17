@@ -5,7 +5,6 @@ import queryString from 'query-string';
 
 const handler = async (req: NextApiRequest, res: NextApiResponse) => {
     const query = queryString.parse(req.query.id.toString());
-
     switch (req.method) {
         case 'POST':
             if (req.query.id === "file") {
@@ -23,15 +22,21 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
 }
 
 const AddVentaFromFile = async (req: NextApiRequest, res: NextApiResponse) => {
-    const apiResponse = await (await GQLMutate({
-        mutation: ADD_SALES_FILE,
-        variables: {
-            ventasJson: JSON.stringify(req.body)
-        }
-    })).json();
+    try {
+        const apiResponse = await (await GQLMutate({
+            mutation: ADD_SALES_FILE,
+            variables: {
+                ventasJson: JSON.stringify(req.body)
+            }
+        })).json();
 
-    const data = JSON.parse(apiResponse.data)
-    return res.status(data.successful ? 200 : 300).json({ message: data.message, successful: data.successful });
+        const data = JSON.parse(apiResponse.data).addVentasFile
+        return res.status(data.successful ? 200 : 300).json({ message: data.message, successful: data.successful });
+    }
+    catch (err) {
+        console.log(err);
+        return res.status(500).json({ message: "Error interno. Si el archivo es muy grande, todavía se estará añadiendo. Espere unos minutos", successful: false });
+    }
 }
 
 const GetSale = async (req: NextApiRequest, res: NextApiResponse) => {
@@ -74,17 +79,17 @@ const GetSale = async (req: NextApiRequest, res: NextApiResponse) => {
 }
 
 const GetSalesByQuery = async (userQuery: queryString.ParsedQuery<string>, res: NextApiResponse) => {
-    if (!userQuery.query) { res.status(300).json({ message: `La query no puede estar vacía` }); }
+    if (Object.keys(userQuery).length === 0) { res.status(300).json({ message: `La query no puede estar vacía` }); }
     const serverRes = await GQLQuery(
         {
             query: QUERY_SALES,
             variables: {
                 "find": {
                     "query": userQuery.query,
-                    "fechaInicial": userQuery.fechas ? userQuery.fechas[0] : null,
-                    "fechaFinal": userQuery.fechas ? userQuery.fechas[1] : null
+                    "fechaInicial": userQuery.fechaInicial ? userQuery.fechaInicial : null,
+                    "fechaFinal": userQuery.fechaFinal ? userQuery.fechaFinal : null
                 },
-                "limit": 1
+                "limit": 10000
             }
         }
     );
@@ -97,7 +102,7 @@ const GetSalesByQuery = async (userQuery: queryString.ParsedQuery<string>, res: 
 export const config = {
     api: {
         bodyParser: {
-            sizeLimit: '50mb',
+            sizeLimit: '100mb',
         },
     },
 }

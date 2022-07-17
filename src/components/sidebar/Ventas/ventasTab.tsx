@@ -97,16 +97,16 @@ const SalesPage = () => {
                 </div>
             </div>
             <div className="grid grid-cols-4 justify-evenly border-t border-x rounded-t-2xl">
-                <div className="px-5 py-3 border-gray-200 text-gray-800 text-left text-sm font-semibold">
+                <div className="px-5 py-3 border-gray-200 text-gray-800 text-left font-semibold">
                     Cliente
                 </div>
-                <div className="py-3 border-gray-200 text-gray-800 text-left text-sm font-semibold">
+                <div className="py-3 border-gray-200 text-gray-800 text-left font-semibold">
                     Fecha de compra
                 </div>
-                <div className="py-3 border-gray-200 text-gray-800 text-left text-sm font-semibold">
+                <div className="py-3 border-gray-200 text-gray-800 text-left font-semibold">
                     Método de pago
                 </div>
-                <div className="py-3 border-gray-200 text-gray-800 text-left text-sm font-semibold">
+                <div className="py-3 border-gray-200 text-gray-800 text-left font-semibold">
                     Valor total
                 </div>
             </div>
@@ -160,22 +160,22 @@ const FilaVenta = (props: { venta: Venta }) => {
 
     return (
         <div className="grid grid-cols-4 w-full justify-evenly gap-x-6 border-t">
-            <div className="px-5 py-3 border-gray-200 text-sm">
+            <div className="px-5 py-3 border-gray-200 ">
                 <p>
                     {props.venta.cliente.nombre}
                 </p>
             </div>
-            <div className="py-3 border-gray-200 text-sm">
+            <div className="py-3 border-gray-200 ">
                 <p className="whitespace-no-wrap">
                     {fecha.toLocaleString()}
                 </p>
             </div>
-            <div className="py-3 border-gray-200 text-sm">
+            <div className="py-3 border-gray-200 ">
                 <p className="whitespace-no-wrap">
                     {props.venta.tipo}
                 </p>
             </div>
-            <div className="py-3 border-gray-200 text-lg">
+            <div className="py-3 border-gray-200">
                 <p className="whitespace-no-wrap">
                     {props.venta.precioVentaTotal.toFixed(2)}€
                 </p>

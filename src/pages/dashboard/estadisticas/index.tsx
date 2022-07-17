@@ -1,8 +1,7 @@
 import { Tab } from "@headlessui/react";
 import { GetServerSideProps } from "next";
 import { useEffect } from "react";
-import EnDesarrolloPage from "../../../components/enDesarrollo";
-import EstadisticasVentasPage from "../../../components/sidebar/Estadisticas/ventas";
+import EstadisticasPage from "../../../components/sidebar/Estadisticas";
 import useEmpleadoContext from "../../../context/empleadoContext";
 import getJwtFromString from "../../../hooks/jwt";
 import DashboardLayout from "../../../layout";
@@ -19,102 +18,55 @@ const Stats = (props: { EmpleadoSesion: SesionEmpleado }) => {
 
     }, []);
     return (
-        <Tab.Group as="div" className="flex flex-col w-full h-full pt-3 pr-2">
-            <Tab.List className="flex gap-1 h-10 pr-10">
-                <Tab
-                    key={"Ventas"}
-                    className={(props: { selected: any }) =>
-                        classNames(
-                            'w-1/4 h-full text-sm rounded-t-2xl border-t border-x',
-                            'focus:outline-none ring-white ring-opacity-60',
-                            props.selected
-                                ? 'bg-white shadow-lg'
-                                : 'bg-gray-200 hover:bg-blue-400 hover:text-white'
-                        )
-                    }
-                >
-                    <span className='text-xl'>
-                        Ventas
-                    </span>
-                </Tab>
-
-                <Tab
-                    key={"Productos"}
-                    className={(props: { selected: any }) =>
-                        classNames(
-                            'w-1/4 h-full text-sm rounded-t-2xl border-t border-x',
-                            'focus:outline-none ring-white ring-opacity-60',
-                            props.selected
-                                ? 'bg-white shadow-lg'
-                                : 'bg-gray-200 hover:bg-blue-400 hover:text-white'
-                        )
-                    }
-                >
-                    <span className='text-xl'>
-                        Productos
-                    </span>
-                </Tab>
-
-                <Tab
-                    key={"Clientes"}
-                    className={(props: { selected: any }) =>
-                        classNames(
-                            'w-1/4 h-full text-sm rounded-t-2xl border-t border-x',
-                            'focus:outline-none ring-white ring-opacity-60',
-                            props.selected
-                                ? 'bg-white shadow-lg'
-                                : 'bg-gray-200 hover:bg-blue-400 hover:text-white'
-                        )
-                    }
-                >
-                    <span className='text-xl'>
-                        Clientes
-                    </span>
-                </Tab>
-
-            </Tab.List>
-            <Tab.Panels className="flex flex-col h-90v w-full pr-2">
-                <Tab.Panel
-                    key={"Ventas"}
-                    className={classNames(
-                        'pb-3 h-full w-full',
-                        'focus:outline-none ring-white ring-opacity-60'
-                    )}
-                >
-                    {/* <EstadisticasPage /> */}
-                    <EstadisticasVentasPage Empleados={[]} />
-                </Tab.Panel>
-
-                <Tab.Panel
-                    key={"Productos"}
-                    className={classNames(
-                        'pb-3 h-full w-full',
-                        'focus:outline-none ring-white ring-opacity-60'
-                    )}
-                >
-                    {/* <EstadisticasPage /> */}
-                    <EnDesarrolloPage />
-                </Tab.Panel>
-
-                <Tab.Panel
-                    key={"Clientes"}
-                    className={classNames(
-                        'pb-3 h-full w-full',
-                        'focus:outline-none ring-white ring-opacity-60'
-                    )}
-                >
-                    {/* <EstadisticasPage /> */}
-                    <EnDesarrolloPage />
-                </Tab.Panel>
-            </Tab.Panels>
-        </Tab.Group >
+        <div className="w-full h-full p-2">
+            <Tab.Group as="div" className="flex flex-col w-full h-full">
+                <Tab.List className="flex gap-1 h-10 pr-10">
+                    <Tab
+                        key={"Ventas"}
+                        className={(props: { selected: any }) =>
+                            classNames(
+                                'w-1/4 h-full text-sm rounded-t-2xl border-t border-x',
+                                'focus:outline-none ring-white ring-opacity-60',
+                                props.selected
+                                    ? 'bg-white shadow-lg'
+                                    : 'bg-gray-200 hover:bg-blue-400 hover:text-white'
+                            )
+                        }
+                    >
+                        <span className='text-xl'>
+                            Resumen
+                        </span>
+                    </Tab>
+                </Tab.List>
+                <Tab.Panels className="flex flex-col h-90v w-full pr-2 ">
+                    <Tab.Panel
+                        key={"Resumen"}
+                        className={classNames(
+                            'pb-3 h-full w-full',
+                            'focus:outline-none ring-white ring-opacity-60'
+                        )}
+                    >
+                        <EstadisticasPage />
+                    </Tab.Panel>
+                </Tab.Panels>
+            </Tab.Group >
+        </div>
     );
 }
 
 Stats.PageLayout = DashboardLayout;
 
 export const getServerSideProps: GetServerSideProps = async (context) => {
-    const jwt = getJwtFromString(context.req.cookies.authorization);
+    const [jwt, isValidCookie] = getJwtFromString(context.req.cookies.authorization);
+
+    if (!isValidCookie) {
+        return {
+            redirect: {
+                permanent: false,
+                destination: `/login`
+            },
+        };
+    }
     let emp: SesionEmpleado = {
         _id: jwt._id,
         apellidos: jwt.apellidos,
@@ -122,7 +74,9 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
         nombre: jwt.nombre,
         rol: Roles[jwt.rol as keyof typeof Roles],
     }
-    jwt.TPV ? emp.TPV = jwt.TPV : null;
+    if (jwt.TPV) {
+        emp.TPV = jwt.TPV
+    }
 
     return {
         props: {

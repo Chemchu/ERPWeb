@@ -103,7 +103,6 @@ const UpdateProducto = async (req: NextApiRequest, res: NextApiResponse) => {
                     "precioCompra": prod.precioCompra,
                     "iva": prod.iva,
                     "margen": prod.margen,
-                    "promociones": prod.promociones,
                     "ean": prod.ean,
                     "cantidad": prod.cantidad,
                     "cantidadRestock": prod.cantidadRestock,
@@ -112,7 +111,7 @@ const UpdateProducto = async (req: NextApiRequest, res: NextApiResponse) => {
             }
         })).json();
 
-        const data = JSON.parse(apiResponse.data);
+        const data = JSON.parse(apiResponse.data).updateProducto;
         return res.status(data.successful ? 200 : 300).json({ message: data.message, successful: data.successful });
 
     }

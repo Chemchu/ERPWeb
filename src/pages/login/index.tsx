@@ -2,7 +2,8 @@ import { motion } from 'framer-motion';
 import React, { useState } from 'react';
 import { SplitLetters } from '../../components/elementos/compAnimados/SplitText';
 import Router from 'next/router';
-import { notifySuccess } from '../../utils/toastify';
+import { GetServerSideProps } from 'next';
+import getJwtFromString from '../../hooks/jwt';
 
 const container = {
     hidden: { opacity: 0, scale: 0 },
@@ -64,21 +65,23 @@ export const LoginForm = () => {
     const [email, SetEmail] = useState<string>('');
     const [password, SetPassword] = useState<string>('');
     const [loginFallido, setLoginFallido] = useState<boolean>(false);
+    const [isLoading, setLoading] = useState<boolean>(false);
 
     const Volver = () => {
         Router.push('/');
     }
 
     const Authenticate = async (userEmail: string, userPassword: string) => {
-        const res = await fetch(`/api/login`, {
+        setLoading(true);
+        const loginFetch = await fetch(`/api/login`, {
             headers: { 'Content-Type': 'application/json' },
             method: 'POST',
             body: JSON.stringify({ email: userEmail, password: userPassword })
         });
 
-        if (res.status === 200) {
-            const json = await res.json();
-            notifySuccess(json.message)
+        const loginJson = await loginFetch.json()
+        setLoading(false)
+        if (loginJson.successful) {
             return Router.push("/dashboard");
         }
 
@@ -160,15 +163,33 @@ export const LoginForm = () => {
                         </motion.div>
                     </div>
                 </motion.div>
+                {
+                    isLoading &&
+                    <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
+                        className='flex items-center justify-center bg-white shadow w-full h-10 rounded-lg divide-y divide-gray-200 mt-2'>
+                        Iniciando sesión...
+                    </motion.div>
+                }
             </motion.div>
         </motion.div >
     );
 }
 
-export async function getServerSideProps() {
+export const getServerSideProps: GetServerSideProps = async (context) => {
+    const [, isValidCookie] = getJwtFromString(context.req.cookies.authorization);
+
+    if (isValidCookie) {
+        return {
+            redirect: {
+                permanent: false,
+                destination: `/dashboard`
+            },
+        };
+    }
+
     return {
         props: {
-            video: `/video/marketVideo-${Math.floor(Math.random() * 5)}.mp4`,
+            video: `/video/marketVideo-0.mp4`,
         },
     }
 }

@@ -57,7 +57,9 @@ export const notifyPromise = (promise: Promise<any>, msgInicial: string, msgExit
 export const notifyLoading = (promise: Promise<any>, msgInicial: string, successfulCallback?: Function, failureCallback?: Function) => {
     const toastId = toast.loading(msgInicial);
     promise
-        .then((data) => {
+        .then(async (response) => {
+            let data = response;
+
             if (data.successful) {
                 toast.update(toastId, { render: data.message, type: "success", isLoading: false, autoClose: 5000, draggable: true, pauseOnHover: true, closeOnClick: true })
                 if (successfulCallback) { successfulCallback(); }

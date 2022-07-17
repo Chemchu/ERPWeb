@@ -5,6 +5,7 @@ import { Empleado } from "../tipos/Empleado";
 import { Producto } from "../tipos/Producto";
 import { ProductoDevuelto } from "../tipos/ProductoDevuelto";
 import { ProductoVendido } from "../tipos/ProductoVendido";
+import { Summary, VentasPorHora } from "../tipos/Summary";
 import { ITPV } from "../tipos/TPV";
 import { Venta } from "../tipos/Venta";
 
@@ -118,7 +119,6 @@ export function CreateCierre(c: any): Cierre | undefined {
             apertura: c.apertura,
             cierre: c.cierre,
             cajaInicial: c.cajaInicial,
-            numVentas: c.numVentas,
             ventasEfectivo: c.ventasEfectivo,
             ventasTarjeta: c.ventasTarjeta,
             ventasTotales: c.ventasTotales,
@@ -329,6 +329,63 @@ function CreateProductoDevuelto(s: any): ProductoDevuelto | undefined {
             dto: s.dto || 0
         }
         return prod;
+    }
+    catch (e) {
+        return undefined;
+    }
+}
+
+export function CreateSummary(s: any): Summary | undefined {
+    try {
+        let summary: Summary = {
+            beneficio: s.beneficio,
+            productosMasVendidos: s.productosMasVendidos,
+            familiasMasVendidas: s.familiasMasVendidas,
+            cantidadProductosVendidos: s.cantidadProductosVendidos,
+            dineroDescontado: s.dineroDescontado,
+            ivaPagado: s.ivaPagado,
+            mediaCantidadVenida: s.mediaCantidadVenida,
+            mediaVentas: s.mediaVentas,
+            numVentas: s.numVentas,
+            totalVentas: s.totalVentas,
+            ventasPorHora: CreateVentasPorHoraList(s.ventasPorHora),
+            totalEfectivo: s.totalEfectivo,
+            totalTarjeta: s.totalTarjeta
+        }
+        return summary;
+    }
+    catch (e) {
+        console.log(e);
+
+        return undefined;
+    }
+}
+
+export function CreateVentasPorHoraList(pList: any[]): VentasPorHora[] {
+    let res: VentasPorHora[] = [];
+    pList.forEach((p: any) => {
+        const ventasPorHora = CreateVentasPorHora(p);
+
+        if (ventasPorHora) res.push(ventasPorHora);
+    });
+
+    return res;
+}
+
+function CreateVentasPorHora(s: any): VentasPorHora | undefined {
+    try {
+        let ventasHora: VentasPorHora = {
+            beneficioHora: s.beneficioHora,
+            productosMasVendidosHora: s.productosMasVendidosHora,
+            familiasMasVendidasHora: s.familiasMasVendidasHora,
+            dineroDescontadoHora: s.dineroDescontadoHora,
+            hora: s.hora,
+            productosVendidosHora: s.productosVendidosHora,
+            totalVentaHora: s.totalVentaHora,
+            totalEfectivoHora: s.totalEfectivoHora,
+            totalTarjetaHora: s.totalTarjetaHora
+        }
+        return ventasHora;
     }
     catch (e) {
         return undefined;

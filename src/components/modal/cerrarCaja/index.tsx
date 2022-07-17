@@ -55,6 +55,9 @@ export const CerrarCaja = (props: { Empleado?: SesionEmpleado, setModalOpen: Fun
             const devoluciones = await FetchDevolucionesByDateRange(tpv.updatedAt, new Date(Date.now()));
             const ventas = await FetchVentasByTPVDate(j.TPV, tpv.updatedAt.toString());
 
+            console.log(tpv);
+
+
             setVentas(ventas);
             setTPV(tpv);
             setTotalEfectivo(GetEfectivoTotal(ventas).toString());
@@ -89,8 +92,7 @@ export const CerrarCaja = (props: { Empleado?: SesionEmpleado, setModalOpen: Fun
 
             const cierre = await AddCierreTPV(Empleado, SetEmpleado, Number(TotalEfectivo),
                 Number(TotalTarjeta), Number(DineroRetirado),
-                Number(TotalPrevistoEnCaja), Number(TotalRealEnCaja),
-                Ventas?.length || 0, abortController);
+                Number(TotalPrevistoEnCaja), Number(TotalRealEnCaja), abortController);
 
             if (cierre) {
                 setQrImage(await GenerateQrBase64(cierre._id, abortController));

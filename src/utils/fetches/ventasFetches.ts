@@ -101,14 +101,18 @@ export const AddVenta = async (pagoCliente: CustomerPaymentInformation, producto
             cliente = pagoCliente.cliente;
         }
 
+        const productosVendidos = productosEnCarrito.map((prod) => {
+            prod.precioVenta = Number(prod.precioVenta)
+            return prod
+        })
+
         const addventaRespone = await fetch(`/api/ventas/`, {
             headers: {
-                'Accept': 'application/json',
                 'Content-Type': 'application/json'
             },
             method: "POST",
             body: JSON.stringify({
-                productosEnCarrito: productosEnCarrito,
+                productosEnCarrito: productosVendidos,
                 pagoCliente: pagoCliente,
                 cliente: cliente,
                 empleado: CreateEmployee(empleado),

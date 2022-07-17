@@ -23,12 +23,13 @@ const SidebarDerecho = React.memo((props: {
     setProductosCarrito: React.Dispatch<React.SetStateAction<ProductoVendido[]>>, empleadoUsandoTPV: boolean,
     setShowModalCerrar: Function, setShowModalAbrir: Function
 }) => {
-    const { ProductosEnCarrito, SetProductosEnCarrito } = useProductEnCarritoContext();
+    const { ProductosEnCarrito, } = useProductEnCarritoContext();
     const { Empleado } = useEmpleadoContext();
     const [DescuentoOpen, setDescuentoPupup] = useState<boolean>(false);
     const { DtoEfectivo, SetDtoEfectivo, DtoPorcentaje, SetDtoPorcentaje } = useProductEnCarritoContext()
     const [PrecioTotal, setPrecioTotal] = useState<number>(PrecioTotalCarrito(ProductosEnCarrito));
     const [PrecioTotalFinal, setPrecioTotalFinal] = useState<number>(AplicarDescuentos(ProductosEnCarrito, Number(DtoEfectivo), Number(DtoPorcentaje)));
+    const [isVentaValida, setIsVentaValida] = useState<boolean>(false)
 
     const [showModalPagar, setPagarModal] = useState(false);
     const [PagoRapido, setPagoRapido] = useState<CustomerPaymentInformation>();
@@ -46,14 +47,28 @@ const SidebarDerecho = React.memo((props: {
             if (!isUnmounted) {
                 SetClientes(r)
             }
-        }).catch(() => {
-            console.log("Error gus")
+        }).catch((err) => {
+            console.log(err)
         });
 
         return () => {
             isUnmounted = true;
         }
     }, []);
+
+    useEffect(() => {
+        for (let i = 0; i < ProductosEnCarrito.length; i++) {
+            if (ProductosEnCarrito[i].cantidadVendida <= 0) {
+                setIsVentaValida(false)
+                return;
+            }
+            if (Number(ProductosEnCarrito[i].precioVenta) <= 0) {
+                setIsVentaValida(false)
+                return;
+            }
+        }
+        setIsVentaValida(true)
+    }, [ProductosEnCarrito])
 
     useEffect(() => {
         if (qrImage) {
@@ -111,15 +126,14 @@ const SidebarDerecho = React.memo((props: {
 
     // Se accede a la lista de productos actualizada usando "functional state update" de react
     // Es para evitar muchos rerenders
-    const SetPropiedadProd = useCallback((idProd: string, cantidad: string, dto: string) => {
+    const SetPropiedadProd = useCallback((idProd: string, cantidad: string, dto: string, precioVenta?: string) => {
         if (!IsPositiveIntegerNumber(String(cantidad))) { return; }
         if (!IsPositiveFloatingNumber(dto)) { return; }
 
         props.setProductosCarrito((prevCarrito) => {
             const prodEnCarrito = prevCarrito.find(p => p._id == idProd);
-
             if (prodEnCarrito) {
-                if (Number(cantidad) === 0) {
+                if (Number(cantidad) === 0 && cantidad !== "") {
                     return prevCarrito.filter(p => p._id != idProd);
                 }
 
@@ -137,9 +151,13 @@ const SidebarDerecho = React.memo((props: {
                         margen: prodEnCarrito.margen,
                         precioCompra: prodEnCarrito.precioCompra,
                         precioVenta: prodEnCarrito.precioVenta,
-                        precioFinal: prodEnCarrito.precioVenta * ((100 - Number(dtoAjustado)) / 100),
+                        precioFinal: Number(prodEnCarrito.precioVenta) * ((100 - Number(dtoAjustado)) / 100),
                         dto: Number(dtoAjustado)
                     } as unknown as ProductoVendido;
+
+                    if (precioVenta !== undefined) {
+                        prodAlCarrito.precioVenta = String(precioVenta)
+                    }
 
                     let ProductosEnCarritoUpdated = prevCarrito;
                     ProductosEnCarritoUpdated[prodIndex] = prodAlCarrito;
@@ -306,11 +324,29 @@ const SidebarDerecho = React.memo((props: {
                 {
                     !isNaN(PrecioTotal) &&
                     <div className="flex flex-col w-full gap-2">
-                        <motion.button whileTap={{ scale: 0.9 }} className="bg-blue-500 h-12 shadow rounded-lg hover:shadow-lg hover:bg-blue-600 text-white focus:outline-none" onClick={(e) => { setPagarModal(true) }}>PAGAR</motion.button>
-                        <motion.button whileTap={{ scale: 0.9 }} className="bg-blue-500 h-12 shadow rounded-lg hover:shadow-lg hover:bg-blue-600 text-white focus:outline-none"
-                            onClick={async () => { await Vender(PagoRapido, ProductosEnCarrito, Empleado, Clientes); }}>
-                            COBRO RAPIDO
-                        </motion.button>
+                        {
+                            PrecioTotal > 0 &&
+                                isVentaValida ?
+                                <>
+                                    <motion.button disabled={PrecioTotal <= 0} whileTap={{ scale: 0.9 }} className={`bg-blue-500 h-12 shadow rounded-lg hover:shadow-lg hover:bg-blue-600 text-white focus:outline-none`} onClick={(e) => { setPagarModal(true) }}>
+                                        PAGAR
+                                    </motion.button>
+                                    <motion.button disabled={PrecioTotal <= 0} whileTap={{ scale: 0.9 }} className="bg-blue-500 h-12 shadow rounded-lg hover:shadow-lg hover:bg-blue-600 text-white focus:outline-none"
+                                        onClick={async () => { await Vender(PagoRapido, ProductosEnCarrito, Empleado, Clientes); }}>
+                                        COBRO RAPIDO
+                                    </motion.button>
+                                </>
+                                :
+                                <>
+                                    <motion.button disabled className={`bg-blue-400 h-12 shadow rounded-lg text-white focus:outline-none`}>
+                                        PAGAR
+                                    </motion.button>
+                                    <motion.button disabled className="bg-blue-400 h-12 shadow rounded-lg text-white focus:outline-none">
+                                        COBRO RAPIDO
+                                    </motion.button>
+                                </>
+                        }
+
                     </div>
                 }
             </div>
@@ -339,12 +375,22 @@ SidebarDerecho.displayName = 'SidebarDerecho';
 export default SidebarDerecho;
 
 const GenerarProductList = React.memo((props: { productosEnCarrito: ProductoVendido[], setPropiedadProducto: Function }) => {
+    const messagesEndRef = useRef<null | HTMLDivElement>(null)
+    const scrollToBottom = () => {
+        if (messagesEndRef.current == null) { return }
+        messagesEndRef.current.scrollIntoView({ behavior: "smooth" })
+    }
+
+    useEffect(scrollToBottom, [props.productosEnCarrito]);
+
     return (
         <div className="flex flex-col h-full gap-2">
             {
                 props.productosEnCarrito.map((p: ProductoVendido) => {
                     return (
-                        <ProductSelectedCard key={`${p._id}`} producto={p} setPropiedadProd={props.setPropiedadProducto} />
+                        <div key={`${p._id}`} ref={messagesEndRef}>
+                            <ProductSelectedCard producto={p} setPropiedadProd={props.setPropiedadProducto} />
+                        </div>
                     );
                 })
             }

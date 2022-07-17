@@ -1,31 +1,44 @@
-import { GetServerSideProps } from "next";
+import { GetServerSideProps, InferGetServerSidePropsType } from "next";
 import React, { useEffect, useState } from "react";
 import SummaryCard from "../../components/dataDisplay/summaryCard";
 import FinanceCard from "../../components/dataDisplay/finaceCard";
-import LineChart from "../../components/dataDisplay/lineChart";
-import PieChart from "../../components/dataDisplay/pieChart";
 import useEmpleadoContext from "../../context/empleadoContext";
 import getJwtFromString from "../../hooks/jwt";
 import DashboardLayout from "../../layout";
 import { SesionEmpleado } from "../../tipos/Empleado";
 import { Roles } from "../../tipos/Enums/Roles";
-import BarChart from "../../components/dataDisplay/barChart";
+import { Summary } from "../../tipos/Summary";
+import { FetchResumenDiario } from "../../utils/fetches/analisisFetches";
+import { Color } from "../../tipos/Enums/Color";
+import VentasDelDia from "../../components/dataDisplay/ventasDelDia";
 
 const saludos = ['Bienvenido otra vez', 'Hola', 'Saludos'];
 
 const Home = (props: { EmpleadoSesion: SesionEmpleado }) => {
   const [saludo, setSaludo] = useState<string>();
   const { Empleado, SetEmpleado } = useEmpleadoContext();
+  const [summaryToday, setSummaryToday] = useState<Summary | undefined>(undefined);
+  const [summaryYesterday, setSummaryYesterday] = useState<Summary | undefined>(undefined);
 
   useEffect(() => {
     if (Object.keys(Empleado).length === 0) {
       SetEmpleado(props.EmpleadoSesion);
     }
-    const GetData = async () => {
+
+    const GetData = () => {
       setSaludo(`${saludos[Math.floor(Math.random() * (saludos.length - 0))]}`);
     }
+    const GetSummaryData = async () => {
+      const hoy = new Date()
+      const ayer = new Date();
+      ayer.setDate(ayer.getDate() - 1);
+
+      setSummaryToday(await FetchResumenDiario(hoy))
+      setSummaryYesterday(await FetchResumenDiario(ayer))
+    }
     GetData()
-  }, []);
+    GetSummaryData()
+  }, [])
 
   if (!Empleado.nombre) {
     return (
@@ -36,26 +49,33 @@ const Home = (props: { EmpleadoSesion: SesionEmpleado }) => {
   }
 
   return (
-    <div className="w-full h-screen py-3">
+    <div className="w-full h-screen py-3 text-gray-700">
       <div className="flex flex-col gap-8 w-full h-full p-4 overflow-y-scroll bg-white rounded-2xl border shadow-lg">
-        <h1 className="text-4xl">
+        <h1 className="text-2xl lg:text-4xl">
           {`${saludo},  ${Empleado.nombre.charAt(0).toUpperCase() + Empleado.nombre.slice(1)}`}
         </h1>
-        <div className="flex flex-col gap-2">
-          <SummaryCard titulo="Total de hoy" valorEfectivo={50.34} valorTarjeta={27.37} />
-          <div className="w-1/2">
-            <BarChart titulo="Movimiento" data={[33, 53, 85]} labels={["Bebida", "Bollería salada", "Panadería"]} />
-          </div>
-          <div className="w-40">
-            <FinanceCard titulo="Ventas" valor={500.34} crecimiento={5.4} />
-          </div>
-          <div className="grid grid-cols-2 xl:grid-cols-3 h-full w-full items-end">
-            <LineChart titulo="Movimiento" data={[33, 53, 85, 41, 44, 65, 3, 60]} labels={["09:00", "10:00", "11:00", "12:00", "13:00", "14:00", "15:00", "16:00", "17:00", "18:00", "19:00", "20:00", "21:00", "22:00"]} />
-            <div className="" id="ventasPorDia">
-              <LineChart titulo="Ventas diarias" data={[33, 53, 85, 41, 44, 65, 3]} labels={["Lunes", "Martes", "Miércoles", "Jueves", "Viernes", "Sábado", "Domingo"]} />
+        <div className="flex flex-col w-full gap-3">
+          <SummaryCard titulo="Ventas totales" data={summaryToday} />
+          <div className="flex flex-wrap gap-2 justify-between">
+            <div className="xl:w-72 w-44">
+              <FinanceCard titulo="Ventas" dataActual={summaryToday?.totalVentas.toFixed(2)} dataPrevio={summaryYesterday?.totalVentas.toFixed(2)} />
             </div>
-            <div className="" id="famMasVendidos">
-              <PieChart titulo="Familias más vendidas" data={[33, 53, 85, 41, 44, 65]} labels={["Bebida", "Panaderia", "Bollería salada", "Bollería dulce", "Snacks", "Congelados"]} />
+            <div className="xl:w-72 w-44">
+              <FinanceCard titulo="Beneficio" dataActual={summaryToday?.beneficio.toFixed(2)} dataPrevio={summaryYesterday?.beneficio.toFixed(2)} />
+            </div>
+            <div className="xl:w-72 w-44">
+              <FinanceCard titulo="Tickets" unidad="uds" dataActual={summaryToday && String(summaryToday?.numVentas)} dataPrevio={summaryToday && String(summaryYesterday?.numVentas)} />
+            </div>
+            <div className="xl:w-72 w-44">
+              <FinanceCard titulo="Productos" unidad="uds" dataActual={summaryToday && String(summaryToday?.cantidadProductosVendidos)} dataPrevio={summaryYesterday && String(summaryYesterday?.cantidadProductosVendidos)} />
+            </div>
+          </div>
+          <div className="flex w-full justify-between gap-4">
+            <div className="w-1/2 h-full">
+              <VentasDelDia data={summaryToday} titulo="Ventas de hoy" ejeX="totalVentaHora" ejeY="hora" nombreEjeX="Vendido" color={Color.GREEN} colorID={"verde"} />
+            </div>
+            <div className="w-1/2 h-full">
+              <VentasDelDia data={summaryYesterday} titulo="Ventas de ayer" ejeX="totalVentaHora" ejeY="hora" nombreEjeX="Vendido" color={Color.BLUE} colorID={"azul"} />
             </div>
           </div>
         </div>
@@ -67,8 +87,16 @@ const Home = (props: { EmpleadoSesion: SesionEmpleado }) => {
 Home.PageLayout = DashboardLayout;
 
 export const getServerSideProps: GetServerSideProps = async (context) => {
+  const [jwt, isValidCookie] = getJwtFromString(context.req.cookies.authorization);
 
-  const jwt = getJwtFromString(context.req.cookies.authorization);
+  if (!isValidCookie) {
+    return {
+      redirect: {
+        permanent: false,
+        destination: `/login`
+      },
+    };
+  }
 
   let emp: SesionEmpleado = {
     _id: jwt._id,
@@ -77,7 +105,10 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
     nombre: jwt.nombre,
     rol: Roles[jwt.rol as keyof typeof Roles] || Roles.Cajero,
   }
-  jwt.TPV ? emp.TPV = jwt.TPV : null;
+
+  if (jwt.TPV) {
+    emp.TPV = jwt.TPV
+  }
 
   return {
     props: {

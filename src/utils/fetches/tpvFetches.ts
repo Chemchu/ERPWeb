@@ -15,6 +15,8 @@ export const FetchTPV = async (TPVId: string, abortController: AbortController):
         if (!fetchTPV.ok) { notifyError("Error al buscar la TPV"); return undefined; }
 
         const tpvJson = await fetchTPV.json();
+        console.log(tpvJson);
+
         return CreateTPV(tpvJson.data);
     }
     catch (e) {
@@ -73,7 +75,7 @@ export const OcuparTPV = async (tpvId: string, emp: SesionEmpleado, cajaInicial:
 }
 
 export const AddCierreTPV = async (Empleado: SesionEmpleado, setEmpleado: Function, TotalEfectivo: number, TotalTarjeta: number, DineroRetirado: number,
-    TotalPrevistoEnCaja: number, TotalRealEnCaja: number, NumVentas: number, abortController: AbortController): Promise<Cierre | undefined> => {
+    TotalPrevistoEnCaja: number, TotalRealEnCaja: number, abortController: AbortController): Promise<Cierre | undefined> => {
     try {
         if (!Empleado.TPV) { return undefined; }
 
@@ -88,7 +90,6 @@ export const AddCierreTPV = async (Empleado: SesionEmpleado, setEmpleado: Functi
                 },
                 body: JSON.stringify({
                     Empleado: Empleado,
-                    NumVentas: NumVentas,
                     TotalEfectivo: TotalEfectivo,
                     TotalTarjeta: TotalTarjeta,
                     ventasTotales: TotalEfectivo + TotalTarjeta,
@@ -101,13 +102,13 @@ export const AddCierreTPV = async (Empleado: SesionEmpleado, setEmpleado: Functi
             });
         const tpvOcupadaJson = await fetchRes.json();
 
-        if (fetchRes.ok) {
+        if (tpvOcupadaJson.successful) {
             notifySuccess(tpvOcupadaJson.message);
             let e = Empleado;
             e.TPV = undefined;
             setEmpleado(e);
         }
-        else { notifyError(tpvOcupadaJson.message); }
+        else { notifyError(tpvOcupadaJson.message); return undefined }
 
         const cierre = CreateCierreList([tpvOcupadaJson.data])[0];
         return cierre;

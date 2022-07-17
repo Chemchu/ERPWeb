@@ -43,58 +43,63 @@ const GetCierres = async (req: NextApiRequest, res: NextApiResponse) => {
 }
 
 const AddCierre = async (req: NextApiRequest, res: NextApiResponse) => {
-    const Empleado: SesionEmpleado = req.body.Empleado;
-    const TotalEfectivo = req.body.TotalEfectivo;
-    const TotalTarjeta = req.body.TotalTarjeta;
-    const DineroRetirado = req.body.DineroRetirado;
-    const TotalPrevistoEnCaja = req.body.TotalPrevistoEnCaja;
-    const TotalRealEnCaja = req.body.TotalRealEnCaja;
-    const Ventas = req.body.NumVentas;
-    const Tpv = req.body.TPV;
+    try {
+        const Empleado: SesionEmpleado = req.body.Empleado;
+        const TotalEfectivo = req.body.TotalEfectivo;
+        const TotalTarjeta = req.body.TotalTarjeta;
+        const DineroRetirado = req.body.DineroRetirado;
+        const TotalPrevistoEnCaja = req.body.TotalPrevistoEnCaja;
+        const TotalRealEnCaja = req.body.TotalRealEnCaja;
+        const Tpv = req.body.TPV;
 
-    const apiResponse = await (await GQLMutate({
-        mutation: ADD_CIERRE,
-        variables: {
-            "cierre": {
-                "tpv": Empleado.TPV,
-                "cajaInicial": Tpv.cajaInicial,
-                "abiertoPor": {
-                    "_id": Tpv.enUsoPor._id,
-                    "nombre": Tpv.enUsoPor.nombre,
-                    "apellidos": Tpv.enUsoPor.apellidos,
-                    "rol": Tpv.enUsoPor.rol,
-                    "email": Tpv.enUsoPor.email
-                },
-                "cerradoPor": {
-                    "_id": Empleado._id,
-                    "nombre": Empleado.nombre,
-                    "apellidos": Empleado.apellidos,
-                    "rol": Empleado.rol,
-                    "email": Empleado.email
-                },
-                "apertura": Tpv.updatedAt,
-                "ventasEfectivo": Number(TotalEfectivo),
-                "ventasTarjeta": Number(TotalTarjeta),
-                "ventasTotales": Number(TotalEfectivo) + Number(TotalTarjeta),
-                "dineroRetirado": Number(DineroRetirado),
-                "fondoDeCaja": Number(TotalRealEnCaja) - Number(DineroRetirado),
-                "numVentas": Ventas,
-                "dineroEsperadoEnCaja": Number(TotalPrevistoEnCaja),
-                "dineroRealEnCaja": Number(TotalRealEnCaja)
+        const apiResponse = await (await GQLMutate({
+            mutation: ADD_CIERRE,
+            variables: {
+                "cierre": {
+                    "tpv": Empleado.TPV,
+                    "cajaInicial": Tpv.cajaInicial,
+                    "abiertoPor": {
+                        "_id": Tpv.enUsoPor._id,
+                        "nombre": Tpv.enUsoPor.nombre,
+                        "apellidos": Tpv.enUsoPor.apellidos,
+                        "rol": Tpv.enUsoPor.rol,
+                        "email": Tpv.enUsoPor.email
+                    },
+                    "cerradoPor": {
+                        "_id": Empleado._id,
+                        "nombre": Empleado.nombre,
+                        "apellidos": Empleado.apellidos,
+                        "rol": Empleado.rol,
+                        "email": Empleado.email
+                    },
+                    "apertura": Tpv.updatedAt,
+                    "ventasEfectivo": Number(TotalEfectivo),
+                    "ventasTarjeta": Number(TotalTarjeta),
+                    "ventasTotales": Number(TotalEfectivo) + Number(TotalTarjeta),
+                    "dineroRetirado": Number(DineroRetirado),
+                    "fondoDeCaja": Number(TotalRealEnCaja) - Number(DineroRetirado),
+                    "dineroEsperadoEnCaja": Number(TotalPrevistoEnCaja),
+                    "dineroRealEnCaja": Number(TotalRealEnCaja)
+                }
             }
+        })).json();
+
+        const data = JSON.parse(apiResponse.data);
+
+        if (data.addCierreTPV.successful) {
+            res.setHeader('Set-Cookie', `authorization=${data.addCierreTPV.token}; HttpOnly; Path=/`);
+            res.status(200).json({ message: data.addCierreTPV.message, successful: data.addCierreTPV.successful, data: data.addCierreTPV.cierre });
+            return;
         }
-    })).json();
-
-    const data = JSON.parse(apiResponse.data);
-
-    if (data.addCierreTPV.successful) {
-        res.setHeader('Set-Cookie', `authorization=${data.addCierreTPV.token}; HttpOnly; Path=/`);
-        res.status(200).json({ message: data.addCierreTPV.message, successful: data.addCierreTPV.successful, data: data.addCierreTPV.cierre });
-        return;
+        else {
+            res.setHeader('Set-Cookie', `authorization=${data.addCierreTPV.token}; HttpOnly; Path=/`);
+            res.status(300).json({ message: data.addCierreTPV.message, successful: data.addCierreTPV.successful });
+            return;
+        }
     }
-    else {
-        res.setHeader('Set-Cookie', `authorization=${data.addCierreTPV.token}; HttpOnly; Path=/`);
-        res.status(300).json({ message: data.addCierreTPV.message, successful: data.addCierreTPV.successful });
+    catch (err) {
+        console.log(err);
+        res.status(300).json({ message: err, successful: false });
         return;
     }
 }

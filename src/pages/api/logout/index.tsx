@@ -6,7 +6,7 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
             case 'GET':
                 return res.status(200)
                     .setHeader('Set-Cookie', `authorization=deleted; HttpOnly; expires=Thu, 01 Jan 1970 00:00:00 GMT; Path=/`)
-                    .json({ message: "Logout" });
+                    .json({ message: "Logout at" + Date.now() });
 
             default:
                 res.setHeader('Allow', ['GET']);

@@ -29,10 +29,10 @@ const Ticket = React.forwardRef((props: { pagoCliente: CustomerPaymentInformatio
                             {
                                 props.productosVendidos.map((prod, index) => {
                                     if (prod.dto) {
-                                        return <GenerarFilaProducto key={"modalRes" + prod._id} numFila={index + 1} nombreProducto={prod.nombre} cantidad={Number(prod.cantidadVendida)} precio={Number(prod.precioVenta * (1 - Number(prod.dto) / 100))} />
+                                        return <GenerarFilaProducto key={"modalRes" + prod._id} numFila={index + 1} nombreProducto={prod.nombre} cantidad={Number(prod.cantidadVendida)} precio={Number(Number(prod.precioVenta) * (1 - Number(prod.dto) / 100))} />
                                     }
                                     else {
-                                        return <GenerarFilaProducto key={"modalRes" + prod._id} numFila={index + 1} nombreProducto={prod.nombre} cantidad={Number(prod.cantidadVendida)} precio={prod.precioVenta} />
+                                        return <GenerarFilaProducto key={"modalRes" + prod._id} numFila={index + 1} nombreProducto={prod.nombre} cantidad={Number(prod.cantidadVendida)} precio={Number(prod.precioVenta)} />
                                     }
                                 })
                             }
