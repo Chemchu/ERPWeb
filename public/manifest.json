@@ -6,7 +6,7 @@
   "display": "fullscreen",
   "orientation": "portrait",
   "scope": "/",
-  "start_url": "/",
+  "start_url": "",
   "icons": [
   {
     "src": "icons/manifest-icon-192.maskable.png",
