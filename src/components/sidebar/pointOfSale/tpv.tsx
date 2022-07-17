@@ -8,7 +8,7 @@ import SkeletonProductCard from "../../Skeletons/skeletonProductCard";
 import SidebarDerecho from "./sidebarDerecho";
 import { motion } from "framer-motion";
 
-const frequenceRateTyping = 200;
+const frequenceRateTyping = 100;
 
 const TPV = (props: { productos: Producto[], empleadoUsandoTPV: boolean, setEmpleadoUsandoTPV: Function, setShowModalCerrar: Function, setShowModalAbrir: Function }) => {
     const [ProductosFiltrados, setProductosFiltrados] = useState<Producto[]>(props.productos);
@@ -73,6 +73,7 @@ const TPV = (props: { productos: Producto[], empleadoUsandoTPV: boolean, setEmpl
                 if (IsEAN13(stringValidated)) {
                     AddProductoToCarrito(productosFiltrados[0], ProductosEnCarrito, SetProductosEnCarrito);
                     setProductosFiltrados(props.productos);
+                    setDirtyInput("")
                     setFiltro("");
                 }
                 else {
