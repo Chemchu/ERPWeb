@@ -31,8 +31,8 @@ const AddProducto = (props: { showModal: Function }) => {
                     animate="visible"
                     exit="exit"
                 >
-                    <div className="flex flex-col w-full h-full text-left ">
-                        <span className="text-3xl cursor-default">
+                    <div className="flex flex-col gap-4 w-full h-full text-left ">
+                        <span className="text-xl xl:text-3xl cursor-default">
                             Añadir nuevo producto
                         </span>
 
