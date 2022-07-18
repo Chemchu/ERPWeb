@@ -4,10 +4,9 @@ import { NameType, ValueType } from 'recharts/types/component/DefaultTooltipCont
 import { Color } from '../../../tipos/Enums/Color';
 import { Summary, VentasPorHora } from '../../../tipos/Summary';
 
-const offset = (new Date().getTimezoneOffset() / 60) * -1
-
 const VentasDelDia = (props: { data: Summary | undefined, titulo: string, ejeX: string, ejeY: string, nombreEjeX: string, color: Color, colorID: string }) => {
     const [ventas, setVentas] = useState<VentasPorHora[]>([])
+    const offset = (new Date().getTimezoneOffset() / 60) * -1
 
     useEffect(() => {
         if (props.data?.ventasPorHora) {
@@ -23,8 +22,15 @@ const VentasDelDia = (props: { data: Summary | undefined, titulo: string, ejeX: 
 
 
     const CustomTooltip = ({ active, payload, label, }: TooltipProps<ValueType, NameType>) => {
-        const horaInicial = Number(String(label).substring(0, 2))
-        const horaFinal = horaInicial + 1
+        let horaInicial = Number(String(label).substring(0, 2))
+        let horaFinal = horaInicial + 1
+
+        if (horaInicial >= 24) {
+            horaInicial -= 24
+        }
+        if (horaFinal >= 24) {
+            horaFinal -= 24
+        }
 
         if (active) {
             return (
