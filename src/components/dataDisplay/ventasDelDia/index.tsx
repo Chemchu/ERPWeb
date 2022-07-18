@@ -1,14 +1,29 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { AreaChart as AChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, TooltipProps } from 'recharts';
 import { NameType, ValueType } from 'recharts/types/component/DefaultTooltipContent';
 import { Color } from '../../../tipos/Enums/Color';
-import { Summary } from '../../../tipos/Summary';
+import { Summary, VentasPorHora } from '../../../tipos/Summary';
 
 const offset = (new Date().getTimezoneOffset() / 60) * -1
 
 const VentasDelDia = (props: { data: Summary | undefined, titulo: string, ejeX: string, ejeY: string, nombreEjeX: string, color: Color, colorID: string }) => {
+    const [ventas, setVentas] = useState<VentasPorHora[]>([])
+
+    useEffect(() => {
+        if (props.data?.ventasPorHora) {
+            const ventas = props.data.ventasPorHora.map((venta) => {
+                const localHora = Number(String(venta.hora).substring(0, 2)) + offset
+                venta.hora = localHora + ":00"
+                return venta
+            })
+
+            setVentas(ventas)
+        }
+    }, [props.data])
+
+
     const CustomTooltip = ({ active, payload, label, }: TooltipProps<ValueType, NameType>) => {
-        const horaInicial = Number(String(label).substring(0, 2)) + offset
+        const horaInicial = Number(String(label).substring(0, 2))
         const horaFinal = horaInicial + 1
 
         if (active) {
@@ -44,7 +59,7 @@ const VentasDelDia = (props: { data: Summary | undefined, titulo: string, ejeX: 
             </div>
             <div className='w-full h-full '>
                 <ResponsiveContainer width="100%" height="100%" minHeight={250}>
-                    <AChart data={props.data.ventasPorHora}
+                    <AChart data={ventas}
                         margin={{ top: 0, right: 30, left: 0, bottom: 10 }}>
                         <defs>
                             <linearGradient id={props.colorID} x1="0" y1="0" x2="0" y2="1">
