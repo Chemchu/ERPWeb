@@ -12,7 +12,7 @@ import Dropdown from "../../elementos/Forms/dropdown";
 import { InputNumber } from "../../elementos/Forms/input/inputDinero";
 import Ticket from "../../printable/ticket";
 import { Backdrop } from "../backdrop";
-import { notifyError, notifySuccess } from "../../../utils/toastify";
+import { notifyError, notifySuccess, notifyWarn } from "../../../utils/toastify";
 import GenerateQrBase64 from "../../../utils/generateQr";
 import { In } from "../../../utils/animations";
 import { FetchClientes } from "../../../utils/fetches/clienteFetches";
@@ -35,6 +35,9 @@ export const ModalPagar = (props: { PagoCliente: CustomerPaymentInformation, han
     const [serverUp, setServerStatus] = useState<boolean>(false);
 
     const componentRef = useRef(null);
+
+    // const [isSendingSale, setIsSendingSale] = useState<boolean>(false)
+    const [isSendingSale, setIsSendingSale] = useState<boolean>(false)
 
     useEffect(() => {
         let isUnmounted = false;
@@ -108,6 +111,9 @@ export const ModalPagar = (props: { PagoCliente: CustomerPaymentInformation, han
     }
 
     const RealizarVenta = async (pagoCliente: CustomerPaymentInformation) => {
+        if (isSendingSale) { notifyWarn("La venta se está enviando. Espere un poco"); return; }
+
+        setIsSendingSale(true);
         const abortController = new AbortController();
         try {
             UpdatePaymentInfo();
@@ -123,11 +129,14 @@ export const ModalPagar = (props: { PagoCliente: CustomerPaymentInformation, han
                 setQrImage(undefined);
                 notifyError("Error al realizar la venta")
             }
+
+            setIsSendingSale(false)
         }
         catch (err) {
             console.log(err);
             abortController.abort();
             notifyError("Error al realizar la venta")
+            setIsSendingSale(false)
         }
     }
 

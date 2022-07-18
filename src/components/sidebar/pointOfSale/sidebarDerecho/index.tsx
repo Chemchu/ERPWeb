@@ -14,7 +14,7 @@ import { FetchClientes } from "../../../../utils/fetches/clienteFetches";
 import { AddVenta } from "../../../../utils/fetches/ventasFetches";
 import GenerateQrBase64 from "../../../../utils/generateQr";
 import { AplicarDescuentos, PrecioTotalCarrito } from "../../../../utils/preciosUtils";
-import { notifyError, notifySuccess } from "../../../../utils/toastify";
+import { notifyError, notifySuccess, notifyWarn } from "../../../../utils/toastify";
 import { IsPositiveFloatingNumber, IsPositiveIntegerNumber, ValidatePositiveFloatingNumber } from "../../../../utils/validator";
 import GuardarCompra from "../../../modal/guardarCompra";
 import ModalPagar from "../../../modal/pagar";
@@ -42,6 +42,8 @@ const SidebarDerecho = React.memo((props: {
     const [Pago, setPago] = useState<CustomerPaymentInformation>();
     const [qrImage, setQrImage] = useState<string>();
     const [Fecha, setFecha] = useState<string>();
+
+    const [isSendingSale, setIsSendingSale] = useState<boolean>(false);
 
     const [Clientes, SetClientes] = useState<Cliente[]>([]);
     const componentRef = useRef(null);
@@ -178,21 +180,30 @@ const SidebarDerecho = React.memo((props: {
     }, []);
 
     const Vender = async (pagoCliente: CustomerPaymentInformation, productosEnCarrito: ProductoVendido[], emp: SesionEmpleado, clientes: Cliente[]) => {
-        if (!emp.TPV) {
-            throw "Error en la autenticación y el uso de la TPV";
-        }
+        try {
+            if (isSendingSale) { notifyWarn("La venta se está enviando. Espere un poco"); return; }
+            if (!emp.TPV) {
+                throw "Error en la autenticación y el uso de la TPV";
+            }
 
-        const { data, error } = await AddVenta(pagoCliente, productosEnCarrito, emp, clientes, emp.TPV);
+            setIsSendingSale(true);
+            const { data, error } = await AddVenta(pagoCliente, productosEnCarrito, emp, clientes, emp.TPV);
 
-        if (!error) {
-            const abortController = new AbortController();
-            setFecha(data.createdAt);
-            setQrImage(await GenerateQrBase64(data._id, abortController));
+            if (!error) {
+                const abortController = new AbortController();
+                setFecha(data.createdAt);
+                setQrImage(await GenerateQrBase64(data._id, abortController));
+            }
+            else {
+                setFecha(undefined);
+                setQrImage(undefined);
+                notifyError("Error al realizar la venta");
+            }
+
+            setIsSendingSale(false)
         }
-        else {
-            setFecha(undefined);
-            setQrImage(undefined);
-            notifyError("Error al realizar la venta");
+        catch (e) {
+            setIsSendingSale(false)
         }
     }
 
