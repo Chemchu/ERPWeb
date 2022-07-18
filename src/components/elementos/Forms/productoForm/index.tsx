@@ -34,8 +34,8 @@ const ProductoForm = (props: { setProducto: Function, producto?: Producto, setHa
     }, [Nombre, Familia, Proveedor, Ean, Cantidad, CantidadReestock, PrecioVenta]);
 
     useEffect(() => {
-        if (!PrecioCompra || isNaN(Number(PrecioCompra))) { setPrecioVenta(""); return; }
-        if (!Iva || isNaN(Number(Iva))) { setPrecioVenta(""); return; }
+        if (!PrecioCompra || isNaN(Number(PrecioCompra))) { setPrecioCompra(""); return; }
+        if (!Iva || isNaN(Number(Iva))) { setIva(""); return; }
         if (!PrecioVenta || isNaN(Number(PrecioVenta))) { setPrecioVenta(""); return; }
 
         const precioCompra = Number(PrecioCompra);
