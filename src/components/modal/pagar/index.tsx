@@ -33,11 +33,9 @@ export const ModalPagar = (props: { PagoCliente: CustomerPaymentInformation, han
 
     const { ProductosEnCarrito, SetProductosEnCarrito, SetDtoEfectivo, SetDtoPorcentaje } = useProductEnCarritoContext();
     const [serverUp, setServerStatus] = useState<boolean>(false);
+    const [isButtonDisabled, setButtonDisabled] = useState<boolean>(false)
 
     const componentRef = useRef(null);
-
-    // const [isSendingSale, setIsSendingSale] = useState<boolean>(false)
-    const [isSendingSale, setIsSendingSale] = useState<boolean>(false)
 
     useEffect(() => {
         let isUnmounted = false;
@@ -87,6 +85,7 @@ export const ModalPagar = (props: { PagoCliente: CustomerPaymentInformation, han
         SetDtoEfectivo("0");
         SetDtoPorcentaje("0");
         notifySuccess("Venta realizada correctamente")
+        setButtonDisabled(false)
         props.handleModalOpen(false);
     }, []);
 
@@ -111,11 +110,10 @@ export const ModalPagar = (props: { PagoCliente: CustomerPaymentInformation, han
     }
 
     const RealizarVenta = async (pagoCliente: CustomerPaymentInformation) => {
-        if (isSendingSale) { notifyWarn("La venta se está enviando. Espere un poco"); return; }
-
-        setIsSendingSale(true);
         const abortController = new AbortController();
         try {
+            setButtonDisabled(true)
+
             UpdatePaymentInfo();
             if (!Empleado || !Empleado.TPV) { notifyError("Error con la autenticación"); return; }
             const { data, error } = await AddVenta(pagoCliente, ProductosEnCarrito, Empleado, Clientes, Empleado.TPV);
@@ -129,14 +127,12 @@ export const ModalPagar = (props: { PagoCliente: CustomerPaymentInformation, han
                 setQrImage(undefined);
                 notifyError("Error al realizar la venta")
             }
-
-            setIsSendingSale(false)
         }
         catch (err) {
             console.log(err);
             abortController.abort();
             notifyError("Error al realizar la venta")
-            setIsSendingSale(false)
+            setButtonDisabled(false)
         }
     }
 
@@ -246,13 +242,14 @@ export const ModalPagar = (props: { PagoCliente: CustomerPaymentInformation, han
 
                         <hr className="my-2" />
                         <div className="grid grid-cols-2 justify-items-center gap-4">
-                            <button className="bg-red-500 hover:bg-red-600 text-white w-full h-12 hover:shadow-lg rounded-lg flex items-center justify-center" onClick={() => props.handleModalOpen(false)}>
+                            <button disabled={isButtonDisabled} className={`${isButtonDisabled ? "bg-red-400 cursor-default" : "bg-red-500 hover:bg-red-600"} text-white w-full h-12 hover:shadow-lg rounded-lg flex items-center justify-center`} onClick={() => props.handleModalOpen(false)}>
                                 <div className="text-lg">CANCELAR</div>
                             </button>
                             {
                                 serverUp ?
                                     Number(cambio.toFixed(2)) >= 0 ?
-                                        <button className="bg-blue-500 hover:bg-blue-600 text-white w-full h-12 hover:shadow-lg rounded-lg flex items-center justify-center" onClick={async () => { await RealizarVenta(PagoDelCliente); }} >
+                                        <button disabled={isButtonDisabled} className={`${isButtonDisabled ? "bg-blue-400 cursor-default" : "bg-blue-500 hover:bg-blue-600"} text-white w-full h-12 hover:shadow-lg rounded-lg flex items-center justify-center`}
+                                            onClick={async (e) => { await RealizarVenta(PagoDelCliente); }} >
                                             <div className="text-lg">COMPLETAR VENTA</div>
                                         </button>
                                         :

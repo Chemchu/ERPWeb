@@ -43,10 +43,9 @@ const SidebarDerecho = React.memo((props: {
     const [qrImage, setQrImage] = useState<string>();
     const [Fecha, setFecha] = useState<string>();
 
-    const [isSendingSale, setIsSendingSale] = useState<boolean>(false);
-
     const [Clientes, SetClientes] = useState<Cliente[]>([]);
     const componentRef = useRef(null);
+    const [isButtonDisabled, setButtonDisabled] = useState<boolean>(false)
 
     useEffect(() => {
         let isUnmounted = false;
@@ -124,6 +123,7 @@ const SidebarDerecho = React.memo((props: {
     const onAfterPrintHandler = React.useCallback(() => {
         props.setProductosCarrito([]);
         notifySuccess("Venta realizada correctamente")
+        setButtonDisabled(false)
     }, []);
 
     const handlePrint = useReactToPrint({
@@ -181,12 +181,11 @@ const SidebarDerecho = React.memo((props: {
 
     const Vender = async (pagoCliente: CustomerPaymentInformation, productosEnCarrito: ProductoVendido[], emp: SesionEmpleado, clientes: Cliente[]) => {
         try {
-            if (isSendingSale) { notifyWarn("La venta se está enviando. Espere un poco"); return; }
+            setButtonDisabled(true)
             if (!emp.TPV) {
                 throw "Error en la autenticación y el uso de la TPV";
             }
 
-            setIsSendingSale(true);
             const { data, error } = await AddVenta(pagoCliente, productosEnCarrito, emp, clientes, emp.TPV);
 
             if (!error) {
@@ -199,11 +198,10 @@ const SidebarDerecho = React.memo((props: {
                 setQrImage(undefined);
                 notifyError("Error al realizar la venta");
             }
-
-            setIsSendingSale(false)
         }
         catch (e) {
-            setIsSendingSale(false)
+            console.log(e);
+            setButtonDisabled(false)
         }
     }
 
@@ -361,12 +359,13 @@ const SidebarDerecho = React.memo((props: {
                     <div className="flex flex-col w-full gap-2">
                         {
                             PrecioTotal > 0 &&
+                                !isButtonDisabled &&
                                 isVentaValida ?
                                 <>
-                                    <motion.button disabled={PrecioTotal <= 0} whileTap={{ scale: 0.9 }} className={`bg-blue-500 h-12 shadow rounded-lg hover:shadow-lg hover:bg-blue-600 text-white focus:outline-none`} onClick={(e) => { setPagarModal(true) }}>
+                                    <motion.button disabled={isButtonDisabled} whileTap={{ scale: 0.9 }} className={`bg-blue-500 h-12 shadow rounded-lg hover:shadow-lg hover:bg-blue-600 text-white focus:outline-none`} onClick={(e) => { setPagarModal(true) }}>
                                         PAGAR
                                     </motion.button>
-                                    <motion.button disabled={PrecioTotal <= 0} whileTap={{ scale: 0.9 }} className="bg-blue-500 h-12 shadow rounded-lg hover:shadow-lg hover:bg-blue-600 text-white focus:outline-none"
+                                    <motion.button disabled={isButtonDisabled} whileTap={{ scale: 0.9 }} className="bg-blue-500 h-12 shadow rounded-lg hover:shadow-lg hover:bg-blue-600 text-white focus:outline-none"
                                         onClick={async () => { await Vender(PagoRapido, ProductosEnCarrito, Empleado, Clientes); }}>
                                         COBRO RAPIDO
                                     </motion.button>
