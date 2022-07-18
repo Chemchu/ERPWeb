@@ -5,6 +5,8 @@ import queryString from 'query-string';
 
 const handler = async (req: NextApiRequest, res: NextApiResponse) => {
     try {
+        if (!req.query.id) { return res.status(300).json({ message: `No se puede recibir una petición sin param por esta ruta`, successful: false }); }
+
         const query = queryString.parse(req.query.id.toString());
         switch (req.method) {
             case 'GET':
@@ -28,6 +30,8 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
 }
 
 const GetTpvById = async (req: NextApiRequest, res: NextApiResponse) => {
+    if (!req.query.id) { return res.status(300).json({ message: `No se puede recibir una petición sin param por esta ruta`, successful: false }); }
+
     const query = queryString.parse(req.query.id.toString());
     const serverRes = await GQLQuery(
         {
@@ -48,6 +52,8 @@ const GetTpvById = async (req: NextApiRequest, res: NextApiResponse) => {
 
 const GetTpvsByUcupabilidad = async (req: NextApiRequest, res: NextApiResponse) => {
     try {
+        if (!req.query.id) { return res.status(300).json({ message: `No se puede recibir una petición sin param por esta ruta`, successful: false }); }
+
         const query = queryString.parse(req.query.id.toString());
         const isLibre: boolean = Boolean(query.isTpvFree);
 

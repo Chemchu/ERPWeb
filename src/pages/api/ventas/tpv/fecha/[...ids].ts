@@ -17,6 +17,7 @@ const GetSaleByTPVDate = async (req: NextApiRequest, res: NextApiResponse) => {
     try {
         const { ids } = req.query;
 
+        if (!ids) { return res.status(300).json({ message: `No se puede recibir una petición sin param por esta ruta`, successful: false }); }
         const serverRes = await GQLQuery({
             query: QUERY_SALES,
             variables: {

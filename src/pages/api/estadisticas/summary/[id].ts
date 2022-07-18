@@ -1,11 +1,10 @@
 import { NextApiRequest, NextApiResponse } from "next";
-import queryString from 'query-string';
-import { isStringObject } from "util/types";
 
 const handler = async (req: NextApiRequest, res: NextApiResponse) => {
     try {
-        const method = req.method;
+        if (!req.query.id) { return res.status(300).json({ message: `No se puede recibir una petición sin param por esta ruta`, successful: false }); }
 
+        const method = req.method;
         switch (method) {
             case 'GET':
                 const fecha: string = typeof req.query.id === "string" ? req.query.id : req.query.id[0];
