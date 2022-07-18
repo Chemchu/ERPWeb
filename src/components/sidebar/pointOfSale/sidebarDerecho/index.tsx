@@ -1,6 +1,7 @@
 import { AnimatePresence, motion } from "framer-motion";
 import React, { useCallback, useEffect, useRef, useState } from "react";
 import { useReactToPrint } from "react-to-print";
+import useComprasAparcadasContext from "../../../../context/comprasAparcadas";
 import useEmpleadoContext from "../../../../context/empleadoContext";
 import useProductEnCarritoContext from "../../../../context/productosEnCarritoContext";
 import { Cliente } from "../../../../tipos/Cliente";
@@ -13,9 +14,11 @@ import { FetchClientes } from "../../../../utils/fetches/clienteFetches";
 import { AddVenta } from "../../../../utils/fetches/ventasFetches";
 import GenerateQrBase64 from "../../../../utils/generateQr";
 import { AplicarDescuentos, PrecioTotalCarrito } from "../../../../utils/preciosUtils";
-import { notifyError, notifySuccess } from "../../../../utils/toastify";
+import { notifyError, notifySuccess, notifyWarn } from "../../../../utils/toastify";
 import { IsPositiveFloatingNumber, IsPositiveIntegerNumber, ValidatePositiveFloatingNumber } from "../../../../utils/validator";
+import GuardarCompra from "../../../modal/guardarCompra";
 import ModalPagar from "../../../modal/pagar";
+import VerComprasAparcadas from "../../../modal/verComprasAparcadas";
 import Ticket from "../../../printable/ticket";
 import { ProductSelectedCard } from "../productCard";
 
@@ -23,15 +26,18 @@ const SidebarDerecho = React.memo((props: {
     setProductosCarrito: React.Dispatch<React.SetStateAction<ProductoVendido[]>>, empleadoUsandoTPV: boolean,
     setShowModalCerrar: Function, setShowModalAbrir: Function
 }) => {
-    const { ProductosEnCarrito, } = useProductEnCarritoContext();
+    const { ProductosEnCarrito, SetProductosEnCarrito } = useProductEnCarritoContext();
     const { Empleado } = useEmpleadoContext();
     const [DescuentoOpen, setDescuentoPupup] = useState<boolean>(false);
     const { DtoEfectivo, SetDtoEfectivo, DtoPorcentaje, SetDtoPorcentaje } = useProductEnCarritoContext()
     const [PrecioTotal, setPrecioTotal] = useState<number>(PrecioTotalCarrito(ProductosEnCarrito));
     const [PrecioTotalFinal, setPrecioTotalFinal] = useState<number>(AplicarDescuentos(ProductosEnCarrito, Number(DtoEfectivo), Number(DtoPorcentaje)));
     const [isVentaValida, setIsVentaValida] = useState<boolean>(false)
+    const { ComprasAparcadasMap } = useComprasAparcadasContext();
 
     const [showModalPagar, setPagarModal] = useState(false);
+    const [showRecuperarVentas, setRecuperarVentas] = useState(false);
+    const [showModalSaveCompra, setSaveCompra] = useState(false);
     const [PagoRapido, setPagoRapido] = useState<CustomerPaymentInformation>();
     const [Pago, setPago] = useState<CustomerPaymentInformation>();
     const [qrImage, setQrImage] = useState<string>();
@@ -39,6 +45,7 @@ const SidebarDerecho = React.memo((props: {
 
     const [Clientes, SetClientes] = useState<Cliente[]>([]);
     const componentRef = useRef(null);
+    const [isButtonDisabled, setButtonDisabled] = useState<boolean>(false)
 
     useEffect(() => {
         let isUnmounted = false;
@@ -116,6 +123,7 @@ const SidebarDerecho = React.memo((props: {
     const onAfterPrintHandler = React.useCallback(() => {
         props.setProductosCarrito([]);
         notifySuccess("Venta realizada correctamente")
+        setButtonDisabled(false)
     }, []);
 
     const handlePrint = useReactToPrint({
@@ -172,21 +180,28 @@ const SidebarDerecho = React.memo((props: {
     }, []);
 
     const Vender = async (pagoCliente: CustomerPaymentInformation, productosEnCarrito: ProductoVendido[], emp: SesionEmpleado, clientes: Cliente[]) => {
-        if (!emp.TPV) {
-            throw "Error en la autenticación y el uso de la TPV";
-        }
+        try {
+            setButtonDisabled(true)
+            if (!emp.TPV) {
+                throw "Error en la autenticación y el uso de la TPV";
+            }
 
-        const { data, error } = await AddVenta(pagoCliente, productosEnCarrito, emp, clientes, emp.TPV);
+            const { data, error } = await AddVenta(pagoCliente, productosEnCarrito, emp, clientes, emp.TPV);
 
-        if (!error) {
-            const abortController = new AbortController();
-            setFecha(data.createdAt);
-            setQrImage(await GenerateQrBase64(data._id, abortController));
+            if (!error) {
+                const abortController = new AbortController();
+                setFecha(data.createdAt);
+                setQrImage(await GenerateQrBase64(data._id, abortController));
+            }
+            else {
+                setFecha(undefined);
+                setQrImage(undefined);
+                notifyError("Error al realizar la venta");
+            }
         }
-        else {
-            setFecha(undefined);
-            setQrImage(undefined);
-            notifyError("Error al realizar la venta");
+        catch (e) {
+            console.log(e);
+            setButtonDisabled(false)
         }
     }
 
@@ -222,22 +237,36 @@ const SidebarDerecho = React.memo((props: {
                         CARRITO VACÍO
                     </p>
                 </div>
-                {
-                    props.empleadoUsandoTPV ?
-                        <button className="flex gap-2 justify-center self-end pb-4" onClick={() => { props.setShowModalCerrar(true) }}>
-                            CERRAR CAJA
-                            <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
+                <div className="flex flex-col gap-2 items-center justify-end">
+                    {
+                        ComprasAparcadasMap.size > 0 &&
+                        <button className="flex gap-2" onClick={() => setRecuperarVentas(true)}>
+                            RECUPERAR VENTAS
+                            <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                                <path strokeLinecap="round" strokeLinejoin="round" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
                             </svg>
                         </button>
-                        :
-                        <button className="flex gap-2 justify-center self-end pb-4" onClick={() => { props.setShowModalAbrir(true) }}>
-                            ABRIR CAJA
-                            <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
-                            </svg>
-                        </button>
-                }
+                    }
+                    {
+                        props.empleadoUsandoTPV ?
+                            <button className="flex gap-2 pb-4" onClick={() => { props.setShowModalCerrar(true) }}>
+                                CERRAR CAJA
+                                <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
+                                </svg>
+                            </button>
+                            :
+                            <button className="flex gap-2 pb-4" onClick={() => { props.setShowModalAbrir(true) }}>
+                                ABRIR CAJA
+                                <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
+                                </svg>
+                            </button>
+                    }
+                </div>
+                <AnimatePresence>
+                    {showRecuperarVentas && <VerComprasAparcadas setModal={setRecuperarVentas} />}
+                </AnimatePresence>
             </div>
         )
     }
@@ -251,12 +280,16 @@ const SidebarDerecho = React.memo((props: {
                     </svg>
                     {` ${ProductosEnCarrito.length}`}
                 </div>
-                <div className="flex justify-center text-blue-gray-300 hover:text-red-700 focus:outline-none cursor-pointer w-10" onClick={() => { props.setProductosCarrito([]) }}>
+                <div className="flex justify-center text-blue-gray-300 hover:text-orange-500 focus:outline-none cursor-pointer w-10" onClick={() => { setSaveCompra(true) }}>
+                    <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                        <path strokeLinecap="round" strokeLinejoin="round" d="M8 7H5a2 2 0 00-2 2v9a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-3m-1 4l-3 3m0 0l-3-3m3 3V4" />
+                    </svg>
+                </div>
+                <div className="flex justify-center text-blue-gray-300 hover:text-red-500 focus:outline-none cursor-pointer w-10" onClick={() => { props.setProductosCarrito([]) }}>
                     <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
                     </svg>
                 </div>
-
             </div>
             <div className="h-full w-full p-2 overflow-y-scroll overflow-x-hidden">
                 <GenerarProductList productosEnCarrito={ProductosEnCarrito} setPropiedadProducto={SetPropiedadProd} />
@@ -326,12 +359,13 @@ const SidebarDerecho = React.memo((props: {
                     <div className="flex flex-col w-full gap-2">
                         {
                             PrecioTotal > 0 &&
+                                !isButtonDisabled &&
                                 isVentaValida ?
                                 <>
-                                    <motion.button disabled={PrecioTotal <= 0} whileTap={{ scale: 0.9 }} className={`bg-blue-500 h-12 shadow rounded-lg hover:shadow-lg hover:bg-blue-600 text-white focus:outline-none`} onClick={(e) => { setPagarModal(true) }}>
+                                    <motion.button disabled={isButtonDisabled} whileTap={{ scale: 0.9 }} className={`bg-blue-500 h-12 shadow rounded-lg hover:shadow-lg hover:bg-blue-600 text-white focus:outline-none`} onClick={(e) => { setPagarModal(true) }}>
                                         PAGAR
                                     </motion.button>
-                                    <motion.button disabled={PrecioTotal <= 0} whileTap={{ scale: 0.9 }} className="bg-blue-500 h-12 shadow rounded-lg hover:shadow-lg hover:bg-blue-600 text-white focus:outline-none"
+                                    <motion.button disabled={isButtonDisabled} whileTap={{ scale: 0.9 }} className="bg-blue-500 h-12 shadow rounded-lg hover:shadow-lg hover:bg-blue-600 text-white focus:outline-none"
                                         onClick={async () => { await Vender(PagoRapido, ProductosEnCarrito, Empleado, Clientes); }}>
                                         COBRO RAPIDO
                                     </motion.button>
@@ -349,6 +383,10 @@ const SidebarDerecho = React.memo((props: {
 
                     </div>
                 }
+                <AnimatePresence>
+                    {showModalPagar && Pago && <ModalPagar PagoCliente={Pago} handleModalOpen={setPagarModal} AllClientes={Clientes} />}
+                    {showModalSaveCompra && <GuardarCompra compraActual={ProductosEnCarrito} setCompraActual={SetProductosEnCarrito} setModal={setSaveCompra} />}
+                </AnimatePresence>
             </div>
             {
                 qrImage && Fecha &&
@@ -363,10 +401,7 @@ const SidebarDerecho = React.memo((props: {
                 </div>
             }
 
-            {/* Modal aceptar compra */}
-            <AnimatePresence>
-                {showModalPagar && Pago && <ModalPagar PagoCliente={Pago} handleModalOpen={setPagarModal} AllClientes={Clientes} />}
-            </AnimatePresence>
+
         </div>
     );
 });

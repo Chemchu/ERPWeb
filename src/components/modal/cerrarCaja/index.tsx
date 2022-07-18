@@ -119,7 +119,6 @@ export const CerrarCaja = (props: { Empleado?: SesionEmpleado, setModalOpen: Fun
                         animate="visible"
                         exit="exit"
                     >
-                        {/* Meter skeletons */}
                         <CargandoSpinner />
                     </motion.div>
                 </Backdrop>
@@ -131,7 +130,7 @@ export const CerrarCaja = (props: { Empleado?: SesionEmpleado, setModalOpen: Fun
         <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
             className="h-full w-full ">
             <Backdrop onClick={(e) => { e.stopPropagation(); props.setModalOpen(false) }} >
-                <motion.div className="h-3/6 w-3/6 flex flex-col items-center bg-white rounded-2xl p-4"
+                <motion.div className="h-4/6 w-4/6 flex flex-col items-center bg-white rounded-2xl p-4"
                     onClick={(e) => e.stopPropagation()}
                     variants={In}
                     initial="hidden"
@@ -194,7 +193,7 @@ export const CerrarCaja = (props: { Empleado?: SesionEmpleado, setModalOpen: Fun
 
                         </div>
 
-                        <div className="flex gap-4 h-auto w-full mb-auto text-white">
+                        <div className="flex gap-4 h-auto w-full text-white">
                             <div className="flex h-10 w-2/3 m-auto bg-red-500 hover:bg-red-600 rounded-lg cursor-pointer items-center justify-center shadow-lg"
                                 onClick={() => { props.setModalOpen(false) }}>
                                 <div>

@@ -4,14 +4,13 @@ import { Producto } from '../../../tipos/Producto';
 import { ProductoVendido } from '../../../tipos/ProductoVendido';
 import { ValidatePositiveFloatingNumber } from '../../../utils/validator';
 
-
 const ProductCard = React.memo((props: { Prod: Producto }) => {
     return (
         <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.9 }}
-            className="flex flex-col shadow-lg h-40 w-full rounded-xl p-1 cursor-pointer border 
+            className="flex flex-col shadow-lg h-24 w-full rounded-xl p-1 cursor-pointer border 
                 bg-white hover:shadow-2xl hover:bg-blue-400 hover:border-blue-700 hover:text-white">
             <div className="flex flex-col justify-between divide-y-2 divide-slate-200 p-2 h-full w-full">
-                <div className="lg:text-base sm:text-base xs:text-sm text-left ">{props.Prod.nombre}</div>
+                <span title={`${props.Prod.nombre}`} className="lg:text-base sm:text-base xs:text-sm text-left line-clamp-3">{props.Prod.nombre}</span>
                 <div className="lg:text-base sm:text-base xs:text-sm font-semibold text-right ">{Number(props.Prod.precioVenta).toFixed(2)}€</div>
             </div>
         </motion.div>

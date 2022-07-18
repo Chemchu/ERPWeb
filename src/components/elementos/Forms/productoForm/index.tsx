@@ -34,8 +34,8 @@ const ProductoForm = (props: { setProducto: Function, producto?: Producto, setHa
     }, [Nombre, Familia, Proveedor, Ean, Cantidad, CantidadReestock, PrecioVenta]);
 
     useEffect(() => {
-        if (!PrecioCompra || isNaN(Number(PrecioCompra))) { setPrecioVenta(""); return; }
-        if (!Iva || isNaN(Number(Iva))) { setPrecioVenta(""); return; }
+        if (!PrecioCompra || isNaN(Number(PrecioCompra))) { setPrecioCompra(""); return; }
+        if (!Iva || isNaN(Number(Iva))) { setIva(""); return; }
         if (!PrecioVenta || isNaN(Number(PrecioVenta))) { setPrecioVenta(""); return; }
 
         const precioCompra = Number(PrecioCompra);
@@ -46,8 +46,8 @@ const ProductoForm = (props: { setProducto: Function, producto?: Producto, setHa
     }, [PrecioCompra, Iva, PrecioVenta]);
 
     return (
-        <form className="flex gap-10 w-full pt-10">
-            <div className="flex flex-col gap-4 w-1/2 h-full ">
+        <form className="flex gap-10 w-full h-full text-sm xl:text-base">
+            <div className="flex flex-col gap-2 w-1/2 h-full">
                 <div className="w-full">
                     {
                         props.producto ?
@@ -55,7 +55,7 @@ const ProductoForm = (props: { setProducto: Function, producto?: Producto, setHa
                                 <label className="block tracking-wide text-gray-700 font-bold">
                                     ID
                                 </label>
-                                <input disabled className="appearance-none block w-full bg-gray-200 text-gray-700 border rounded py-3 px-4 leading-tight focus:outline-none focus:bg-white" type="text" placeholder="Por ejemplo `Bocadillo chorizo`"
+                                <input disabled className="appearance-none block w-full bg-gray-200 text-gray-700 border rounded p-2 leading-tight focus:outline-none focus:bg-white" type="text" placeholder="Por ejemplo `Bocadillo chorizo`"
                                     value={props.producto._id} />
                             </>
                             :
@@ -63,7 +63,7 @@ const ProductoForm = (props: { setProducto: Function, producto?: Producto, setHa
                                 <label className="block tracking-wide text-gray-700 font-bold">
                                     Nombre del producto
                                 </label>
-                                <input className="appearance-none block w-full bg-gray-200 text-gray-700 border rounded py-3 px-4 leading-tight focus:outline-none focus:bg-white ring-blue-500" type="text" placeholder="Por ejemplo `Bocadillo chorizo`"
+                                <input className="appearance-none block w-full bg-gray-200 text-gray-700 border rounded p-2 leading-tight focus:outline-none focus:bg-white ring-blue-500" type="text" placeholder="Por ejemplo `Bocadillo chorizo`"
                                     value={Nombre} onChange={(e) => { setNombre(e.target.value); props.setHayCambios && props.setHayCambios(true); }} />
                             </>
                     }
@@ -73,37 +73,37 @@ const ProductoForm = (props: { setProducto: Function, producto?: Producto, setHa
                     <label className="block tracking-wide text-gray-700 font-bold">
                         Familia
                     </label>
-                    <input className="appearance-none ring-blue-500 block w-full bg-gray-200 text-gray-700 border border-gray-200 rounded py-3 px-4 leading-tight focus:outline-none focus:bg-white focus:border-gray-500" id="grid-last-name" type="text" placeholder="Por ejemplo `Bolleria salada`"
+                    <input className="appearance-none ring-blue-500 block w-full bg-gray-200 text-gray-700 border border-gray-200 rounded p-2 leading-tight focus:outline-none focus:bg-white focus:border-gray-500" id="grid-last-name" type="text" placeholder="Por ejemplo `Bolleria salada`"
                         value={Familia} onChange={(e) => { setFamilia(e.target.value); props.setHayCambios && props.setHayCambios(true); }} />
                 </div>
                 <div className="w-full">
                     <label className="block tracking-wide text-gray-700 font-bold">
                         Proveedor
                     </label>
-                    <input className="appearance-none ring-blue-500 block w-full bg-gray-200 text-gray-700 border rounded py-3 px-4 leading-tight focus:outline-none focus:bg-white" type="text" placeholder="Nombre del proveedor del producto"
+                    <input className="appearance-none ring-blue-500 block w-full bg-gray-200 text-gray-700 border rounded p-2 leading-tight focus:outline-none focus:bg-white" type="text" placeholder="Nombre del proveedor del producto"
                         value={Proveedor} onChange={(e) => { setProveedor(e.target.value); props.setHayCambios && props.setHayCambios(true); }} />
                 </div>
                 <div className="w-full">
                     <label className="block tracking-wide text-gray-700 font-bold">
                         Código EAN
                     </label>
-                    <input className="appearance-none ring-blue-500 block w-full bg-gray-200 text-gray-700 border border-gray-200 rounded py-3 px-4 leading-tight focus:outline-none focus:bg-white focus:border-gray-500" id="grid-last-name" type="text" placeholder="ID numérico de trece dígitos"
+                    <input className="appearance-none ring-blue-500 block w-full bg-gray-200 text-gray-700 border border-gray-200 rounded p-2 leading-tight focus:outline-none focus:bg-white focus:border-gray-500" id="grid-last-name" type="text" placeholder="ID numérico de trece dígitos"
                         value={Ean} onChange={(e) => { setEan(e.target.value); props.setHayCambios && props.setHayCambios(true); }} />
                 </div>
                 <div className="w-full">
                     <label className="block tracking-wide text-gray-700 font-bold">
                         Cantidad
                     </label>
-                    <input className="appearance-none ring-blue-500 block w-full bg-gray-200 text-gray-700 border border-gray-200 rounded py-3 px-4 leading-tight focus:outline-none focus:bg-white focus:border-gray-500" id="grid-last-name" type="text" placeholder="Cantidad en stock"
+                    <input className="appearance-none ring-blue-500 block w-full bg-gray-200 text-gray-700 border border-gray-200 rounded p-2 leading-tight focus:outline-none focus:bg-white focus:border-gray-500" id="grid-last-name" type="text" placeholder="Cantidad en stock"
                         value={Cantidad} onChange={(e) => { setCantidad(ValidatePositiveIntegerNumber(e.target.value)); props.setHayCambios && props.setHayCambios(true); }} />
                 </div>
             </div>
-            <div className="flex flex-col gap-4 w-1/2">
+            <div className="flex flex-col gap-2 w-1/2">
                 <div className="w-full">
                     <label className="block tracking-wide text-gray-700 font-bold">
                         Precio de compra
                     </label>
-                    <input className="appearance-none ring-blue-500 block w-full bg-gray-200 text-gray-700 border border-gray-200 rounded py-3 px-4 leading-tight focus:outline-none focus:bg-white focus:border-gray-500" id="grid-city" type="text" placeholder="Precio de compra por unidad"
+                    <input className="appearance-none ring-blue-500 block w-full bg-gray-200 text-gray-700 border border-gray-200 rounded p-2 leading-tight focus:outline-none focus:bg-white focus:border-gray-500" id="grid-city" type="text" placeholder="Precio de compra por unidad"
                         value={PrecioCompra} onChange={(e) => { setPrecioCompra(ValidatePositiveFloatingNumber(e.target.value)); props.setHayCambios && props.setHayCambios(true); }} />
                 </div>
                 <div className="w-full">
@@ -111,7 +111,7 @@ const ProductoForm = (props: { setProducto: Function, producto?: Producto, setHa
                         IVA
                     </label>
                     <div className="flex gap-2 items-center">
-                        <input className="appearance-none ring-blue-500 block w-full bg-gray-200 text-gray-700 border border-gray-200 rounded py-3 px-4 leading-tight focus:outline-none focus:bg-white focus:border-gray-500" id="grid-last-name" type="text" placeholder="IVA del producto"
+                        <input className="appearance-none ring-blue-500 block w-full bg-gray-200 text-gray-700 border border-gray-200 rounded p-2 leading-tight focus:outline-none focus:bg-white focus:border-gray-500" id="grid-last-name" type="text" placeholder="IVA del producto"
                             value={Iva} onChange={(e) => { setIva(ValidatePositiveFloatingNumber(e.target.value)); props.setHayCambios && props.setHayCambios(true); }} />
                         <span>%</span>
                     </div>
@@ -120,7 +120,7 @@ const ProductoForm = (props: { setProducto: Function, producto?: Producto, setHa
                     <label className="block tracking-wide text-gray-700 font-bold">
                         Precio de venta
                     </label>
-                    <input className="appearance-none ring-blue-500 block w-full bg-gray-200 text-gray-700 border border-gray-200 rounded py-3 px-4 leading-tight focus:outline-none focus:bg-white focus:border-gray-500" id="grid-zip" type="text" placeholder="Precio de venta al público"
+                    <input className="appearance-none ring-blue-500 block w-full bg-gray-200 text-gray-700 border border-gray-200 rounded p-2 leading-tight focus:outline-none focus:bg-white focus:border-gray-500" id="grid-zip" type="text" placeholder="Precio de venta al público"
                         value={PrecioVenta} onChange={(e) => { setPrecioVenta(ValidatePositiveFloatingNumber(e.target.value)); props.setHayCambios && props.setHayCambios(true); }} />
                 </div>
                 <div className="w-full">
@@ -128,7 +128,7 @@ const ProductoForm = (props: { setProducto: Function, producto?: Producto, setHa
                         Margen
                     </label>
                     <div className="flex gap-2 items-center">
-                        <input disabled className="appearance-none ring-blue-500 block w-full bg-gray-200 text-gray-700 border border-gray-200 rounded py-3 px-4 leading-tight focus:outline-none focus:bg-white focus:border-gray-500" id="grid-zip" type="text" placeholder="Margen de beneficio"
+                        <input disabled className="appearance-none ring-blue-500 block w-full bg-gray-200 text-gray-700 border border-gray-200 rounded p-2 leading-tight focus:outline-none focus:bg-white focus:border-gray-500" id="grid-zip" type="text" placeholder="Margen de beneficio"
                             value={Margen} />
                         <span>%</span>
                     </div>
@@ -137,7 +137,7 @@ const ProductoForm = (props: { setProducto: Function, producto?: Producto, setHa
                     <label className="block tracking-wide text-gray-700 font-bold">
                         Cantidad de reestock
                     </label>
-                    <input className="appearance-none ring-blue-500 block w-full bg-gray-200 text-gray-700 border border-gray-200 rounded py-3 px-4 leading-tight focus:outline-none focus:bg-white focus:border-gray-500" id="grid-last-name" type="text" placeholder="Cantidad mínima recomendada en stock"
+                    <input className="appearance-none ring-blue-500 block w-full bg-gray-200 text-gray-700 border border-gray-200 rounded p-2 leading-tight focus:outline-none focus:bg-white focus:border-gray-500" id="grid-last-name" type="text" placeholder="Cantidad mínima recomendada en stock"
                         value={CantidadReestock} onChange={(e) => { setCantidadReestock(ValidatePositiveIntegerNumber(e.target.value)); props.setHayCambios && props.setHayCambios(true); }} />
                 </div>
             </div>
