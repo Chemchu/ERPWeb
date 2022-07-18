@@ -8,6 +8,7 @@ import { EmpleadoContextProvider } from "../context/empleadoContext";
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { SidebarOption } from "../tipos/Enums/SidebarOption";
+import { ComprasAparcadasContextProvider } from "../context/comprasAparcadas";
 
 const variants = {
     initial: {
@@ -40,27 +41,29 @@ const DashboardLayout = React.memo(({ children }: { children: React.ReactNode })
     return (
         <EmpleadoContextProvider>
             <ProductCarritoContextProvider>
-                {
-                    <div className="dark:bg-gray-800 h-screen w-screen overflow-hidden bg_food">
-                        <NextProgress />
-                        <div className="flex items-start w-full h-full justify-start">
-                            <Sidebar isCollapsed={isSidebarCollapsed} setCollapsed={setSidebarCollapsed} IndexSeleccionado={IndexSidebar} setIndex={setSidebarIndex} />
-                            <motion.div key={router.route} className="w-full h-full" initial={variants.initial} animate={variants.animate} exit={variants.exit}>
-                                {children}
-                            </motion.div>
-                        </div>
-                        <ToastContainer
-                            position="bottom-right"
-                            autoClose={3000}
-                            hideProgressBar={false}
-                            newestOnTop={false}
-                            closeOnClick
-                            rtl={false}
-                            draggable
-                            pauseOnHover={false}
-                        />
-                    </div >
-                }
+                <ComprasAparcadasContextProvider>
+                    {
+                        <div className="dark:bg-gray-800 h-screen w-screen overflow-hidden bg_food">
+                            <NextProgress />
+                            <div className="flex items-start w-full h-full justify-start">
+                                <Sidebar isCollapsed={isSidebarCollapsed} setCollapsed={setSidebarCollapsed} IndexSeleccionado={IndexSidebar} setIndex={setSidebarIndex} />
+                                <motion.div key={router.route} className="w-full h-full" initial={variants.initial} animate={variants.animate} exit={variants.exit}>
+                                    {children}
+                                </motion.div>
+                            </div>
+                            <ToastContainer
+                                position="bottom-right"
+                                autoClose={3000}
+                                hideProgressBar={false}
+                                newestOnTop={false}
+                                closeOnClick
+                                rtl={false}
+                                draggable
+                                pauseOnHover={false}
+                            />
+                        </div >
+                    }
+                </ComprasAparcadasContextProvider>
             </ProductCarritoContextProvider>
         </EmpleadoContextProvider>
 
