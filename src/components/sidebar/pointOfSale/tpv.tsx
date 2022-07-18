@@ -126,21 +126,23 @@ const TPV = (props: { productos: Producto[], empleadoUsandoTPV: boolean, setEmpl
             <div className="grid grid-cols-3 bg-gray-100">
                 <div className="col-span-2 h-screen">
                     <div className="flex flex-col h-full w-full py-4">
-                        <div className="flex w-full gap-2 flex-row bg-white rounded-3xl shadow text-lg h-16 transition-shadow focus:shadow-2xl focus:outline-none p-2">
-                            <div className="flex p-2 items-center rounded-full bg-blue-400 text-white">
-                                <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
-                                </svg>
+                        <div className="px-2 text-lg h-16">
+                            <div className="flex w-full gap-2 flex-row bg-white rounded-3xl shadow transition-shadow focus:outline-none p-2">
+                                <div className="flex p-2 items-center rounded-full bg-blue-400 text-white">
+                                    <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                                    </svg>
+                                </div>
+                                <input className="w-full transition-shadow focus:outline-none" placeholder="Buscar producto o código de barras..."
+                                    onChange={(e) => { setDirtyInput(e.target.value); }}
+                                    value={dirtyInput} />
+                                <button className="flex p-2 items-center rounded-full text-gray-400 hover:text-red-500"
+                                    onClick={LimpiarFiltro}>
+                                    <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                                        <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
+                                    </svg>
+                                </button>
                             </div>
-                            <input className="w-full transition-shadow focus:outline-none" placeholder="Buscar producto o código de barras..."
-                                onChange={(e) => { setDirtyInput(e.target.value); }}
-                                value={dirtyInput} />
-                            <button className="flex p-2 items-center rounded-full text-gray-400 hover:text-red-500"
-                                onClick={LimpiarFiltro}>
-                                <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-                                    <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
-                                </svg>
-                            </button>
                         </div>
                         {
                             props.productos.length <= 0 ?
@@ -148,7 +150,7 @@ const TPV = (props: { productos: Producto[], empleadoUsandoTPV: boolean, setEmpl
                                     {
                                         arrayNum.map((n, i) => {
                                             return (
-                                                <div key={`SkeletonFav-${i}`} className="animate-pulse h-10 w-16 md:w-32 lg:w-48 border-2 rounded-md mx-auto bg-gray-300" />
+                                                <div key={`SkeletonFav-${i}`} className="animate-pulse h-10 w-16 md:w-32 lg:w-48 border-2 rounded-xl mx-auto bg-gray-300" />
                                             );
                                         })
                                     }
@@ -156,9 +158,9 @@ const TPV = (props: { productos: Producto[], empleadoUsandoTPV: boolean, setEmpl
                                 :
                                 Familias[0] !== undefined &&
                                 <div className="px-4">
-                                    <div className="flex w-full max-h-20 py-2 gap-4 overflow-y-hidden overflow-x-scroll justify-start text-center">
+                                    <div className="flex w-full max-h-20 py-2 gap-2 overflow-y-hidden overflow-x-scroll justify-start text-center">
                                         <motion.button whileTap={{ scale: 0.9 }} whileHover={{ scale: 1.1 }}
-                                            key={"Todos"} id={"Todos"} className="flex bg-blue-400 hover:bg-blue-500 text-white rounded-md w-auto max-w-lg py-1 px-2"
+                                            key={"Todos"} id={"Todos"} className="flex bg-blue-400 hover:bg-blue-500 text-white rounded-xl w-auto max-w-lg py-1 px-2"
                                             onClick={() => setProductosFiltrados(props.productos)}>
                                             <span className="self-center p-1">TODOS</span>
                                         </motion.button>
@@ -166,7 +168,7 @@ const TPV = (props: { productos: Producto[], empleadoUsandoTPV: boolean, setEmpl
                                             Familias.map(f => {
                                                 return (
                                                     <motion.button whileTap={{ scale: 0.9 }} whileHover={{ scale: 1.1 }}
-                                                        key={f} id={f} className="flex bg-blue-400 hover:bg-blue-500 text-white rounded-md w-auto max-w-lg py-1 px-2"
+                                                        key={f} id={f} className="flex bg-blue-400 hover:bg-blue-500 text-white rounded-xl w-auto max-w-lg py-1 px-2"
                                                         onClick={(e) => setProductosFiltrados(props.productos.filter(p => p.familia === e.currentTarget.id))}>
                                                         <span className="self-center w-full p-1 truncate">
                                                             {f}
