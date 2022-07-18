@@ -1,17 +1,20 @@
-import React, { PureComponent, SVGAttributes } from 'react';
+import React from 'react';
 import { AreaChart as AChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, TooltipProps } from 'recharts';
 import { NameType, ValueType } from 'recharts/types/component/DefaultTooltipContent';
 import { Color } from '../../../tipos/Enums/Color';
 import { Summary } from '../../../tipos/Summary';
 
+const offset = (new Date().getTimezoneOffset() / 60) * -1
+
 const VentasDelDia = (props: { data: Summary | undefined, titulo: string, ejeX: string, ejeY: string, nombreEjeX: string, color: Color, colorID: string }) => {
     const CustomTooltip = ({ active, payload, label, }: TooltipProps<ValueType, NameType>) => {
-        const horaFinal = Number(String(label).substring(0, 2)) + 1
+        const horaInicial = Number(String(label).substring(0, 2)) + offset
+        const horaFinal = horaInicial + 1
 
         if (active) {
             return (
                 <div className="bg-white border border-blue-600 opacity-90 rounded-xl shadow-lg p-4 custom-tooltip">
-                    <p className="label text-xl font-semibold">{`${label} - ${String(horaFinal) + ":00"}`}</p>
+                    <p className="label text-xl font-semibold">{`${horaInicial}:00 - ${String(horaFinal) + ":00"}`}</p>
                     {
                         payload &&
                         <p className="label text-base">{`Ventas: ${Number(payload[0].value).toFixed(2)}€`}</p>
