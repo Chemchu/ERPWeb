@@ -22,7 +22,7 @@ const VentasDelDia = (props: { data: Summary | undefined, titulo: string, ejeX: 
 
 
     const CustomTooltip = ({ active, payload, label, }: TooltipProps<ValueType, NameType>) => {
-        let horaInicial = Number(String(label).substring(0, 2))
+        let horaInicial = String(label).length < 5 ? Number(String(label).substring(0, 1)) : Number(String(label).substring(0, 2))
         let horaFinal = horaInicial + 1
 
         if (horaInicial >= 24) {

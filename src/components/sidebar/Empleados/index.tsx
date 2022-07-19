@@ -174,7 +174,7 @@ const EmpleadosPage = () => {
                 <div className="text-left font-semibold w-1/3">
                     Correo
                 </div>
-                <div className="text-left font-semibold w-1/3">
+                <div className="text-right font-semibold w-1/3">
                     Rol
                 </div>
             </div>
@@ -234,10 +234,10 @@ const FilaEmpleado = (props: { empleado: Empleado, setEmpleados: Function }) => 
                 <div className="w-1/3 text-left">
                     {empleado.nombre}
                 </div>
-                <div className="w-1/3 text-left">
+                <div className="w-1/3 text-left truncate">
                     {empleado.email}
                 </div>
-                <div className="w-1/3 text-left">
+                <div className="w-1/3 text-right">
                     {empleado.rol}
                 </div>
             </div>
