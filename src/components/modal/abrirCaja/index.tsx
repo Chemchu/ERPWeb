@@ -12,7 +12,7 @@ import ContarCaja from "../contarCaja";
 const AbrirCaja = (props: { setShowModal: Function, setEmpleadoUsandoTPV: Function }) => {
     const [tpvs, setTpvs] = useState<ITPV[]>([]);
     const [currentTpvName, setCurrentTpvName] = useState<string>();
-    const [cajaInicial, setCajaInicial] = useState<string>('0');
+    const [cajaInicial, setCajaInicial] = useState<string>('');
     const { Empleado, SetEmpleado } = useEmpleadoContext();
     const [showContador, setContador] = useState<boolean>(false);
     const [desglose, setDesglose] = useState<Map<number, number>>(new Map())
@@ -56,9 +56,10 @@ const AbrirCaja = (props: { setShowModal: Function, setEmpleadoUsandoTPV: Functi
 
     return (
         <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}>
-            <Backdrop >
+            <Backdrop onClick={() => props.setShowModal(false)}>
                 <motion.div variants={In} initial="hidden" animate="visible" exit="exit"
-                    className="flex flex-col h-3/6 w-3/6 max-h-96 max-w-lg bg-white rounded-xl  items-center">
+                    className="flex flex-col h-3/6 w-3/6 max-h-96 max-w-lg bg-white rounded-xl  items-center"
+                    onClick={(e) => e.stopPropagation()}>
                     <div className="text-2xl justify-self-start pt-4 w">
                         TPV Cerrada
                     </div>

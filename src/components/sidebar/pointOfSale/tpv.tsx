@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useTransition } from "react";
+import React, { useEffect, useRef, useState, useTransition } from "react";
 import { IsEAN, ValidateSearchString } from "../../../utils/validator";
 import { Producto } from "../../../tipos/Producto";
 import { ProductoVendido } from "../../../tipos/ProductoVendido";
@@ -17,6 +17,8 @@ const TPV = (props: { productos: Producto[], empleadoUsandoTPV: boolean, setEmpl
     const { ProductosEnCarrito, SetProductosEnCarrito } = useProductEnCarritoContext();
     const [Familias, setFamilias] = useState<string[]>([]);
     const [, startTransition] = useTransition();
+
+    const inputRef = useRef<any>(null);
 
     useEffect(() => {
         const delayDebounceFn = setTimeout(() => {
@@ -122,7 +124,8 @@ const TPV = (props: { productos: Producto[], empleadoUsandoTPV: boolean, setEmpl
     }
 
     return (
-        <div className="antialiased overflow-hidden text-gray-800">
+        <div className="antialiased overflow-hidden text-gray-800"
+            onClick={() => { inputRef?.current?.focus() }}>
             <div className="grid grid-cols-3 bg-gray-100">
                 <div className="col-span-2 h-screen">
                     <div className="flex flex-col h-full w-full py-4">
@@ -134,10 +137,12 @@ const TPV = (props: { productos: Producto[], empleadoUsandoTPV: boolean, setEmpl
                                     </svg>
                                 </div>
                                 <input className="w-full transition-shadow focus:outline-none" placeholder="Buscar producto o código de barras..."
+                                    autoFocus
+                                    ref={inputRef}
                                     onChange={(e) => { setDirtyInput(e.target.value); }}
                                     value={dirtyInput} />
                                 <button className="flex p-2 items-center rounded-full text-gray-400 hover:text-red-500"
-                                    onClick={LimpiarFiltro}>
+                                    onClick={() => { LimpiarFiltro(); }}>
                                     <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
                                         <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
                                     </svg>
@@ -161,7 +166,7 @@ const TPV = (props: { productos: Producto[], empleadoUsandoTPV: boolean, setEmpl
                                     <div className="flex w-full max-h-20 py-2 gap-2 overflow-y-hidden overflow-x-scroll justify-start text-center">
                                         <motion.button whileTap={{ scale: 0.9 }} whileHover={{ scale: 1.1 }}
                                             key={"Todos"} id={"Todos"} className="flex bg-blue-400 hover:bg-blue-500 text-white rounded-xl w-auto max-w-lg py-1 px-2"
-                                            onClick={() => setProductosFiltrados(props.productos)}>
+                                            onClick={() => { setProductosFiltrados(props.productos); }}>
                                             <span className="self-center p-1">TODOS</span>
                                         </motion.button>
                                         {
@@ -169,7 +174,7 @@ const TPV = (props: { productos: Producto[], empleadoUsandoTPV: boolean, setEmpl
                                                 return (
                                                     <motion.button whileTap={{ scale: 0.9 }} whileHover={{ scale: 1.1 }}
                                                         key={f} id={f} className="flex bg-blue-400 hover:bg-blue-500 text-white rounded-xl w-auto max-w-lg py-1 px-2"
-                                                        onClick={(e) => setProductosFiltrados(props.productos.filter(p => p.familia === e.currentTarget.id))}>
+                                                        onClick={(e) => { setProductosFiltrados(props.productos.filter(p => p.familia === e.currentTarget.id)); }}>
                                                         <span className="self-center w-full p-1 truncate">
                                                             {f}
                                                         </span>
@@ -181,7 +186,7 @@ const TPV = (props: { productos: Producto[], empleadoUsandoTPV: boolean, setEmpl
                                 </div>
                         }
                         <div className="h-full overflow-hidden">
-                            <ListaProductos productos={props.productos} productosFiltrados={ProductosFiltrados} />
+                            <ListaProductos productos={props.productos} productosFiltrados={ProductosFiltrados} inputRef={inputRef} />
                         </div>
                     </div>
                 </div>
@@ -193,7 +198,7 @@ const TPV = (props: { productos: Producto[], empleadoUsandoTPV: boolean, setEmpl
     );
 }
 
-const ListaProductos = (props: { productos?: Producto[], productosFiltrados: Producto[] }) => {
+const ListaProductos = (props: { productos?: Producto[], productosFiltrados: Producto[], inputRef?: any }) => {
     const { ProductosEnCarrito, SetProductosEnCarrito } = useProductEnCarritoContext();
     const maxItems = 30;
 
@@ -221,7 +226,7 @@ const ListaProductos = (props: { productos?: Producto[], productosFiltrados: Pro
                         props.productosFiltrados.slice(0, maxItems).map((prod: Producto) => {
                             return (
                                 <button key={prod._id} id={prod._id}
-                                    onClick={() => { AddProductoToCarrito(prod, ProductosEnCarrito, SetProductosEnCarrito) }}>
+                                    onClick={() => { AddProductoToCarrito(prod, ProductosEnCarrito, SetProductosEnCarrito); }}>
                                     <ProductCard Prod={prod} />
                                 </button>
                             );

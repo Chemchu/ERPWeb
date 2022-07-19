@@ -74,7 +74,7 @@ const ContarCaja = (props: { showItself: Function, setTotal: Function, desglose:
 }
 
 const ContarMoneda = (props: { valorMoneda: number, desglose: Map<number, number>, setDesglose: Function }) => {
-    const [cantidad, setCantidad] = useState<string>("0");
+    const [cantidad, setCantidad] = useState<string>("");
 
     useEffect(() => {
         const cantidadMonedas = props.desglose.get(props.valorMoneda);
@@ -84,7 +84,7 @@ const ContarMoneda = (props: { valorMoneda: number, desglose: Map<number, number
             return;
         }
 
-        setCantidad("0")
+        setCantidad("")
     }, [props.desglose])
 
     useEffect(() => {
