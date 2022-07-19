@@ -46,8 +46,8 @@ const EstadisticasPage = () => {
 
                 const inicial: Date = dateRange[0]
                 const final: Date = dateRange[1]
-                const fechaInicial = new Date(inicial.setDate(inicial.getDate()))
-                const fechaFinal = new Date(final.setDate(final.getDate() - 1))
+                const fechaInicial = new Date(inicial.setHours(inicial.getHours() + 12))
+                const fechaFinal = new Date(final.setHours(final.getHours() - 12))
 
                 setSummary(await FetchResumenRango(fechaInicial, fechaFinal))
             }
