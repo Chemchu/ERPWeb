@@ -5,6 +5,8 @@ import queryString from 'query-string';
 
 const handler = async (req: NextApiRequest, res: NextApiResponse) => {
     try {
+        if (!req.query.id) { return res.status(300).json({ message: `No se puede recibir una petición sin param por esta ruta`, successful: false }); }
+
         const method = req.method;
         const query = queryString.parse(req.query.id.toString());
 

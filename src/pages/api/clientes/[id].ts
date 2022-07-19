@@ -5,8 +5,9 @@ import GQLQuery, { GQLMutate } from "../../../utils/serverFetcher";
 
 const handler = async (req: NextApiRequest, res: NextApiResponse) => {
     try {
-        const query = queryString.parse(req.query.id.toString());
+        if (!req.query.id) { return res.status(300).json({ message: `No se puede recibir una petición sin param por esta ruta`, successful: false }); }
 
+        const query = queryString.parse(req.query.id.toString());
         switch (req.method) {
             case 'POST':
                 if (req.query.id === "file") {

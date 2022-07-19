@@ -6,9 +6,10 @@ import { Empleado } from "../../../tipos/Empleado";
 
 const handler = async (req: NextApiRequest, res: NextApiResponse) => {
     try {
+        if (!req.query.id) { return res.status(300).json({ message: `No se puede recibir una petición sin param por esta ruta`, successful: false }); }
+
         const method = req.method;
         const query = queryString.parse(req.query.id.toString());
-
         switch (method) {
             case 'GET':
                 if (Object.keys(query).length > 0) { return await GetEmpleadosFromQuery(query, res); }

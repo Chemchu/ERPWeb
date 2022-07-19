@@ -6,9 +6,10 @@ import { Producto } from "../../../tipos/Producto";
 
 const handler = async (req: NextApiRequest, res: NextApiResponse): Promise<void> => {
     try {
+        if (!req.query.id) { return res.status(300).json({ message: `No se puede recibir una petición sin param por esta ruta`, successful: false }); }
+
         const method = req.method;
         const query = queryString.parse(req.query.id.toString());
-
         switch (method) {
             case 'POST':
                 if (req.query.id === "file") {

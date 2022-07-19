@@ -4,6 +4,8 @@ import GQLQuery, { GQLMutate } from "../../../utils/serverFetcher";
 import queryString from 'query-string';
 
 const handler = async (req: NextApiRequest, res: NextApiResponse) => {
+    if (!req.query.id) { return res.status(300).json({ message: `No se puede recibir una petición sin param por esta ruta`, successful: false }); }
+
     const query = queryString.parse(req.query.id.toString());
     switch (req.method) {
         case 'POST':
@@ -41,6 +43,8 @@ const AddVentaFromFile = async (req: NextApiRequest, res: NextApiResponse) => {
 
 const GetSale = async (req: NextApiRequest, res: NextApiResponse) => {
     try {
+        if (!req.query.id) { return res.status(300).json({ message: `No se puede recibir una petición sin param por esta ruta`, successful: false }); }
+
         const query = queryString.parse(req.query.id.toString());
         let serverRes;
 
