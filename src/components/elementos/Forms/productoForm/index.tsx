@@ -15,6 +15,11 @@ const ProductoForm = (props: { setProducto: Function, producto?: Producto, setHa
     const [CantidadReestock, setCantidadReestock] = useState<string>(props.producto?.cantidadRestock ? String(props.producto?.cantidadRestock) : "0");
 
     useEffect(() => {
+        let margen = Margen;
+        if (Number(margen) === Infinity) {
+            margen = "100"
+        }
+
         const p: Producto = {
             _id: "Creando",
             alta: true,
@@ -31,7 +36,7 @@ const ProductoForm = (props: { setProducto: Function, producto?: Producto, setHa
         }
         props.setProducto(p);
 
-    }, [Nombre, Familia, Proveedor, Ean, Cantidad, CantidadReestock, PrecioVenta]);
+    }, [Nombre, Familia, Proveedor, Ean, Cantidad, CantidadReestock, Margen]);
 
     useEffect(() => {
         if (!PrecioCompra || isNaN(Number(PrecioCompra))) { setPrecioCompra(""); return; }
@@ -40,7 +45,11 @@ const ProductoForm = (props: { setProducto: Function, producto?: Producto, setHa
 
         const precioCompra = Number(PrecioCompra);
         const precioConIva = precioCompra + precioCompra * (Number(Iva) / 100)
-        const margen = ((Number(PrecioVenta) - precioConIva) / precioConIva) * 100
+        let margen = ((Number(PrecioVenta) - precioConIva) / precioConIva) * 100
+
+        if (margen === Infinity) {
+            margen = 100
+        }
 
         setMargen(margen.toFixed(2));
     }, [PrecioCompra, Iva, PrecioVenta]);
