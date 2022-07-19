@@ -26,9 +26,9 @@ export const CerrarCaja = (props: { Empleado?: SesionEmpleado, setModalOpen: Fun
     const [TotalEfectivo, setTotalEfectivo] = useState<string>();
     const [TotalTarjeta, setTotalTarjeta] = useState<string>();
     const [TotalPrevistoEnCaja, setTotalPrevistoEnCaja] = useState<string>();
-    const [TotalRealEnCaja, setTotalRealEnCaja] = useState<string>("0");
+    const [TotalRealEnCaja, setTotalRealEnCaja] = useState<string>("");
     const [Desglose, setDesglose] = useState<Map<number, number>>(new Map());
-    const [DineroRetirado, setDineroRetirado] = useState<string>("0");
+    const [DineroRetirado, setDineroRetirado] = useState<string>("");
     const [showContarCaja, setContarCaja] = useState<boolean>(false);
     const [qrImage, setQrImage] = useState<string>();
     const [Cierre, setCierre] = useState<Cierre>();
@@ -54,9 +54,6 @@ export const CerrarCaja = (props: { Empleado?: SesionEmpleado, setModalOpen: Fun
 
             const devoluciones = await FetchDevolucionesByDateRange(tpv.updatedAt, new Date(Date.now()));
             const ventas = await FetchVentasByTPVDate(j.TPV, tpv.updatedAt.toString());
-
-            console.log(tpv);
-
 
             setVentas(ventas);
             setTPV(tpv);

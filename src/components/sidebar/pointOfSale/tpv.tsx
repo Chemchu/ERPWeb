@@ -137,6 +137,7 @@ const TPV = (props: { productos: Producto[], empleadoUsandoTPV: boolean, setEmpl
                                     </svg>
                                 </div>
                                 <input className="w-full transition-shadow focus:outline-none" placeholder="Buscar producto o código de barras..."
+                                    autoFocus
                                     ref={inputRef}
                                     onChange={(e) => { setDirtyInput(e.target.value); }}
                                     value={dirtyInput} />

@@ -11,6 +11,7 @@ import GenerateQrBase64 from "../../../utils/generateQr";
 import Ticket from "../../printable/ticket";
 import { Backdrop } from "../backdrop";
 import DevolverVenta from "../devolucionModal/devolverVenta";
+import EditarVenta from "../modificarVenta";
 
 const VerVenta = (props: { venta: Venta | undefined, setModal: Function }) => {
     const [tpv, setTpv] = useState<ITPV>();
@@ -18,6 +19,7 @@ const VerVenta = (props: { venta: Venta | undefined, setModal: Function }) => {
     const [PagoDelCliente, setPago] = useState<CustomerPaymentInformation>();
     const [qrImage, setQrImage] = useState<string>();
     const [showDevolverModal, setShowDevolverModal] = useState<boolean>(false);
+    const [showEditarVentaModal, setShowEditarVentaModal] = useState<boolean>(false);
 
     const reactToPrintContent = React.useCallback(() => {
         return componentRef.current;
@@ -99,9 +101,16 @@ const VerVenta = (props: { venta: Venta | undefined, setModal: Function }) => {
                     exit="exit"
                 >
                     <div className="flex flex-col w-full h-full text-left ">
-                        <span className="text-2xl">
-                            Venta en: {`${fecha.toLocaleString()}`}
-                        </span>
+                        <div className="flex justify-between items-center">
+                            <span className="text-2xl">
+                                Venta en: {`${fecha.toLocaleString()}`}
+                            </span>
+                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}
+                                className="h-6 w-6 hover:text-blue-500 cursor-pointer"
+                                onClick={() => { setShowEditarVentaModal(true) }}>
+                                <path strokeLinecap="round" strokeLinejoin="round" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
+                            </svg>
+                        </div>
                         <div className="flex w-full h-5/6 justify-between align-middle py-6">
                             <span className="font-semibold w-1/2 h-full">
                                 Resumen de la compra
@@ -155,29 +164,24 @@ const VerVenta = (props: { venta: Venta | undefined, setModal: Function }) => {
                                     </span>
                                 </div>
                             </span>
-                            <div className="flex flex-col font-semibold text-right w-1/2 h-full gap-2">
-                                <span>
-                                    Lista de productos
-                                </span>
-                                <div className="bg-gray-100 rounded-lg border-2 w-full h-full font-normal overflow-y-scroll">
-                                    <div className="flex w-full justify-around p-2 cursor-default">
-                                        <p className="w-1/4 text-left font-semibold">Producto</p>
-                                        <p className="w-1/4 text-center font-semibold">Cantidad</p>
-                                        <p className="w-1/4 text-center font-semibold">Descuento</p>
-                                        <p className="w-1/4 text-center font-semibold">Total</p>
-                                    </div>
-                                    <hr className="border-2 border-gray-300" />
-                                    <div className="flex flex-col gap-2 w-full h-full p-2">
-                                        {
-                                            props.venta.productos.map((prod, index) => {
-                                                return (
-                                                    <div key={`editarVenta_${prod._id}_${index}`} className="hover:bg-gray-200 hover:cursor-pointer">
-                                                        <GenerarFilaProducto numFila={index + 1} producto={prod} />
-                                                    </div>
-                                                )
-                                            })
-                                        }
-                                    </div>
+                            <div className="bg-gray-100 rounded-lg border-2 w-1/2 h-full font-normal overflow-y-scroll">
+                                <div className="flex w-full justify-around p-2 cursor-default">
+                                    <p className="w-1/4 text-left font-semibold">Producto</p>
+                                    <p className="w-1/4 text-center font-semibold">Cantidad</p>
+                                    <p className="w-1/4 text-center font-semibold">Descuento</p>
+                                    <p className="w-1/4 text-center font-semibold">Total</p>
+                                </div>
+                                <hr className="border-2 border-gray-300" />
+                                <div className="flex flex-col gap-2 w-full h-full p-2">
+                                    {
+                                        props.venta.productos.map((prod, index) => {
+                                            return (
+                                                <div key={`editarVenta_${prod._id}_${index}`} className="hover:bg-gray-200 hover:cursor-pointer">
+                                                    <GenerarFilaProducto numFila={index + 1} producto={prod} />
+                                                </div>
+                                            )
+                                        })
+                                    }
                                 </div>
                             </div>
                         </div>
@@ -208,6 +212,9 @@ const VerVenta = (props: { venta: Venta | undefined, setModal: Function }) => {
                             {
                                 showDevolverModal &&
                                 <DevolverVenta venta={props.venta} setModal={setShowDevolverModal} setModalVenta={props.setModal} />
+                            }
+                            {
+                                showEditarVentaModal && <EditarVenta setShowModal={setShowEditarVentaModal} setVenta={() => { }} />
                             }
                         </AnimatePresence>
                     </div>
