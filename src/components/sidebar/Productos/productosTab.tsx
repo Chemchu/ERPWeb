@@ -11,6 +11,7 @@ import DownloadFile from "../../elementos/botones/downloadFile";
 import AddProducto from "../../modal/addProducto";
 import NuevoBoton from "../../elementos/botones/nuevoBoton";
 import { FetchProductoByQuery, FetchProductos } from "../../../utils/fetches/productosFetches";
+import { ValidateSearchString } from "../../../utils/validator";
 
 const arrayNum = [...Array(8)];
 
@@ -37,7 +38,7 @@ const ProductPage = () => {
 
     const Filtrar = async (f: string) => {
         if (f === "") { return; }
-        if (!f.match('^[-_a-zA-Z0-9.\s ]*$')) { notifyWarn("Producto inválido"); return; }
+        if (!ValidateSearchString(f)) { notifyWarn("Producto inválido"); return; }
 
         setProductosFiltradas(await FetchProductoByQuery(f));
     }

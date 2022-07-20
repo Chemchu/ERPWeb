@@ -80,7 +80,7 @@ const ContarMoneda = (props: { valorMoneda: number, desglose: Map<number, number
         const cantidadMonedas = props.desglose.get(props.valorMoneda);
 
         if (cantidadMonedas) {
-            setCantidad(String(cantidadMonedas))
+            setCantidad(cantidadMonedas.toFixed(2))
             return;
         }
 
