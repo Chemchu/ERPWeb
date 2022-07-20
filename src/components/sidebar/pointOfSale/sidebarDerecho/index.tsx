@@ -305,6 +305,7 @@ const SidebarDerecho = React.memo((props: {
                                     </svg>
                                     <div>
                                         <input type="text" inputMode="numeric" className="text-xs text-center rounded-lg w-1/2 h-6 shadow" name="DtoEfectivo" value={DtoEfectivo}
+                                            onClick={(e) => e.stopPropagation()}
                                             onChange={(e) => {
                                                 SetDtoEfectivo(ValidatePositiveFloatingNumber(e.target.value));
                                             }}
@@ -319,6 +320,7 @@ const SidebarDerecho = React.memo((props: {
                                     </svg>
                                     <div>
                                         <input type="text" inputMode="numeric" className="text-xs text-center rounded-lg w-1/2 h-6 shadow" name="DtoPorcentaje" value={DtoPorcentaje}
+                                            onClick={(e) => e.stopPropagation()}
                                             onChange={(e) => {
                                                 SetDtoPorcentaje(ValidatePositiveFloatingNumber(e.target.value));
                                             }}
