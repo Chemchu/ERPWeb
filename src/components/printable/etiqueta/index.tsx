@@ -5,7 +5,7 @@ import { notifyWarn } from "../../../utils/toastify";
 const Etiqueta = React.forwardRef((props: { nombre: string, ean: string, precio: number }, ref: React.LegacyRef<HTMLDivElement>) => {
     useEffect(() => {
         try {
-            JsBarcode("#ean-13", props.ean, { format: "ean13", background: "#ffffff", height: 20, displayValue: true });
+            JsBarcode("#ean-13", props.ean, { format: "ean13", background: "#ffffff", height: 10, displayValue: true, fontSize: 20 });
         }
         catch (e) {
             notifyWarn("EAN inválido. El código de barras no estará en la etiqueta");
@@ -13,16 +13,16 @@ const Etiqueta = React.forwardRef((props: { nombre: string, ean: string, precio:
     }, [])
 
     return (
-        <div className="flex flex-col gap-1 items-center bg-white rounded-2xl w-full h-auto text-sm p-2" ref={ref}>
-            <div className="flex justify-between w-full text-center text-lg">
-                <span className="text-left w-full">
-                    {props.nombre}
-                </span>
-                <span className="w-full text-xl text-right">
+        <div ref={ref} className="flex flex-col items-center bg-white w-full h-auto p-3">
+            <span className="text-left w-full line-clamp-3">
+                {props.nombre}
+            </span>
+            <div className="flex justify-between items-center w-full text-center text-lg px-2">
+                <svg id="ean-13" />
+                <span className="w-1/3 text-2xl text-right font-semibold">
                     {props.precio.toFixed(2)}€
                 </span>
             </div>
-            <svg id="ean-13" />
         </div>
     );
 });
