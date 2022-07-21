@@ -24,7 +24,7 @@ import { ProductSelectedCard } from "../productCard";
 
 const SidebarDerecho = React.memo((props: {
     setProductosCarrito: React.Dispatch<React.SetStateAction<ProductoVendido[]>>, empleadoUsandoTPV: boolean,
-    setShowModalCerrar: Function, setShowModalAbrir: Function
+    setShowModalCerrar: Function, setShowModalAbrir: Function, inputRef?: any
 }) => {
     const { ProductosEnCarrito, SetProductosEnCarrito } = useProductEnCarritoContext();
     const { Empleado } = useEmpleadoContext();
@@ -124,6 +124,7 @@ const SidebarDerecho = React.memo((props: {
         props.setProductosCarrito([]);
         notifySuccess("Venta realizada correctamente")
         setButtonDisabled(false)
+        props.inputRef?.current?.focus();
     }, []);
 
     const handlePrint = useReactToPrint({
@@ -386,7 +387,7 @@ const SidebarDerecho = React.memo((props: {
                     </div>
                 }
                 <AnimatePresence>
-                    {showModalPagar && Pago && <ModalPagar PagoCliente={Pago} handleModalOpen={setPagarModal} AllClientes={Clientes} />}
+                    {showModalPagar && Pago && <ModalPagar PagoCliente={Pago} handleModalOpen={setPagarModal} AllClientes={Clientes} inputRef={props.inputRef} />}
                     {showModalSaveCompra && <GuardarCompra compraActual={ProductosEnCarrito} setCompraActual={SetProductosEnCarrito} setModal={setSaveCompra} />}
                 </AnimatePresence>
             </div>

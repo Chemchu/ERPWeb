@@ -18,7 +18,7 @@ import { In } from "../../../utils/animations";
 import { FetchClientes } from "../../../utils/fetches/clienteFetches";
 import { AddVenta } from "../../../utils/fetches/ventasFetches";
 
-export const ModalPagar = (props: { PagoCliente: CustomerPaymentInformation, handleModalOpen: Function, AllClientes?: Cliente[] }) => {
+export const ModalPagar = (props: { PagoCliente: CustomerPaymentInformation, handleModalOpen: Function, AllClientes?: Cliente[], inputRef: any }) => {
     const [dineroEntregado, setDineroEntregado] = useState<string>("0");
     const [dineroEntregadoTarjeta, setDineroEntregadoTarjeta] = useState<string>("0");
     const [cambio, setCambio] = useState<number>(props.PagoCliente.cambio);
@@ -45,7 +45,6 @@ export const ModalPagar = (props: { PagoCliente: CustomerPaymentInformation, han
         }
         else {
             FetchClientes().then((r) => {
-
                 if (!isUnmounted) {
                     SetClientes(r)
                     setServerStatus(true);
@@ -87,6 +86,7 @@ export const ModalPagar = (props: { PagoCliente: CustomerPaymentInformation, han
         notifySuccess("Venta realizada correctamente")
         setButtonDisabled(false)
         props.handleModalOpen(false);
+        props.inputRef?.current?.focus()
     }, []);
 
     const handlePrint = useReactToPrint({
