@@ -10,8 +10,8 @@ export const InputNumber = (props: { value: string, valorPendiente: string, tipo
     return (
         <div>
             <div className="flex relative ">
-                <span className="rounded-l-md inline-flex items-center px-3 border-t bg-white border-l border-b
-                  border-gray-300 text-gray-500 shadow-sm text-sm hover:bg-blue-400 cursor-pointer stroke-gray-500 hover:stroke-white"
+                <span className="rounded-l-md inline-flex items-center px-3 border-t border-l border-b
+                  border-gray-300 text-gray-500 shadow-sm text-sm bg-blue-400 hover:bg-blue-500 cursor-pointer stroke-white"
                     onClick={SetExactValue}>
                     {
                         props.tipo === TipoCobro.Tarjeta ?
