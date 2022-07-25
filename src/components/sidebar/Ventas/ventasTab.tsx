@@ -1,15 +1,14 @@
 import { AnimatePresence } from "framer-motion";
 import React, { useEffect, useState } from "react";
-import { Cliente } from "../../../tipos/Cliente";
 import { TipoDocumento } from "../../../tipos/Enums/TipoDocumentos";
 import { Venta } from "../../../tipos/Venta";
 import DateRange from "../../elementos/Forms/dateRange";
-import DownloadFile from "../../elementos/botones/downloadFile";
 import { Paginador } from "../../elementos/Forms/paginador";
 import VerVenta from "../../modal/verVenta";
 import SkeletonCard from "../../Skeletons/skeletonCard";
 import UploadFileRestricted from "../../elementos/botones/uploadFileRestricted";
-import { FetchVenta, FetchVentaByQuery, FetchVentas, FetchVentasByDateRange } from "../../../utils/fetches/ventasFetches";
+import { FetchVentaByQuery, FetchVentas, FetchVentasByDateRange } from "../../../utils/fetches/ventasFetches";
+import DownloadVentasFile from "../../elementos/botones/downloadVentasFile";
 
 const SalesPage = () => {
     const [Ventas, setVentas] = useState<Venta[]>([]);
@@ -74,7 +73,7 @@ const SalesPage = () => {
             <div className="flex w-full h-auto py-4">
                 <div className="flex justify-start w-1/3 h-full gap-4 items-start">
                     <UploadFileRestricted extension="json" tipoDocumento={TipoDocumento.Ventas} />
-                    <DownloadFile tipoDocumento={TipoDocumento.Ventas} />
+                    <DownloadVentasFile tipoDocumento={TipoDocumento.Ventas} />
                 </div>
                 <div className="flex w-2/3 gap-4 justify-end">
                     <DateRange dateRange={dateRange} setDateRange={setDateRange} endDate={endDate} startDate={startDate} />

@@ -3,10 +3,9 @@ import { useState } from "react";
 import useEmpleadoContext from "../../../../context/empleadoContext";
 import { Roles } from "../../../../tipos/Enums/Roles";
 import { TipoDocumento } from "../../../../tipos/Enums/TipoDocumentos";
-import { notifyError, notifyPromise, notifySuccess } from "../../../../utils/toastify";
 import DownloadFileModal from "../../../modal/downloadFileModal";
 
-const DownloadFile = (props: { tipoDocumento: TipoDocumento }) => {
+const DownloadCierresFile = (props: { tipoDocumento: TipoDocumento }) => {
     const [showModal, setModal] = useState<boolean>(false);
     const { Empleado } = useEmpleadoContext();
 
@@ -37,4 +36,4 @@ const DownloadFile = (props: { tipoDocumento: TipoDocumento }) => {
     );
 }
 
-export default DownloadFile;
+export default DownloadCierresFile;

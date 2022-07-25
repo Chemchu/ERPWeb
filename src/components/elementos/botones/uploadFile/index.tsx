@@ -1,12 +1,12 @@
 import useEmpleadoContext from "../../../../context/empleadoContext";
 import { Roles } from "../../../../tipos/Enums/Roles";
 import { TipoDocumento } from "../../../../tipos/Enums/TipoDocumentos";
-import { notifyError, notifyLoading, notifyPromise, notifySuccess } from "../../../../utils/toastify";
+import { notifyError, notifyLoading } from "../../../../utils/toastify";
 
-const UploadFile = (props: { extension?: string, tipoDocumento: TipoDocumento }) => {
+const UploadFile = (props: { extension?: string[], tipoDocumento: TipoDocumento }) => {
     const { Empleado } = useEmpleadoContext();
 
-    const TIPOS_PERMITIDOS: string[] = props.extension ? [props.extension] : ["csv", "xlsx", "xls"];
+    const TIPOS_PERMITIDOS: string[] = props.extension ? props.extension : ["csv", "xlsx", "xls"];
     const TIPOS_PERMITIDOS_CON_PUNTO: string = props.extension ? "." + props.extension : ".csv, .xlsx, .xls";
 
     const handleChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -44,7 +44,7 @@ const UploadFile = (props: { extension?: string, tipoDocumento: TipoDocumento })
         }
     };
 
-    if (Empleado.rol === Roles.Cajero) {
+    if (Empleado.rol !== Roles.Administrador) {
         return (
             <></>
         )

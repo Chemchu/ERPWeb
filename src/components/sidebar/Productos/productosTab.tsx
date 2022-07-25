@@ -7,7 +7,7 @@ import VerProducto from "../../modal/verProducto";
 import { notifyWarn } from "../../../utils/toastify";
 import UploadFile from "../../elementos/botones/uploadFile";
 import { TipoDocumento } from "../../../tipos/Enums/TipoDocumentos";
-import DownloadFile from "../../elementos/botones/downloadFile";
+import DownloadProductsFile from "../../elementos/botones/downloadProductsFile";
 import AddProducto from "../../modal/addProducto";
 import NuevoBoton from "../../elementos/botones/nuevoBoton";
 import { FetchProductoByQuery, FetchProductos } from "../../../utils/fetches/productosFetches";
@@ -48,8 +48,8 @@ const ProductPage = () => {
             <div className="flex w-full h-auto py-4">
                 <div className="flex gap-4 w-full h-full justify-start">
                     <NuevoBoton accionEvent={() => setAddProdModal(true)} />
-                    <UploadFile tipoDocumento={TipoDocumento.Productos} />
-                    <DownloadFile tipoDocumento={TipoDocumento.Productos} />
+                    <UploadFile tipoDocumento={TipoDocumento.Productos} extension={["csv"]} />
+                    <DownloadProductsFile productos={Productos} />
                 </div>
                 <div className="flex gap-2">
                     <input autoFocus={true} className="rounded-lg border appearance-none shadow-lg w-40 xl:w-96 h-full py-2 px-4 bg-white text-gray-700 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-600" placeholder="Buscar..."

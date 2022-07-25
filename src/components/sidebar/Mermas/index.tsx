@@ -5,7 +5,7 @@ import SkeletonCard from "../../Skeletons/skeletonCard";
 import { notifyWarn } from "../../../utils/toastify";
 import UploadFile from "../../elementos/botones/uploadFile";
 import { TipoDocumento } from "../../../tipos/Enums/TipoDocumentos";
-import DownloadFile from "../../elementos/botones/downloadFile";
+import DownloadProductsFile from "../../elementos/botones/downloadProductsFile";
 import AddProducto from "../../modal/addProducto";
 import { Merma } from "../../../tipos/Merma";
 import NuevoBoton from "../../elementos/botones/nuevoBoton";
@@ -46,7 +46,7 @@ const MermaPage = () => {
                 <div className="flex gap-4 w-full h-full justify-start">
                     <NuevoBoton accionEvent={() => { setAddMermaModal(true); }} />
                     <UploadFile tipoDocumento={TipoDocumento.Productos} />
-                    <DownloadFile tipoDocumento={TipoDocumento.Productos} />
+                    {/* <DownloadProductsFile tipoDocumento={TipoDocumento.Productos} /> */}
                 </div>
                 <div className="flex gap-2">
                     <input autoFocus={true} className="rounded-lg border appearance-none shadow-lg w-40 xl:w-96 h-full py-2 px-4 bg-white text-gray-700 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-600" placeholder="Buscar..."
