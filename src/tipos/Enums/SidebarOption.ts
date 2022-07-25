@@ -8,5 +8,6 @@ export enum SidebarOption {
     Estadisticas = "estadisticas",
     Empleados = "empleados",
     Ajustes = "ajustes",
-    Salir = "salir"
+    Salir = "salir",
+    Proveedores = "proveedores"
 }

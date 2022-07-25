@@ -296,11 +296,11 @@ const SidebarDerecho = React.memo((props: {
                 <GenerarProductList productosEnCarrito={ProductosEnCarrito} setPropiedadProducto={SetPropiedadProd} />
             </div>
             <div className="h-1/4 p-4 w-full">
-                <div>
+                <div className="relative">
                     {DescuentoOpen &&
-                        <div className="h-auto border-t-2 border-2 p-2 border-blue-400 rounded-xl">
-                            <div className="flex text-left text-sm">
-                                <div className="flex self-center gap-4">
+                        <div className="absolute block bg-blue-200 duration-300 transform -translate-y-16 top-4 z-10 origin-[0] border-t-2 border-2 border-blue-400 rounded-lg p-2">
+                            <div className="flex w-full items-center justify-center text-sm">
+                                <div className="flex self-center gap-2">
                                     <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 9V7a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2m2 4h10a2 2 0 002-2v-6a2 2 0 00-2-2H9a2 2 0 00-2 2v6a2 2 0 002 2zm7-5a2 2 0 11-4 0 2 2 0 014 0z" />
                                     </svg>
@@ -315,7 +315,7 @@ const SidebarDerecho = React.memo((props: {
                                     </div>
                                 </div>
 
-                                <div className="flex ml-auto gap-4">
+                                <div className="flex ml-auto gap-2">
                                     <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z" />
                                     </svg>
@@ -375,10 +375,12 @@ const SidebarDerecho = React.memo((props: {
                                 </>
                                 :
                                 <>
-                                    <motion.button disabled className={`bg-blue-400 h-12 shadow rounded-lg text-white focus:outline-none`}>
+                                    <motion.button className={`bg-blue-400 h-12 shadow rounded-lg text-white focus:outline-none`}
+                                        onClick={() => notifyError("No se puede realizar una venta con un producto de 0.00€")}>
                                         PAGAR
                                     </motion.button>
-                                    <motion.button disabled className="bg-blue-400 h-12 shadow rounded-lg text-white focus:outline-none">
+                                    <motion.button className="bg-blue-400 h-12 shadow rounded-lg text-white focus:outline-none"
+                                        onClick={() => notifyError("No se puede realizar una venta con un producto de 0.00€")}>
                                         COBRO RAPIDO
                                     </motion.button>
                                 </>

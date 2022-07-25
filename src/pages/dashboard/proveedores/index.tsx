@@ -3,6 +3,8 @@ import { GetServerSideProps } from "next";
 import { useEffect, useState } from "react";
 import EnDesarrolloPage from "../../../components/enDesarrollo";
 import ClientesPage from "../../../components/sidebar/Clientes";
+import ProveedoresPage from "../../../components/sidebar/Proveedores";
+import AlbaranesPage from "../../../components/sidebar/Proveedores/Albaranes";
 import useEmpleadoContext from "../../../context/empleadoContext";
 import getJwtFromString from "../../../hooks/jwt";
 import DashboardLayout from "../../../layout";
@@ -39,6 +41,22 @@ const Proveedores = (props: { EmpleadoSesion: SesionEmpleado }) => {
                         Proveedores
                     </span>
                 </Tab>
+                <Tab
+                    key={"AlbaranesTab"}
+                    className={(props: { selected: any }) =>
+                        classNames(
+                            'w-1/4 h-full text-sm rounded-t-2xl border-t border-x',
+                            'focus:outline-none ring-white ring-opacity-60',
+                            props.selected
+                                ? 'bg-white shadow-lg'
+                                : 'bg-gray-200 hover:bg-blue-400 hover:text-white'
+                        )
+                    }
+                >
+                    <span className='text-xl'>
+                        Albaranes
+                    </span>
+                </Tab>
 
             </Tab.List>
             <Tab.Panels className="flex flex-col h-90v w-full pr-2">
@@ -50,6 +68,18 @@ const Proveedores = (props: { EmpleadoSesion: SesionEmpleado }) => {
                     )}
                 >
                     <EnDesarrolloPage />
+                    {/* <ProveedoresPage /> */}
+                </Tab.Panel>
+
+                <Tab.Panel
+                    key={"AlbaranesContent"}
+                    className={classNames(
+                        'pb-3 h-full w-full',
+                        'focus:outline-none ring-white ring-opacity-60'
+                    )}
+                >
+                    <EnDesarrolloPage />
+                    {/* <AlbaranesPage /> */}
                 </Tab.Panel>
             </Tab.Panels>
         </Tab.Group >

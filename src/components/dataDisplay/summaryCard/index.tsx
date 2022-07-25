@@ -1,6 +1,53 @@
+import { useEffect, useState } from "react";
 import { Summary } from "../../../tipos/Summary";
 
 const SummaryCard = (props: { titulo: string, data: Summary | undefined }) => {
+    const [totalMañana, setTotalMañana] = useState<number>(0)
+    const [totalTarde, setTotalTarde] = useState<number>(0)
+    const [totalMañanaEfectivo, setTotalMañanaEfectivo] = useState<number>(0)
+    const [totalTardeEfectivo, setTotalTardeEfectivo] = useState<number>(0)
+    const [totalMañanaTarjeta, setTotalMañanaTarjeta] = useState<number>(0)
+    const [totalTardeTarjeta, setTotalTardeTarjeta] = useState<number>(0)
+
+    useEffect(() => {
+        if (!props.data) { return }
+
+        let tMañana = 0
+        let tMañanaEfectivo = 0
+        let tMañanaTarjeta = 0
+
+        let tTarde = 0
+        let tTardeEfectivo = 0
+        let tTardeTarjeta = 0
+        props.data.ventasPorHora.forEach((venta) => {
+            let hora = venta.hora
+            if (hora.length <= 4) {
+                hora = venta.hora.substring(0, 1)
+            }
+            else {
+                hora = venta.hora.substring(0, 2)
+            }
+
+            if (Number(hora) < 16) {
+                tMañana += venta.totalVentaHora
+                tMañanaEfectivo += venta.totalEfectivoHora
+                tMañanaTarjeta += venta.totalTarjetaHora
+            }
+            else {
+                tTarde += venta.totalVentaHora
+                tTardeEfectivo += venta.totalEfectivoHora
+                tTardeTarjeta += venta.totalTarjetaHora
+            }
+        })
+
+        setTotalMañana(tMañana)
+        setTotalTarde(tTarde)
+        setTotalMañanaEfectivo(tMañanaEfectivo)
+        setTotalMañanaTarjeta(tMañanaTarjeta)
+        setTotalTardeEfectivo(tTardeEfectivo)
+        setTotalTardeTarjeta(tTardeTarjeta)
+    }, [props.data])
+
     if (!props.data) {
         return (
             <div className="w-full border rounded-xl mx-auto">
@@ -13,41 +60,24 @@ const SummaryCard = (props: { titulo: string, data: Summary | undefined }) => {
     }
 
     return (
-        <div className="md:p-6 p-4 bg-white shadow-lg hover:shadow-xl rounded-lg flex justify-between dark:bg-gray-800 md:items-center md:flex-row flex-col gap-12">
-            <div className="flex text-gray-700 justify-between w-full">
-                <div>
-                    <span className="text-bold text-xl text-gray-700 dark:text-gray-400 block">
-                        {props.titulo}
-                    </span>
-                    <span className="text-4xl md:text-5xl mt-2 font-black block">
-                        {(props.data.totalVentas).toFixed(2)}
-                        <span className="text-xl">
-                            €
-                        </span>
-                    </span>
-                </div>
-                <div>
-                    <span className="text-left text-xl md:block">
-                        Efectivo
-                    </span>
-                    <span className="text-4xl md:text-5xl mt-2 font-black block">
-                        {(props.data.totalEfectivo).toFixed(2)}
-                        <span className="text-xl">
-                            €
-                        </span>
-                    </span>
-                </div>
-                <div>
-                    <span className="text-left text-xl md:block">
-                        Tarjeta
-                    </span>
-                    <span className="text-4xl md:text-5xl mt-2 font-black block">
-                        {(props.data.totalTarjeta).toFixed(2)}
-                        <span className="text-xl">
-                            €
-                        </span>
-                    </span>
-                </div>
+        <div className="md:p-6 p-4 bg-white shadow-lg hover:shadow-xl rounded-lg flex justify-between dark:bg-gray-800 md:items-center gap-4">
+            <div className="flex flex-col">
+                <span className="text-2xl text-gray-700 font-semibold pb-2">Total</span>
+                <span>Ventas: {props.data.totalVentas.toFixed(2)}€</span>
+                <span>Efectivo: {props.data.totalEfectivo.toFixed(2)}€</span>
+                <span>Tarjeta: {props.data.totalTarjeta.toFixed(2)}€</span>
+            </div>
+            <div className="flex flex-col">
+                <span className="text-2xl text-gray-700 font-semibold pb-2">Mañana</span>
+                <span>Ventas: {totalMañana.toFixed(2)}€</span>
+                <span>Efectivo: {totalMañanaEfectivo.toFixed(2)}€</span>
+                <span>Tarjeta: {totalMañanaTarjeta.toFixed(2)}€</span>
+            </div>
+            <div className="flex flex-col">
+                <span className="text-2xl text-gray-700 font-semibold pb-2">Tarde</span>
+                <span>Ventas: {totalTarde.toFixed(2)}€</span>
+                <span>Efectivo: {totalTardeEfectivo.toFixed(2)}€</span>
+                <span>Tarjeta: {totalTardeTarjeta.toFixed(2)}€</span>
             </div>
         </div>
 
