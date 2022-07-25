@@ -7,7 +7,7 @@ import { Paginador } from "../../elementos/Forms/paginador";
 import UploadFile from "../../elementos/botones/uploadFile";
 import SkeletonCard from "../../Skeletons/skeletonCard";
 import NuevoBoton from "../../elementos/botones/nuevoBoton";
-import DownloadFile from "../../elementos/botones/downloadFile";
+import DownloadProductsFile from "../../elementos/botones/downloadProductsFile";
 import VerCliente from "../../modal/verCliente";
 import AddCliente from "../../modal/addCliente";
 import { FetchClientes, FetchClientesByQuery } from "../../../utils/fetches/clienteFetches";
@@ -48,7 +48,7 @@ const ClientesPage = () => {
                 <div className="flex gap-4 w-full h-full">
                     <NuevoBoton accionEvent={() => setModal(true)} />
                     <UploadFile tipoDocumento={TipoDocumento.Clientes} />
-                    <DownloadFile tipoDocumento={TipoDocumento.Clientes} />
+                    {/* <DownloadProductsFile tipoDocumento={TipoDocumento.Clientes} /> */}
                 </div>
                 <div className="flex gap-2">
                     <input autoFocus={true} className="rounded-lg border appearance-none shadow-lg w-72 xl:w-96 h-full py-2 px-4 bg-white text-gray-700 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-600" placeholder="Cliente a buscar"
@@ -92,7 +92,7 @@ const ClientesPage = () => {
                     <div className="flex gap-4 w-full h-full">
                         <NuevoBoton accionEvent={() => setModal(true)} />
                         <UploadFile tipoDocumento={TipoDocumento.Clientes} />
-                        <DownloadFile tipoDocumento={TipoDocumento.Clientes} />
+                        {/* <DownloadProductsFile tipoDocumento={TipoDocumento.Clientes} /> */}
                     </div>
                     <div className="flex gap-2">
                         <input autoFocus={true} className="rounded-lg border appearance-none shadow-lg w-72 xl:w-96 h-full py-2 px-4 bg-white text-gray-700 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-600" placeholder="Cliente a buscar"
@@ -139,7 +139,7 @@ const ClientesPage = () => {
                 <div className="flex gap-4 w-full h-full">
                     <NuevoBoton accionEvent={() => setModal(true)} />
                     <UploadFile tipoDocumento={TipoDocumento.Clientes} />
-                    <DownloadFile tipoDocumento={TipoDocumento.Clientes} />
+                    {/* <DownloadProductsFile tipoDocumento={TipoDocumento.Clientes} /> */}
                 </div>
                 <div className="flex gap-2">
                     <input autoFocus={true} className="rounded-lg border appearance-none shadow-lg w-72 xl:w-96 h-full py-2 px-4 bg-white text-gray-700 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-600" placeholder="Cliente a buscar"

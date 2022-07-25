@@ -29,7 +29,8 @@
     "react-dom": "^18.1.0",
     "react-to-print": "^2.14.4",
     "react-toastify": "^9.0.4",
-    "recharts": "^2.1.12"
+    "recharts": "^2.1.12",
+    "xlsx": "^0.18.5"
   },
   "devDependencies": {
     "@types/node": "16.11.11",

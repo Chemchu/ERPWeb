@@ -19,7 +19,7 @@ const Etiqueta = React.forwardRef((props: { nombre: string, ean: string, precio:
             </span>
             <div className="flex justify-between items-center w-full text-center text-lg px-2">
                 <svg id="ean-13" />
-                <span className="w-1/3 text-2xl text-right font-semibold">
+                <span className="w-1/3 text-4xl text-right font-semibold">
                     {props.precio.toFixed(2)}€
                 </span>
             </div>

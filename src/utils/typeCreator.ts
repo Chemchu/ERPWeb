@@ -18,19 +18,15 @@ function CreateProduct(p: any): Producto | undefined {
             alta: p.alta,
             cantidad: p.cantidad | 0,
             cantidadRestock: p.cantidadRestock | 0,
-            descripcion: p.descripcion ? p.descripcion : "",
             ean: p.ean,
             familia: p.familia,
-            img: p.img,
             iva: p.iva,
             nombre: p.nombre,
             precioCompra: p.precioCompra,
             precioVenta: p.precioVenta,
-            tags: p.tags,
-            promociones: p.promociones,
             proveedor: p.proveedor,
             margen: p.margen
-        } as unknown as Producto
+        } as Producto
 
         return producto;
     }
