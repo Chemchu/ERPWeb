@@ -12,6 +12,8 @@ import AddProducto from "../../modal/addProducto";
 import NuevoBoton from "../../elementos/botones/nuevoBoton";
 import { FetchProductoByQuery, FetchProductos } from "../../../utils/fetches/productosFetches";
 import { ValidateSearchString } from "../../../utils/validator";
+import SimpleListBox from "../../elementos/Forms/simpleListBox";
+import { TipoProductos } from "../../../tipos/Enums/TipoProductos";
 
 const arrayNum = [...Array(8)];
 
@@ -20,27 +22,54 @@ const ProductPage = () => {
     const [ProductosFiltrados, setProductosFiltradas] = useState<Producto[] | undefined>();
     const [addProdModal, setAddProdModal] = useState<boolean>(false);
     const [Productos, SetProductos] = useState<Producto[]>([]);
+    const [tipoProductos, setTipoProductos] = useState<TipoProductos>(TipoProductos.Todos)
     const [isLoading, setLoading] = useState<boolean>(true);
+    const [isMounted, setIsMounted] = useState<boolean>(true);
 
     useEffect(() => {
         const GetAllData = async () => {
             SetProductos(await FetchProductos());
             setLoading(false);
+            setIsMounted(true)
         }
         GetAllData();
     }, []);
 
     useEffect(() => {
+        if (!isMounted) { return }
+
+        const GetAllData = async () => {
+            if (filtro) {
+                if (!ValidateSearchString(filtro)) { notifyWarn("Producto inválido"); return; }
+
+                setProductosFiltradas(await FetchProductoByQuery(filtro, tipoProductos));
+            }
+            else {
+                SetProductos(await FetchProductos(tipoProductos));
+            }
+        }
+        GetAllData();
+    }, [tipoProductos]);
+
+    useEffect(() => {
+        if (!isMounted) { return }
+
         if (filtro === "") {
             setProductosFiltradas(undefined);
         }
     }, [filtro])
 
     const Filtrar = async (f: string) => {
+        if (!isMounted) { return }
+
         if (f === "") { return; }
         if (!ValidateSearchString(f)) { notifyWarn("Producto inválido"); return; }
 
-        setProductosFiltradas(await FetchProductoByQuery(f));
+        setProductosFiltradas(await FetchProductoByQuery(f, tipoProductos));
+    }
+
+    const SetTipoProductos = (e: string) => {
+        setTipoProductos(TipoProductos[e as keyof typeof TipoProductos])
     }
 
     return (
@@ -51,21 +80,24 @@ const ProductPage = () => {
                     <UploadFile tipoDocumento={TipoDocumento.Productos} extension={["csv"]} />
                     <DownloadProductsFile productos={Productos} />
                 </div>
-                <div className="flex gap-2">
-                    <input autoFocus={true} className="rounded-lg border appearance-none shadow-lg w-40 xl:w-96 h-full py-2 px-4 bg-white text-gray-700 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-600" placeholder="Buscar..."
-                        onChange={(e) => { setFiltro(e.target.value); }} onKeyPress={async (e) => { e.key === "Enter" && await Filtrar(filtro) }} />
+                <div>
+                    <div className="flex gap-2 items-center">
+                        <input autoFocus={true} className="rounded-lg border appearance-none shadow-lg w-40 xl:w-96 h-full py-2 px-4 bg-white text-gray-700 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-600" placeholder="Buscar..."
+                            onChange={(e) => { setFiltro(e.target.value); }} onKeyPress={async (e) => { e.key === "Enter" && await Filtrar(filtro) }} />
 
-                    {
-                        filtro ?
-                            <button className="px-4 py-2 font-semibold text-white bg-blue-500 rounded-lg shadow-md hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-400 focus:ring-offset-2 focus:ring-offset-purple-200"
-                                onClick={async (e) => { e.preventDefault(); await Filtrar(filtro) }}>
-                                Filtrar
-                            </button>
-                            :
-                            <button disabled className="px-4 py-2 font-semibold text-white bg-blue-300 rounded-lg shadow-md cursor-default">
-                                Filtrar
-                            </button>
-                    }
+                        {
+                            filtro ?
+                                <button className="px-4 py-2 font-semibold text-white bg-blue-500 rounded-lg shadow-md hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-400 focus:ring-offset-2 focus:ring-offset-purple-200"
+                                    onClick={async (e) => { e.preventDefault(); await Filtrar(filtro) }}>
+                                    Filtrar
+                                </button>
+                                :
+                                <button disabled className="px-4 py-2 font-semibold text-white bg-blue-300 rounded-lg shadow-md cursor-default">
+                                    Filtrar
+                                </button>
+                        }
+                    </div>
+                    <SimpleListBox elementos={[TipoProductos.Todos, TipoProductos.Alta, TipoProductos.Baja]} setElemento={SetTipoProductos} defaultValue={TipoProductos.Todos} />
                 </div>
             </div>
             <TablaProductos isLoading={isLoading} Productos={ProductosFiltrados || Productos} SetProductos={SetProductos} />

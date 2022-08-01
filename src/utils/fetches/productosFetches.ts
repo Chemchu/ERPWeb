@@ -2,8 +2,9 @@ import { Producto } from "../../tipos/Producto";
 import { notifyError, notifySuccess } from "../toastify";
 import { CreateProductList } from "../typeCreator";
 import queryString from 'query-string';
+import { TipoProductos } from "../../tipos/Enums/TipoProductos";
 
-export const FetchProductos = async (): Promise<Producto[]> => {
+export const FetchProductos = async (tipoProductos?: TipoProductos): Promise<Producto[]> => {
     try {
         let prodRes = [] as Producto[];
         const pResponse = await fetch('/api/productos');
@@ -13,7 +14,14 @@ export const FetchProductos = async (): Promise<Producto[]> => {
         const resJson = await pResponse.json();
 
         prodRes = CreateProductList(resJson.data);
-        return prodRes.filter((p) => { return p.alta === true });
+        if (tipoProductos === TipoProductos.Alta) {
+            return prodRes.filter((p) => { return p.alta === true });
+        }
+        if (tipoProductos === TipoProductos.Baja) {
+            return prodRes.filter((p) => { return p.alta === false });
+        }
+
+        return prodRes
     }
     catch (e: any) {
         notifyError(e);
@@ -22,7 +30,7 @@ export const FetchProductos = async (): Promise<Producto[]> => {
 
 }
 
-export const FetchProductoByQuery = async (userQuery: string): Promise<Producto[]> => {
+export const FetchProductoByQuery = async (userQuery: string, tipoProductos?: TipoProductos): Promise<Producto[]> => {
     try {
         let prodRes = [] as Producto[];
         let id: any = new Object;
@@ -37,7 +45,14 @@ export const FetchProductoByQuery = async (userQuery: string): Promise<Producto[
         const pJson = await pResponse.json();
 
         prodRes = CreateProductList(pJson.productos);
-        return prodRes.filter((p) => { return p.alta === true });
+        if (tipoProductos === TipoProductos.Alta) {
+            return prodRes.filter((p) => { return p.alta === true });
+        }
+        if (tipoProductos === TipoProductos.Baja) {
+            return prodRes.filter((p) => { return p.alta === false });
+        }
+
+        return prodRes
     }
     catch (e) {
         console.log(e);
