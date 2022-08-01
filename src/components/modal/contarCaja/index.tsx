@@ -11,7 +11,7 @@ const ContarCaja = (props: { showItself: Function, setTotal: Function, desglose:
             t += cantidad * moneda
         })
 
-        props.setTotal(t)
+        props.setTotal(t.toFixed(2))
     }
 
     const LimpiarDesglose = () => {
@@ -80,7 +80,7 @@ const ContarMoneda = (props: { valorMoneda: number, desglose: Map<number, number
         const cantidadMonedas = props.desglose.get(props.valorMoneda);
 
         if (cantidadMonedas) {
-            setCantidad(cantidadMonedas.toFixed(2))
+            setCantidad(String(cantidadMonedas))
             return;
         }
 
