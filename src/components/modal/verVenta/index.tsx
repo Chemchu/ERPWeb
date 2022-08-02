@@ -197,14 +197,15 @@ const VerVenta = (props: { venta: Venta | undefined, setModal: Function }) => {
                             </button>
                         </div>
                         {
-                            PagoDelCliente && qrImage && fecha &&
+                            PagoDelCliente && qrImage &&
+                            props.venta &&
                             <div style={{ display: "none" }}>
                                 <Ticket
                                     ref={componentRef}
                                     pagoCliente={PagoDelCliente}
                                     productosVendidos={props.venta.productos}
-                                    fecha={props.venta.createdAt}
                                     qrImage={qrImage}
+                                    venta={props.venta}
                                 />
                             </div>
                         }

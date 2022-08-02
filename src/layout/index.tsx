@@ -1,14 +1,18 @@
-import { AnimatePresence, motion } from "framer-motion";
+import "react-toastify/dist/ReactToastify.css";
+import { motion } from "framer-motion";
 import { useRouter } from "next/router";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import Sidebar from "../components/sidebar";
 import NextProgress from "next-progress";
 import { ProductCarritoContextProvider } from "../context/productosEnCarritoContext";
 import { EmpleadoContextProvider } from "../context/empleadoContext";
 import { ToastContainer } from "react-toastify";
-import "react-toastify/dist/ReactToastify.css";
 import { SidebarOption } from "../tipos/Enums/SidebarOption";
 import { ComprasAparcadasContextProvider } from "../context/comprasAparcadas";
+import useDatosTiendaContext, { DatosTiendaContextProvider } from "../context/datosTienda";
+import Cookies from 'js-cookie'
+import { notifyInfo } from "../utils/toastify";
+import StoreDataModal from "../components/modal/storeDataModal";
 
 const variants = {
     initial: {
@@ -33,11 +37,26 @@ const variants = {
 
 const DashboardLayout = React.memo(({ children }: { children: React.ReactNode }) => {
     const [isSidebarCollapsed, setSidebarCollapsed] = useState<boolean>(false);
+    const [showStoreDataModal, setStoreDataModal] = useState<boolean>(false);
     const [IndexSidebar, setSidebarIndex] = useState<SidebarOption>(SidebarOption.Inicio);
+    const { SetNombreTienda, SetDireccionTienda, SetCIF } = useDatosTiendaContext();
+
+    useEffect(() => {
+        const tiendaInfo = Cookies.get("storeData")
+        if (!tiendaInfo) {
+            notifyInfo("Por favor, introduzca los datos acerca de la tienda")
+            setStoreDataModal(true)
+            return;
+        }
+
+        const data = JSON.parse(tiendaInfo)
+        SetNombreTienda(data.nombre)
+        SetDireccionTienda(data.direccion)
+        SetCIF(data.cif)
+    }, [IndexSidebar])
 
     {/* router.route es lo que hace que funcione el exit del AnimatePresence */ }
     const router = useRouter();
-
     return (
         <EmpleadoContextProvider>
             <ProductCarritoContextProvider>
@@ -50,6 +69,7 @@ const DashboardLayout = React.memo(({ children }: { children: React.ReactNode })
                                 <motion.div key={router.route} className="w-full h-full" initial={variants.initial} animate={variants.animate} exit={variants.exit}>
                                     {children}
                                 </motion.div>
+                                {showStoreDataModal && <StoreDataModal showModal={setStoreDataModal} />}
                             </div>
                             <ToastContainer
                                 position="bottom-right"
@@ -66,7 +86,6 @@ const DashboardLayout = React.memo(({ children }: { children: React.ReactNode })
                 </ComprasAparcadasContextProvider>
             </ProductCarritoContextProvider>
         </EmpleadoContextProvider>
-
     );
 });
 

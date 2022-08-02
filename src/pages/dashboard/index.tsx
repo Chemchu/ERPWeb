@@ -1,4 +1,4 @@
-import { GetServerSideProps, InferGetServerSidePropsType } from "next";
+import { GetServerSideProps } from "next";
 import React, { useEffect, useState } from "react";
 import SummaryCard from "../../components/dataDisplay/summaryCard";
 import FinanceCard from "../../components/dataDisplay/finaceCard";

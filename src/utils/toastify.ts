@@ -36,6 +36,18 @@ export const notifyWarn = (msg: string) => {
     });
 }
 
+export const notifyInfo = (msg: string) => {
+    toast.info(msg, {
+        position: "bottom-right",
+        autoClose: 3000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: false,
+        draggable: true,
+        progress: undefined,
+    });
+}
+
 export const notifyPromise = (promise: Promise<any>, msgInicial: string, msgExito?: string, msgError?: string) => {
     toast.promise(promise,
         {

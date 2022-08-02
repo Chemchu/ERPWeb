@@ -19,6 +19,7 @@
     "chart.js": "^3.8.0",
     "framer-motion": "^6.3.11",
     "graphql": "^16.2.0",
+    "js-cookie": "^3.0.1",
     "jsbarcode": "^3.11.5",
     "next": "^12.1.6",
     "next-progress": "^2.2.0",
@@ -33,6 +34,7 @@
     "xlsx": "^0.18.5"
   },
   "devDependencies": {
+    "@types/js-cookie": "^3.0.2",
     "@types/node": "16.11.11",
     "@types/react-datepicker": "^4.3.4",
     "autoprefixer": "^10.4.0",

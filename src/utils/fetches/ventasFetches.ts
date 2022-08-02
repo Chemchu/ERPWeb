@@ -91,7 +91,7 @@ export const FetchVentasByDateRange = async (fechaIni: Date, fechaFin: Date): Pr
     }
 }
 
-export const AddVenta = async (pagoCliente: CustomerPaymentInformation, productosEnCarrito: ProductoVendido[], empleado: SesionEmpleado, clientes: Cliente[], tpv: string): Promise<{ data: any, error: boolean }> => {
+export const AddVenta = async (pagoCliente: CustomerPaymentInformation, productosEnCarrito: ProductoVendido[], empleado: SesionEmpleado, clientes: Cliente[], tpv: string): Promise<{ data: Venta | undefined, error: boolean }> => {
     try {
         let cliente;
         if (!pagoCliente.cliente) {
