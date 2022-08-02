@@ -10,13 +10,13 @@ const Ticket = React.forwardRef((props: { pagoCliente: CustomerPaymentInformatio
             <div className="w-full h-5/6 rounded-3xl bg-white z-10 ">
                 <div className="flex flex-col gap-1">
                     <h2 className="text-xl font-semibold text-center ">ERPWeb</h2>
+                    <div className="text-center">Venta: {props.venta._id}</div>
                     <div className="text-center">Fecha: {new Date(Number(props.venta.createdAt)).toLocaleString()}</div>
                     <div className="flex flex-col text-center">
                         <div>Cliente: {props.pagoCliente.cliente.nombre} </div>
                         {props.pagoCliente.cliente.nif && props.pagoCliente.cliente.nif !== "General" && <div>CIF: {props.pagoCliente.cliente.nif} </div>}
                         {props.pagoCliente.cliente.calle && props.pagoCliente.cliente.calle !== "General" && <div>Dirección: {props.pagoCliente.cliente.calle} </div>}
                         {props.pagoCliente.cliente.cp && props.pagoCliente.cliente.cp !== "General" && <div>Código postal: {props.pagoCliente.cliente.cp} </div>}
-                        <div>{props.venta._id}</div>
                     </div>
                 </div>
                 <div id="receipt-content" className="text-left w-full h-5/6 p-4">
