@@ -14,7 +14,7 @@ const Dropdown = (props: { titulo?: string, elementos: string[], selectedElement
     return (
         <Combobox as="div" className="relative" value={props.selectedElemento} onChange={(e) => { props.setElemento(e) }}>
             <Combobox.Label>{props.titulo}</Combobox.Label>
-            <Combobox.Input className="rounded-lg flex-1 border w-full py-2 px-4 bg-white placeholder-gray-400 shadow-sm text-base focus:outline-none focus:ring-1 focus:ring-blue-600 focus:border-transparent" onChange={(event) => setQuery(event.target.value)} />
+            <Combobox.Input className="rounded-lg flex-1 border w-full py-2 px-4 bg-white placeholder-gray-400 shadow-sm text-base focus:outline-none focus:ring-1 focus:ring-blue-600 focus:border-transparent" onChange={(event: any) => setQuery(event.target.value)} />
             <Transition
                 leave="transition ease-in duration-100"
                 leaveFrom="opacity-100"

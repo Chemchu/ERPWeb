@@ -2,19 +2,21 @@ import React from "react";
 import { CustomerPaymentInformation } from "../../../tipos/CustomerPayment";
 import { ProductoVendido } from "../../../tipos/ProductoVendido";
 import Image from "next/image";
+import { Venta } from "../../../tipos/Venta";
 
-const Ticket = React.forwardRef((props: { pagoCliente: CustomerPaymentInformation, productosVendidos: ProductoVendido[], fecha: string, qrImage: string }, ref: React.LegacyRef<HTMLDivElement>) => {
+const Ticket = React.forwardRef((props: { pagoCliente: CustomerPaymentInformation, productosVendidos: ProductoVendido[], qrImage: string, venta: Venta }, ref: React.LegacyRef<HTMLDivElement>) => {
     return (
         <div className="flex flex-col gap-4 items-center bg-white rounded-2xl w-full h-auto text-xs" ref={ref}>
             <div className="w-full h-5/6 rounded-3xl bg-white z-10 ">
                 <div className="flex flex-col gap-1">
                     <h2 className="text-xl font-semibold text-center ">ERPWeb</h2>
-                    <div className="text-center">Fecha: {new Date(Number(props.fecha)).toLocaleString()}</div>
+                    <div className="text-center">Fecha: {new Date(Number(props.venta.createdAt)).toLocaleString()}</div>
                     <div className="flex flex-col text-center">
                         <div>Cliente: {props.pagoCliente.cliente.nombre} </div>
                         {props.pagoCliente.cliente.nif && props.pagoCliente.cliente.nif !== "General" && <div>CIF: {props.pagoCliente.cliente.nif} </div>}
                         {props.pagoCliente.cliente.calle && props.pagoCliente.cliente.calle !== "General" && <div>Dirección: {props.pagoCliente.cliente.calle} </div>}
                         {props.pagoCliente.cliente.cp && props.pagoCliente.cliente.cp !== "General" && <div>Código postal: {props.pagoCliente.cliente.cp} </div>}
+                        <div>{props.venta._id}</div>
                     </div>
                 </div>
                 <div id="receipt-content" className="text-left w-full h-5/6 p-4">
@@ -69,6 +71,9 @@ const Ticket = React.forwardRef((props: { pagoCliente: CustomerPaymentInformatio
             </div>
 
             <div className="flex flex-col pb-2">
+                <span className="text-center">
+                    Le ha atendido {props.venta.vendidoPor.nombre}
+                </span>
                 <span>
                     ¡Gracias por su compra! Vuelva siempre
                 </span>

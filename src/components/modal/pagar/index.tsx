@@ -17,6 +17,7 @@ import GenerateQrBase64 from "../../../utils/generateQr";
 import { In } from "../../../utils/animations";
 import { FetchClientes } from "../../../utils/fetches/clienteFetches";
 import { AddVenta } from "../../../utils/fetches/ventasFetches";
+import { Venta } from "../../../tipos/Venta";
 
 export const ModalPagar = (props: { PagoCliente: CustomerPaymentInformation, handleModalOpen: Function, AllClientes?: Cliente[], inputRef: any }) => {
     const [dineroEntregado, setDineroEntregado] = useState<string>("0");
@@ -29,7 +30,7 @@ export const ModalPagar = (props: { PagoCliente: CustomerPaymentInformation, han
     const [NombreClienteActual, SetNombreClienteActual] = useState<string>("General");
     const [PagoDelCliente, SetPagoCliente] = useState<CustomerPaymentInformation>(props.PagoCliente);
     const [qrImage, setQrImage] = useState<any>();
-    const [fecha, setFecha] = useState<string>();
+    const [VentaResultante, setVenta] = useState<Venta>();
 
     const { ProductosEnCarrito, SetProductosEnCarrito, SetDtoEfectivo, SetDtoPorcentaje } = useProductEnCarritoContext();
     const [serverUp, setServerStatus] = useState<boolean>(false);
@@ -118,13 +119,13 @@ export const ModalPagar = (props: { PagoCliente: CustomerPaymentInformation, han
             if (!Empleado || !Empleado.TPV) { notifyError("Error con la autenticación"); return; }
             const { data, error } = await AddVenta(pagoCliente, ProductosEnCarrito, Empleado, Clientes, Empleado.TPV);
 
-            if (!error) {
-                setFecha(data.createdAt);
-                setQrImage(await GenerateQrBase64(data._id, abortController));
+            if (!error && data) {
+                setQrImage(await GenerateQrBase64(data?._id, abortController));
+                setVenta(data);
             }
             else {
-                setFecha(undefined);
                 setQrImage(undefined);
+                setVenta(undefined);
                 notifyError("Error al realizar la venta")
             }
         }
@@ -265,14 +266,14 @@ export const ModalPagar = (props: { PagoCliente: CustomerPaymentInformation, han
                         </div>
                     </div>
                     {
-                        qrImage && fecha &&
+                        qrImage && VentaResultante &&
                         <div style={{ display: "none" }}>
                             <Ticket
                                 ref={componentRef}
                                 pagoCliente={PagoDelCliente}
                                 productosVendidos={ProductosEnCarrito}
-                                fecha={fecha}
                                 qrImage={qrImage}
+                                venta={VentaResultante}
                             />
                         </div>
                     }

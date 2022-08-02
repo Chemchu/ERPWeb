@@ -10,6 +10,7 @@ import { SesionEmpleado } from "../../../../tipos/Empleado";
 import { TipoCobro } from "../../../../tipos/Enums/TipoCobro";
 import { Producto } from "../../../../tipos/Producto";
 import { ProductoVendido } from "../../../../tipos/ProductoVendido";
+import { Venta } from "../../../../tipos/Venta";
 import { FetchClientes } from "../../../../utils/fetches/clienteFetches";
 import { AddVenta } from "../../../../utils/fetches/ventasFetches";
 import GenerateQrBase64 from "../../../../utils/generateQr";
@@ -41,7 +42,7 @@ const SidebarDerecho = React.memo((props: {
     const [PagoRapido, setPagoRapido] = useState<CustomerPaymentInformation>();
     const [Pago, setPago] = useState<CustomerPaymentInformation>();
     const [qrImage, setQrImage] = useState<string>();
-    const [Fecha, setFecha] = useState<string>();
+    const [VentaResultante, setVenta] = useState<Venta>();
 
     const [Clientes, SetClientes] = useState<Cliente[]>([]);
     const componentRef = useRef(null);
@@ -189,14 +190,14 @@ const SidebarDerecho = React.memo((props: {
 
             const { data, error } = await AddVenta(pagoCliente, productosEnCarrito, emp, clientes, emp.TPV);
 
-            if (!error) {
+            if (!error && data) {
                 const abortController = new AbortController();
-                setFecha(data.createdAt);
                 setQrImage(await GenerateQrBase64(data._id, abortController));
+                setVenta(data);
             }
             else {
-                setFecha(undefined);
                 setQrImage(undefined);
+                setVenta(undefined);
                 notifyError("Error al realizar la venta");
             }
         }
@@ -394,14 +395,15 @@ const SidebarDerecho = React.memo((props: {
                 </AnimatePresence>
             </div>
             {
-                qrImage && Fecha &&
+                qrImage &&
+                VentaResultante &&
                 <div style={{ display: "none" }}>
                     <Ticket
                         ref={componentRef}
                         pagoCliente={PagoRapido}
                         productosVendidos={ProductosEnCarrito}
-                        fecha={Fecha}
                         qrImage={qrImage}
+                        venta={VentaResultante}
                     />
                 </div>
             }
