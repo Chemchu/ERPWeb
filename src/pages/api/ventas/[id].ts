@@ -1,7 +1,8 @@
 import { NextApiRequest, NextApiResponse } from "next"
-import { ADD_SALES_FILE, QUERY_SALE, QUERY_SALES } from "../../../utils/querys";
+import { ADD_SALES_FILE, QUERY_SALE, QUERY_SALES, UPDATE_SALE } from "../../../utils/querys";
 import GQLQuery, { GQLMutate } from "../../../utils/serverFetcher";
 import queryString from 'query-string';
+import { Venta } from "../../../tipos/Venta";
 
 const handler = async (req: NextApiRequest, res: NextApiResponse) => {
     if (!req.query.id) { return res.status(300).json({ message: `No se puede recibir una petición sin param por esta ruta`, successful: false }); }
@@ -17,9 +18,48 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
             if (Object.keys(query).length > 0) { return await GetSalesByQuery(query, res); }
             else { return await GetSale(req, res); }
 
+        case 'PUT':
+            return await UpdateVenta(req, res);
+
         default:
-            res.setHeader('Allow', ['GET']);
+            res.setHeader('Allow', ['GET', 'POST', 'PUT']);
             res.status(405).end(`Method ${req.method} Not Allowed`);
+    }
+}
+
+const UpdateVenta = async (req: NextApiRequest, res: NextApiResponse) => {
+    try {
+        const venta: Venta = req.body;
+        const apiResponse = await (await GQLMutate({
+            mutation: UPDATE_SALE,
+            variables: {
+                "id": venta._id,
+                "precioVentaTotal": venta.precioVentaTotal,
+                "tipo": venta.tipo,
+                "modificadoPor": {
+                    "_id": venta.modificadoPor._id,
+                    "nombre": venta.modificadoPor.nombre,
+                    "apellidos": venta.modificadoPor.apellidos,
+                    "rol": venta.modificadoPor.rol,
+                    "email": venta.modificadoPor.email,
+                },
+                "cliente": {
+                    "_id": venta.cliente._id,
+                    "nif": venta.cliente.nif,
+                    "nombre": venta.cliente.nombre,
+                    "calle": venta.cliente.calle,
+                    "cp": venta.cliente.cp
+                }
+            }
+        })).json();
+
+        const data = JSON.parse(apiResponse.data).updateVenta;
+        return res.status(data.successful ? 200 : 300).json({ message: data.message, successful: data.successful });
+
+    }
+    catch (e) {
+        console.log(e);
+        return res.status(500).json({ message: `Error interno: respuesta no válida por parte del servidor.`, successful: false });
     }
 }
 

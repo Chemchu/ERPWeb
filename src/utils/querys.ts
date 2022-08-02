@@ -540,3 +540,14 @@ export const ADD_CIERRES_FILE = `
       }
     }
 `;
+
+export const UPDATE_SALE = `
+mutation UpdateVenta($id: ID!, $precioVentaTotal: Float!, $tipo: String, $cliente: ClienteInput, $modificadoPor: EmpleadoInput) {
+  updateVenta(_id: $id, precioVentaTotal: $precioVentaTotal, tipo: $tipo, cliente: $cliente, modificadoPor: $modificadoPor) {
+    message
+    successful
+    _id
+    createdAt
+  }
+}
+`
