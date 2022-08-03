@@ -26,23 +26,6 @@ export const FetchVentas = async (): Promise<Venta[]> => {
     }
 }
 
-export const FetchVenta = async (id: string): Promise<Venta[]> => {
-    try {
-        let query: any = new Object;
-        query.id = id;
-        const idVenta = queryString.stringify(query);
-
-        const vRes = await fetch(`/api/ventas/${idVenta}`);
-        const ventas = await vRes.json();
-        return CreateSalesList([ventas.data]);
-    }
-    catch (e) {
-        console.error(e);
-        notifyError("Error de conexión");
-        return [];
-    }
-}
-
 export const FetchVentaByQuery = async (userQuery: string, fechas?: string[]): Promise<Venta[]> => {
     try {
         let query: any = new Object;
@@ -51,7 +34,6 @@ export const FetchVentaByQuery = async (userQuery: string, fechas?: string[]): P
         const queryObject = queryString.stringify(query);
 
         const vRes = await fetch(`/api/ventas/${queryObject}`);
-
         const resJson = await vRes.json();
         return CreateSalesList(resJson.data);
     }
