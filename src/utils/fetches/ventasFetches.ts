@@ -26,24 +26,6 @@ export const FetchVentas = async (): Promise<Venta[]> => {
     }
 }
 
-export const FetchVenta = async (id: string): Promise<Venta[]> => {
-    try {
-        let query: any = new Object;
-        query.id = id;
-        const idVenta = queryString.stringify(query);
-
-        const vRes = await fetch(`/api/ventas/${idVenta}`);
-        const ventas = await vRes.json();
-
-        return CreateSalesList([ventas.data]);
-    }
-    catch (e) {
-        console.error(e);
-        notifyError("Error de conexión");
-        return [];
-    }
-}
-
 export const FetchVentaByQuery = async (userQuery: string, fechas?: string[]): Promise<Venta[]> => {
     try {
         let query: any = new Object;
@@ -52,7 +34,6 @@ export const FetchVentaByQuery = async (userQuery: string, fechas?: string[]): P
         const queryObject = queryString.stringify(query);
 
         const vRes = await fetch(`/api/ventas/${queryObject}`);
-
         const resJson = await vRes.json();
         return CreateSalesList(resJson.data);
     }
@@ -91,7 +72,8 @@ export const FetchVentasByDateRange = async (fechaIni: Date, fechaFin: Date): Pr
     }
 }
 
-export const AddVenta = async (pagoCliente: CustomerPaymentInformation, productosEnCarrito: ProductoVendido[], empleado: SesionEmpleado, clientes: Cliente[], tpv: string): Promise<{ data: Venta | undefined, error: boolean }> => {
+export const AddVenta = async (pagoCliente: CustomerPaymentInformation, productosEnCarrito: ProductoVendido[], empleado: SesionEmpleado, clientes: Cliente[], tpv: string):
+    Promise<{ data: any | undefined, error: boolean }> => {
     try {
         let cliente;
         if (!pagoCliente.cliente) {
@@ -106,7 +88,7 @@ export const AddVenta = async (pagoCliente: CustomerPaymentInformation, producto
             return prod
         })
 
-        const addventaRespone = await fetch(`/api/ventas/`, {
+        const addVentaRespone = await fetch(`/api/ventas/`, {
             headers: {
                 'Content-Type': 'application/json'
             },
@@ -120,11 +102,11 @@ export const AddVenta = async (pagoCliente: CustomerPaymentInformation, producto
             })
         });
 
-        if (!addventaRespone.ok) { notifyError("Error al añadir la venta"); return { data: undefined, error: true } }
+        if (!addVentaRespone.ok) { notifyError("Error al añadir la venta"); return { data: undefined, error: true } }
 
-        const response = await addventaRespone.json();
+        const response = await addVentaRespone.json();
 
-        const error = addventaRespone.status === 200 ? false : true;
+        const error = addVentaRespone.status === 200 ? false : true;
         return { data: response.data, error: error };
     }
     catch (err) {

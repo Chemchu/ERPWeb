@@ -12,7 +12,7 @@ import { Producto } from "../../../../tipos/Producto";
 import { ProductoVendido } from "../../../../tipos/ProductoVendido";
 import { Venta } from "../../../../tipos/Venta";
 import { FetchClientes } from "../../../../utils/fetches/clienteFetches";
-import { AddVenta } from "../../../../utils/fetches/ventasFetches";
+import { AddVenta, FetchVentaByQuery } from "../../../../utils/fetches/ventasFetches";
 import GenerateQrBase64 from "../../../../utils/generateQr";
 import { AplicarDescuentos, PrecioTotalCarrito } from "../../../../utils/preciosUtils";
 import { notifyError, notifySuccess, notifyWarn } from "../../../../utils/toastify";
@@ -192,8 +192,8 @@ const SidebarDerecho = React.memo((props: {
 
             if (!error && data) {
                 const abortController = new AbortController();
+                setVenta((await FetchVentaByQuery(data._id))[0]);
                 setQrImage(await GenerateQrBase64(data._id, abortController));
-                setVenta(data);
             }
             else {
                 setQrImage(undefined);

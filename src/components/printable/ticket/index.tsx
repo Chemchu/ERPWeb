@@ -7,7 +7,6 @@ import useDatosTiendaContext from "../../../context/datosTienda";
 
 const Ticket = React.forwardRef((props: { pagoCliente: CustomerPaymentInformation, productosVendidos: ProductoVendido[], qrImage: string, venta: Venta }, ref: React.LegacyRef<HTMLDivElement>) => {
     const { NombreTienda, DireccionTienda, CIF } = useDatosTiendaContext()
-
     return (
         <div className="flex flex-col gap-4 items-center bg-white rounded-2xl w-full h-auto text-xs" ref={ref}>
             <div className="w-full h-5/6 rounded-3xl bg-white z-10 ">
