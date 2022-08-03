@@ -16,7 +16,7 @@ import { notifyError, notifySuccess, notifyWarn } from "../../../utils/toastify"
 import GenerateQrBase64 from "../../../utils/generateQr";
 import { In } from "../../../utils/animations";
 import { FetchClientes } from "../../../utils/fetches/clienteFetches";
-import { AddVenta } from "../../../utils/fetches/ventasFetches";
+import { AddVenta, FetchVentaByQuery } from "../../../utils/fetches/ventasFetches";
 import { Venta } from "../../../tipos/Venta";
 
 export const ModalPagar = (props: { PagoCliente: CustomerPaymentInformation, handleModalOpen: Function, AllClientes?: Cliente[], inputRef: any }) => {
@@ -120,8 +120,8 @@ export const ModalPagar = (props: { PagoCliente: CustomerPaymentInformation, han
             const { data, error } = await AddVenta(pagoCliente, ProductosEnCarrito, Empleado, Clientes, Empleado.TPV);
 
             if (!error && data) {
+                setVenta((await FetchVentaByQuery(data._id))[0]);
                 setQrImage(await GenerateQrBase64(data?._id, abortController));
-                setVenta(data);
             }
             else {
                 setQrImage(undefined);
