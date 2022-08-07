@@ -34,7 +34,7 @@ export const ModalPagar = (props: { PagoCliente: CustomerPaymentInformation, han
 
     const { ProductosEnCarrito, SetProductosEnCarrito, SetDtoEfectivo, SetDtoPorcentaje } = useProductEnCarritoContext();
     const [serverUp, setServerStatus] = useState<boolean>(false);
-    const [isButtonDisabled, setButtonDisabled] = useState<boolean>(false)
+    const [isButtonDisabled, setButtonDisabled] = useState<boolean>(false);
 
     const componentRef = useRef(null);
 

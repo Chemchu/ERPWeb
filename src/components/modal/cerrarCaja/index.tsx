@@ -32,6 +32,7 @@ export const CerrarCaja = (props: { Empleado?: SesionEmpleado, setModalOpen: Fun
     const [showContarCaja, setContarCaja] = useState<boolean>(false);
     const [qrImage, setQrImage] = useState<string>();
     const [Cierre, setCierre] = useState<Cierre>();
+    const [isButtonDisabled, setButtonDisabled] = useState<boolean>(false);
     const { Empleado, SetEmpleado } = useEmpleadoContext();
     const componentRef = useRef(null);
 
@@ -39,9 +40,14 @@ export const CerrarCaja = (props: { Empleado?: SesionEmpleado, setModalOpen: Fun
         return componentRef.current;
     }, []);
 
+    const onAfterPrintHandler = React.useCallback(() => {
+        setButtonDisabled(false)
+    }, []);
+
     const handlePrint = useReactToPrint({
         documentTitle: "Cierre de caja",
         content: reactToPrintContent,
+        onAfterPrint: onAfterPrintHandler
     });
 
     useEffect(() => {
@@ -85,6 +91,7 @@ export const CerrarCaja = (props: { Empleado?: SesionEmpleado, setModalOpen: Fun
     const CerrarCaja = async () => {
         const abortController = new AbortController();
         try {
+            setButtonDisabled(true);
             if (!Tpv || !Tpv._id) { return; }
 
             const cierre = await AddCierreTPV(Empleado, SetEmpleado, Number(TotalEfectivo),
@@ -100,6 +107,7 @@ export const CerrarCaja = (props: { Empleado?: SesionEmpleado, setModalOpen: Fun
         }
         catch (e) {
             abortController.abort();
+            setButtonDisabled(false)
             return;
         }
     }
@@ -198,7 +206,7 @@ export const CerrarCaja = (props: { Empleado?: SesionEmpleado, setModalOpen: Fun
                                 </div>
                             </div>
                             {
-                                Number(TotalRealEnCaja) > 0 && Number(TotalRealEnCaja) - Number(DineroRetirado) >= 0 ?
+                                Number(TotalRealEnCaja) > 0 && Number(TotalRealEnCaja) - Number(DineroRetirado) >= 0 && !isButtonDisabled ?
                                     <div className={`flex h-10 w-2/3 m-auto bg-blue-500 hover:bg-blue-600 rounded-lg cursor-pointer items-center justify-center shadow-lg`}
                                         onClick={async () => { await CerrarCaja(); }}>
                                         <div>
