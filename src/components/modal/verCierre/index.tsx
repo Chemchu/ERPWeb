@@ -7,10 +7,12 @@ import { In } from "../../../utils/animations";
 import GenerateQrBase64 from "../../../utils/generateQr";
 import CierrePrintable from "../../printable/cierrePrintable";
 import { Backdrop } from "../backdrop";
+import BorrarCierreModal from "../borrarCierreModal";
 
-const VerCierre = (props: { showModal: Function, cierre: Cierre, tpv: string }) => {
-    const componentRef = useRef(null);
+const VerCierre = (props: { showModal: Function, cierre: Cierre, setCierre: Function, tpv: string }) => {
     const [qrImage, setQrImage] = useState<string>();
+    const [showModalDelete, setModalDelete] = useState<boolean>(false);
+    const componentRef = useRef(null);
 
     useEffect(() => {
         const abortController = new AbortController();
@@ -50,7 +52,17 @@ const VerCierre = (props: { showModal: Function, cierre: Cierre, tpv: string }) 
                 >
                     <div className="flex flex-col w-full h-full">
                         <div className="text-2xl">
-                            Cierre de {fechaCierre}
+                            <div className="flex w-full justify-between">
+                                <span>
+                                    Cierre de {fechaCierre}
+                                </span>
+                                <div className="hover:text-red-500 cursor-pointer"
+                                    onClick={() => { setModalDelete(true) }}>
+                                    <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                                        <path strokeLinecap="round" strokeLinejoin="round" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                                    </svg>
+                                </div>
+                            </div>
                             <div className="flex flex-col gap-1 pt-4 text-base">
                                 <span>
                                     ID: {props.cierre._id}
@@ -120,6 +132,10 @@ const VerCierre = (props: { showModal: Function, cierre: Cierre, tpv: string }) 
                                     </div>
                             }
                         </div>
+                        {
+                            showModalDelete &&
+                            <BorrarCierreModal cierre={props.cierre} showCierreModal={props.showModal} setCierre={props.setCierre} showModal={setModalDelete} />
+                        }
                         {
                             qrImage &&
                             <div style={{ display: "none" }}>

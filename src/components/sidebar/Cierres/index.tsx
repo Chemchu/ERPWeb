@@ -20,7 +20,7 @@ const elementsPerPage = 50;
 const CierrePage = () => {
     const [currentPage, setCurrentPage] = useState<number>(1);
     const [filtro, setFiltro] = useState<string>("");
-    const [CierresFiltrados, setCierresFiltradas] = useState<Cierre[] | undefined>();
+    const [CierresFiltrados, setCierresFiltrados] = useState<Cierre[] | undefined>();
     const [dateRange, setDateRange] = useState([null, null]);
     const [startDate, endDate] = dateRange;
     const [CierresList, SetCierres] = useState<Cierre[]>([]);
@@ -44,7 +44,7 @@ const CierrePage = () => {
 
     useEffect(() => {
         if (!isMounted) { return }
-        if (filtro === "") { setCierresFiltradas(undefined); return; }
+        if (filtro === "") { setCierresFiltrados(undefined); return; }
     }, [filtro])
 
     useEffect(() => {
@@ -54,11 +54,11 @@ const CierrePage = () => {
             if (dateRange[0] && dateRange[1]) {
                 const fechas: string[] = [dateRange[0], dateRange[1]]
                 setLoading(true)
-                setCierresFiltradas(await FetchCierresByQuery(undefined, fechas));
+                setCierresFiltrados(await FetchCierresByQuery(undefined, fechas));
             }
 
             if (dateRange[0] == null && dateRange[1] == null) {
-                setCierresFiltradas(undefined); return;
+                setCierresFiltrados(undefined); return;
             }
         }
 
@@ -81,10 +81,10 @@ const CierrePage = () => {
     }
 
     const Filtrar = async (f: string) => {
-        if (f === "") { setCierresFiltradas(undefined); return; }
+        if (f === "") { setCierresFiltrados(undefined); return; }
 
         setLoading(true);
-        setCierresFiltradas(await FetchCierresByQuery(f));
+        setCierresFiltrados(await FetchCierresByQuery(f));
     }
 
     if (isLoading) {
@@ -178,7 +178,7 @@ const CierrePage = () => {
                     </div>
                 </div>
                 <div className="h-full w-full border-2 rounded-b overflow-y-scroll">
-                    <TablaCierre CierresList={CierresFiltrados || CierresList} currentPage={currentPage} Tpvs={Tpvs} />
+                    <TablaCierre CierresList={CierresFiltrados || CierresList} SetCierres={CierresFiltrados ? setCierresFiltrados : SetCierres} currentPage={currentPage} Tpvs={Tpvs} />
                 </div>
             </div>
             <div className="flex pt-2 items-center justify-center">
@@ -190,7 +190,7 @@ const CierrePage = () => {
 
 export default CierrePage;
 
-const TablaCierre = (props: { CierresList: Cierre[], currentPage: number, Tpvs: ITPV[] }) => {
+const TablaCierre = (props: { CierresList: Cierre[], SetCierres: Function, currentPage: number, Tpvs: ITPV[] }) => {
     if (!props.CierresList) {
         return (
             <div className="flex justify-center items-center h-full w-full border-2 rounded-b text-xl overflow-y-scroll">
@@ -209,7 +209,7 @@ const TablaCierre = (props: { CierresList: Cierre[], currentPage: number, Tpvs: 
                     props.CierresList.slice((elementsPerPage * (props.currentPage - 1)), props.currentPage * elementsPerPage).map((p, index) => {
                         return (
                             <div className="w-full h-10" key={`FilaProdTable${p._id}`}>
-                                <FilaCierre cierre={p} tpvs={props.Tpvs} />
+                                <FilaCierre cierres={props.CierresList} setAllCierres={props.SetCierres} cierre={p} tpvs={props.Tpvs} />
                             </div>
                         );
                     })
@@ -218,9 +218,26 @@ const TablaCierre = (props: { CierresList: Cierre[], currentPage: number, Tpvs: 
     )
 }
 
-const FilaCierre = (props: { cierre: Cierre, tpvs: ITPV[] }) => {
+const FilaCierre = (props: { cierres: Cierre[], setAllCierres: Function, cierre: Cierre, tpvs: ITPV[] }) => {
+    const [currentCierre, setCurrentCierre] = useState<Cierre>(props.cierre)
     const [showModal, setModal] = useState<boolean>(false);
+
     const tpv = props.tpvs.find((t) => { return t._id === props.cierre.tpv })?.nombre || 'Cargando...';
+
+    const SetCurrentCierre = (c: Cierre | null) => {
+        if (c === null) {
+            const cierres = props.cierres.filter((cierre) => { return cierre._id !== props.cierre._id });
+            props.setAllCierres(cierres);
+
+            return;
+        }
+
+        setCurrentCierre(c);
+    }
+
+    if (!currentCierre) {
+        return <div>Cargando...</div>
+    }
 
     return (
         <div className="hover:bg-blue-200">
@@ -229,17 +246,17 @@ const FilaCierre = (props: { cierre: Cierre, tpvs: ITPV[] }) => {
                     {tpv}
                 </div>
                 <div className="w-1/4 text-left">
-                    {new Date(Number(props.cierre.cierre)).toLocaleString()}
+                    {new Date(Number(currentCierre.cierre)).toLocaleString()}
                 </div>
                 <div className="w-1/4 text-right">
-                    {props.cierre.cerradoPor.nombre}
+                    {currentCierre.cerradoPor.nombre}
                 </div>
                 <div className="w-1/4 text-right">
-                    {props.cierre.ventasTotales.toFixed(2)}€
+                    {currentCierre.ventasTotales.toFixed(2)}€
                 </div>
             </div>
             <AnimatePresence>
-                {showModal && <VerCierre showModal={setModal} cierre={props.cierre} tpv={tpv} />}
+                {showModal && <VerCierre showModal={setModal} setCierre={SetCurrentCierre} cierre={currentCierre} tpv={tpv} />}
             </AnimatePresence>
         </div>
     );
