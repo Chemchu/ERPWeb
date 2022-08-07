@@ -8,7 +8,7 @@ export const getJwtFromString = (jwt: string | undefined): [JWT, boolean] => {
     try {
         const base64Url = jwt.split(" ")[1].split('.')[1];
         const base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
-        const jsonPayload = JSON.parse(Buffer.from(base64, 'base64').toString('ascii'));
+        const jsonPayload = JSON.parse(Buffer.from(base64, 'base64').toString('utf-8'));
 
         return [jsonPayload as JWT, true];
     }
