@@ -1,5 +1,5 @@
 import { Cierre } from "../../tipos/Cierre";
-import { notifyError } from "../toastify";
+import { notifyError, notifySuccess } from "../toastify";
 import { CreateCierreList } from "../typeCreator";
 import queryString from 'query-string';
 
@@ -41,5 +41,26 @@ export const FetchCierresByQuery = async (userQuery?: string, fechas?: string[])
         console.error(e);
         notifyError(String(e));
         return [];
+    }
+}
+
+export const DeleteCierre = async (cierreId: string): Promise<Boolean> => {
+    try {
+        const pResponse = await fetch(`/api/cierres/${cierreId}`, {
+            method: 'DELETE',
+            headers: {
+                'Content-Type': 'application/json'
+            }
+        });
+
+        const msg = await pResponse.json();
+
+        if (!pResponse.ok) { notifyError(msg.message); return false; }
+        else { notifySuccess(msg.message); return msg.successful; }
+    }
+    catch (e) {
+        console.log(e);
+        notifyError("Error de conexión");
+        return false;
     }
 }

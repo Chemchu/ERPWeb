@@ -1,5 +1,5 @@
 import { NextApiRequest, NextApiResponse } from "next";
-import { ADD_CIERRES_FILE, QUERY_CIERRES } from "../../../utils/querys";
+import { ADD_CIERRES_FILE, DELETE_CIERRE, QUERY_CIERRES } from "../../../utils/querys";
 import GQLQuery, { GQLMutate } from "../../../utils/serverFetcher";
 import queryString from 'query-string';
 
@@ -20,14 +20,29 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
                 if (req.query.id === "file") {
                     return await AddCierresFromFile(req, res);
                 }
+
+            case 'DELETE':
+                return await DeleteCierre(req, res);
         }
 
-        return res.status(300).json({ message: `Solo se acepta metodo GET`, successful: false });
+        return res.status(300).json({ message: `Solo se acepta metodo GET, POST y DELETE`, successful: false });
     }
     catch (err) {
         console.log(err);
         return res.status(500).json({ message: `${err}` });
     }
+}
+
+const DeleteCierre = async (req: NextApiRequest, res: NextApiResponse) => {
+    const apiResponse = await (await GQLMutate({
+        mutation: DELETE_CIERRE,
+        variables: {
+            "id": req.query.id
+        }
+    })).json();
+
+    const data = JSON.parse(apiResponse.data).deleteCierreTPV;
+    return res.status(data.successful ? 200 : 300).json({ message: data.message, successful: data.successful });
 }
 
 const AddCierresFromFile = async (req: NextApiRequest, res: NextApiResponse) => {
