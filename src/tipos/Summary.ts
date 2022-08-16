@@ -8,6 +8,8 @@ export type Summary = {
     totalTarjeta: number,
     numVentas: number,
     mediaVentas: number,
+    ventaMinima: number,
+    ventaMaxima: number,
     mediaCantidadVenida: number,
     cantidadProductosVendidos: number,
     dineroDescontado: number,
