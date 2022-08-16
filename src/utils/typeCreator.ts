@@ -342,6 +342,8 @@ export function CreateSummary(s: any): Summary | undefined {
             ivaPagado: s.ivaPagado,
             mediaCantidadVenida: s.mediaCantidadVenida,
             mediaVentas: s.mediaVentas,
+            ventaMinima: s.ventaMinima,
+            ventaMaxima: s.ventaMaxima,
             numVentas: s.numVentas,
             totalVentas: s.totalVentas,
             ventasPorHora: CreateVentasPorHoraList(s.ventasPorHora),

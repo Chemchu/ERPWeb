@@ -28,7 +28,9 @@ const SummaryCard = (props: { titulo: string, data: Summary | undefined }) => {
                 hora = venta.hora.substring(0, 2)
             }
 
-            if (Number(hora) < 16) {
+            const offsetUTC = (new Date().getTimezoneOffset() / 60) * -1
+            const inicioTurnoTarde = 16
+            if (Number(hora) < inicioTurnoTarde - offsetUTC) {
                 tMañana += venta.totalVentaHora
                 tMañanaEfectivo += venta.totalEfectivoHora
                 tMañanaTarjeta += venta.totalTarjetaHora

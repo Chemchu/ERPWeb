@@ -120,23 +120,32 @@ const EstadisticasPage = () => {
                 !isLoading &&
                 <div className="flex flex-wrap gap-2 justify-start xl:justify-center">
                     <div className="xl:w-72 w-44">
-                        <FinanceCard titulo="Ventas" dataActual={summary?.totalVentas.toFixed(2)} dataPrevio={summary?.totalVentas.toFixed(2)} />
+                        <FinanceCard titulo="Ventas" dataActual={summary?.totalVentas?.toFixed(2)} dataPrevio={summary?.totalVentas?.toFixed(2)} />
                     </div>
                     <div className="xl:w-72 w-44">
-                        <FinanceCard titulo="Efectivo" unidad="€" dataActual={summary?.totalEfectivo.toFixed(2)} dataPrevio={summary?.totalEfectivo.toFixed(2)} />
+                        <FinanceCard titulo="Efectivo" unidad="€" dataActual={summary?.totalEfectivo?.toFixed(2)} dataPrevio={summary?.totalEfectivo?.toFixed(2)} />
                     </div>
                     <div className="xl:w-72 w-44">
-                        <FinanceCard titulo="Tarjeta" unidad="€" dataActual={summary?.totalTarjeta.toFixed(2)} dataPrevio={summary?.totalTarjeta.toFixed(2)} />
+                        <FinanceCard titulo="Tarjeta" unidad="€" dataActual={summary?.totalTarjeta?.toFixed(2)} dataPrevio={summary?.totalTarjeta?.toFixed(2)} />
                     </div>
                     <div className="xl:w-72 w-44">
                         <FinanceCard titulo="Tickets" unidad="uds" dataActual={String(summary?.numVentas)} dataPrevio={String(summary?.numVentas)} />
                     </div>
                     <div className="xl:w-72 w-44">
-                        <FinanceCard titulo="Beneficio" dataActual={summary?.beneficio.toFixed(2)} dataPrevio={summary?.beneficio.toFixed(2)} />
+                        <FinanceCard titulo="Beneficio" dataActual={summary?.beneficio?.toFixed(2)} dataPrevio={summary?.beneficio?.toFixed(2)} />
                     </div>
                     <div className="xl:w-72 w-44">
-                        <FinanceCard titulo="Cantidad" unidad="uds" dataActual={String(summary?.cantidadProductosVendidos)} dataPrevio={String(summary?.cantidadProductosVendidos)} />
+                        <FinanceCard titulo="Media" unidad="€" dataActual={summary?.mediaVentas?.toFixed(2)} dataPrevio={summary?.mediaVentas?.toFixed(2)} />
                     </div>
+                    <div className="xl:w-72 w-44">
+                        <FinanceCard titulo="Máxima" unidad="€" dataActual={summary?.ventaMaxima?.toFixed(2)} dataPrevio={summary?.ventaMaxima?.toFixed(2)} />
+                    </div>
+                    <div className="xl:w-72 w-44">
+                        <FinanceCard titulo="Minima" unidad="€" dataActual={summary?.ventaMinima?.toFixed(2)} dataPrevio={summary?.ventaMinima?.toFixed(2)} />
+                    </div>
+                    {/* <div className="xl:w-72 w-44">
+                        <FinanceCard titulo="Cantidad" unidad="uds" dataActual={String(summary?.cantidadProductosVendidos)} dataPrevio={String(summary?.cantidadProductosVendidos)} />
+                    </div> */}
                 </div>
             }
             {
