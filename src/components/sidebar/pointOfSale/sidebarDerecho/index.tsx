@@ -18,6 +18,7 @@ import { AplicarDescuentos, PrecioTotalCarrito } from "../../../../utils/precios
 import { notifyError, notifySuccess, notifyWarn } from "../../../../utils/toastify";
 import { IsPositiveFloatingNumber, IsPositiveIntegerNumber, ValidatePositiveFloatingNumber } from "../../../../utils/validator";
 import GuardarCompra from "../../../modal/guardarCompra";
+import Ofertar from "../../../modal/ofertar";
 import ModalPagar from "../../../modal/pagar";
 import VerComprasAparcadas from "../../../modal/verComprasAparcadas";
 import Ticket from "../../../printable/ticket";
@@ -29,7 +30,8 @@ const SidebarDerecho = React.memo((props: {
 }) => {
     const { ProductosEnCarrito, SetProductosEnCarrito } = useProductEnCarritoContext();
     const { Empleado } = useEmpleadoContext();
-    const [DescuentoOpen, setDescuentoPupup] = useState<boolean>(false);
+    const [DescuentoOpen, setDescuentoPopup] = useState<boolean>(false);
+    const [OfertaOpen, setOfertaPopup] = useState<boolean>(false);
     const { DtoEfectivo, SetDtoEfectivo, DtoPorcentaje, SetDtoPorcentaje } = useProductEnCarritoContext()
     const [PrecioTotal, setPrecioTotal] = useState<number>(PrecioTotalCarrito(ProductosEnCarrito));
     const [PrecioTotalFinal, setPrecioTotalFinal] = useState<number>(AplicarDescuentos(ProductosEnCarrito, Number(DtoEfectivo), Number(DtoPorcentaje)));
@@ -296,10 +298,10 @@ const SidebarDerecho = React.memo((props: {
             <div className="h-full w-full p-2 overflow-y-scroll overflow-x-hidden">
                 <GenerarProductList productosEnCarrito={ProductosEnCarrito} setPropiedadProducto={SetPropiedadProd} />
             </div>
-            <div className="h-1/4 p-4 w-full">
+            <div className="h-1/3 xl:h-1/4 p-3 w-full">
                 <div className="relative">
                     {DescuentoOpen &&
-                        <div className="absolute block bg-blue-200 duration-300 transform -translate-y-16 top-4 z-10 origin-[0] border-t-2 border-2 border-blue-400 rounded-lg p-2">
+                        <div className="w-full absolute block bg-blue-200 duration-300 transform -translate-y-16 top-4 z-10 origin-[0] border-t-2 border-2 border-blue-400 rounded-lg p-2">
                             <div className="flex w-full items-center justify-center text-sm">
                                 <div className="flex self-center gap-2">
                                     <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -333,8 +335,13 @@ const SidebarDerecho = React.memo((props: {
                             </div>
                         </div>
                     }
-                    <div className="text-left text-lg font-semibold hover:text-blue-500 underline cursor-pointer" onClick={() => setDescuentoPupup(!DescuentoOpen)}>
-                        Descuento
+                    <div className="w-full flex justify-between text-left text-lg font-semibold">
+                        <div className="hover:text-blue-500 underline cursor-pointer" onClick={() => setDescuentoPopup(!DescuentoOpen)}>
+                            Descuento
+                        </div>
+                        <div className="hover:text-blue-500 underline cursor-pointer" onClick={() => setOfertaPopup(!OfertaOpen)}>
+                            Ofertas
+                        </div>
                     </div>
                 </div>
                 <div className="flex text-lg font-semibold">
@@ -366,21 +373,21 @@ const SidebarDerecho = React.memo((props: {
                                 !isButtonDisabled &&
                                 isVentaValida ?
                                 <>
-                                    <motion.button disabled={isButtonDisabled} whileTap={{ scale: 0.9 }} className={`bg-blue-500 h-12 shadow rounded-lg hover:shadow-lg hover:bg-blue-600 text-white focus:outline-none`} onClick={(e) => { setPagarModal(true) }}>
+                                    <motion.button disabled={isButtonDisabled} whileTap={{ scale: 0.9 }} className={`bg-blue-500 h-10 xl:h-12 shadow rounded-lg hover:shadow-lg hover:bg-blue-600 text-white focus:outline-none`} onClick={(e) => { setPagarModal(true) }}>
                                         PAGAR
                                     </motion.button>
-                                    <motion.button disabled={isButtonDisabled} whileTap={{ scale: 0.9 }} className="bg-blue-500 h-12 shadow rounded-lg hover:shadow-lg hover:bg-blue-600 text-white focus:outline-none"
+                                    <motion.button disabled={isButtonDisabled} whileTap={{ scale: 0.9 }} className="bg-blue-500 h-10 xl:h-12 shadow rounded-lg hover:shadow-lg hover:bg-blue-600 text-white focus:outline-none"
                                         onClick={async () => { await Vender(PagoRapido, ProductosEnCarrito, Empleado, Clientes); }}>
                                         COBRO RAPIDO
                                     </motion.button>
                                 </>
                                 :
                                 <>
-                                    <motion.button className={`bg-blue-400 h-12 shadow rounded-lg text-white focus:outline-none`}
+                                    <motion.button className={`bg-blue-400 h-10 xl:h-12 shadow rounded-lg text-white focus:outline-none`}
                                         onClick={() => notifyError("No se puede realizar una venta con un producto de 0.00€")}>
                                         PAGAR
                                     </motion.button>
-                                    <motion.button className="bg-blue-400 h-12 shadow rounded-lg text-white focus:outline-none"
+                                    <motion.button className="bg-blue-400 h-10 xl:h-12 shadow rounded-lg text-white focus:outline-none"
                                         onClick={() => notifyError("No se puede realizar una venta con un producto de 0.00€")}>
                                         COBRO RAPIDO
                                     </motion.button>
@@ -392,6 +399,7 @@ const SidebarDerecho = React.memo((props: {
                 <AnimatePresence>
                     {showModalPagar && Pago && <ModalPagar PagoCliente={Pago} handleModalOpen={setPagarModal} AllClientes={Clientes} inputRef={props.inputRef} />}
                     {showModalSaveCompra && <GuardarCompra compraActual={ProductosEnCarrito} setCompraActual={SetProductosEnCarrito} setModal={setSaveCompra} />}
+                    {OfertaOpen && <Ofertar setModal={setOfertaPopup} />}
                 </AnimatePresence>
             </div>
             {
