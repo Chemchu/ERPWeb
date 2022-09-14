@@ -25,6 +25,7 @@ import Ticket from "../../../printable/ticket";
 import { ProductSelectedCard } from "../productCard";
 
 const SidebarDerecho = React.memo((props: {
+    productos: Producto[],
     setProductosCarrito: React.Dispatch<React.SetStateAction<ProductoVendido[]>>, empleadoUsandoTPV: boolean,
     setShowModalCerrar: Function, setShowModalAbrir: Function, inputRef?: any
 }) => {
@@ -399,7 +400,7 @@ const SidebarDerecho = React.memo((props: {
                 <AnimatePresence>
                     {showModalPagar && Pago && <ModalPagar PagoCliente={Pago} handleModalOpen={setPagarModal} AllClientes={Clientes} inputRef={props.inputRef} />}
                     {showModalSaveCompra && <GuardarCompra compraActual={ProductosEnCarrito} setCompraActual={SetProductosEnCarrito} setModal={setSaveCompra} />}
-                    {OfertaOpen && <Ofertar setModal={setOfertaPopup} />}
+                    {OfertaOpen && <Ofertar setModal={setOfertaPopup} productos={props.productos} />}
                 </AnimatePresence>
             </div>
             {
