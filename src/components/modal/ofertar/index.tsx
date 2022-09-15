@@ -18,9 +18,9 @@ const Ofertar = (props: { setModal: Function, productos: Producto[] }) => {
     const [ofertas, setOfertas] = useState<Producto[]>([]);
     const { ProductosEnCarrito, SetProductosEnCarrito } = useProductEnCarritoContext();
 
-    useEffect(() => {
-        if (isMounted) { props.setModal(false); }
-    }, [ProductosEnCarrito])
+    // useEffect(() => {
+    //     if (isMounted) { props.setModal(false); }
+    // }, [ProductosEnCarrito])
 
     const messagesEndRef = useRef<null | HTMLDivElement>(null)
     const scrollToBottom = () => {
@@ -31,16 +31,20 @@ const Ofertar = (props: { setModal: Function, productos: Producto[] }) => {
     useEffect(scrollToBottom, [ofertas]);
     useEffect(() => {
         const GetData = async () => {
-            const promise = new Promise<string>((resolve) => {
-                setTimeout(() => {
-                    setLoading(false)
-                    resolve("PANADERIA")
-                }, 1500)
+            try {
+                const promise = new Promise<string>((resolve) => {
+                    setTimeout(() => {
+                        setLoading(false)
+                        resolve("PANADERIA")
+                    }, 1500)
+                })
 
-            })
-
-            const familia = await promise;
-            setFamiliaOfertada(familia);
+                const familia = await promise;
+                setFamiliaOfertada(familia);
+            }
+            catch (e) {
+                setFamiliaOfertada("");
+            }
             setMounted(true);
         }
 
@@ -137,7 +141,7 @@ const Ofertar = (props: { setModal: Function, productos: Producto[] }) => {
                         {
                             familiaOfertada ?
                                 <div className="w-full h-full">
-                                    <ProductoPicker productos={props.productos} familiaOfertada={familiaOfertada} setOfertas={setOfertas} />
+                                    <ProductoPicker titulo="Escriba el nombre del producto a ofertar" productos={props.productos} familiaOfertada={familiaOfertada} setOfertas={setOfertas} />
                                 </div>
                                 :
                                 <div className="w-full h-full">
@@ -192,7 +196,7 @@ const Ofertar = (props: { setModal: Function, productos: Producto[] }) => {
     )
 }
 
-const ProductoPicker = (props: { productos: Producto[], familiaOfertada: string, setOfertas: React.Dispatch<React.SetStateAction<Producto[]>> }) => {
+const ProductoPicker = (props: { titulo: string, productos: Producto[], familiaOfertada: string, setOfertas: React.Dispatch<React.SetStateAction<Producto[]>> }) => {
     const [productoSeleccionado, setProductoSeleccionado] = useState<string>("");
     const AddOferta = () => {
         if (productoSeleccionado === "") {
@@ -219,15 +223,18 @@ const ProductoPicker = (props: { productos: Producto[], familiaOfertada: string,
     }
 
     return (
-        <div className="flex gap-1 w-full h-full items-center">
-            <Dropdown elementos={props.productos.filter((p) => p.familia === props.familiaOfertada).map((p) => { return p.nombre })}
-                setElemento={setProductoSeleccionado} selectedElemento={productoSeleccionado} />
-            <div>
-                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor"
-                    className="w-6 h-6 text-blue-600 cursor-pointer"
-                    onClick={AddOferta}>
-                    <path strokeLinecap="round" strokeLinejoin="round" d="M12 9v6m3-3H9m12 0a9 9 0 11-18 0 9 9 0 0118 0z" />
-                </svg>
+        <div className="flex flex-col w-full h-full">
+            <span>{props.titulo}</span>
+            <div className="flex gap-1 w-full h-full items-center">
+                <Dropdown elementos={props.productos.filter((p) => p.familia === props.familiaOfertada).map((p) => { return p.nombre })}
+                    setElemento={setProductoSeleccionado} selectedElemento={productoSeleccionado} />
+                <div>
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor"
+                        className="w-6 h-6 text-blue-600 cursor-pointer"
+                        onClick={AddOferta}>
+                        <path strokeLinecap="round" strokeLinejoin="round" d="M12 9v6m3-3H9m12 0a9 9 0 11-18 0 9 9 0 0118 0z" />
+                    </svg>
+                </div>
             </div>
         </div>
     )
