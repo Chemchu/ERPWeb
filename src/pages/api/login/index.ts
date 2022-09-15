@@ -19,7 +19,7 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
         )).json();
         const data = JSON.parse(apiResponse.data).login;
 
-        // Devolver en caso de que todo haya ido bien
+        if (data == null || data == undefined) { return res.status(300).json({ message: `Fallo al iniciar sesión: usuario y/o contraseña incorrectos`, successful: false }); }
         if (data.successful) {
             const token = getJwt(data.token);
             const productionEnv: boolean = process.env.NODE_ENV !== "development";

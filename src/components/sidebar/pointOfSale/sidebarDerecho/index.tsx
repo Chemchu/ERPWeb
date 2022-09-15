@@ -340,9 +340,12 @@ const SidebarDerecho = React.memo((props: {
                         <div className="hover:text-blue-500 underline cursor-pointer" onClick={() => setDescuentoPopup(!DescuentoOpen)}>
                             Descuento
                         </div>
-                        <div className="hover:text-blue-500 underline cursor-pointer" onClick={() => setOfertaPopup(!OfertaOpen)}>
-                            Ofertas
-                        </div>
+                        {
+                            PrecioTotal === PrecioTotalFinal &&
+                            <div className="hover:text-blue-500 underline cursor-pointer" onClick={() => setOfertaPopup(!OfertaOpen)}>
+                                Ofertas
+                            </div>
+                        }
                     </div>
                 </div>
                 <div className="flex text-lg font-semibold">
@@ -351,17 +354,14 @@ const SidebarDerecho = React.memo((props: {
                         PrecioTotal !== PrecioTotalFinal ?
                             <div className="flex gap-2 justify-end ml-auto">
                                 <div className="text-right w-full text-red-500 line-through">
-                                    {/*Cambiar en caso de que la cesta tenga productos y calcular el valor total*/}
                                     {ProductosEnCarrito.length <= 0 ? 0.00 : PrecioTotal.toFixed(2)} €
                                 </div>
                                 <div className="text-right w-full">
-                                    {/*Cambiar en caso de que la cesta tenga productos y calcular el valor total*/}
                                     {ProductosEnCarrito.length <= 0 ? 0.00 : PrecioTotalFinal.toFixed(2)} €
                                 </div>
                             </div>
                             :
                             <div className="text-right w-full">
-                                {/*Cambiar en caso de que la cesta tenga productos y calcular el valor total*/}
                                 {ProductosEnCarrito.length <= 0 ? 0.00 : PrecioTotal.toFixed(2)} €
                             </div>
                     }
@@ -416,8 +416,6 @@ const SidebarDerecho = React.memo((props: {
                     />
                 </div>
             }
-
-
         </div>
     );
 });

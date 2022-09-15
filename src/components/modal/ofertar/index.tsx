@@ -2,6 +2,7 @@ import { AnimatePresence, motion } from "framer-motion"
 import { useEffect, useRef, useState } from "react"
 import useProductEnCarritoContext from "../../../context/productosEnCarritoContext"
 import { Producto } from "../../../tipos/Producto"
+import { ProductoVendido } from "../../../tipos/ProductoVendido"
 import { In } from "../../../utils/animations"
 import { notifyWarn } from "../../../utils/toastify"
 import CargandoSpinner from "../../cargandoSpinner"
@@ -13,8 +14,13 @@ const Ofertar = (props: { setModal: Function, productos: Producto[] }) => {
     const [infoOpen, setInfoOpen] = useState<boolean>(false);
     const [familiaOfertada, setFamiliaOfertada] = useState<string>("");
     const [isLoading, setLoading] = useState<boolean>(true);
+    const [isMounted, setMounted] = useState<boolean>(false);
     const [ofertas, setOfertas] = useState<Producto[]>([]);
-    const { ProductosEnCarrito, SetProductosEnCarrito } = useProductEnCarritoContext()
+    const { ProductosEnCarrito, SetProductosEnCarrito } = useProductEnCarritoContext();
+
+    useEffect(() => {
+        if (isMounted) { props.setModal(false); }
+    }, [ProductosEnCarrito])
 
     const messagesEndRef = useRef<null | HTMLDivElement>(null)
     const scrollToBottom = () => {
@@ -35,6 +41,7 @@ const Ofertar = (props: { setModal: Function, productos: Producto[] }) => {
 
             const familia = await promise;
             setFamiliaOfertada(familia);
+            setMounted(true);
         }
 
         GetData();
@@ -44,6 +51,32 @@ const Ofertar = (props: { setModal: Function, productos: Producto[] }) => {
         setOfertas((ofertas) => {
             ofertas.splice(index, 1)
             return [...ofertas]
+        })
+    }
+
+    const AddProductToSale = () => {
+        SetProductosEnCarrito((carrito) => {
+            for (let index = 0; index < ofertas.length; index++) {
+                const productoOfertado = ofertas[index];
+
+                const pVendido: ProductoVendido = {
+                    _id: productoOfertado._id,
+                    cantidadVendida: 1,
+                    dto: 5,
+                    ean: productoOfertado.ean,
+                    familia: productoOfertado.familia,
+                    iva: productoOfertado.iva,
+                    margen: productoOfertado.margen,
+                    nombre: productoOfertado.nombre,
+                    precioCompra: productoOfertado.precioCompra,
+                    precioVenta: productoOfertado.precioVenta,
+                    precioFinal: productoOfertado.precioVenta * (100 - 5),
+                    proveedor: productoOfertado.proveedor,
+                }
+                carrito.push(pVendido)
+            }
+
+            return [...carrito]
         })
     }
 
@@ -59,25 +92,15 @@ const Ofertar = (props: { setModal: Function, productos: Producto[] }) => {
                         animate="visible"
                         exit="exit"
                     >
-                        <div className="flex gap-1 w-full font-semibold text-xl items-center">
-                            Ofertas disponibles
-                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor"
-                                className="w-6 h-6 text-blue-500 cursor-pointer"
-                                onClick={() => setInfoOpen(!infoOpen)}>
-                                <path strokeLinecap="round" strokeLinejoin="round" d="M11.25 11.25l.041-.02a.75.75 0 011.063.852l-.708 2.836a.75.75 0 001.063.853l.041-.021M21 12a9 9 0 11-18 0 9 9 0 0118 0zm-9-3.75h.008v.008H12V8.25z" />
-                            </svg>
-                            <AnimatePresence>
-                                {infoOpen && <FloatingLabel texto="Oferta basada en la compra actual" />}
-                            </AnimatePresence>
-                        </div>
+                        <span className="w-full font-semibold text-2xl">Generar oferta</span>
                         <div className="flex flex-col w-full h-full items-center justify-center">
-                            <CargandoSpinner mensaje="Calculando oferta..." />
+                            <CargandoSpinner mensaje="Generando la oferta..." />
                         </div>
                         <div className="flex w-full items-end justify-around text-white gap-10">
                             <button className="h-10 w-full rounded-xl bg-red-500 hover:bg-red-600 shadow-lg" onClick={() => props.setModal(false)}>
                                 Cancelar
                             </button>
-                            <button className="h-10 w-full rounded-xl bg-blue-500 hover:bg-blue-600 shadow-lg" onClick={async () => { }}>
+                            <button className="h-10 w-full rounded-xl bg-blue-500 hover:bg-blue-600 shadow-lg">
                                 Añadir oferta
                             </button>
                         </div>
@@ -98,15 +121,16 @@ const Ofertar = (props: { setModal: Function, productos: Producto[] }) => {
                     animate="visible"
                     exit="exit"
                 >
-                    <div className="flex gap-1 w-full font-semibold text-xl items-center">
-                        Ofertas disponibles
+                    <span className="w-full font-semibold text-2xl">Generar oferta</span>
+                    <div className="flex gap-1 w-full text-xl items-center">
+                        <span>Categoría ofertada: {familiaOfertada}</span>
                         <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor"
                             className="w-6 h-6 text-blue-500 cursor-pointer"
                             onClick={() => setInfoOpen(!infoOpen)}>
                             <path strokeLinecap="round" strokeLinejoin="round" d="M11.25 11.25l.041-.02a.75.75 0 011.063.852l-.708 2.836a.75.75 0 001.063.853l.041-.021M21 12a9 9 0 11-18 0 9 9 0 0118 0zm-9-3.75h.008v.008H12V8.25z" />
                         </svg>
                         <AnimatePresence>
-                            {infoOpen && <FloatingLabel texto="Oferta basada en la compra actual" />}
+                            {infoOpen && <FloatingLabel texto="Categoría elegida en base a la compra actual" />}
                         </AnimatePresence>
                     </div>
                     <div className="flex flex-col w-full justify-center">
@@ -156,7 +180,8 @@ const Ofertar = (props: { setModal: Function, productos: Producto[] }) => {
                                 </button>
                                 :
 
-                                <button className="h-10 w-full rounded-xl bg-blue-500 hover:bg-blue-600 shadow-lg cursor-pointer" onClick={async () => { }}>
+                                <button className="h-10 w-full rounded-xl bg-blue-500 hover:bg-blue-600 shadow-lg cursor-pointer"
+                                    onClick={() => { AddProductToSale() }}>
                                     Añadir oferta
                                 </button>
                         }
