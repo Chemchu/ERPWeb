@@ -18,9 +18,9 @@ const Ofertar = (props: { setModal: Function, productos: Producto[] }) => {
     const [ofertas, setOfertas] = useState<Producto[]>([]);
     const { ProductosEnCarrito, SetProductosEnCarrito } = useProductEnCarritoContext();
 
-    // useEffect(() => {
-    //     if (isMounted) { props.setModal(false); }
-    // }, [ProductosEnCarrito])
+    useEffect(() => {
+        if (isMounted) { props.setModal(false); }
+    }, [ProductosEnCarrito])
 
     const messagesEndRef = useRef<null | HTMLDivElement>(null)
     const scrollToBottom = () => {
@@ -32,15 +32,30 @@ const Ofertar = (props: { setModal: Function, productos: Producto[] }) => {
     useEffect(() => {
         const GetData = async () => {
             try {
-                const promise = new Promise<string>((resolve) => {
-                    setTimeout(() => {
-                        setLoading(false)
-                        resolve("PANADERIA")
-                    }, 1500)
+                const categorias = ProductosEnCarrito.map((producto) => {
+                    return producto.familia
                 })
 
-                const familia = await promise;
-                setFamiliaOfertada(familia);
+                const categoriasUnicas = categorias.filter((element, index) => {
+                    return categorias.indexOf(element) === index;
+                })
+                const apiRespone = await fetch(`/api/recommender`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-type': 'application/json'
+                    },
+                    body: JSON.stringify({ categoriasEnCarrito: categoriasUnicas })
+                })
+
+                const resJson = await apiRespone.json();
+                if (resJson.successful) {
+                    setFamiliaOfertada(resJson.data);
+                }
+                else {
+                    setFamiliaOfertada("");
+                }
+
+                setLoading(false);
             }
             catch (e) {
                 setFamiliaOfertada("");
@@ -114,6 +129,61 @@ const Ofertar = (props: { setModal: Function, productos: Producto[] }) => {
         )
     }
 
+    if (familiaOfertada === "") {
+        return (
+
+            <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
+                className="h-full w-full ">
+                <Backdrop onClick={() => { props.setModal(false) }}>
+                    <motion.div className="flex flex-col h-3/4 w-3/4 xl:h-1/2 xl:w-1/2 gap-2 items-center bg-white rounded-2xl p-4"
+                        onClick={(e) => e.stopPropagation()}
+                        variants={In}
+                        initial="hidden"
+                        animate="visible"
+                        exit="exit"
+                    >
+                        <span className="w-full font-semibold text-2xl">Generar oferta</span>
+                        <div className="flex gap-1 w-full text-xl items-center">
+                            <span>Oferta no disponible</span>
+                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor"
+                                className="w-6 h-6 text-blue-500 cursor-pointer"
+                                onClick={() => setInfoOpen(!infoOpen)}>
+                                <path strokeLinecap="round" strokeLinejoin="round" d="M11.25 11.25l.041-.02a.75.75 0 011.063.852l-.708 2.836a.75.75 0 001.063.853l.041-.021M21 12a9 9 0 11-18 0 9 9 0 0118 0zm-9-3.75h.008v.008H12V8.25z" />
+                            </svg>
+                            <AnimatePresence>
+                                {infoOpen && <FloatingLabel texto="Esta compra no cumple con los requisitos de oferta" color="orange" />}
+                            </AnimatePresence>
+                        </div>
+                        <div className="flex gap-2 w-full h-full justify-center items-center">
+                            <span>Ninguna oferta disponible</span>
+                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor"
+                                className="w-8 h-8 animate-[spin_3s_ease-in-out_infinite]">
+                                <path strokeLinecap="round" strokeLinejoin="round" d="M15.182 16.318A4.486 4.486 0 0012.016 15a4.486 4.486 0 00-3.198 1.318M21 12a9 9 0 11-18 0 9 9 0 0118 0zM9.75 9.75c0 .414-.168.75-.375.75S9 10.164 9 9.75 9.168 9 9.375 9s.375.336.375.75zm-.375 0h.008v.015h-.008V9.75zm5.625 0c0 .414-.168.75-.375.75s-.375-.336-.375-.75.168-.75.375-.75.375.336.375.75zm-.375 0h.008v.015h-.008V9.75z" />
+                            </svg>
+                        </div>
+                        <div className="flex w-full items-end justify-around text-white gap-10">
+                            <button className="h-10 w-full rounded-xl bg-red-500 hover:bg-red-600 shadow-lg" onClick={() => props.setModal(false)}>
+                                Cancelar
+                            </button>
+                            {
+                                ofertas.length <= 0 ?
+                                    <button disabled className="h-10 w-full rounded-xl bg-blue-400 shadow-lg">
+                                        Añadir oferta
+                                    </button>
+                                    :
+
+                                    <button className="h-10 w-full rounded-xl bg-blue-500 hover:bg-blue-600 shadow-lg cursor-pointer"
+                                        onClick={() => { AddProductToSale() }}>
+                                        Añadir oferta
+                                    </button>
+                            }
+                        </div>
+                    </motion.div>
+                </Backdrop>
+            </motion.div>
+        )
+    }
+
     return (
         <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
             className="h-full w-full ">
@@ -134,20 +204,11 @@ const Ofertar = (props: { setModal: Function, productos: Producto[] }) => {
                             <path strokeLinecap="round" strokeLinejoin="round" d="M11.25 11.25l.041-.02a.75.75 0 011.063.852l-.708 2.836a.75.75 0 001.063.853l.041-.021M21 12a9 9 0 11-18 0 9 9 0 0118 0zm-9-3.75h.008v.008H12V8.25z" />
                         </svg>
                         <AnimatePresence>
-                            {infoOpen && <FloatingLabel texto="Categoría elegida en base a la compra actual" />}
+                            {infoOpen && <FloatingLabel texto="Categoría elegida en base a la compra actual" color="green" />}
                         </AnimatePresence>
                     </div>
                     <div className="flex flex-col w-full justify-center">
-                        {
-                            familiaOfertada ?
-                                <div className="w-full h-full">
-                                    <ProductoPicker titulo="Escriba el nombre del producto a ofertar" productos={props.productos} familiaOfertada={familiaOfertada} setOfertas={setOfertas} />
-                                </div>
-                                :
-                                <div className="w-full h-full">
-                                    Ninguna oferta disponible
-                                </div>
-                        }
+                        <ProductoPicker titulo="Escriba el nombre del producto a ofertar" productos={props.productos} familiaOfertada={familiaOfertada} setOfertas={setOfertas} />
                     </div>
                     <div className="w-full h-full rounded-lg border overflow-y-scroll">
                         {
@@ -172,7 +233,6 @@ const Ofertar = (props: { setModal: Function, productos: Producto[] }) => {
                             })
                         }
                     </div>
-
                     <div className="flex w-full items-end justify-around text-white gap-10">
                         <button className="h-10 w-full rounded-xl bg-red-500 hover:bg-red-600 shadow-lg" onClick={() => props.setModal(false)}>
                             Cancelar

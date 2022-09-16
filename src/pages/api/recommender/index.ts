@@ -3,12 +3,18 @@ import { NextApiRequest, NextApiResponse } from "next";
 
 const handler = async (req: NextApiRequest, res: NextApiResponse) => {
     try {
-        const apiResponse = await (await fetch(`${process.env.ERPGATEWAY_URL}api/recommendation`, {
-            body: req.body
+        const apiResponse = await (await fetch(`${process.env.ERPGATEWAY_URL}api/recommender`, {
+            method: 'POST',
+            headers: {
+                'Content-type': 'application/json'
+            },
+            body: JSON.stringify(req.body)
         })).json();
 
-        const data = JSON.parse(apiResponse.data);
-        return res.status(apiResponse.successful ? 200 : 300).json({ message: apiResponse.message, successful: apiResponse.successful, data: data });
+        const apiJson = JSON.parse(apiResponse);
+
+        const successful = apiJson.data !== "INVALID"
+        return res.status(successful ? 200 : 300).json({ message: apiJson.message, successful: successful, data: apiJson.data });
     }
     catch (err) {
         console.log(err);
