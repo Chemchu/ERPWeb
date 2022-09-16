@@ -12,7 +12,6 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
         })).json();
 
         const apiJson = JSON.parse(apiResponse);
-
         const successful = apiJson.data !== "INVALID"
         return res.status(successful ? 200 : 300).json({ message: apiJson.message, successful: successful, data: apiJson.data });
     }
