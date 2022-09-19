@@ -35,7 +35,8 @@ module.exports = {
         'supermarket3': "url('/img/market-3.jpg')",        
         'supermarket4': "url('/img/market-4.jpg')",
         'supermarket5': "url('/img/market-5.jpg')",
-        'landing1': "url('/img/landing-1.jpg')"
+        'landing1': "url('/img/landing-1.jpg')",
+        'landing2': "url('/img/landing-2.jpg')"
       }
     },
   },

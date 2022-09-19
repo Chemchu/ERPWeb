@@ -89,7 +89,7 @@ const Ofertar = (props: { setModal: Function, productos: Producto[] }) => {
                     nombre: productoOfertado.nombre,
                     precioCompra: productoOfertado.precioCompra,
                     precioVenta: productoOfertado.precioVenta,
-                    precioFinal: productoOfertado.precioVenta * (100 - 5),
+                    precioFinal: (productoOfertado.precioVenta * 0.95),
                     proveedor: productoOfertado.proveedor,
                 }
                 carrito.push(pVendido)

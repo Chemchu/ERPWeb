@@ -61,7 +61,8 @@ const TPV = (props: { productos: Producto[], empleadoUsandoTPV: boolean, setEmpl
                 if (stringValidated === "") productosFiltrados = props.productos;
                 else {
                     productosFiltrados = props.productos.filter((p: Producto) => {
-                        return p.nombre.toUpperCase().includes(stringValidated.toUpperCase()) || p.ean === stringValidated
+                        return p.alta &&
+                            (p.nombre.toUpperCase().includes(stringValidated.toUpperCase()) || p.ean === stringValidated)
                     });
                 }
 

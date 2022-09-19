@@ -400,7 +400,7 @@ const SidebarDerecho = React.memo((props: {
                 <AnimatePresence>
                     {showModalPagar && Pago && <ModalPagar PagoCliente={Pago} handleModalOpen={setPagarModal} AllClientes={Clientes} inputRef={props.inputRef} />}
                     {showModalSaveCompra && <GuardarCompra compraActual={ProductosEnCarrito} setCompraActual={SetProductosEnCarrito} setModal={setSaveCompra} />}
-                    {OfertaOpen && <Ofertar setModal={setOfertaPopup} productos={props.productos} />}
+                    {OfertaOpen && <Ofertar setModal={setOfertaPopup} productos={props.productos.filter((p) => p.alta)} />}
                 </AnimatePresence>
             </div>
             {
