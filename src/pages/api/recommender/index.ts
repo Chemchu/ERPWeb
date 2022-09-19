@@ -17,7 +17,7 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
     }
     catch (err) {
         console.log(err);
-        return res.status(500).json({ message: `Error: ${err}`, successful: false });
+        return res.status(500).json({ message: `Error: ${err}`, successful: false, data: "INVALID" });
     }
 }
 
