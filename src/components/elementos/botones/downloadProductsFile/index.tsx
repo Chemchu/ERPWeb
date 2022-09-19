@@ -10,7 +10,7 @@ const DownloadProductsFile = (props: { productos: Producto[] }) => {
         const worksheet = XLSX.utils.json_to_sheet(props.productos);
         const workbook = XLSX.utils.book_new();
         XLSX.utils.book_append_sheet(workbook, worksheet, "Hoja1");
-        XLSX.writeFile(workbook, "Productos.csv");
+        XLSX.writeFile(workbook, "Productos.xlsx");
     }
 
     if (Empleado.rol === Roles.Cajero) {

@@ -122,16 +122,16 @@ const VerVenta = (props: { venta: Venta | undefined, setModal: Function }) => {
                                         Tipo de venta: {props.venta.tipo}
                                     </span>
                                     <span>
-                                        Valor total: {props.venta.precioVentaTotal}€
+                                        Valor total: {props.venta.precioVentaTotal.toFixed(2)}€
                                     </span>
                                     <span>
-                                        Cantidad pagada con efectivo: {props.venta.dineroEntregadoEfectivo}€
+                                        Cantidad pagada con efectivo: {props.venta.dineroEntregadoEfectivo.toFixed(2)}€
                                     </span>
                                     <span>
-                                        Cantidad pagada con tarjeta: {props.venta.dineroEntregadoTarjeta}€
+                                        Cantidad pagada con tarjeta: {props.venta.dineroEntregadoTarjeta.toFixed(2)}€
                                     </span>
                                     <span>
-                                        Cambio: {props.venta.cambio}€
+                                        Cambio: {props.venta.cambio.toFixed(2)}€
                                     </span>
                                     <span>
                                         TPV: {`${tpv?.nombre || `Cargando...`}`}
