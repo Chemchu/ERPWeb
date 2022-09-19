@@ -25,7 +25,7 @@ const PuntoDeVenta = (props: { isEmpleadoUsingTPV: boolean, EmpleadoSesion: Sesi
             SetEmpleado(props.EmpleadoSesion)
         }
         const GetProd = async () => {
-            SetProductos(await FetchProductos());
+            SetProductos((await FetchProductos()).filter((p) => p.alta));
         }
         GetProd();
     }, []);

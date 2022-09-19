@@ -61,7 +61,8 @@ const TPV = (props: { productos: Producto[], empleadoUsandoTPV: boolean, setEmpl
                 if (stringValidated === "") productosFiltrados = props.productos;
                 else {
                     productosFiltrados = props.productos.filter((p: Producto) => {
-                        return p.nombre.toUpperCase().includes(stringValidated.toUpperCase()) || p.ean === stringValidated
+                        return p.alta &&
+                            (p.nombre.toUpperCase().includes(stringValidated.toUpperCase()) || p.ean === stringValidated)
                     });
                 }
 
@@ -117,7 +118,9 @@ const TPV = (props: { productos: Producto[], empleadoUsandoTPV: boolean, setEmpl
                     </div>
                 </div>
                 <div className="h-screen p-3">
-                    <SidebarDerecho setProductosCarrito={SetProductosEnCarrito} empleadoUsandoTPV={props.empleadoUsandoTPV} setShowModalAbrir={props.setShowModalAbrir} setShowModalCerrar={props.setShowModalCerrar} />
+                    <SidebarDerecho setProductosCarrito={SetProductosEnCarrito} empleadoUsandoTPV={props.empleadoUsandoTPV}
+                        setShowModalAbrir={props.setShowModalAbrir} setShowModalCerrar={props.setShowModalCerrar}
+                        productos={props.productos} />
                 </div>
             </div>
         </div>)
@@ -193,6 +196,7 @@ const TPV = (props: { productos: Producto[], empleadoUsandoTPV: boolean, setEmpl
                 <div className="h-screen p-3">
                     <SidebarDerecho setProductosCarrito={SetProductosEnCarrito} empleadoUsandoTPV={props.empleadoUsandoTPV}
                         setShowModalAbrir={props.setShowModalAbrir} setShowModalCerrar={props.setShowModalCerrar}
+                        productos={props.productos}
                         inputRef={inputRef} />
                 </div>
             </div>

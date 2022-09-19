@@ -161,26 +161,25 @@ export const ModalPagar = (props: { PagoCliente: CustomerPaymentInformation, han
     return (
         <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} >
             <Backdrop onClick={() => { props.handleModalOpen(false) }} >
-                <motion.div className="mx-20 my-20 flex flex-grow items-center bg-white rounded-2xl"
+                <motion.div className="flex w-11/12 max-h-full items-center bg-white rounded-xl"
                     onClick={(e) => e.stopPropagation()}
                     variants={In}
                     initial="hidden"
                     animate="visible"
                     exit="exit"
                 >
-                    <div id="receipt-content" className="text-left w-full text-sm p-6 overflow-auto">
-                        <div className="grid grid-cols-2">
+                    <div id="receipt-content" className="flex flex-col gap-4 text-left w-full text-sm p-4 overflow-auto">
+                        <div className="flex gap-2">
                             {/* Parte izquierda, datos cliente */}
-                            <div className="bg-white text-center justify-center py-6">
-                                <div>
-                                    <div className="text-2xl font-semibold">Datos cliente</div>
-                                    <hr />
-                                    <div className="flex flex-col justify-between mt-4 px-2 text-lg text-center">
+                            <div className="h-full w-full bg-white text-center justify-center">
+                                <div className="flex flex-col gap-4">
+                                    <span className="text-2xl font-semibold">Datos cliente</span>
+                                    <div className="flex flex-col justify-between text-lg text-center">
                                         <label className="text-left font-semibold">Buscar cliente</label>
                                         <Dropdown elementos={Clientes.map((c) => { return c.nombre })} selectedElemento={NombreClienteActual} setElemento={SetNombreClienteActual} />
                                     </div>
                                 </div>
-                                <div className="flex flex-col gap-2 px-2 pt-6 justify-items-start w-full">
+                                <div className="flex flex-col gap-2 justify-items-start w-full">
                                     <div className="text-left">
                                         <h1 className="text-lg font-semibold">Nombre completo</h1>
                                         <label className="text-base" htmlFor="NombreCompleto">{ClienteActual?.nombre}</label>
@@ -200,11 +199,10 @@ export const ModalPagar = (props: { PagoCliente: CustomerPaymentInformation, han
                                 </div>
                             </div>
                             {/* Parte derecha, forma de pago */}
-                            <div className="text-center justify-center py-6">
-                                <div>
-                                    <div className="text-2xl font-semibold">Método de pago</div>
-                                    <hr />
-                                    <div className="grid grid-cols-2 justify-items gap-6 p-10">
+                            <div className="flex flex-col w-full bg-white text-center justify-center">
+                                <div className="flex flex-col gap-4 items-center">
+                                    <span className="text-2xl font-semibold">Método de pago</span>
+                                    <div className="flex xl:gap-10 gap-4">
                                         <div>
                                             <div className="text-xl text-left">
                                                 Efectivo
@@ -224,7 +222,7 @@ export const ModalPagar = (props: { PagoCliente: CustomerPaymentInformation, han
                                     </div>
                                 </div>
 
-                                <div className="grid grid-cols-3 text-lg text-center justify-center">
+                                <div className="flex gap-10 text-lg text-center justify-center">
                                     <div>
                                         <div>Total a pagar</div>
                                         <div className="text-4xl font-semibold">{PagoDelCliente.precioTotal.toFixed(2)}€</div>
@@ -241,26 +239,25 @@ export const ModalPagar = (props: { PagoCliente: CustomerPaymentInformation, han
                             </div>
                         </div>
 
-                        <hr className="my-2" />
-                        <div className="grid grid-cols-2 justify-items-center gap-4">
-                            <button disabled={isButtonDisabled} className={`${isButtonDisabled ? "bg-red-400 cursor-default" : "bg-red-500 hover:bg-red-600"} text-white w-full h-12 hover:shadow-lg rounded-lg flex items-center justify-center`} onClick={() => props.handleModalOpen(false)}>
-                                <div className="text-lg">CANCELAR</div>
+                        <div className="flex justify-items-center gap-2">
+                            <button disabled={isButtonDisabled} className={`${isButtonDisabled ? "bg-red-400 cursor-default" : "bg-red-500 hover:bg-red-600"} text-white w-full h-10 hover:shadow-lg rounded-lg flex items-center justify-center`} onClick={() => props.handleModalOpen(false)}>
+                                <div className="text-lg">Cancelar</div>
                             </button>
                             {
                                 serverUp ?
                                     Number(cambio.toFixed(2)) >= 0 ?
-                                        <button disabled={isButtonDisabled} className={`${isButtonDisabled ? "bg-blue-400 cursor-default" : "bg-blue-500 hover:bg-blue-600"} text-white w-full h-12 hover:shadow-lg rounded-lg flex items-center justify-center`}
+                                        <button disabled={isButtonDisabled} className={`${isButtonDisabled ? "bg-blue-400 cursor-default" : "bg-blue-500 hover:bg-blue-600"} text-white w-full h-10 hover:shadow-lg rounded-lg flex items-center justify-center`}
                                             onClick={async (e) => { await RealizarVenta(PagoDelCliente); }} >
-                                            <div className="text-lg">COMPLETAR VENTA</div>
+                                            <div className="text-lg">Completar venta</div>
                                         </button>
                                         :
-                                        <button className="bg-blue-400 text-white w-full h-12 cursor-default rounded-lg flex items-center justify-center">
-                                            <div className="text-lg">DINERO INSUFICIENTE</div>
+                                        <button className="bg-blue-400 text-white w-full h-10 cursor-default rounded-lg flex items-center justify-center">
+                                            <div className="text-lg">Dinero insuficiente</div>
                                         </button>
 
                                     :
-                                    <button className="bg-slate-500 hover:bg-slate-500 cursor-pointer text-white w-full h-12 hover:shadow-lg rounded-lg flex items-center justify-center">
-                                        <div className="text-lg">CARGANDO CLIENTES...</div>
+                                    <button className="bg-slate-500 hover:bg-slate-500 cursor-pointer text-white w-full h-10 hover:shadow-lg rounded-lg flex items-center justify-center">
+                                        <div className="text-lg">Cargando clientes...</div>
                                     </button>
                             }
                         </div>
