@@ -4,12 +4,13 @@ import { ProductoVendido } from "../../../tipos/ProductoVendido";
 import Image from "next/image";
 import { Venta } from "../../../tipos/Venta";
 import useDatosTiendaContext from "../../../context/datosTienda";
+import { CalcularBaseImponiblePorIva } from "../../../utils/typeCreator";
 
 const Ticket = React.forwardRef((props: { pagoCliente: CustomerPaymentInformation, productosVendidos: ProductoVendido[], qrImage: string, venta: Venta }, ref: React.LegacyRef<HTMLDivElement>) => {
-    const { NombreTienda, DireccionTienda, CIF } = useDatosTiendaContext()
+    const { NombreTienda, DireccionTienda, CIF } = useDatosTiendaContext();
     return (
-        <div className="flex flex-col gap-4 items-center bg-white rounded-2xl w-full h-auto text-xs" ref={ref}>
-            <div className="w-full h-5/6 rounded-3xl bg-white z-10 ">
+        <div className="flex flex-col gap-2 items-center bg-white rounded-2xl w-full h-auto text-xs" ref={ref}>
+            <div className="w-full h-5/6 rounded-3xl bg-white z-10">
                 <div className="flex flex-col gap-1">
                     <h2 className="text-xl font-semibold text-center ">{NombreTienda || "ERPWeb"}</h2>
                     {DireccionTienda && <div className="text-xs text-center">Dirección: {DireccionTienda}</div>}
@@ -24,12 +25,12 @@ const Ticket = React.forwardRef((props: { pagoCliente: CustomerPaymentInformatio
                         {props.pagoCliente.cliente.cp && props.pagoCliente.cliente.cp !== "General" && <div>Código postal: {props.pagoCliente.cliente.cp} </div>}
                     </div>
                 </div>
-                <div id="receipt-content" className="text-left w-full h-5/6 p-4">
+                <div id="receipt-content" className="text-left w-full h-5/6 p-2">
                     <hr />
                     <div className="w-full h-full">
                         <div className="flex w-full justify-around">
                             <p className="w-2/4 text-left font-semibold">Producto</p>
-                            <p className="w-1/4 text-center font-semibold">Cantidad</p>
+                            <p className="w-1/4 text-center font-semibold">Und.</p>
                             <p className="w-1/4 text-center font-semibold">Total</p>
                         </div>
                         <div className="flex flex-col gap-2 w-full h-full overflow-y-auto overflow-x-hidden pt-2">
@@ -47,6 +48,11 @@ const Ticket = React.forwardRef((props: { pagoCliente: CustomerPaymentInformatio
                         <hr />
                     </div>
                 </div>
+            </div>
+            <div className="w-full">
+                <hr />
+                <GetBaseImponible productosVendidos={props.productosVendidos} iva={[4.00, 10.00, 21.00]} />
+                <hr />
             </div>
             <div className="flex flex-col justify-evenly w-full h-auto items-center">
                 <div className="font-semibold">
@@ -108,3 +114,33 @@ const GenerarFilaProducto = (props: { numFila: number, nombreProducto: string, c
         </div>
     );
 }
+
+const GetBaseImponible = (props: { productosVendidos: ProductoVendido[], iva: number[] }) => {
+    return (
+        <div className="flex flex-col gap-1 w-full items-center justify-center">
+            {
+                props.iva.map((iva, index) => {
+                    const [BImponible, valorIVA] = CalcularBaseImponiblePorIva(props.productosVendidos, iva);
+                    if (BImponible <= 0) { return <></> }
+                    return (
+                        <div key={index} className="flex justify-around w-full">
+                            <div className="flex flex-col">
+                                <span>Base imp.</span>
+                                <span>{BImponible.toFixed(2)}€</span>
+                            </div>
+                            <div className="flex flex-col">
+                                <span>%IVA</span>
+                                <span>{iva}%</span>
+                            </div>
+                            <div className="flex flex-col">
+                                <span>IVA</span>
+                                <span>{valorIVA.toFixed(2)}€</span>
+                            </div>
+                        </div>
+                    )
+                })
+            }
+        </div>
+    )
+}
+

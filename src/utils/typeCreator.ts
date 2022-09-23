@@ -389,3 +389,11 @@ function CreateVentasPorHora(s: any): VentasPorHora | undefined {
         return undefined;
     }
 }
+
+export const CalcularBaseImponiblePorIva = (productosVendidos: ProductoVendido[], iva: number): [number, number] => {
+    const prodsFiltrados = productosVendidos.filter((p) => p.iva === iva);
+    const bImponible = prodsFiltrados.reduce((prev: number, current: ProductoVendido) => {
+        return prev + ((current.precioFinal / (1 + (current.iva / 100))) * current.cantidadVendida)
+    }, 0);
+    return [bImponible, bImponible * (iva / 100)]
+}

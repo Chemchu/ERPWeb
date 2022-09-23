@@ -93,7 +93,7 @@ const CierrePage = () => {
                 <div className="flex w-full h-auto py-4 gap-2 justify-end ">
                     <UploadFileRestricted tipoDocumento={TipoDocumento.Cierres} />
                     <DownloadCierresFile tipoDocumento={TipoDocumento.Cierres} />
-                    <DateRange dateRange={dateRange} setDateRange={setDateRange} endDate={endDate} startDate={startDate} />
+                    <DateRange titulo="Fecha" dateRange={dateRange} setDateRange={setDateRange} endDate={endDate} startDate={startDate} />
                     <input disabled autoFocus={true} className="rounded-lg border appearance-none shadow-lg w-max-72 xl:w-96 h-full py-2 px-4 bg-white text-gray-700 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-600" placeholder="ID del cierre" />
                     {
                         filtro ?
