@@ -76,7 +76,7 @@ const SalesPage = () => {
                     <DownloadVentasFile tipoDocumento={TipoDocumento.Ventas} />
                 </div>
                 <div className="flex w-2/3 gap-4 justify-end">
-                    <DateRange dateRange={dateRange} setDateRange={setDateRange} endDate={endDate} startDate={startDate} />
+                    <DateRange titulo="Fecha" dateRange={dateRange} setDateRange={setDateRange} endDate={endDate} startDate={startDate} />
                     <div className="flex gap-2">
                         <input autoFocus={true} className="rounded-lg border appearance-none shadow-lg w-40 xl:w-96 h-full py-2 px-4 bg-white text-gray-700 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-600" placeholder="Buscar venta..."
                             onChange={(e) => { setFiltro(e.target.value); }} onKeyPress={async (e) => { e.key === "Enter" && await Filtrar(filtro) }} />

@@ -133,7 +133,7 @@ const GetSalesByQuery = async (userQuery: queryString.ParsedQuery<string>, res: 
                     "fechaInicial": userQuery.fechaInicial ? userQuery.fechaInicial : null,
                     "fechaFinal": userQuery.fechaFinal ? userQuery.fechaFinal : null
                 },
-                "limit": 10000
+                "limit": 25000
             }
         }
     );
@@ -148,6 +148,7 @@ export const config = {
         bodyParser: {
             sizeLimit: '100mb',
         },
+        responseLimit: '15mb',
     },
 }
 

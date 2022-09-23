@@ -4,6 +4,7 @@ import { ProductoVendido } from "../../../tipos/ProductoVendido";
 import Image from "next/image";
 import { Venta } from "../../../tipos/Venta";
 import useDatosTiendaContext from "../../../context/datosTienda";
+import { CalcularBaseImponiblePorIva } from "../../../utils/typeCreator";
 
 const Ticket = React.forwardRef((props: { pagoCliente: CustomerPaymentInformation, productosVendidos: ProductoVendido[], qrImage: string, venta: Venta }, ref: React.LegacyRef<HTMLDivElement>) => {
     const { NombreTienda, DireccionTienda, CIF } = useDatosTiendaContext();
@@ -118,11 +119,11 @@ const GetBaseImponible = (props: { productosVendidos: ProductoVendido[], iva: nu
     return (
         <div className="flex flex-col gap-1 w-full items-center justify-center">
             {
-                props.iva.map((iva) => {
-                    const [BImponible, valorIVA] = CalcularBaseImponible(props.productosVendidos, iva);
+                props.iva.map((iva, index) => {
+                    const [BImponible, valorIVA] = CalcularBaseImponiblePorIva(props.productosVendidos, iva);
                     if (BImponible <= 0) { return <></> }
                     return (
-                        <div className="flex justify-around w-full">
+                        <div key={index} className="flex justify-around w-full">
                             <div className="flex flex-col">
                                 <span>Base imp.</span>
                                 <span>{BImponible.toFixed(2)}€</span>
@@ -143,10 +144,3 @@ const GetBaseImponible = (props: { productosVendidos: ProductoVendido[], iva: nu
     )
 }
 
-const CalcularBaseImponible = (productosVendidos: ProductoVendido[], iva: number): [number, number] => {
-    const prodsFiltrados = productosVendidos.filter((p) => p.iva === iva);
-    const bImponible = prodsFiltrados.reduce((prev: number, current: ProductoVendido) => {
-        return prev + (current.precioFinal / (1 + (current.iva / 100)))
-    }, 0);
-    return [bImponible, bImponible * (iva / 100)]
-}

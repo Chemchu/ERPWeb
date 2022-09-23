@@ -110,7 +110,7 @@ const EstadisticasPage = () => {
     return (
         <div className="flex flex-col gap-4 h-full w-full bg-white rounded-b-2xl rounded-r-2xl p-4 shadow-lg border-x overflow-y-scroll">
             <div id="filtros" className="flex justify-end w-full z-20 gap-4">
-                <DateRange dateRange={dateRange} setDateRange={setDateRange} endDate={endDate} startDate={startDate} isClearable={true} />
+                <DateRange titulo="Fecha" dateRange={dateRange} setDateRange={setDateRange} endDate={endDate} startDate={startDate} isClearable={true} />
                 <div className="xl:w-72 w-52">
                     <SimpleListBox elementos={[Tiempos.Hoy, Tiempos.Ayer, Tiempos.EstaSemana, Tiempos.SemanaPasada, Tiempos.EsteMes,
                     Tiempos.MesPasado]} setElemento={setTimeRange} defaultValue={Tiempos.Hoy} />
