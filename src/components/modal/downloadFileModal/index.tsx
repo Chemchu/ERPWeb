@@ -1,4 +1,4 @@
-import { motion } from "framer-motion";
+import { AnimatePresence, motion } from "framer-motion";
 import { useEffect, useState } from "react";
 import { TipoDocumento } from "../../../tipos/Enums/TipoDocumentos";
 import { In } from "../../../utils/animations";
@@ -15,6 +15,7 @@ const DownloadFileModal = (props: { setModal: Function, tipoDocumento: TipoDocum
     const [startDate, endDate] = dateRange;
     const [validDate, setValidDate] = useState<boolean>(false);
     const [data, setData] = useState<any[] | undefined>(undefined);
+    const [isDownloading, setIsDownloading] = useState<boolean>(false);
 
     useEffect(() => {
         if (dateRange[0] == null) { setValidDate(false); return; }
@@ -29,12 +30,14 @@ const DownloadFileModal = (props: { setModal: Function, tipoDocumento: TipoDocum
         if (data.length <= 0) { return; }
 
         ExportData()
+        setIsDownloading(false);
     }, [data])
 
 
     const DownloadData = async () => {
         if (startDate == null) { return; }
         if (endDate == null) { return; }
+        setIsDownloading(true);
 
         if (props.tipoDocumento === TipoDocumento.Ventas) {
             const ventas = await FetchVentasByDateRange(startDate, endDate);
@@ -116,6 +119,15 @@ const DownloadFileModal = (props: { setModal: Function, tipoDocumento: TipoDocum
                     <div className="flex flex-col gap-4 justify-center items-center h-full w-full">
                         <span>Seleccione un rango de fechas</span>
                         <DateRange dateRange={dateRange} setDateRange={setDateRange} endDate={endDate} startDate={startDate} />
+                        <AnimatePresence>
+                            {
+                                isDownloading &&
+                                <motion.span initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
+                                    className="text-xs italic">
+                                    Si el rango de fechas abarca muchos días, la descarga puede tardar varios minutos
+                                </motion.span>
+                            }
+                        </AnimatePresence>
                     </div>
                     <div className="flex gap-2 w-full h-1/3 justify-around items-end text-white">
                         <button className="w-1/2 h-12 rounded-xl bg-red-500 hover:bg-red-600 shadow-lg" onClick={() => { props.setModal(false) }}>
@@ -123,8 +135,9 @@ const DownloadFileModal = (props: { setModal: Function, tipoDocumento: TipoDocum
                         </button>
                         {
                             validDate ?
-                                <button className="w-1/2 h-12 rounded-xl bg-blue-500 hover:bg-blue-600 shadow-lg" onClick={() => { DownloadData() }}>
-                                    Exportar
+                                <button disabled={isDownloading} className={`${isDownloading ? "bg-blue-400" : "bg-blue-500 hover:bg-blue-600 "} w-1/2 h-12 rounded-xl shadow-lg`}
+                                    onClick={DownloadData}>
+                                    {isDownloading ? "Exportando..." : "Exportar"}
                                 </button>
                                 :
                                 <button disabled className="w-1/2 h-12 rounded-xl bg-blue-400 shadow-lg">
