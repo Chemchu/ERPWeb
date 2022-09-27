@@ -13,17 +13,10 @@ const Ticket = React.forwardRef((props: { pagoCliente: CustomerPaymentInformatio
             <div className="w-full h-5/6 rounded-3xl bg-white z-10">
                 <div className="flex flex-col gap-1">
                     <h2 className="text-xl font-semibold text-center ">{NombreTienda || "ERPWeb"}</h2>
-                    {DireccionTienda && <div className="text-xs text-center">Dirección: {DireccionTienda}</div>}
+                    {DireccionTienda && <div className="text-xs text-center">{DireccionTienda}</div>}
                     {CIF && <div className="text-xs text-center">CIF: {CIF}</div>}
-
-                    <div className="text-center">Venta: {props.venta._id}</div>
+                    {props.venta.numFactura && <div className="text-center">Num. factura: {props.venta.numFactura}</div>}
                     <div className="text-center">Fecha: {new Date(Number(props.venta.createdAt)).toLocaleString()}</div>
-                    <div className="flex flex-col text-center">
-                        <div>Cliente: {props.pagoCliente.cliente.nombre} </div>
-                        {props.pagoCliente.cliente.nif && props.pagoCliente.cliente.nif !== "General" && <div>CIF: {props.pagoCliente.cliente.nif} </div>}
-                        {props.pagoCliente.cliente.calle && props.pagoCliente.cliente.calle !== "General" && <div>Dirección: {props.pagoCliente.cliente.calle} </div>}
-                        {props.pagoCliente.cliente.cp && props.pagoCliente.cliente.cp !== "General" && <div>Código postal: {props.pagoCliente.cliente.cp} </div>}
-                    </div>
                 </div>
                 <div id="receipt-content" className="text-left w-full h-5/6 p-2">
                     <hr />
@@ -77,9 +70,20 @@ const Ticket = React.forwardRef((props: { pagoCliente: CustomerPaymentInformatio
                     Cambio: {props.pagoCliente.cambio.toFixed(2)}€
                 </div>
             </div>
-            <div className="flex justify-center">
+            <div className="flex flex-col gap-1 justify-center items-center">
                 <Image src={props.qrImage} layout="fixed" width={50} height={50} />
+                <span className="italic">Este código QR es para uso interno de la empresa</span>
             </div>
+            {/* <div className="text-xs text-center">ID: {props.venta._id}</div> */}
+            {
+                props.pagoCliente.cliente.nif !== "General" &&
+                <div className="flex flex-col text-center">
+                    <div>{props.pagoCliente.cliente.nombre} </div>
+                    {props.pagoCliente.cliente.nif && props.pagoCliente.cliente.nif !== "General" && <div>CIF: {props.pagoCliente.cliente.nif} </div>}
+                    {props.pagoCliente.cliente.calle && props.pagoCliente.cliente.calle !== "General" && <div>{props.pagoCliente.cliente.calle} </div>}
+                    {props.pagoCliente.cliente.cp && props.pagoCliente.cliente.cp !== "General" && <div>CP: {props.pagoCliente.cliente.cp} </div>}
+                </div>
+            }
             <div className="flex flex-col pb-2">
                 <span className="text-center">
                     Le ha atendido {props.venta.vendidoPor.nombre}
