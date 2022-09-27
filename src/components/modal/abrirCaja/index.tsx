@@ -60,8 +60,8 @@ const AbrirCaja = (props: { setShowModal: Function, setEmpleadoUsandoTPV: Functi
                 <motion.div variants={In} initial="hidden" animate="visible" exit="exit"
                     className="flex flex-col h-3/6 w-3/6 max-h-96 max-w-lg bg-white rounded-xl  items-center"
                     onClick={(e) => e.stopPropagation()}>
-                    <div className="text-2xl justify-self-start pt-4 w">
-                        TPV Cerrada
+                    <div className="text-2xl justify-self-start p-4">
+                        Abrir TPV
                     </div>
 
                     <div className="flex flex-col flex-grow gap-10 justify-center">
@@ -93,8 +93,8 @@ const AbrirCaja = (props: { setShowModal: Function, setEmpleadoUsandoTPV: Functi
                         </div>
                     </div>
 
-                    <div className="flex gap-10 text-center justify-end items-end text-white pb-4">
-                        <div className="flex h-10 w-32 m-auto bg-red-500 hover:bg-red-600 rounded-2xl cursor-pointer items-center justify-center shadow-lg"
+                    <div className="flex w-full gap-4 text-center justify-end items-end text-white p-4">
+                        <div className="flex h-10 w-full m-auto bg-red-500 hover:bg-red-600 rounded-xl cursor-pointer items-center justify-center shadow-lg"
                             onClick={() => { props.setShowModal(false) }}>
                             <div>
                                 Cancelar
@@ -102,14 +102,14 @@ const AbrirCaja = (props: { setShowModal: Function, setEmpleadoUsandoTPV: Functi
                         </div>
                         {
                             Number(cajaInicial) > 0 && currentTpvName && tpvs ?
-                                <div className="flex h-10 w-32 m-auto bg-blue-500 hover:bg-blue-600 rounded-2xl cursor-pointer items-center justify-center shadow-lg"
+                                <div className="flex h-10 w-full m-auto bg-blue-500 hover:bg-blue-600 rounded-xl cursor-pointer items-center justify-center shadow-lg"
                                     onClick={AbrirTPV}>
                                     <div>
                                         Abrir TPV
                                     </div>
                                 </div>
                                 :
-                                <div className="flex h-10 w-32 m-auto bg-blue-400 rounded-2xl cursor-default items-center justify-center shadow-lg">
+                                <div className="flex h-10 w-full m-auto bg-blue-400 rounded-xl cursor-default items-center justify-center shadow-lg">
                                     <div>
                                         Abrir TPV
                                     </div>
