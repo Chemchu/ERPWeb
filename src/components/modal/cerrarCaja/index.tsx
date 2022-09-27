@@ -13,12 +13,13 @@ import { AddCierreTPV, FetchTPV } from "../../../utils/fetches/tpvFetches";
 import { FetchVentasByTPVDate } from "../../../utils/fetches/ventasFetches";
 import GenerateQrBase64 from "../../../utils/generateQr";
 import { GetEfectivoTotal, GetTarjetaTotal, GetTotalEnCaja } from "../../../utils/preciosUtils";
-import { notifyError } from "../../../utils/toastify";
+import { notifyError, notifyWarn } from "../../../utils/toastify";
 import { ValidatePositiveFloatingNumber } from "../../../utils/validator";
 import CargandoSpinner from "../../cargandoSpinner";
 import CierrePrintable from "../../printable/cierrePrintable";
 import { Backdrop } from "../backdrop";
 import ContarCaja from "../contarCaja";
+import RequestConfirmacion from "../requestConfirmacion";
 
 export const CerrarCaja = (props: { Empleado?: SesionEmpleado, setModalOpen: Function, setEmpleadoUsandoTPV: Function }) => {
     const [Ventas, setVentas] = useState<Venta[]>();
@@ -33,6 +34,9 @@ export const CerrarCaja = (props: { Empleado?: SesionEmpleado, setModalOpen: Fun
     const [qrImage, setQrImage] = useState<string>();
     const [Cierre, setCierre] = useState<Cierre>();
     const [isButtonDisabled, setButtonDisabled] = useState<boolean>(false);
+    const [confimationRequest, setConfimationRequest] = useState<boolean>(false);
+    const [anyadiendoCierre, setAnyadiendoCierre] = useState<boolean>(false);
+    const [isMounted, setIsMounted] = useState<boolean>(false);
     const { Empleado, SetEmpleado } = useEmpleadoContext();
     const componentRef = useRef(null);
 
@@ -42,6 +46,9 @@ export const CerrarCaja = (props: { Empleado?: SesionEmpleado, setModalOpen: Fun
 
     const onAfterPrintHandler = React.useCallback(() => {
         setButtonDisabled(false)
+        setAnyadiendoCierre(false)
+        props.setModalOpen(false)
+        props.setEmpleadoUsandoTPV(false);
     }, []);
 
     const handlePrint = useReactToPrint({
@@ -69,6 +76,7 @@ export const CerrarCaja = (props: { Empleado?: SesionEmpleado, setModalOpen: Fun
         }
 
         GetVentas(Empleado);
+        setIsMounted(true);
 
         return () => {
             abortController.abort();
@@ -76,8 +84,18 @@ export const CerrarCaja = (props: { Empleado?: SesionEmpleado, setModalOpen: Fun
     }, [])
 
     useEffect(() => {
+        if (!isMounted) { return; }
+
         if (qrImage) {
             handlePrint();
+        }
+        else {
+            notifyWarn("No se ha podido generar el código QR del cierre")
+
+            setButtonDisabled(false)
+            setAnyadiendoCierre(false)
+            props.setEmpleadoUsandoTPV(false);
+            props.setModalOpen(false)
         }
 
     }, [qrImage])
@@ -99,17 +117,27 @@ export const CerrarCaja = (props: { Empleado?: SesionEmpleado, setModalOpen: Fun
                 Number(TotalPrevistoEnCaja), Number(TotalRealEnCaja), abortController);
 
             if (cierre) {
-                setQrImage(await GenerateQrBase64(cierre._id, abortController));
                 setCierre(cierre);
-                props.setModalOpen(false);
-                props.setEmpleadoUsandoTPV(false);
+                setQrImage(await GenerateQrBase64(cierre._id, abortController));
+            }
+            else {
+                setButtonDisabled(false)
+                setAnyadiendoCierre(false)
             }
         }
         catch (e) {
             abortController.abort();
             setButtonDisabled(false)
+            setAnyadiendoCierre(false)
+            props.setModalOpen(false)
             return;
         }
+    }
+
+    const ConfirmarCierre = async () => {
+        setConfimationRequest(false)
+        setAnyadiendoCierre(true)
+        await CerrarCaja()
     }
 
     if (!Ventas) {
@@ -129,6 +157,40 @@ export const CerrarCaja = (props: { Empleado?: SesionEmpleado, setModalOpen: Fun
                 </Backdrop>
             </motion.div>
         );
+    }
+
+    if (anyadiendoCierre) {
+        return (
+            <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
+                className="h-full w-full ">
+                <Backdrop onClick={(e) => { e.stopPropagation(); }} >
+                    <motion.div className="h-1/3 w-1/3 flex flex-col items-center bg-white rounded-2xl p-4"
+                        onClick={(e) => e.stopPropagation()}
+                        variants={In}
+                        initial="hidden"
+                        animate="visible"
+                        exit="exit"
+                    >
+                        <div className="flex w-full h-full justify-center">
+                            <CargandoSpinner mensaje="Añadiendo cierre..." />
+                        </div>
+                        {
+                            qrImage &&
+                            Cierre &&
+                            Tpv &&
+                            <div style={{ display: "none" }}>
+                                <CierrePrintable
+                                    ref={componentRef}
+                                    cierre={Cierre}
+                                    tpv={Tpv.nombre}
+                                    qrImage={qrImage}
+                                />
+                            </div>
+                        }
+                    </motion.div>
+                </Backdrop>
+            </motion.div>
+        )
     }
 
     return (
@@ -199,7 +261,7 @@ export const CerrarCaja = (props: { Empleado?: SesionEmpleado, setModalOpen: Fun
                         </div>
 
                         <div className="flex gap-4 h-auto w-full text-white">
-                            <div className="flex h-10 w-2/3 m-auto bg-red-500 hover:bg-red-600 rounded-lg cursor-pointer items-center justify-center shadow-lg"
+                            <div className="flex h-10 w-2/3 m-auto bg-red-500 hover:bg-red-600 rounded-xl cursor-pointer items-center justify-center shadow-lg"
                                 onClick={() => { props.setModalOpen(false) }}>
                                 <div>
                                     Cancelar
@@ -207,37 +269,29 @@ export const CerrarCaja = (props: { Empleado?: SesionEmpleado, setModalOpen: Fun
                             </div>
                             {
                                 Number(TotalRealEnCaja) > 0 && Number(TotalRealEnCaja) - Number(DineroRetirado) >= 0 && !isButtonDisabled ?
-                                    <div className={`flex h-10 w-2/3 m-auto bg-blue-500 hover:bg-blue-600 rounded-lg cursor-pointer items-center justify-center shadow-lg`}
-                                        onClick={async () => { await CerrarCaja(); }}>
+                                    <div className={`flex h-10 w-2/3 m-auto bg-blue-500 hover:bg-blue-600 rounded-xl cursor-pointer items-center justify-center shadow-lg`}
+                                        onClick={() => { setConfimationRequest(true) }}>
                                         <div>
                                             Cerrar TPV
                                         </div>
                                     </div>
                                     :
-                                    <div className={`flex h-10 w-2/3 m-auto bg-blue-400 hover:bg-blue-400 rounded-lg cursor-default items-center justify-center shadow-lg`}>
+                                    <div className={`flex h-10 w-2/3 m-auto bg-blue-400 rounded-xl cursor-default items-center justify-center shadow-lg`}>
                                         <div>
                                             Cerrar TPV
                                         </div>
                                     </div>
-                            }
-                            {
-                                qrImage &&
-                                Cierre &&
-                                Tpv &&
-                                <div style={{ display: "none" }}>
-                                    <CierrePrintable
-                                        ref={componentRef}
-                                        cierre={Cierre}
-                                        tpv={Tpv.nombre}
-                                        qrImage={qrImage}
-                                    />
-                                </div>
                             }
                         </div>
                     </div>
                     <AnimatePresence>
                         {
                             showContarCaja && <ContarCaja showItself={setContarCaja} setTotal={setTotalRealEnCaja} desglose={Desglose} setDesglose={setDesglose} />
+                        }
+                        {
+                            confimationRequest && <RequestConfirmacion titulo="¿Desea añadir el cierre?" msg="El cierre no se podrá modificar una vez sea añadido"
+                                acceptCallback={async () => await ConfirmarCierre()}
+                                cancelCallback={() => setConfimationRequest(false)} />
                         }
                     </AnimatePresence>
                 </motion.div>

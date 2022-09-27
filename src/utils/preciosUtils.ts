@@ -82,9 +82,6 @@ export const GetTotalEnCaja = (Ventas: Venta[], Devoluciones: Devolucion[], Tpv:
         if (tipoVenta === TipoCobro.Fraccionado) {
             return total + venta.dineroEntregadoEfectivo - venta.cambio;
         }
-
-        console.log(total);
-
         return Number(total.toFixed(2));
     }, Tpv.cajaInicial);
 
