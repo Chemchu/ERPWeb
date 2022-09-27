@@ -59,6 +59,7 @@ function CreateSale(s: any): Venta | undefined {
         let venta: Venta = {
             _id: s._id,
             productos: CreateProductoVendidoList(s.productos),
+            numFactura: s.numFactura,
             dineroEntregadoEfectivo: s.dineroEntregadoEfectivo,
             dineroEntregadoTarjeta: s.dineroEntregadoTarjeta,
             precioVentaTotalSinDto: s.preprecioVentaTotalSinDto,

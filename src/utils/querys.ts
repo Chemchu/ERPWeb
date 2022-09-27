@@ -252,6 +252,7 @@ export const QUERY_SALES = `
     query Ventas($find: VentasFind) {
         ventas(find: $find) {
             _id
+            numFactura
             dineroEntregadoEfectivo
             dineroEntregadoTarjeta
             descuentoEfectivo

@@ -5,6 +5,7 @@ import { ProductoVendido } from "./ProductoVendido";
 export type Venta = {
     _id: string,
     productos: ProductoVendido[],
+    numFactura: string,
     dineroEntregadoEfectivo: number,
     dineroEntregadoTarjeta: number,
     precioVentaTotalSinDto: number,
