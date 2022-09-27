@@ -66,7 +66,6 @@ DevolucionTicket.displayName = 'Ticket de devolución';
 
 export default DevolucionTicket;
 
-
 const GenerarFilaProductoDevuelto = (props: { numFila: number, productoDevuelto: ProductoDevuelto }) => {
     return (
         <div className="flex w-full">
