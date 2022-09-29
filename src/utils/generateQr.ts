@@ -4,7 +4,8 @@ const GenerateQrBase64 = async (id: string, abortController: AbortController): P
         const imageBlob = await res.blob();
         const imageObjectURL = URL.createObjectURL(imageBlob);
 
-        return imageObjectURL;
+        if (imageObjectURL) { return imageObjectURL; }
+        return undefined;
     }
     catch (e) {
         return undefined

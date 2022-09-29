@@ -82,10 +82,10 @@ const SidebarDerecho = React.memo((props: {
     }, [ProductosEnCarrito])
 
     useEffect(() => {
-        if (qrImage) {
+        if (VentaResultante) {
             handlePrint();
         }
-    }, [qrImage]);
+    }, [VentaResultante]);
 
     useEffect(() => {
         setPrecioTotal(PrecioTotalCarrito(ProductosEnCarrito));
@@ -195,8 +195,8 @@ const SidebarDerecho = React.memo((props: {
 
             if (!error && data) {
                 const abortController = new AbortController();
-                setVenta((await FetchVentaByQuery(data._id))[0]);
                 setQrImage(await GenerateQrBase64(data._id, abortController));
+                setVenta((await FetchVentaByQuery(data._id))[0]);
             }
             else {
                 setQrImage(undefined);
@@ -404,8 +404,8 @@ const SidebarDerecho = React.memo((props: {
                 </AnimatePresence>
             </div>
             {
-                qrImage &&
                 VentaResultante &&
+                PagoRapido &&
                 <div style={{ display: "none" }}>
                     <Ticket
                         ref={componentRef}

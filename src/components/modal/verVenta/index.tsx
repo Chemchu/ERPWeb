@@ -84,11 +84,8 @@ const VerVenta = (props: { venta: Venta | undefined, setModal: Function }) => {
         )
     }
 
-    let fecha = new Date(0);
-    let fechaActualizada = new Date(0);
-    fecha.setUTCMilliseconds(Number(props.venta.createdAt));
-    fechaActualizada.setUTCMilliseconds(Number(props.venta.updatedAt));
-
+    let fecha = new Date(Number(props.venta.createdAt));
+    let fechaActualizada = new Date(Number(props.venta.updatedAt));
     return (
         <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
             className="h-full w-full ">
@@ -197,8 +194,8 @@ const VerVenta = (props: { venta: Venta | undefined, setModal: Function }) => {
                             </button>
                         </div>
                         {
-                            PagoDelCliente && qrImage &&
                             props.venta &&
+                            PagoDelCliente &&
                             <div style={{ display: "none" }}>
                                 <Ticket
                                     ref={componentRef}

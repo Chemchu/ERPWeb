@@ -2,7 +2,7 @@ import React from "react";
 import Image from "next/image";
 import { Cierre } from "../../../tipos/Cierre";
 
-const CierrePrintable = React.forwardRef((props: { tpv: string, cierre: Cierre, qrImage: string }, ref: React.LegacyRef<HTMLDivElement>) => {
+const CierrePrintable = React.forwardRef((props: { tpv: string, cierre: Cierre, qrImage: string | undefined }, ref: React.LegacyRef<HTMLDivElement>) => {
     return (
         <div className="flex flex-col gap-4 items-center bg-white rounded-2xl w-full h-auto text-xs" ref={ref}>
             <div className="w-full h-5/6 rounded-3xl bg-white z-10 ">
@@ -70,9 +70,15 @@ const CierrePrintable = React.forwardRef((props: { tpv: string, cierre: Cierre, 
                     </div>
                 </div>
             </div>
-            <div className="flex justify-center">
-                <Image src={props.qrImage} layout="fixed" width={50} height={50} />
-            </div>
+            {
+                props.qrImage ?
+                    <div className="flex flex-col gap-1 items-center justify-center">
+                        <Image src={props.qrImage} layout="fixed" width={50} height={50} />
+                        <span>ID: {props.cierre._id}</span>
+                    </div>
+                    :
+                    <span className="italic">No se ha podido generar el código QR</span>
+            }
 
             <hr />
         </div>

@@ -6,7 +6,7 @@ import { Venta } from "../../../tipos/Venta";
 import useDatosTiendaContext from "../../../context/datosTienda";
 import { CalcularBaseImponiblePorIva } from "../../../utils/typeCreator";
 
-const Ticket = React.forwardRef((props: { pagoCliente: CustomerPaymentInformation, productosVendidos: ProductoVendido[], qrImage: string, venta: Venta }, ref: React.LegacyRef<HTMLDivElement>) => {
+const Ticket = React.forwardRef((props: { pagoCliente: CustomerPaymentInformation, productosVendidos: ProductoVendido[], qrImage: string | undefined, venta: Venta }, ref: React.LegacyRef<HTMLDivElement>) => {
     const { NombreTienda, DireccionTienda, CIF } = useDatosTiendaContext();
     return (
         <div className="flex flex-col gap-2 items-center bg-white rounded-2xl w-full h-auto text-xs" ref={ref}>
@@ -44,7 +44,7 @@ const Ticket = React.forwardRef((props: { pagoCliente: CustomerPaymentInformatio
             </div>
             <div className="w-full">
                 <hr />
-                <GetBaseImponible productosVendidos={props.productosVendidos} iva={[4.00, 10.00, 21.00]} />
+                <GetBaseImponible productosVendidos={props.productosVendidos} />
                 <hr />
             </div>
             <div className="flex flex-col justify-evenly w-full h-auto items-center">
@@ -70,11 +70,16 @@ const Ticket = React.forwardRef((props: { pagoCliente: CustomerPaymentInformatio
                     Cambio: {props.pagoCliente.cambio.toFixed(2)}€
                 </div>
             </div>
-            <div className="flex flex-col gap-1 justify-center items-center">
-                <Image src={props.qrImage} layout="fixed" width={50} height={50} />
-                <span className="italic">Este código QR es para uso interno de la empresa</span>
-            </div>
-            {/* <div className="text-xs text-center">ID: {props.venta._id}</div> */}
+            {
+                props.qrImage ?
+                    <div className="flex flex-col gap-1 justify-center items-center">
+                        <Image src={props.qrImage} layout="fixed" width={50} height={50} />
+                        <span className="italic">Este código QR es para uso interno de la empresa</span>
+                    </div>
+                    :
+                    <span className="italic">No se ha podido generar el código QR</span>
+            }
+            <div className="text-xs text-center">ID: {props.venta._id}</div>
             {
                 props.pagoCliente.cliente.nif !== "General" &&
                 <div className="flex flex-col text-center">
@@ -119,15 +124,25 @@ const GenerarFilaProducto = (props: { numFila: number, nombreProducto: string, c
     );
 }
 
-const GetBaseImponible = (props: { productosVendidos: ProductoVendido[], iva: number[] }) => {
+const GetBaseImponible = (props: { productosVendidos: ProductoVendido[] }) => {
+    const ivas = new Map<number, boolean>();
+    for (let index = 0; index < props.productosVendidos.length; index++) {
+        const prodVendido = props.productosVendidos[index];
+
+        if (ivas.has(prodVendido.iva)) { continue; }
+        ivas.set(prodVendido.iva, true);
+    }
+
+    const tiposIva = Array.from(ivas.keys())
+
     return (
         <div className="flex flex-col gap-1 w-full items-center justify-center">
             {
-                props.iva.map((iva, index) => {
+                tiposIva.map((iva, index) => {
                     const [BImponible, valorIVA] = CalcularBaseImponiblePorIva(props.productosVendidos, iva);
-                    if (BImponible <= 0) { return <></> }
+                    if (BImponible <= 0) { return null }
                     return (
-                        <div key={index} className="flex justify-around w-full">
+                        <div key={`BImponible-${index}`} className="flex justify-around w-full">
                             <div className="flex flex-col">
                                 <span>Base imp.</span>
                                 <span>{BImponible.toFixed(2)}€</span>

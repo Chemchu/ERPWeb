@@ -86,19 +86,10 @@ export const CerrarCaja = (props: { Empleado?: SesionEmpleado, setModalOpen: Fun
     useEffect(() => {
         if (!isMounted) { return; }
 
-        if (qrImage) {
+        if (Cierre) {
             handlePrint();
         }
-        else {
-            notifyWarn("No se ha podido generar el código QR del cierre")
-
-            setButtonDisabled(false)
-            setAnyadiendoCierre(false)
-            props.setEmpleadoUsandoTPV(false);
-            props.setModalOpen(false)
-        }
-
-    }, [qrImage])
+    }, [Cierre])
 
     const SetTotalReal = (value: string) => {
         if (Desglose.size > 0) { setDesglose(new Map()) }
@@ -117,8 +108,8 @@ export const CerrarCaja = (props: { Empleado?: SesionEmpleado, setModalOpen: Fun
                 Number(TotalPrevistoEnCaja), Number(TotalRealEnCaja), abortController);
 
             if (cierre) {
-                setCierre(cierre);
                 setQrImage(await GenerateQrBase64(cierre._id, abortController));
+                setCierre(cierre);
             }
             else {
                 setButtonDisabled(false)
@@ -175,7 +166,6 @@ export const CerrarCaja = (props: { Empleado?: SesionEmpleado, setModalOpen: Fun
                             <CargandoSpinner mensaje="Añadiendo cierre..." />
                         </div>
                         {
-                            qrImage &&
                             Cierre &&
                             Tpv &&
                             <div style={{ display: "none" }}>
