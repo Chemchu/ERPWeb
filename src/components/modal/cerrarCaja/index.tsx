@@ -86,7 +86,9 @@ export const CerrarCaja = (props: { Empleado?: SesionEmpleado, setModalOpen: Fun
     useEffect(() => {
         if (!isMounted) { return; }
 
-        handlePrint();
+        if (Cierre) {
+            handlePrint();
+        }
     }, [Cierre])
 
     const SetTotalReal = (value: string) => {
