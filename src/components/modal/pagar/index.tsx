@@ -61,10 +61,10 @@ export const ModalPagar = (props: { PagoCliente: CustomerPaymentInformation, han
     }, []);
 
     useEffect(() => {
-        if (qrImage) {
+        if (VentaResultante) {
             handlePrint();
         }
-    }, [qrImage]);
+    }, [VentaResultante]);
 
     useEffect(() => {
         const cliente = Clientes.find((c) => {
@@ -120,8 +120,8 @@ export const ModalPagar = (props: { PagoCliente: CustomerPaymentInformation, han
             const { data, error } = await AddVenta(pagoCliente, ProductosEnCarrito, Empleado, Clientes, Empleado.TPV);
 
             if (!error && data) {
-                setVenta((await FetchVentaByQuery(data._id))[0]);
                 setQrImage(await GenerateQrBase64(data?._id, abortController));
+                setVenta((await FetchVentaByQuery(data._id))[0]);
             }
             else {
                 setQrImage(undefined);
@@ -263,7 +263,7 @@ export const ModalPagar = (props: { PagoCliente: CustomerPaymentInformation, han
                         </div>
                     </div>
                     {
-                        qrImage && VentaResultante &&
+                        VentaResultante &&
                         <div style={{ display: "none" }}>
                             <Ticket
                                 ref={componentRef}

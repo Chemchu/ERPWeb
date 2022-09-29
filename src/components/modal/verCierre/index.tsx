@@ -22,7 +22,6 @@ const VerCierre = (props: { showModal: Function, cierre: Cierre, setCierre: Func
         }
 
         GetQrImage();
-
         return (() => {
             abortController.abort();
         });

@@ -6,7 +6,7 @@ import { Venta } from "../../../tipos/Venta";
 import useDatosTiendaContext from "../../../context/datosTienda";
 import { CalcularBaseImponiblePorIva } from "../../../utils/typeCreator";
 
-const Ticket = React.forwardRef((props: { pagoCliente: CustomerPaymentInformation, productosVendidos: ProductoVendido[], qrImage: string, venta: Venta }, ref: React.LegacyRef<HTMLDivElement>) => {
+const Ticket = React.forwardRef((props: { pagoCliente: CustomerPaymentInformation, productosVendidos: ProductoVendido[], qrImage: string | undefined, venta: Venta }, ref: React.LegacyRef<HTMLDivElement>) => {
     const { NombreTienda, DireccionTienda, CIF } = useDatosTiendaContext();
     return (
         <div className="flex flex-col gap-2 items-center bg-white rounded-2xl w-full h-auto text-xs" ref={ref}>
@@ -70,10 +70,15 @@ const Ticket = React.forwardRef((props: { pagoCliente: CustomerPaymentInformatio
                     Cambio: {props.pagoCliente.cambio.toFixed(2)}€
                 </div>
             </div>
-            <div className="flex flex-col gap-1 justify-center items-center">
-                <Image src={props.qrImage} layout="fixed" width={50} height={50} />
-                <span className="italic">Este código QR es para uso interno de la empresa</span>
-            </div>
+            {
+                props.qrImage ?
+                    <div className="flex flex-col gap-1 justify-center items-center">
+                        <Image src={props.qrImage} layout="fixed" width={50} height={50} />
+                        <span className="italic">Este código QR es para uso interno de la empresa</span>
+                    </div>
+                    :
+                    <span className="italic">No se ha podido generar el código QR</span>
+            }
             <div className="text-xs text-center">ID: {props.venta._id}</div>
             {
                 props.pagoCliente.cliente.nif !== "General" &&
