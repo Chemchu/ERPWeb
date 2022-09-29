@@ -44,7 +44,7 @@ const Ticket = React.forwardRef((props: { pagoCliente: CustomerPaymentInformatio
             </div>
             <div className="w-full">
                 <hr />
-                <GetBaseImponible productosVendidos={props.productosVendidos} iva={[4.00, 10.00, 21.00]} />
+                <GetBaseImponible productosVendidos={props.productosVendidos} />
                 <hr />
             </div>
             <div className="flex flex-col justify-evenly w-full h-auto items-center">
@@ -74,7 +74,7 @@ const Ticket = React.forwardRef((props: { pagoCliente: CustomerPaymentInformatio
                 <Image src={props.qrImage} layout="fixed" width={50} height={50} />
                 <span className="italic">Este código QR es para uso interno de la empresa</span>
             </div>
-            {/* <div className="text-xs text-center">ID: {props.venta._id}</div> */}
+            <div className="text-xs text-center">ID: {props.venta._id}</div>
             {
                 props.pagoCliente.cliente.nif !== "General" &&
                 <div className="flex flex-col text-center">
@@ -119,15 +119,25 @@ const GenerarFilaProducto = (props: { numFila: number, nombreProducto: string, c
     );
 }
 
-const GetBaseImponible = (props: { productosVendidos: ProductoVendido[], iva: number[] }) => {
+const GetBaseImponible = (props: { productosVendidos: ProductoVendido[] }) => {
+    const ivas = new Map<number, boolean>();
+    for (let index = 0; index < props.productosVendidos.length; index++) {
+        const prodVendido = props.productosVendidos[index];
+
+        if (ivas.has(prodVendido.iva)) { continue; }
+        ivas.set(prodVendido.iva, true);
+    }
+
+    const tiposIva = Array.from(ivas.keys())
+
     return (
         <div className="flex flex-col gap-1 w-full items-center justify-center">
             {
-                props.iva.map((iva, index) => {
+                tiposIva.map((iva, index) => {
                     const [BImponible, valorIVA] = CalcularBaseImponiblePorIva(props.productosVendidos, iva);
-                    if (BImponible <= 0) { return <></> }
+                    if (BImponible <= 0) { return null }
                     return (
-                        <div key={index} className="flex justify-around w-full">
+                        <div key={`BImponible-${index}`} className="flex justify-around w-full">
                             <div className="flex flex-col">
                                 <span>Base imp.</span>
                                 <span>{BImponible.toFixed(2)}€</span>

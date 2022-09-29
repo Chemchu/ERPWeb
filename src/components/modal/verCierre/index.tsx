@@ -63,81 +63,68 @@ const VerCierre = (props: { showModal: Function, cierre: Cierre, setCierre: Func
                                     </svg>
                                 </div>
                             </div>
-                            <div className="flex flex-col gap-1 pt-4 text-base">
-                                <span>
-                                    ID: {props.cierre._id}
-                                </span>
-                                <span>
-                                    TPV: {props.tpv}
-                                </span>
-                                <span>
-                                    Venta total: {props.cierre.ventasTotales.toFixed(2)}€
-                                </span>
-                                <span>
-                                    Ventas en efectivo: {props.cierre.ventasEfectivo.toFixed(2)}€
-                                </span>
-                                <span>
-                                    Ventas en tarjeta: {props.cierre.ventasTarjeta.toFixed(2)}€
-                                </span>
-                                {
-                                    props.cierre.beneficio &&
-                                    props.cierre.beneficio > 0 &&
+                            <span className="text-base">
+                                ID: {props.cierre._id}
+                            </span>
+                            <div className="grid grid-cols-2 pt-2">
+                                <div className="flex flex-col gap-1 text-base">
                                     <span>
-                                        Beneficio: {props.cierre.beneficio.toFixed(2)}€
+                                        TPV: {props.tpv}
                                     </span>
-                                }
-                                <span>
-                                    Caja inicial: {props.cierre.cajaInicial.toFixed(2)}€
-                                </span>
-                                <span>
-                                    Caja final esperada: {props.cierre.dineroEsperadoEnCaja.toFixed(2)}€
-                                </span>
-                                <span>
-                                    Caja final real: {props.cierre.dineroRealEnCaja.toFixed(2)}€
-                                </span>
-                                <span>
-                                    Dinero retirado: {props.cierre.dineroRetirado.toFixed(2)}€
-                                </span>
-                                <span>
-                                    Fondo de caja dejado: {props.cierre.fondoDeCaja.toFixed(2)}€
-                                </span>
-                                <span>
-                                    Abierto por: {props.cierre.abiertoPor.nombre}
-                                </span>
-                                <span>
-                                    Fecha de apertura: {fechaApertura}
-                                </span>
-                                <span>
-                                    Cerrado por: {props.cierre.cerradoPor.nombre}
-                                </span>
-                                <span>
-                                    Fecha de cierre: {fechaCierre}
-                                </span>
+                                    <span>
+                                        Venta total: {props.cierre.ventasTotales.toFixed(2)}€
+                                    </span>
+                                    <span>
+                                        Ventas en efectivo: {props.cierre.ventasEfectivo.toFixed(2)}€
+                                    </span>
+                                    <span>
+                                        Ventas en tarjeta: {props.cierre.ventasTarjeta.toFixed(2)}€
+                                    </span>
+                                    <span>
+                                        Caja inicial: {props.cierre.cajaInicial.toFixed(2)}€
+                                    </span>
+                                    <span>
+                                        Caja final esperada: {props.cierre.dineroEsperadoEnCaja.toFixed(2)}€
+                                    </span>
+                                    <span>
+                                        Caja final real: {props.cierre.dineroRealEnCaja.toFixed(2)}€
+                                    </span>
+                                </div>
+                                <div className="flex flex-col gap-1 text-base">
+                                    <span>
+                                        Dinero retirado: {props.cierre.dineroRetirado.toFixed(2)}€
+                                    </span>
+                                    <span>
+                                        Fondo de caja dejado: {props.cierre.fondoDeCaja.toFixed(2)}€
+                                    </span>
+                                    <span>
+                                        Abierto por: {props.cierre.abiertoPor.nombre}
+                                    </span>
+                                    <span>
+                                        Fecha de apertura: {fechaApertura}
+                                    </span>
+                                    <span>
+                                        Cerrado por: {props.cierre.cerradoPor.nombre}
+                                    </span>
+                                    <span>
+                                        Fecha de cierre: {fechaCierre}
+                                    </span>
+                                </div>
                             </div>
                         </div>
                         <div className="flex w-full h-full gap-4 justify-around items-end text-white">
                             <button className="w-1/2 h-12 rounded-xl bg-red-500 hover:bg-red-600 shadow-lg" onClick={() => { props.showModal(false) }}>
                                 Cerrar
                             </button>
-                            {
-                                qrImage ?
-                                    <button className="w-1/2 h-12 rounded-xl bg-blue-500 hover:bg-blue-600 shadow-lg" onClick={() => { handlePrint() }}>
-                                        Imprimir
-                                    </button>
-                                    :
-                                    <div className="flex justify-center items-center w-1/2 h-12 rounded-xl bg-blue-400 cursor-default shadow-lg" >
-                                        <span>
-                                            Imprimir
-                                        </span>
-                                    </div>
-                            }
+                            <button className="w-1/2 h-12 rounded-xl bg-blue-500 hover:bg-blue-600 shadow-lg" onClick={() => { handlePrint() }}>
+                                Imprimir
+                            </button>
                         </div>
                         {
                             showModalDelete &&
                             <BorrarCierreModal cierre={props.cierre} showCierreModal={props.showModal} setCierre={props.setCierre} showModal={setModalDelete} />
                         }
                         {
-                            qrImage &&
                             <div style={{ display: "none" }}>
                                 <CierrePrintable
                                     ref={componentRef}

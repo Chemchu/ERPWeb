@@ -406,6 +406,7 @@ const SidebarDerecho = React.memo((props: {
             {
                 qrImage &&
                 VentaResultante &&
+                PagoRapido &&
                 <div style={{ display: "none" }}>
                     <Ticket
                         ref={componentRef}

@@ -197,8 +197,9 @@ const VerVenta = (props: { venta: Venta | undefined, setModal: Function }) => {
                             </button>
                         </div>
                         {
-                            PagoDelCliente && qrImage &&
+                            qrImage &&
                             props.venta &&
+                            PagoDelCliente &&
                             <div style={{ display: "none" }}>
                                 <Ticket
                                     ref={componentRef}
