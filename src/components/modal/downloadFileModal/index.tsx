@@ -61,8 +61,8 @@ const DownloadFileModal = (props: { setModal: Function, tipoDocumento: TipoDocum
                     cambio: v.cambio.toFixed(2),
                     tipo: v.tipo,
                     fecha: new Date(Number(v.createdAt)).toLocaleString(),
-                    // descuentoEfectivo: v.descuentoEfectivo.toFixed(2),
-                    // descuentoPorcentaje: v.descuentoPorcentaje.toFixed(2),
+                    descuentoEfectivo: v.descuentoEfectivo.toFixed(2),
+                    descuentoPorcentaje: v.descuentoPorcentaje.toFixed(2)
                 }
             })
 
@@ -106,7 +106,7 @@ const DownloadFileModal = (props: { setModal: Function, tipoDocumento: TipoDocum
         <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
             className="h-full w-full z-20">
             <Backdrop onClick={(e) => { e.stopPropagation(); props.setModal(false) }} >
-                <motion.div className="h-2/6 w-3/6 m-auto p-4 flex flex-col items-center justify-center bg-white rounded-2xl"
+                <motion.div className="h-2/6 w-3/6 m-auto p-4 flex flex-col gap-2 items-center justify-center bg-white rounded-2xl"
                     onClick={(e) => e.stopPropagation()}
                     variants={In}
                     initial="hidden"
@@ -116,7 +116,7 @@ const DownloadFileModal = (props: { setModal: Function, tipoDocumento: TipoDocum
                     <span className="text-xl w-full h-1/4 font-semibold">
                         Exportar {props.tipoDocumento.toLocaleLowerCase()}
                     </span>
-                    <div className="flex flex-col gap-4 justify-center items-center h-full w-full">
+                    <div className="flex flex-col gap-2 justify-center items-center h-full w-full">
                         <span>Seleccione un rango de fechas</span>
                         <DateRange dateRange={dateRange} setDateRange={setDateRange} endDate={endDate} startDate={startDate} />
                         <AnimatePresence>

@@ -12,7 +12,7 @@ type AppPropsConPageLayout = AppProps & {
 
 function MyApp({ Component, pageProps, router }: AppPropsConPageLayout) {
   return (
-    <AnimatePresence exitBeforeEnter>
+    <AnimatePresence mode='wait'>
       {
         Component.PageLayout ?
           <DatosTiendaContextProvider >

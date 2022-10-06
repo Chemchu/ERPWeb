@@ -1,6 +1,4 @@
 import { useEffect, useState } from "react";
-import { ResponsiveContainer, BarChart, Bar, Cell, CartesianGrid, XAxis, YAxis, Tooltip, Legend, TooltipProps } from "recharts";
-import { NameType, ValueType } from "recharts/types/component/DefaultTooltipContent";
 import { FamiliaMasVendido as FamiliaMasVendida } from "../../../tipos/Summary";
 
 const FamiliasMasVendidasStats = (props: { titulo: string, data: FamiliaMasVendida[] }) => {
@@ -15,28 +13,28 @@ const FamiliasMasVendidasStats = (props: { titulo: string, data: FamiliaMasVendi
         setActiveIndex(index);
     };
 
-    const CustomTooltip = ({ active, payload, label, }: TooltipProps<ValueType, NameType>) => {
-        if (active) {
-            return (
-                <div className="bg-white border border-blue-600 opacity-90 rounded-xl shadow-lg p-4 custom-tooltip">
-                    {
-                        payload &&
-                        <>
-                            <p className="label text-xl font-semibold">{`${payload[0].payload.familia}`}</p>
-                            <p className="label text-base">{`Cantidad vendida: ${label} unidades`}</p>
-                        </>
-                    }
-                </div>
-            );
-        }
+    // const CustomTooltip = ({ active, payload, label, }: TooltipProps<ValueType, NameType>) => {
+    //     if (active) {
+    //         return (
+    //             <div className="bg-white border border-blue-600 opacity-90 rounded-xl shadow-lg p-4 custom-tooltip">
+    //                 {
+    //                     payload &&
+    //                     <>
+    //                         <p className="label text-xl font-semibold">{`${payload[0].payload.familia}`}</p>
+    //                         <p className="label text-base">{`Cantidad vendida: ${label} unidades`}</p>
+    //                     </>
+    //                 }
+    //             </div>
+    //         );
+    //     }
 
-        return null;
-    };
+    //     return null;
+    // };
 
     return (
         <div className="w-full h-full rounded-lg shadow p-4 text-center">
             <p className="font-semibold">{props.titulo}</p>
-            <ResponsiveContainer width="100%" height={250}>
+            {/* <ResponsiveContainer width="100%" height={250}>
                 <BarChart
                     margin={{
                         top: 5,
@@ -55,7 +53,7 @@ const FamiliasMasVendidasStats = (props: { titulo: string, data: FamiliaMasVendi
                         ))}
                     </Bar>
                 </BarChart>
-            </ResponsiveContainer>
+            </ResponsiveContainer> */}
             {
                 activeItem &&
                 <div className="border-2 rounded-md border-blue-400">
