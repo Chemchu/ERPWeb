@@ -34,6 +34,7 @@
     "react-dom": "^18.1.0",
     "react-to-print": "^2.14.4",
     "react-toastify": "^9.0.4",
+    "recharts": "^2.1.14",
     "victory": "^36.6.8",
     "xlsx": "^0.18.5"
   },

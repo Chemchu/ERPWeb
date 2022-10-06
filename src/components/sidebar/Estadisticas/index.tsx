@@ -7,13 +7,15 @@ import { Summary } from "../../../tipos/Summary";
 import AuthorizationWrapper from "../../authorizationWrapper";
 import FinanceCard from "../../dataDisplay/finaceCard";
 import { FetchResumenDiario, FetchResumenRango } from "../../../utils/fetches/analisisFetches";
-import VentasDelDia from "../../dataDisplay/ventasDelDia";
 import { Color } from "../../../tipos/Enums/Color";
 import SimpleListBox from "../../elementos/Forms/simpleListBox";
 import { Tiempos } from "../../../tipos/Enums/Tiempos";
 import DateRange from "../../elementos/Forms/dateRange";
-import ProductosMasVendidosStats from "../../dataDisplay/productosMasVendidosStats";
-import FamiliasMasVendidasStats from "../../dataDisplay/familiasMasVendidasStats";
+import dynamic from "next/dynamic";
+
+const FamiliasMasVendidasStats = dynamic(() => import("../../dataDisplay/familiasMasVendidasStats"), { ssr: false });
+const VentasDelDia = dynamic(() => import("../../dataDisplay/ventasDelDia"), { ssr: false });
+const ProductosMasVendidosStats = dynamic(() => import("../../dataDisplay/productosMasVendidosStats"), { ssr: false });
 
 const EstadisticasPage = () => {
     const [mounted, setMounted] = useState<boolean>(false)

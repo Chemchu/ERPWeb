@@ -1,11 +1,12 @@
+import dynamic from 'next/dynamic';
 import React, { useEffect, useState } from 'react';
-import { VictoryBrushContainer, VictoryChart, VictoryTheme } from 'victory';
-import { VictoryArea } from 'victory-area';
+import { AreaChart as AChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, TooltipProps } from 'recharts';
+import { NameType, ValueType } from 'recharts/types/component/DefaultTooltipContent';
 import { Color } from '../../../tipos/Enums/Color';
-import { Summary } from '../../../tipos/Summary';
+import { Summary, VentasPorHora } from '../../../tipos/Summary';
 
 const VentasDelDia = (props: { data: Summary | undefined, titulo: string, ejeX: string, ejeY: string, nombreEjeX: string, color: Color, colorID: string }) => {
-    const [ventasXY, setVentasXY] = useState<{ x: string | number, y: number }[]>([])
+    const [ventas, setVentas] = useState<VentasPorHora[]>([])
     const offset = (new Date().getTimezoneOffset() / 60) * -1
 
     useEffect(() => {
@@ -14,16 +15,38 @@ const VentasDelDia = (props: { data: Summary | undefined, titulo: string, ejeX: 
                 const localHora = Number(String(venta.hora).substring(0, 2)) + offset
                 venta.hora = localHora + ":00"
                 return venta
-            });
+            })
 
-            setVentasXY(ventas.map((v, i) => {
-                return {
-                    x: v.hora,
-                    y: v.totalVentaHora
-                }
-            }))
+            setVentas(ventas)
         }
     }, [props.data])
+
+
+    const CustomTooltip = ({ active, payload, label, }: TooltipProps<ValueType, NameType>) => {
+        let horaInicial = String(label).length < 5 ? Number(String(label).substring(0, 1)) : Number(String(label).substring(0, 2))
+        let horaFinal = horaInicial + 1
+
+        if (horaInicial >= 24) {
+            horaInicial -= 24
+        }
+        if (horaFinal >= 24) {
+            horaFinal -= 24
+        }
+
+        if (active) {
+            return (
+                <div className="bg-white border border-blue-600 opacity-90 rounded-xl shadow-lg p-4 custom-tooltip">
+                    <p className="label text-xl font-semibold">{`${horaInicial}:00 - ${String(horaFinal) + ":00"}`}</p>
+                    {
+                        payload &&
+                        <p className="label text-base">{`Ventas: ${Number(payload[0].value).toFixed(2)}€`}</p>
+                    }
+                </div>
+            );
+        }
+
+        return null;
+    };
 
     if (!props.data) {
         return (
@@ -41,37 +64,23 @@ const VentasDelDia = (props: { data: Summary | undefined, titulo: string, ejeX: 
             <div className='flex justify-center py-4 font-semibold text-gray-600'>
                 {props.titulo}
             </div>
-            <div className='w-full h-full'>
-                <svg style={{ height: 0 }}>
-                    <defs>
-                        <linearGradient id="myGradient" x1="0%" y1="0%" x2="0%" y2="100%">
-                            <stop offset="0%" stopColor="#86EFAC" />
-                            <stop offset="100%" stopColor="#16A34A" />
-                        </linearGradient>
-                    </defs>
-                </svg>
-                <VictoryChart maxDomain={{ y: props.data.totalVentas <= 0 ? 100 : undefined }}
-                    containerComponent={
-                        <VictoryBrushContainer
-                            brushDimension="x"
-                            brushDomain={{ x: [0.1, 0.3] }}
-                            handleComponent={
-                                <div className='w-full h-full bg-white rounded-xl'>
-                                    Ey
-                                </div>
-                            }
-                        />}
-                >
-                    <VictoryArea
-                        interpolation={'natural'}
-                        labels={({ datum }) => datum.y <= 0 ? '' : `${Number(datum.y).toFixed(2)}€`}
-                        style={{ data: { fill: `url(#myGradient)`, opacity: 0.9 }, labels: { fontSize: 11 } }}
-                        data={ventasXY}
-                        animate={{
-                            duration: 1000
-                        }}
-                    />
-                </VictoryChart>
+            <div className='w-full h-full '>
+                <ResponsiveContainer width="100%" height="100%" minHeight={250}>
+                    <AChart data={ventas}
+                        margin={{ top: 0, right: 30, left: 0, bottom: 10 }}>
+                        <defs>
+                            <linearGradient id={props.colorID} x1="0" y1="0" x2="0" y2="1">
+                                <stop offset="5%" stopColor={props.color} stopOpacity={0.9} />
+                                <stop offset="95%" stopColor={props.color} stopOpacity={0.4} />
+                            </linearGradient>
+                        </defs>
+                        <XAxis dataKey={props.ejeY} />
+                        <YAxis dataKey={props.ejeX} />
+                        <CartesianGrid strokeDasharray="3 3" />
+                        <Tooltip content={CustomTooltip} />
+                        <Area type="monotone" dataKey={props.ejeX} name={props.nombreEjeX} stroke={props.color || "#8884d8"} fillOpacity={1} fill={`url(#${props.colorID})`} />
+                    </AChart>
+                </ResponsiveContainer>
             </div>
         </div>
     )
