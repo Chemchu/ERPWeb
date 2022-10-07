@@ -13,7 +13,6 @@ import { Color } from "../../tipos/Enums/Color";
 import dynamic from "next/dynamic";
 
 const VentasDelDia = dynamic(() => import("../../components/dataDisplay/ventasDelDia"), { ssr: false });
-
 const saludos = ['Bienvenido otra vez', 'Hola', 'Saludos'];
 
 const Home = (props: { EmpleadoSesion: SesionEmpleado }) => {

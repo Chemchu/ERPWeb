@@ -3,9 +3,10 @@ import { useState } from "react";
 import useEmpleadoContext from "../../../../context/empleadoContext";
 import { Roles } from "../../../../tipos/Enums/Roles";
 import { TipoDocumento } from "../../../../tipos/Enums/TipoDocumentos";
-import DownloadFileModal from "../../../modal/downloadFileModal";
+import DownloadCierresModal from "../../../modal/downloadFileModal/downloadCierresModal";
+import DownloadVentasModal from "../../../modal/downloadFileModal/downloadVentasModal";
 
-const DownloadCierresFile = (props: { tipoDocumento: TipoDocumento }) => {
+const DownloadFile = (props: { tipoDocumento: TipoDocumento }) => {
     const [showModal, setModal] = useState<boolean>(false);
     const { Empleado } = useEmpleadoContext();
 
@@ -13,6 +14,19 @@ const DownloadCierresFile = (props: { tipoDocumento: TipoDocumento }) => {
         return (
             <></>
         )
+    }
+
+    const FileType = () => {
+        switch (props.tipoDocumento) {
+            case TipoDocumento.Cierres:
+                return <DownloadCierresModal setModal={setModal} />
+
+            case TipoDocumento.Ventas:
+                return <DownloadVentasModal setModal={setModal} />
+
+            default:
+                return undefined;
+        }
     }
 
     return (
@@ -29,11 +43,11 @@ const DownloadCierresFile = (props: { tipoDocumento: TipoDocumento }) => {
             <AnimatePresence>
                 {
                     showModal &&
-                    <DownloadFileModal setModal={setModal} tipoDocumento={props.tipoDocumento} />
+                    FileType()
                 }
             </AnimatePresence>
         </>
     );
 }
 
-export default DownloadCierresFile;
+export default DownloadFile;
