@@ -110,13 +110,13 @@ const DownloadVentasModal = (props: { setModal: Function }) => {
                         ean: pVendido.ean,
                         familia: pVendido.familia,
                         precioCompra: Number(pVendido.precioCompra.toFixed(2)),
-                        precioVenta: Number(pVendido.precioVenta.toFixed(2)),
+                        precioVenta: Number(Number(pVendido.precioVenta).toFixed(2)),
                         cantidadVendida: pVendido.cantidadVendida,
                         valorTotalVendido: pVendido.precioFinal * pVendido.cantidadVendida,
                         baseImponible: Number((bImponible).toFixed(2)),
                         iva: Number((iva).toFixed(2)),
                         margen: Number((margen).toFixed(2)),
-                        nota: pVendido.precioVenta - (pVendido.precioCompra + ((pVendido.iva / 100) * pVendido.precioCompra)) <= 0 ? "Precio de compra y precio de venta muy cercanos, este producto no tiene margen" : ""
+                        nota: Number(pVendido.precioVenta) - (pVendido.precioCompra + ((pVendido.iva / 100) * pVendido.precioCompra)) <= 0 ? "Precio de compra y precio de venta muy cercanos, este producto no tiene margen" : ""
                     } as ProdVendidoXlsx)
                 }
                 else {

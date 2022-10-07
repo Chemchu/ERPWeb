@@ -3,7 +3,7 @@ export type ProductoVendido = {
     nombre: string,
     proveedor: string,
     familia: string,
-    precioVenta: number,
+    precioVenta: number | string,
     precioCompra: number,
     precioFinal: number,
     iva: number,
