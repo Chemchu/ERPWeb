@@ -1,5 +1,4 @@
 import { useEffect, useState } from "react";
-import { Summary } from "../../../tipos/Summary";
 
 const FinanceCard = (props: { titulo: string, unidad?: string, dataActual: string | undefined, dataPrevio: string | undefined }) => {
     // Incremento porcentual: ((valorFinal - valorInicial) / valorInicial ) * 100

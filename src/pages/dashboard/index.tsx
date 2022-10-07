@@ -10,8 +10,9 @@ import { Roles } from "../../tipos/Enums/Roles";
 import { Summary } from "../../tipos/Summary";
 import { FetchResumenDiario } from "../../utils/fetches/analisisFetches";
 import { Color } from "../../tipos/Enums/Color";
-import VentasDelDia from "../../components/dataDisplay/ventasDelDia";
+import dynamic from "next/dynamic";
 
+const VentasDelDia = dynamic(() => import("../../components/dataDisplay/ventasDelDia"), { ssr: false });
 const saludos = ['Bienvenido otra vez', 'Hola', 'Saludos'];
 
 const Home = (props: { EmpleadoSesion: SesionEmpleado }) => {

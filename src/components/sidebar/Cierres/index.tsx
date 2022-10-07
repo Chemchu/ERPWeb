@@ -12,7 +12,7 @@ import { Paginador } from "../../elementos/Forms/paginador";
 import VerCierre from "../../modal/verCierre";
 import SkeletonCard from "../../Skeletons/skeletonCard";
 import { FetchTPVs } from "../../../utils/fetches/tpvFetches";
-import DownloadCierresFile from "../../elementos/botones/downloadCierresFile";
+import DownloadFile from "../../elementos/botones/downloadFile";
 
 const arrayNum = [...Array(8)];
 const elementsPerPage = 50;
@@ -92,7 +92,7 @@ const CierrePage = () => {
             <div className="flex flex-col h-full w-full bg-white rounded-b-2xl rounded-r-2xl p-4 shadow-lg border-x">
                 <div className="flex w-full h-auto py-4 gap-2 justify-end ">
                     <UploadFileRestricted tipoDocumento={TipoDocumento.Cierres} />
-                    <DownloadCierresFile tipoDocumento={TipoDocumento.Cierres} />
+                    <DownloadFile tipoDocumento={TipoDocumento.Cierres} />
                     <DateRange titulo="Fecha" dateRange={dateRange} setDateRange={setDateRange} endDate={endDate} startDate={startDate} />
                     <input disabled autoFocus={true} className="rounded-lg border appearance-none shadow-lg w-max-72 xl:w-96 h-full py-2 px-4 bg-white text-gray-700 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-600" placeholder="ID del cierre" />
                     {
@@ -143,7 +143,7 @@ const CierrePage = () => {
             <div className="flex w-full h-auto py-4 gap-2 justify-end">
                 <div className="flex gap-2 justify-start w-full">
                     <UploadFileRestricted tipoDocumento={TipoDocumento.Cierres} />
-                    <DownloadCierresFile tipoDocumento={TipoDocumento.Cierres} />
+                    <DownloadFile tipoDocumento={TipoDocumento.Cierres} />
                 </div>
                 <DateRange dateRange={dateRange} setDateRange={setDateRange} endDate={endDate} startDate={startDate} />
                 <input autoFocus={true} className="rounded-lg border appearance-none shadow-lg w-max-72 xl:w-96 h-full py-2 px-4 bg-white text-gray-700 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-600" placeholder="ID del cierre"

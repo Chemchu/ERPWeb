@@ -1,18 +1,13 @@
 import { Tab } from '@headlessui/react';
 import { GetServerSideProps } from 'next';
-import { useEffect, useState } from 'react';
+import { useEffect } from 'react';
 import DevolucionesPage from '../../../components/sidebar/Ventas/devolucionesTab';
 import SalesPage from '../../../components/sidebar/Ventas/ventasTab'
 import useEmpleadoContext from '../../../context/empleadoContext';
 import getJwtFromString from '../../../hooks/jwt';
 import DashboardLayout from '../../../layout';
-import { Cliente } from '../../../tipos/Cliente';
-import { Devolucion } from '../../../tipos/Devolucion';
 import { SesionEmpleado } from '../../../tipos/Empleado';
 import { Roles } from '../../../tipos/Enums/Roles';
-import { Venta } from '../../../tipos/Venta';
-import { FetchDevoluciones } from '../../../utils/fetches/devolucionesFetches';
-import { FetchVentas } from '../../../utils/fetches/ventasFetches';
 
 const Ventas = (props: { EmpleadoSesion: SesionEmpleado }) => {
     const { Empleado, SetEmpleado } = useEmpleadoContext();
