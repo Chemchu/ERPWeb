@@ -561,3 +561,90 @@ mutation DeleteCierreTPV($id: ID!) {
   }
 }
 `
+export const QUERY_MERMA = `
+query Merma($find: MermaFind!) {
+  merma(find: $find) {
+    _id
+    productos {
+      nombre
+      proveedor
+      cantidad
+      familia
+      margen
+      ean
+      iva
+      precioCompra
+      precioVenta
+      motivo
+    }
+    creadoPor {
+      _id
+      nombre
+      apellidos
+      rol
+      email
+    }
+    costeProductos
+    ventasPerdidas
+    beneficioPerdido
+    createdAt
+    updatedAt
+  }
+}
+`
+
+export const QUERY_MERMAS = `
+query Mermas($find: MermasFind, $limit: Int) {
+  mermas(find: $find, limit: $limit) {
+    _id
+    productos {
+      nombre
+      proveedor
+      cantidad
+      familia
+      margen
+      ean
+      iva
+      precioCompra
+      precioVenta
+      motivo
+    }
+    creadoPor {
+      _id
+      nombre
+      apellidos
+      rol
+      email
+    }
+    costeProductos
+    ventasPerdidas
+    beneficioPerdido
+    createdAt
+    updatedAt
+  }
+}
+`
+
+export const ADD_MERMA = `
+mutation Mutation($merma: MermaInput!) {
+  addMerma(merma: $merma) {
+    message
+    successful
+  }
+}`
+
+export const DELETE_MERMA = `
+mutation Mutation($id: ID!) {
+  deleteMerma(_id: $id) {
+    message
+    successful
+  }
+}`
+
+export const UPDATE_MERMA = `
+mutation Mutation($id: ID!, $merma: MermaInput!) {
+  updateMerma(_id: $id, merma: $merma) {
+    message
+    successful
+  }
+}`

@@ -3,15 +3,13 @@ import React, { useEffect, useState } from "react";
 import { Paginador } from "../../elementos/Forms/paginador";
 import SkeletonCard from "../../Skeletons/skeletonCard";
 import { notifyWarn } from "../../../utils/toastify";
-import UploadFile from "../../elementos/botones/uploadFile";
-import { TipoDocumento } from "../../../tipos/Enums/TipoDocumentos";
 import NuevoBoton from "../../elementos/botones/nuevoBoton";
 import { Merma } from "../../../tipos/Merma";
 import { FetchMermaByQuery, FetchMermas } from "../../../utils/fetches/mermasFetches";
 import VerMerma from "../../modal/verMerma";
 import AddMerma from "../../modal/addMerma";
 
-const arrayNum = [...Array(8)];
+const arrayNum = [...Array(16)];
 
 const MermaPage = () => {
     const [filtro, setFiltro] = useState<string>("");
@@ -91,16 +89,18 @@ const MermaPage = () => {
                     Beneficios perdidos
                 </div>
             </div>
-            {
-                isLoading ?
-                    arrayNum.map((n, i) => {
-                        return (
-                            <SkeletonCard key={`SkeletonProdList-${i}`} />
-                        );
-                    })
-                    :
-                    <TablaMerma Mermas={MermasFiltradas || Mermas} SetMermas={setMermas} />
-            }
+            <div className="h-full overflow-clip">
+                {
+                    isLoading ?
+                        arrayNum.map((_, i) => {
+                            return (
+                                <SkeletonCard key={`SkeletonProdList-${i}`} />
+                            );
+                        })
+                        :
+                        <TablaMerma Mermas={MermasFiltradas || Mermas} SetMermas={setMermas} />
+                }
+            </div>
             <AnimatePresence>
                 {addMermaModal && <AddMerma showModal={setAddMermaModal} />}
             </AnimatePresence>

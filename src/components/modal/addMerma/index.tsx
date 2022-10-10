@@ -1,11 +1,12 @@
 import { motion } from "framer-motion";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useState } from "react";
 import useEmpleadoContext from "../../../context/empleadoContext";
 import { MotivoMerma } from "../../../tipos/Enums/MotivoMerma";
 import { NuevaMerma } from "../../../tipos/Merma";
 import { Producto } from "../../../tipos/Producto";
 import { NuevoProductoMermado } from "../../../tipos/ProductoMermado";
 import { In } from "../../../utils/animations";
+import { AddNuevaMerma } from "../../../utils/fetches/mermasFetches";
 import { FetchProductos } from "../../../utils/fetches/productosFetches";
 import { notifyError, notifyLoading } from "../../../utils/toastify";
 import { ValidatePositiveIntegerNumber } from "../../../utils/validator";
@@ -19,18 +20,18 @@ const AddMerma = (props: { showModal: Function }) => {
 
     const CrearMerma = async (Merm: NuevaMerma | undefined) => {
         if (!Merm) {
-            notifyError("Error con el producto");
+            notifyError("Error con la merma");
             return;
         }
-        // notifyLoading(CreateNuevoProductoMermado(), "Creando producto...", () => {
-        //     props.showModal(false);
-        // });
+        notifyLoading(AddNuevaMerma(Merm), "Añadiendo merma...", () => {
+            props.showModal(false);
+        });
     }
 
-    useEffect(() => {
-        // console.log(NuevaMerma);
+    // useEffect(() => {
+    //     // console.log(NuevaMerma);
 
-    }, [NuevaMerma])
+    // }, [NuevaMerma])
 
     return (
         <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} >
