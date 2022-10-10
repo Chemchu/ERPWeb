@@ -2,8 +2,11 @@ import { Cierre } from "../tipos/Cierre";
 import { Cliente } from "../tipos/Cliente";
 import { Devolucion } from "../tipos/Devolucion";
 import { Empleado } from "../tipos/Empleado";
+import { MotivoMerma } from "../tipos/Enums/MotivoMerma";
+import { Merma, NuevaMerma } from "../tipos/Merma";
 import { Producto } from "../tipos/Producto";
 import { ProductoDevuelto } from "../tipos/ProductoDevuelto";
+import { NuevoProductoMermado } from "../tipos/ProductoMermado";
 import { ProductoVendido } from "../tipos/ProductoVendido";
 import { Summary, VentasPorHora } from "../tipos/Summary";
 import { ITPV } from "../tipos/TPV";
@@ -144,6 +147,73 @@ export function CreateProductList(pList: any[]): Producto[] {
     });
 
     return res;
+}
+
+export function CreateMermaList(mList: any[]): Merma[] {
+    if (!mList) { throw "Lista de mermas indefinida"; }
+
+    let res: Merma[] = [];
+    mList.forEach((m: any) => {
+        const merma = CreateMerma(m);
+
+        if (merma) res.push(merma);
+    });
+
+    return res;
+}
+
+export function CreateNuevaMerma(empleadoID: string, productos: NuevoProductoMermado[]): NuevaMerma | undefined {
+    try {
+        if (productos.length <= 0) return undefined;
+        if (!empleadoID) return undefined;
+
+        let merma = {
+            empleadoId: empleadoID,
+            productos: productos,
+        } as NuevaMerma
+
+        return merma;
+    }
+    catch (e) {
+        return undefined;
+    }
+}
+
+export function CreateNuevoProductoMermado(producto: Producto, cantidadMermada: number, motivo: MotivoMerma | string): NuevoProductoMermado | undefined {
+    try {
+        let prodMermado = {
+            _id: producto._id,
+            cantidad: cantidadMermada,
+            motivo: motivo,
+        } as NuevoProductoMermado
+
+        return prodMermado;
+    }
+    catch (e) {
+        return undefined;
+    }
+}
+
+function CreateMerma(m: any): Merma | undefined {
+    try {
+        if (!m) return undefined;
+
+        let merma = {
+            _id: m._id,
+            productos: m.productos,
+            costeProductos: m.costeProductos,
+            ventasPerdidas: m.ventasPerdidas,
+            beneficioPerdido: m.beneficioPerdido,
+            creadoPor: m.creadoPor,
+            createdAt: m.createdAt,
+            updatedAt: m.updatedAt,
+        } as Merma
+
+        return merma;
+    }
+    catch (e) {
+        return undefined;
+    }
 }
 
 export function CreateClientList(cList: any[]): Cliente[] {

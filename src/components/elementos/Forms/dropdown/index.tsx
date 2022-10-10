@@ -1,12 +1,15 @@
 import { Combobox, Transition } from "@headlessui/react";
 import { useState, useTransition } from "react";
 
-const Dropdown = (props: { titulo?: string, elementos: string[], selectedElemento: string, setElemento: Function }) => {
+const Dropdown = (props: { titulo?: string, elementos: string[], selectedElemento: string, setElemento: Function, setCurrentInput?: Function }) => {
     const [query, setQuery] = useState('');
-    const [isPending, startTransition] = useTransition();
+    const [_, startTransition] = useTransition();
 
     const Filtrar = (event: any) => {
-        startTransition(() => { setQuery(event.target.value) })
+        startTransition(() => {
+            setQuery(event.target.value);
+            if (props.setCurrentInput) { props.setCurrentInput(event.target.value); }
+        })
     }
 
     const filteredOptions =
@@ -17,11 +20,12 @@ const Dropdown = (props: { titulo?: string, elementos: string[], selectedElement
             });
 
     return (
-        <Combobox as="div" className="relative w-full" value={props.selectedElemento} onChange={(e: any) => { props.setElemento(e) }}>
+        <Combobox as="div" className="relative w-full" value={props.selectedElemento} onChange={(e: any) => { props.setElemento(e); }}>
             <Combobox.Label>{props.titulo}</Combobox.Label>
             <Combobox.Input className="rounded-lg flex-1 border w-full py-2 px-4 bg-white placeholder-gray-400 shadow-sm text-base focus:outline-none 
                 focus:ring-1 focus:ring-blue-600 focus:border-transparent"
-                onChange={Filtrar} />
+                onChange={Filtrar}
+                value={query} />
             <Transition
                 leave="transition ease-in duration-100"
                 leaveFrom="opacity-100"
@@ -30,11 +34,10 @@ const Dropdown = (props: { titulo?: string, elementos: string[], selectedElement
                 <Combobox.Options className="absolute flex flex-col py-1 mt-1 bg-white w-full border rounded-lg z-10">
                     {
                         filteredOptions.slice(0, 10).map((elem, index) => (
-                            <Combobox.Option className="hover:bg-blue-400 hover:text-white cursor-pointer" key={`${elem}-${index}`} value={elem}>
+                            <Combobox.Option className="flex h-8 hover:bg-blue-400 hover:text-white cursor-pointer items-center border-b" key={`${elem}-${index}`} value={elem}>
                                 <span className="p-4">
                                     {elem}
                                 </span>
-                                <hr />
                             </Combobox.Option>
                         ))
                     }

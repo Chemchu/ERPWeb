@@ -1,7 +1,7 @@
 const NuevoBoton = (props: { accionEvent: Function }) => {
     return (
         <button onClick={(e) => { e.preventDefault(); props.accionEvent(); }}>
-            <label className="flex flex-shrink-0 justify-center gap-2 w-28 py-2 text-base font-semibold text-white bg-green-500 
+            <label className="flex flex-shrink-0 justify-center gap-2 w-28 py-2 text-base font-semibold text-white bg-green-500 cursor-pointer
             rounded-lg shadow-md hover:bg-green-600 focus:outline-none focus:ring-2 focus:ring-green-600 focus:ring-offset-2 focus:ring-offset-blue-200">
                 <span>
                     Nuevo

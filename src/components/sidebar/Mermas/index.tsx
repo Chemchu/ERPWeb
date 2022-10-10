@@ -5,10 +5,11 @@ import SkeletonCard from "../../Skeletons/skeletonCard";
 import { notifyWarn } from "../../../utils/toastify";
 import UploadFile from "../../elementos/botones/uploadFile";
 import { TipoDocumento } from "../../../tipos/Enums/TipoDocumentos";
-import DownloadProductsFile from "../../elementos/botones/downloadProductsFile";
-import AddProducto from "../../modal/addProducto";
-import { Merma } from "../../../tipos/Merma";
 import NuevoBoton from "../../elementos/botones/nuevoBoton";
+import { Merma } from "../../../tipos/Merma";
+import { FetchMermaByQuery, FetchMermas } from "../../../utils/fetches/mermasFetches";
+import VerMerma from "../../modal/verMerma";
+import AddMerma from "../../modal/addMerma";
 
 const arrayNum = [...Array(8)];
 
@@ -21,8 +22,18 @@ const MermaPage = () => {
     const [isMounted, setMounted] = useState<boolean>(false);
 
     useEffect(() => {
-        setMounted(true)
-        setLoading(false)
+        const GetData = async () => {
+            try {
+                setMounted(true)
+                setMermas(await FetchMermas())
+                setLoading(false)
+            }
+            catch (err) {
+                console.log(err);
+            }
+        }
+
+        GetData()
     }, [])
 
 
@@ -37,7 +48,7 @@ const MermaPage = () => {
     const Filtrar = async (f: string) => {
         if (!f.match('^[-_a-zA-Z0-9.\s ]*$')) { notifyWarn("Producto inválido"); return; }
 
-        //setMermasFiltradas(await FetchProductoByQuery(f));
+        setMermasFiltradas(await FetchMermaByQuery(f));
     }
 
     return (
@@ -45,12 +56,10 @@ const MermaPage = () => {
             <div className="flex w-full h-auto py-4">
                 <div className="flex gap-4 w-full h-full justify-start">
                     <NuevoBoton accionEvent={() => { setAddMermaModal(true); }} />
-                    <UploadFile tipoDocumento={TipoDocumento.Productos} />
-                    {/* <DownloadProductsFile tipoDocumento={TipoDocumento.Productos} /> */}
                 </div>
                 <div className="flex gap-2">
                     <input autoFocus={true} className="rounded-lg border appearance-none shadow-lg w-40 xl:w-96 h-full py-2 px-4 bg-white text-gray-700 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-600" placeholder="Buscar..."
-                        onChange={(e) => { setFiltro(e.target.value); }} onKeyPress={async (e) => { e.key === "Enter" ? await Filtrar(filtro) : null }} />
+                        onChange={(e) => { setFiltro(e.target.value); }} onKeyDown={async (e) => { e.key === "Enter" ? await Filtrar(filtro) : null }} />
 
                     {
                         filtro ?
@@ -66,18 +75,20 @@ const MermaPage = () => {
                 </div>
             </div>
             <div className="flex justify-between border-t-2 border-x-2 rounded-t-2xl px-5 py-2">
-                <div className="text-left text-sm font-semibold w-2/5">
-                    Nombre
+                <div className="font-semibold">
+                    Fecha
                 </div>
-
-                <div className="text-left text-sm font-semibold w-1/5">
-                    Precio
+                <div className="font-semibold">
+                    Empleado
                 </div>
-                <div className="text-left text-sm font-semibold w-1/5 ">
-                    Familia
+                <div className="font-semibold">
+                    Coste de productos
                 </div>
-                <div className="text-right text-sm font-semibold w-1/5">
-                    Cantidad
+                <div className="font-semibold ">
+                    Ventas perdidas
+                </div>
+                <div className="font-semibold">
+                    Beneficios perdidos
                 </div>
             </div>
             {
@@ -91,7 +102,7 @@ const MermaPage = () => {
                     <TablaMerma Mermas={MermasFiltradas || Mermas} SetMermas={setMermas} />
             }
             <AnimatePresence>
-                {addMermaModal && <AddProducto showModal={setAddMermaModal} />}
+                {addMermaModal && <AddMerma showModal={setAddMermaModal} />}
             </AnimatePresence>
         </div>
     );
@@ -115,11 +126,8 @@ const TablaMerma = (props: { Mermas: Merma[], SetMermas: Function }) => {
             <div className="h-full w-full border-2 rounded-b overflow-y-scroll">
                 {
                     props.Mermas.length <= 0 ?
-                        // <div className="flex justify-center items-center h-full w-full text-xl">
-                        //     No se ha encontrado registros de mermas en el sistema
-                        // </div>
                         <div className="flex justify-center items-center h-full w-full text-xl">
-                            Página en desarrollo!
+                            No se ha encontrado registros de mermas en el sistema
                         </div>
                         :
                         props.Mermas.slice((elementsPerPage * (currentPage - 1)), currentPage * elementsPerPage).map((p, index) => {
@@ -156,23 +164,28 @@ const FilaMerma = (props: { merma: Merma, allMermas: Merma[], setAllProductos: F
     return (
         <div className="hover:bg-blue-200">
             <div className="flex justify-between border-b px-5 py-2 cursor-pointer" onClick={() => { setModal(true) }}>
-                <div className="w-2/5 text-sm text-left">
-                    {merma._id}
+                <div className="">
+                    {new Date(Number(merma.createdAt)).toLocaleString()}
                 </div>
-                <div className="w-1/5 text-sm text-left">
+                <div className="">
+                    {merma.creadoPor.nombre}
+                </div>
+                <div className="">
                     {merma.productos.length}
                 </div>
-                <div className="w-1/5 text-base text-left">
-                    {/* {merma.familia} */}
+                <div className="">
+                    {merma.costeProductos}
                 </div>
-                <div className="w-1/5 text-sm text-right">
-                    {/* <span className={`w-full px-3 py-1 rounded-full ${merma.cantidad > 0 ? " text-green-900 bg-green-300" : "text-red-900 bg-red-300"}`}>
-                        {merma.cantidad ? merma.cantidad : 0}
-                    </span> */}
+
+                <div className="">
+                    {merma.ventasPerdidas}
+                </div>
+                <div className="">
+                    {merma.beneficioPerdido}
                 </div>
             </div>
             <AnimatePresence>
-                {/* {showModal && <VerProducto showModal={setModal} producto={merma} setProducto={SetCurrentMerma} />} */}
+                {showModal && <VerMerma showModal={setModal} merma={merma} />}
             </AnimatePresence>
         </div>
 
