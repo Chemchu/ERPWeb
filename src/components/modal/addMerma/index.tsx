@@ -67,6 +67,7 @@ const AddMerma = (props: { showModal: Function }) => {
 }
 
 const NuevaMermaForm = (props: { setMerma: Function }) => {
+    const [isMounted, setMounted] = useState<boolean>(false);
     const [Productos, setProductos] = useState<Producto[]>([]);
     const [ProductosSeleccionados, setProductosSeleccionados] = useState<Producto[]>([]);
     const [ProductosMermados, setProductosMermados] = useState<NuevoProductoMermado[] & { index?: number }>([]);
@@ -76,6 +77,7 @@ const NuevaMermaForm = (props: { setMerma: Function }) => {
         try {
             const GetData = async () => {
                 setProductos(await FetchProductos())
+                setMounted(true);
             }
             GetData()
         }
@@ -86,6 +88,8 @@ const NuevaMermaForm = (props: { setMerma: Function }) => {
 
 
     useEffect(() => {
+        if (!isMounted) { return; }
+
         setProductosMermados((prev: NuevoProductoMermado[]) => {
             return ProductosSeleccionados.map((p) => {
                 const productoMermado = prev.find((pMermado) => p._id === pMermado._id)
@@ -107,6 +111,20 @@ const NuevaMermaForm = (props: { setMerma: Function }) => {
     }, [ProductosSeleccionados])
 
     useEffect(() => {
+        if (!isMounted) { return; }
+        if (!ProductoSeleccionado) { return; }
+
+        const prodMermado = Productos.find((p) => ProductoSeleccionado === p.nombre || ProductoSeleccionado === p.ean);
+
+        if (prodMermado) {
+            setProductosSeleccionados(prev => [...prev, prodMermado])
+            setProductoSeleccionado("")
+        }
+    }, [ProductoSeleccionado])
+
+    useEffect(() => {
+        if (!isMounted) { return; }
+
         props.setMerma((prev: NuevaMerma) => {
             return {
                 empleadoId: prev.empleadoId,
@@ -114,25 +132,6 @@ const NuevaMermaForm = (props: { setMerma: Function }) => {
             } as NuevaMerma
         })
     }, [ProductosMermados])
-
-    const AñadirAMermas = () => {
-        const prodMermado = Productos.find((p) => ProductoSeleccionado === p.nombre || ProductoSeleccionado === p.ean);
-
-        if (prodMermado) {
-            setProductosSeleccionados(prev => [...prev, prodMermado])
-            setProductoSeleccionado("")
-        }
-    }
-
-    const AddEAN = (input: string) => {
-        if (!input) { return; }
-
-        const prodMermado = Productos.find((p) => input === p.ean);
-        if (prodMermado) {
-            setProductoSeleccionado("")
-            setProductosSeleccionados(prev => [...prev, prodMermado])
-        }
-    }
 
     const HandleDelete = (id: number) => {
         setProductosSeleccionados((productosMermados) => productosMermados.filter((p, i) => {
@@ -159,12 +158,8 @@ const NuevaMermaForm = (props: { setMerma: Function }) => {
                 <div className="flex items-center gap-2 justify-center">
                     <Dropdown elementos={Productos.map((p) => p.nombre).concat(Productos.map((p) => p.ean))}
                         selectedElemento={ProductoSeleccionado || ""}
-                        setElemento={setProductoSeleccionado} />
-                    <button onClick={AñadirAMermas}>
-                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-8 h-8 stroke-blue-500">
-                            <path strokeLinecap="round" strokeLinejoin="round" d="M12 9v6m3-3H9m12 0a9 9 0 11-18 0 9 9 0 0118 0z" />
-                        </svg>
-                    </button>
+                        setElemento={setProductoSeleccionado}
+                        autoSelect />
                 </div>
                 <div className="w-full h-full border-gray-300 rounded-lg border overflow-hidden">
                     {
