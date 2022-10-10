@@ -28,7 +28,7 @@ const AddMerma = (props: { showModal: Function }) => {
     }
 
     useEffect(() => {
-        console.log(NuevaMerma);
+        // console.log(NuevaMerma);
 
     }, [NuevaMerma])
 
@@ -129,8 +129,8 @@ const NuevaMermaForm = (props: { setMerma: Function }) => {
 
         const prodMermado = Productos.find((p) => input === p.ean);
         if (prodMermado) {
-            setProductosSeleccionados(prev => [...prev, prodMermado])
             setProductoSeleccionado("")
+            setProductosSeleccionados(prev => [...prev, prodMermado])
         }
     }
 
@@ -156,11 +156,10 @@ const NuevaMermaForm = (props: { setMerma: Function }) => {
         <main className="w-full h-full">
             <section className="flex flex-col gap-2 w-full h-full">
                 <span>Buscar producto</span>
-                <div className="flex items-center justify-center">
-                    <Dropdown elementos={Productos.map((p) => p.nombre)}
+                <div className="flex items-center gap-2 justify-center">
+                    <Dropdown elementos={Productos.map((p) => p.nombre).concat(Productos.map((p) => p.ean))}
                         selectedElemento={ProductoSeleccionado || ""}
-                        setElemento={setProductoSeleccionado}
-                        setCurrentInput={AddEAN} />
+                        setElemento={setProductoSeleccionado} />
                     <button onClick={AñadirAMermas}>
                         <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-8 h-8 stroke-blue-500">
                             <path strokeLinecap="round" strokeLinejoin="round" d="M12 9v6m3-3H9m12 0a9 9 0 11-18 0 9 9 0 0118 0z" />

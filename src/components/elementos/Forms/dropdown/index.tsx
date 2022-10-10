@@ -1,14 +1,13 @@
 import { Combobox, Transition } from "@headlessui/react";
 import { useState, useTransition } from "react";
 
-const Dropdown = (props: { titulo?: string, elementos: string[], selectedElemento: string, setElemento: Function, setCurrentInput?: Function }) => {
+const Dropdown = (props: { titulo?: string, elementos: string[], selectedElemento: string, setElemento: Function }) => {
     const [query, setQuery] = useState('');
     const [_, startTransition] = useTransition();
 
     const Filtrar = (event: any) => {
         startTransition(() => {
             setQuery(event.target.value);
-            if (props.setCurrentInput) { props.setCurrentInput(event.target.value); }
         })
     }
 
@@ -24,8 +23,7 @@ const Dropdown = (props: { titulo?: string, elementos: string[], selectedElement
             <Combobox.Label>{props.titulo}</Combobox.Label>
             <Combobox.Input className="rounded-lg flex-1 border w-full py-2 px-4 bg-white placeholder-gray-400 shadow-sm text-base focus:outline-none 
                 focus:ring-1 focus:ring-blue-600 focus:border-transparent"
-                onChange={Filtrar}
-                value={query} />
+                onChange={Filtrar} />
             <Transition
                 leave="transition ease-in duration-100"
                 leaveFrom="opacity-100"
