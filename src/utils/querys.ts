@@ -566,6 +566,7 @@ query Merma($find: MermaFind!) {
   merma(find: $find) {
     _id
     productos {
+      _id
       nombre
       proveedor
       cantidad
@@ -598,6 +599,7 @@ query Mermas($find: MermasFind, $limit: Int) {
   mermas(find: $find, limit: $limit) {
     _id
     productos {
+      _id
       nombre
       proveedor
       cantidad

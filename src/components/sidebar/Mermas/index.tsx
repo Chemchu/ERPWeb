@@ -34,6 +34,10 @@ const MermaPage = () => {
         GetData()
     }, [])
 
+    useEffect(() => {
+        if (!isMounted) { return; }
+        setLoading(false);
+    }, [Mermas])
 
     useEffect(() => {
         if (!isMounted) { return; }
@@ -47,6 +51,12 @@ const MermaPage = () => {
         if (!f.match('^[-_a-zA-Z0-9.\s ]*$')) { notifyWarn("Producto inválido"); return; }
 
         setMermasFiltradas(await FetchMermaByQuery(f));
+    }
+
+    const UpdateMermasCallback = async () => {
+        setFiltro("")
+        setMermas(await FetchMermas())
+        setLoading(true);
     }
 
     return (
@@ -72,20 +82,17 @@ const MermaPage = () => {
                     }
                 </div>
             </div>
-            <div className="flex justify-between border-t-2 border-x-2 rounded-t-2xl px-5 py-2">
-                <div className="font-semibold">
+            <div className="flex justify-between items-center border-t-2 border-x-2 rounded-t-2xl px-5 py-2 font-semibold">
+                <div className="w-2/5">
                     Fecha
                 </div>
-                <div className="font-semibold">
-                    Empleado
+                <div className="w-1/5 text-left">
+                    Coste
                 </div>
-                <div className="font-semibold">
-                    Coste de productos
+                <div className="w-1/5 text-center">
+                    Ventas
                 </div>
-                <div className="font-semibold ">
-                    Ventas perdidas
-                </div>
-                <div className="font-semibold">
+                <div className="w-1/5 text-right">
                     Beneficios perdidos
                 </div>
             </div>
@@ -98,17 +105,17 @@ const MermaPage = () => {
                             );
                         })
                         :
-                        <TablaMerma Mermas={MermasFiltradas || Mermas} SetMermas={setMermas} />
+                        <TablaMerma Mermas={MermasFiltradas || Mermas} SetMermas={setMermas} UpdateMermasCallback={UpdateMermasCallback} />
                 }
             </div>
             <AnimatePresence>
-                {addMermaModal && <AddMerma showModal={setAddMermaModal} />}
+                {addMermaModal && <AddMerma showModal={setAddMermaModal} updateCallback={UpdateMermasCallback} />}
             </AnimatePresence>
         </div>
     );
 }
 
-const TablaMerma = (props: { Mermas: Merma[], SetMermas: Function }) => {
+const TablaMerma = (props: { Mermas: Merma[], SetMermas: Function, UpdateMermasCallback: Function }) => {
     const [currentPage, setCurrentPage] = useState<number>(1);
 
     const elementsPerPage = 50;
@@ -133,7 +140,7 @@ const TablaMerma = (props: { Mermas: Merma[], SetMermas: Function }) => {
                         props.Mermas.slice((elementsPerPage * (currentPage - 1)), currentPage * elementsPerPage).map((p, index) => {
                             return (
                                 <div key={`FilaProdTable${p._id}`}>
-                                    <FilaMerma merma={p} allMermas={props.Mermas} setAllProductos={props.SetMermas} />
+                                    <FilaMerma merma={p} UpdateMermasCallback={props.UpdateMermasCallback} />
                                 </div>
                             );
                         })
@@ -146,46 +153,27 @@ const TablaMerma = (props: { Mermas: Merma[], SetMermas: Function }) => {
     )
 }
 
-const FilaMerma = (props: { merma: Merma, allMermas: Merma[], setAllProductos: Function }) => {
+const FilaMerma = (props: { merma: Merma, UpdateMermasCallback: Function }) => {
     const [showModal, setModal] = useState<boolean>(false);
-    const [merma, setMerma] = useState<Merma>(props.merma);
-
-    const SetCurrentMerma = (p: Merma | null) => {
-        if (p === null) {
-            const prods = props.allMermas.filter((p) => { return p._id !== merma._id });
-            props.setAllProductos(prods);
-
-            return;
-        }
-
-        setMerma(p);
-    }
 
     return (
         <div className="hover:bg-blue-200">
-            <div className="flex justify-between border-b px-5 py-2 cursor-pointer" onClick={() => { setModal(true) }}>
-                <div className="">
-                    {new Date(Number(merma.createdAt)).toLocaleString()}
+            <div className="flex justify-between items-center border-b px-5 h-12 cursor-pointer" onClick={() => { setModal(true) }}>
+                <div className="w-2/5">
+                    {new Date(Number(props.merma.createdAt)).toLocaleString()}
                 </div>
-                <div className="">
-                    {merma.creadoPor.nombre}
+                <div className="w-1/5 text-left">
+                    {props.merma.costeProductos}
                 </div>
-                <div className="">
-                    {merma.productos.length}
+                <div className="w-1/5 text-center">
+                    {props.merma.ventasPerdidas}
                 </div>
-                <div className="">
-                    {merma.costeProductos}
-                </div>
-
-                <div className="">
-                    {merma.ventasPerdidas}
-                </div>
-                <div className="">
-                    {merma.beneficioPerdido}
+                <div className="w-1/5 text-right">
+                    {props.merma.beneficioPerdido}
                 </div>
             </div>
             <AnimatePresence>
-                {showModal && <VerMerma showModal={setModal} merma={merma} />}
+                {showModal && <VerMerma showModal={setModal} merma={props.merma} updateMermasCallback={props.UpdateMermasCallback} />}
             </AnimatePresence>
         </div>
 

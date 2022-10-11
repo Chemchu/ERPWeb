@@ -1,5 +1,5 @@
 import { NextApiRequest, NextApiResponse } from "next"
-import { DELETE_MERMA, QUERY_MERMAS, UPDATE_MERMA } from "../../../utils/querys";
+import { DELETE_MERMA, QUERY_MERMA, QUERY_MERMAS, UPDATE_MERMA } from "../../../utils/querys";
 import GQLQuery, { GQLMutate } from "../../../utils/serverFetcher";
 import queryString from 'query-string';
 import { Merma } from "../../../tipos/Merma";
@@ -47,13 +47,10 @@ const GetMermaFromQuery = async (userQuery: queryString.ParsedQuery<string>, res
     if (!userQuery.query) { res.status(300).json({ message: `La query no puede estar vacía`, successful: false }); }
 
     const serverRes = await GQLQuery({
-        query: QUERY_MERMAS,
+        query: QUERY_MERMA,
         variables: {
-            "id": null,
             "find": {
-                "fechaInicial": null,
-                "fechaFinal": null,
-                "empleadoId": null
+                "_id": userQuery
             }
         }
     })

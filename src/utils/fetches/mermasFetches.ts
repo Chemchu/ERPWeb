@@ -58,3 +58,21 @@ export const AddNuevaMerma = async (merma: NuevaMerma) => {
         return { message: "Error: " + String(e), successful: false };
     }
 }
+
+export const DeleteMerma = async (_id: string) => {
+    try {
+        const mResponse = await fetch(`/api/mermas/${_id}`, {
+            method: 'DELETE',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+        });
+
+        const msg = await mResponse.json();
+        return { message: msg.message, successful: msg.successful }
+    }
+    catch (e) {
+        console.log(e);
+        return { message: "Error: " + String(e), successful: false };
+    }
+}

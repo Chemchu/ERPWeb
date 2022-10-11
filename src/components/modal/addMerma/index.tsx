@@ -6,7 +6,7 @@ import { NuevaMerma } from "../../../tipos/Merma";
 import { Producto } from "../../../tipos/Producto";
 import { NuevoProductoMermado } from "../../../tipos/ProductoMermado";
 import { In } from "../../../utils/animations";
-import { AddNuevaMerma } from "../../../utils/fetches/mermasFetches";
+import { AddNuevaMerma, FetchMermas } from "../../../utils/fetches/mermasFetches";
 import { FetchProductos } from "../../../utils/fetches/productosFetches";
 import { notifyError, notifyLoading } from "../../../utils/toastify";
 import { ValidatePositiveIntegerNumber } from "../../../utils/validator";
@@ -14,24 +14,24 @@ import Dropdown from "../../elementos/Forms/dropdown";
 import SimpleListBox from "../../elementos/Forms/simpleListBox";
 import { Backdrop } from "../backdrop";
 
-const AddMerma = (props: { showModal: Function }) => {
+const AddMerma = (props: { showModal: Function, updateCallback: Function }) => {
     const { Empleado } = useEmpleadoContext()
     const [NuevaMerma, setNuevaMerma] = useState<NuevaMerma>({ empleadoId: Empleado._id, productos: [] });
+    const [isCreandoMerma, setIsCreandoMerma] = useState<boolean>(false);
 
     const CrearMerma = async (Merm: NuevaMerma | undefined) => {
         if (!Merm) {
             notifyError("Error con la merma");
             return;
         }
+
+        setIsCreandoMerma(true);
         notifyLoading(AddNuevaMerma(Merm), "Añadiendo merma...", () => {
+            setIsCreandoMerma(false);
+            props.updateCallback();
             props.showModal(false);
         });
     }
-
-    // useEffect(() => {
-    //     // console.log(NuevaMerma);
-
-    // }, [NuevaMerma])
 
     return (
         <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} >
@@ -55,10 +55,17 @@ const AddMerma = (props: { showModal: Function }) => {
                             <button className="h-10 w-full rounded-xl bg-red-500 hover:bg-red-600 shadow-lg" onClick={() => props.showModal(false)}>
                                 Cancelar
                             </button>
-                            <button disabled={!(NuevaMerma.productos.length > 0)} className={`${NuevaMerma.productos.length > 0 ? "bg-blue-500 hover:bg-blue-600" : "bg-blue-400"} h-10 w-full rounded-xl shadow-lg`}
-                                onClick={async () => { await CrearMerma(NuevaMerma) }}>
-                                Crear merma
-                            </button>
+                            {
+                                isCreandoMerma ?
+                                    <button disabled={true} className={`bg-blue-400 h-10 w-full rounded-xl shadow-lg`}>
+                                        Creando merma...
+                                    </button>
+                                    :
+                                    <button disabled={!(NuevaMerma.productos.length > 0)} className={`${NuevaMerma.productos.length > 0 ? "bg-blue-500 hover:bg-blue-600" : "bg-blue-400"} h-10 w-full rounded-xl shadow-lg`}
+                                        onClick={async () => { await CrearMerma(NuevaMerma) }}>
+                                        Crear merma
+                                    </button>
+                            }
                         </div>
                     </div>
                 </motion.div>

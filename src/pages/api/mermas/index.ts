@@ -51,7 +51,8 @@ const AddMerma = async (req: NextApiRequest, res: NextApiResponse) => {
         return res.status(data.addMerma.successful ? 200 : 300).json({ message: data.addMerma.message, successful: data.addMerma.successful || false });
     }
     catch (err) {
-        return res.status(500).json({ message: "Error al intentar crear el producto", successful: false });
+        console.log(err);
+        return res.status(500).json({ message: `Error al intentar la merma: ${err}`, successful: false });
     }
 }
 
