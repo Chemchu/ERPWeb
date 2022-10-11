@@ -59,7 +59,6 @@ export const FetchProductoByQuery = async (userQuery: string, tipoProductos?: Ti
         notifyError("Error de conexión");
         return [];
     }
-
 }
 
 export const UpdateProducto = async (producto: Producto): Promise<Boolean> => {

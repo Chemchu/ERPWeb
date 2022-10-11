@@ -3,14 +3,13 @@ import React, { useEffect, useState } from "react";
 import { Paginador } from "../../elementos/Forms/paginador";
 import SkeletonCard from "../../Skeletons/skeletonCard";
 import { notifyWarn } from "../../../utils/toastify";
-import UploadFile from "../../elementos/botones/uploadFile";
-import { TipoDocumento } from "../../../tipos/Enums/TipoDocumentos";
-import DownloadProductsFile from "../../elementos/botones/downloadProductsFile";
-import AddProducto from "../../modal/addProducto";
-import { Merma } from "../../../tipos/Merma";
 import NuevoBoton from "../../elementos/botones/nuevoBoton";
+import { Merma } from "../../../tipos/Merma";
+import { FetchMermaByQuery, FetchMermas } from "../../../utils/fetches/mermasFetches";
+import VerMerma from "../../modal/verMerma";
+import AddMerma from "../../modal/addMerma";
 
-const arrayNum = [...Array(8)];
+const arrayNum = [...Array(16)];
 
 const MermaPage = () => {
     const [filtro, setFiltro] = useState<string>("");
@@ -21,10 +20,24 @@ const MermaPage = () => {
     const [isMounted, setMounted] = useState<boolean>(false);
 
     useEffect(() => {
-        setMounted(true)
-        setLoading(false)
+        const GetData = async () => {
+            try {
+                setMounted(true)
+                setMermas(await FetchMermas())
+                setLoading(false)
+            }
+            catch (err) {
+                console.log(err);
+            }
+        }
+
+        GetData()
     }, [])
 
+    useEffect(() => {
+        if (!isMounted) { return; }
+        setLoading(false);
+    }, [Mermas])
 
     useEffect(() => {
         if (!isMounted) { return; }
@@ -37,7 +50,13 @@ const MermaPage = () => {
     const Filtrar = async (f: string) => {
         if (!f.match('^[-_a-zA-Z0-9.\s ]*$')) { notifyWarn("Producto inválido"); return; }
 
-        //setMermasFiltradas(await FetchProductoByQuery(f));
+        setMermasFiltradas(await FetchMermaByQuery(f));
+    }
+
+    const UpdateMermasCallback = async () => {
+        setFiltro("")
+        setMermas(await FetchMermas())
+        setLoading(true);
     }
 
     return (
@@ -45,12 +64,10 @@ const MermaPage = () => {
             <div className="flex w-full h-auto py-4">
                 <div className="flex gap-4 w-full h-full justify-start">
                     <NuevoBoton accionEvent={() => { setAddMermaModal(true); }} />
-                    <UploadFile tipoDocumento={TipoDocumento.Productos} />
-                    {/* <DownloadProductsFile tipoDocumento={TipoDocumento.Productos} /> */}
                 </div>
                 <div className="flex gap-2">
                     <input autoFocus={true} className="rounded-lg border appearance-none shadow-lg w-40 xl:w-96 h-full py-2 px-4 bg-white text-gray-700 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-600" placeholder="Buscar..."
-                        onChange={(e) => { setFiltro(e.target.value); }} onKeyPress={async (e) => { e.key === "Enter" ? await Filtrar(filtro) : null }} />
+                        onChange={(e) => { setFiltro(e.target.value); }} onKeyDown={async (e) => { e.key === "Enter" ? await Filtrar(filtro) : null }} />
 
                     {
                         filtro ?
@@ -65,39 +82,40 @@ const MermaPage = () => {
                     }
                 </div>
             </div>
-            <div className="flex justify-between border-t-2 border-x-2 rounded-t-2xl px-5 py-2">
-                <div className="text-left text-sm font-semibold w-2/5">
-                    Nombre
+            <div className="flex justify-between items-center border-t-2 border-x-2 rounded-t-2xl px-5 py-2 font-semibold">
+                <div className="w-2/5">
+                    Fecha
                 </div>
-
-                <div className="text-left text-sm font-semibold w-1/5">
-                    Precio
+                <div className="w-1/5 text-left">
+                    Coste
                 </div>
-                <div className="text-left text-sm font-semibold w-1/5 ">
-                    Familia
+                <div className="w-1/5 text-center">
+                    Ventas
                 </div>
-                <div className="text-right text-sm font-semibold w-1/5">
-                    Cantidad
+                <div className="w-1/5 text-right">
+                    Beneficios perdidos
                 </div>
             </div>
-            {
-                isLoading ?
-                    arrayNum.map((n, i) => {
-                        return (
-                            <SkeletonCard key={`SkeletonProdList-${i}`} />
-                        );
-                    })
-                    :
-                    <TablaMerma Mermas={MermasFiltradas || Mermas} SetMermas={setMermas} />
-            }
+            <div className="h-full overflow-clip">
+                {
+                    isLoading ?
+                        arrayNum.map((_, i) => {
+                            return (
+                                <SkeletonCard key={`SkeletonProdList-${i}`} />
+                            );
+                        })
+                        :
+                        <TablaMerma Mermas={MermasFiltradas || Mermas} SetMermas={setMermas} UpdateMermasCallback={UpdateMermasCallback} />
+                }
+            </div>
             <AnimatePresence>
-                {addMermaModal && <AddProducto showModal={setAddMermaModal} />}
+                {addMermaModal && <AddMerma showModal={setAddMermaModal} updateCallback={UpdateMermasCallback} />}
             </AnimatePresence>
         </div>
     );
 }
 
-const TablaMerma = (props: { Mermas: Merma[], SetMermas: Function }) => {
+const TablaMerma = (props: { Mermas: Merma[], SetMermas: Function, UpdateMermasCallback: Function }) => {
     const [currentPage, setCurrentPage] = useState<number>(1);
 
     const elementsPerPage = 50;
@@ -115,17 +133,14 @@ const TablaMerma = (props: { Mermas: Merma[], SetMermas: Function }) => {
             <div className="h-full w-full border-2 rounded-b overflow-y-scroll">
                 {
                     props.Mermas.length <= 0 ?
-                        // <div className="flex justify-center items-center h-full w-full text-xl">
-                        //     No se ha encontrado registros de mermas en el sistema
-                        // </div>
                         <div className="flex justify-center items-center h-full w-full text-xl">
-                            Página en desarrollo!
+                            No se ha encontrado registros de mermas en el sistema
                         </div>
                         :
                         props.Mermas.slice((elementsPerPage * (currentPage - 1)), currentPage * elementsPerPage).map((p, index) => {
                             return (
                                 <div key={`FilaProdTable${p._id}`}>
-                                    <FilaMerma merma={p} allMermas={props.Mermas} setAllProductos={props.SetMermas} />
+                                    <FilaMerma merma={p} UpdateMermasCallback={props.UpdateMermasCallback} />
                                 </div>
                             );
                         })
@@ -138,41 +153,27 @@ const TablaMerma = (props: { Mermas: Merma[], SetMermas: Function }) => {
     )
 }
 
-const FilaMerma = (props: { merma: Merma, allMermas: Merma[], setAllProductos: Function }) => {
+const FilaMerma = (props: { merma: Merma, UpdateMermasCallback: Function }) => {
     const [showModal, setModal] = useState<boolean>(false);
-    const [merma, setMerma] = useState<Merma>(props.merma);
-
-    const SetCurrentMerma = (p: Merma | null) => {
-        if (p === null) {
-            const prods = props.allMermas.filter((p) => { return p._id !== merma._id });
-            props.setAllProductos(prods);
-
-            return;
-        }
-
-        setMerma(p);
-    }
 
     return (
         <div className="hover:bg-blue-200">
-            <div className="flex justify-between border-b px-5 py-2 cursor-pointer" onClick={() => { setModal(true) }}>
-                <div className="w-2/5 text-sm text-left">
-                    {merma._id}
+            <div className="flex justify-between items-center border-b px-5 h-12 cursor-pointer" onClick={() => { setModal(true) }}>
+                <div className="w-2/5">
+                    {new Date(Number(props.merma.createdAt)).toLocaleString()}
                 </div>
-                <div className="w-1/5 text-sm text-left">
-                    {merma.productos.length}
+                <div className="w-1/5 text-left">
+                    {props.merma.costeProductos}
                 </div>
-                <div className="w-1/5 text-base text-left">
-                    {/* {merma.familia} */}
+                <div className="w-1/5 text-center">
+                    {props.merma.ventasPerdidas}
                 </div>
-                <div className="w-1/5 text-sm text-right">
-                    {/* <span className={`w-full px-3 py-1 rounded-full ${merma.cantidad > 0 ? " text-green-900 bg-green-300" : "text-red-900 bg-red-300"}`}>
-                        {merma.cantidad ? merma.cantidad : 0}
-                    </span> */}
+                <div className="w-1/5 text-right">
+                    {props.merma.beneficioPerdido}
                 </div>
             </div>
             <AnimatePresence>
-                {/* {showModal && <VerProducto showModal={setModal} producto={merma} setProducto={SetCurrentMerma} />} */}
+                {showModal && <VerMerma showModal={setModal} merma={props.merma} updateMermasCallback={props.UpdateMermasCallback} />}
             </AnimatePresence>
         </div>
 

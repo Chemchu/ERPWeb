@@ -164,16 +164,16 @@ const DownloadVentasModal = (props: { setModal: Function }) => {
                     exit="exit"
                 >
                     <Tab.Group>
-                        <Tab.List className="w-96 h-12 flex gap-1 font-semibold text-lg">
+                        <Tab.List className="w-96 h-12 flex gap-1 text-lg">
                             <Tab
                                 key={"exportarVentasTab"}
-                                className={(props: { selected: boolean }) => `${props.selected ? "bg-white cursor-default" : "bg-gray-300 hover:bg-blue-500 hover:text-white"} w-full rounded-t-xl`}
+                                className={(props: { selected: boolean }) => `${props.selected ? "bg-white cursor-default" : "bg-gray-300 hover:bg-blue-400 hover:text-white"} w-full rounded-t-xl`}
                             >
                                 Ventas
                             </Tab>
                             <Tab
                                 key={"exportarProdVendidosTab"}
-                                className={(props: { selected: boolean }) => `${props.selected ? "bg-white cursor-default" : "bg-gray-300 hover:bg-blue-500 hover:text-white"} w-full rounded-t-xl`}
+                                className={(props: { selected: boolean }) => `${props.selected ? "bg-white cursor-default" : "bg-gray-300 hover:bg-blue-400 hover:text-white"} w-full rounded-t-xl`}
                             >
                                 Productos vendidos
                             </Tab>
