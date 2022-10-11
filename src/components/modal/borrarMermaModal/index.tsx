@@ -1,12 +1,15 @@
 import { motion } from "framer-motion";
+import { useState } from "react";
 import { Roles } from "../../../tipos/Enums/Roles";
 import { In } from "../../../utils/animations";
 import AuthorizationWrapper from "../../authorizationWrapper";
 import { Backdrop } from "../backdrop";
 
 const BorrarMermaModal = (props: { showModal: Function, acceptCallback: Function }) => {
+    const [isDeleting, setIsDeleting] = useState<boolean>(false);
 
     const Eliminar = async () => {
+        setIsDeleting(true);
         props.acceptCallback()
     }
     return (
@@ -33,10 +36,16 @@ const BorrarMermaModal = (props: { showModal: Function, acceptCallback: Function
                                 Las cantidades mermadas se ajustarán automáticamente 😉
                             </p>
                             <div className="flex items-center justify-between gap-4 w-full mt-8">
-                                <button onClick={Eliminar} type="button" className="py-2 px-4  bg-blue-600 hover:bg-blue-700 focus:ring-blue-500 focus:ring-offset-blue-200 text-white w-full transition ease-in duration-200 text-center text-base font-semibold shadow-md focus:outline-none focus:ring-2 focus:ring-offset-2  rounded-lg ">
-                                    Sí
-                                </button>
-                                <button onClick={() => props.showModal(false)} type="button" className="py-2 px-4  bg-white hover:bg-gray-100 focus:ring-blue-500 focus:ring-offset-blue-200 text-blue-500 w-full transition ease-in duration-200 text-center text-base font-semibold shadow-md focus:outline-none focus:ring-2 focus:ring-offset-2  rounded-lg ">
+                                {
+                                    isDeleting ?
+                                        <button disabled type="button" className="py-2 px-4 bg-blue-400 focus:ring-blue-500 focus:ring-offset-blue-200 text-white w-full transition ease-in duration-200 text-center text-base font-semibold shadow-md focus:outline-none focus:ring-2 focus:ring-offset-2  rounded-lg ">
+                                            Borrando...
+                                        </button>
+                                        : <button onClick={Eliminar} type="button" className="py-2 px-4 bg-blue-600 hover:bg-blue-700 focus:ring-blue-500 focus:ring-offset-blue-200 text-white w-full transition ease-in duration-200 text-center text-base font-semibold shadow-md focus:outline-none focus:ring-2 focus:ring-offset-2  rounded-lg ">
+                                            Sí
+                                        </button>
+                                }
+                                <button onClick={() => props.showModal(false)} type="button" className="py-2 px-4 bg-white hover:bg-gray-100 focus:ring-blue-500 focus:ring-offset-blue-200 text-blue-500 w-full transition ease-in duration-200 text-center text-base font-semibold shadow-md focus:outline-none focus:ring-2 focus:ring-offset-2  rounded-lg ">
                                     No
                                 </button>
                             </div>

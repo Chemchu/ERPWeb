@@ -10,8 +10,6 @@ import BorrarMermaModal from "../borrarMermaModal";
 
 const VerMerma = (props: { showModal: Function, merma: Merma, updateMermasCallback: Function }) => {
     const [showDeleteModal, setShowDeleteModal] = useState<boolean>(false);
-    const [isDeleting, setIsDeleting] = useState<boolean>(false);
-
     const DeleteCurrentMerma = async () => {
         const { message, successful } = await DeleteMerma(props.merma._id);
         await props.updateMermasCallback();
@@ -64,7 +62,7 @@ const VerMerma = (props: { showModal: Function, merma: Merma, updateMermasCallba
                                         props.merma.productos.map((prod, index) => {
                                             return (
                                                 <li key={index}
-                                                    className="flex justify-between gap-2 w-full h-auto hover:bg-gray-300 p-2 text-sm cursor-default">
+                                                    className="flex justify-between items-center gap-2 w-full h-auto hover:bg-gray-300 p-2 text-sm cursor-default">
                                                     <span className="w-2/4">{prod.nombre}</span>
                                                     <span className="w-1/4 text-right">{prod.cantidad}</span>
                                                     <span className="w-1/4 text-right">{prod.motivo}</span>
