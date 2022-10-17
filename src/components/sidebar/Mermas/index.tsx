@@ -82,32 +82,7 @@ const MermaPage = () => {
                     }
                 </div>
             </div>
-            <div className="flex justify-between items-center border-t-2 border-x-2 rounded-t-2xl px-5 py-2 font-semibold">
-                <div className="w-2/5">
-                    Fecha
-                </div>
-                <div className="w-1/5 text-left">
-                    Coste
-                </div>
-                <div className="w-1/5 text-center">
-                    Ventas
-                </div>
-                <div className="w-1/5 text-right">
-                    Beneficios perdidos
-                </div>
-            </div>
-            <div className="h-full overflow-clip">
-                {
-                    isLoading ?
-                        arrayNum.map((_, i) => {
-                            return (
-                                <SkeletonCard key={`SkeletonProdList-${i}`} />
-                            );
-                        })
-                        :
-                        <TablaMerma Mermas={MermasFiltradas || Mermas} SetMermas={setMermas} UpdateMermasCallback={UpdateMermasCallback} />
-                }
-            </div>
+            <TablaMerma Mermas={MermasFiltradas || Mermas} SetMermas={setMermas} isLoading={isLoading} UpdateMermasCallback={UpdateMermasCallback} />
             <AnimatePresence>
                 {addMermaModal && <AddMerma showModal={setAddMermaModal} updateCallback={UpdateMermasCallback} />}
             </AnimatePresence>
@@ -115,7 +90,7 @@ const MermaPage = () => {
     );
 }
 
-const TablaMerma = (props: { Mermas: Merma[], SetMermas: Function, UpdateMermasCallback: Function }) => {
+const TablaMerma = (props: { Mermas: Merma[], SetMermas: Function, isLoading: boolean, UpdateMermasCallback: Function }) => {
     const [currentPage, setCurrentPage] = useState<number>(1);
 
     const elementsPerPage = 50;
@@ -130,24 +105,51 @@ const TablaMerma = (props: { Mermas: Merma[], SetMermas: Function, UpdateMermasC
 
     return (
         <>
-            <div className="h-full w-full border-2 rounded-b overflow-y-scroll">
+            <div className="flex items-center border-t-2 border-x-2 rounded-t-2xl p-2 font-semibold">
+                <div className="w-2/5 ">
+                    Fecha
+                </div>
+                <div className="w-1/5 text-left ">
+                    Coste
+                </div>
+                <div className="w-1/5 text-center">
+                    Ventas
+                </div>
+                <div className="w-1/5 text-right ">
+                    Beneficios perdidos
+                </div>
+            </div>
+            <div className="h-full overflow-clip">
                 {
-                    props.Mermas.length <= 0 ?
-                        <div className="flex justify-center items-center h-full w-full text-xl">
-                            No se ha encontrado registros de mermas en el sistema
-                        </div>
-                        :
-                        props.Mermas.slice((elementsPerPage * (currentPage - 1)), currentPage * elementsPerPage).map((p, index) => {
+                    props.isLoading ?
+                        arrayNum.map((_, i) => {
                             return (
-                                <div key={`FilaProdTable${p._id}`}>
-                                    <FilaMerma merma={p} UpdateMermasCallback={props.UpdateMermasCallback} />
-                                </div>
+                                <SkeletonCard key={`SkeletonProdList-${i}`} />
                             );
                         })
+                        :
+                        <>
+                            <div className="h-full w-full border-2 rounded-b overflow-y-scroll">
+                                {
+                                    props.Mermas.length <= 0 ?
+                                        <div className="flex justify-center items-center h-full w-full text-xl">
+                                            No se ha encontrado registros de mermas en el sistema
+                                        </div>
+                                        :
+                                        props.Mermas.slice((elementsPerPage * (currentPage - 1)), currentPage * elementsPerPage).map((p, index) => {
+                                            return (
+                                                <div key={`FilaProdTable${p._id}`}>
+                                                    <FilaMerma merma={p} UpdateMermasCallback={props.UpdateMermasCallback} />
+                                                </div>
+                                            );
+                                        })
+                                }
+                            </div>
+                            <div className="flex pt-2 items-center justify-center">
+                                <Paginador numPages={numPages} paginaActual={currentPage} maxPages={10} cambiarPaginaActual={setPaginaActual} />
+                            </div>
+                        </>
                 }
-            </div>
-            <div className="flex pt-2 items-center justify-center">
-                <Paginador numPages={numPages} paginaActual={currentPage} maxPages={10} cambiarPaginaActual={setPaginaActual} />
             </div>
         </>
     )
@@ -157,19 +159,19 @@ const FilaMerma = (props: { merma: Merma, UpdateMermasCallback: Function }) => {
     const [showModal, setModal] = useState<boolean>(false);
 
     return (
-        <div className="hover:bg-blue-200">
-            <div className="flex justify-between items-center border-b px-5 h-12 cursor-pointer" onClick={() => { setModal(true) }}>
+        <div className="hover:bg-blue-200 w-full">
+            <div className="flex items-center border-b p-2 h-12 cursor-pointer" onClick={() => { setModal(true) }}>
                 <div className="w-2/5">
                     {new Date(Number(props.merma.createdAt)).toLocaleString()}
                 </div>
                 <div className="w-1/5 text-left">
-                    {props.merma.costeProductos}
+                    {props.merma.costeProductos}€
                 </div>
                 <div className="w-1/5 text-center">
-                    {props.merma.ventasPerdidas}
+                    {props.merma.ventasPerdidas}€
                 </div>
-                <div className="w-1/5 text-right">
-                    {props.merma.beneficioPerdido}
+                <div className="w-1/5 text-right ">
+                    {props.merma.beneficioPerdido}€
                 </div>
             </div>
             <AnimatePresence>

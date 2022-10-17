@@ -31,7 +31,7 @@ export const FetchMermaByQuery = async (userQuery: string): Promise<Merma[]> => 
         if (!mResponse.ok) { notifyError("Error al buscar las mermas"); return []; }
 
         const mJson = await mResponse.json();
-        return CreateMermaList(mJson)
+        return CreateMermaList(mJson.mermas)
     }
     catch (e) {
         console.log(e);

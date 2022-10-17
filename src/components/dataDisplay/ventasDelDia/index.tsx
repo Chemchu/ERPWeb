@@ -1,11 +1,13 @@
-import dynamic from 'next/dynamic';
 import React, { useEffect, useState } from 'react';
 import { AreaChart as AChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, TooltipProps } from 'recharts';
 import { NameType, ValueType } from 'recharts/types/component/DefaultTooltipContent';
 import { Color } from '../../../tipos/Enums/Color';
 import { Summary, VentasPorHora } from '../../../tipos/Summary';
 
-const VentasDelDia = (props: { data: Summary | undefined, titulo: string, ejeX: string, ejeY: string, nombreEjeX: string, color: Color, colorID: string }) => {
+const VentasDelDia = (props: {
+    data: Summary | undefined, titulo: string, ejeY: string, ejeX: string, nombreEjeX: string, color: Color, colorID: string,
+    maxY?: number | undefined, minY?: number | undefined
+}) => {
     const [ventas, setVentas] = useState<VentasPorHora[]>([])
     const offset = (new Date().getTimezoneOffset() / 60) * -1
 
@@ -74,11 +76,11 @@ const VentasDelDia = (props: { data: Summary | undefined, titulo: string, ejeX: 
                                 <stop offset="95%" stopColor={props.color} stopOpacity={0.4} />
                             </linearGradient>
                         </defs>
-                        <XAxis dataKey={props.ejeY} />
-                        <YAxis dataKey={props.ejeX} />
+                        <XAxis dataKey={props.ejeX} />
+                        <YAxis dataKey={props.ejeY} domain={[props.minY || 0, props.maxY || 500]} />
                         <CartesianGrid strokeDasharray="3 3" />
                         <Tooltip content={CustomTooltip} />
-                        <Area type="monotone" dataKey={props.ejeX} name={props.nombreEjeX} stroke={props.color || "#8884d8"} fillOpacity={1} fill={`url(#${props.colorID})`} />
+                        <Area type="monotone" dataKey={props.ejeY} name={props.nombreEjeX} stroke={props.color || "#8884d8"} fillOpacity={1} fill={`url(#${props.colorID})`} />
                     </AChart>
                 </ResponsiveContainer>
             </div>

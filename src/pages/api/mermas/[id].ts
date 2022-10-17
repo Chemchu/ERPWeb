@@ -12,7 +12,9 @@ const handler = async (req: NextApiRequest, res: NextApiResponse): Promise<void>
         const query = queryString.parse(req.query.id.toString());
         switch (method) {
             case 'GET':
-                if (Object.keys(query).length > 0) { return await GetMermaFromQuery(query, res); }
+                if (Object.keys(query).length > 0) {
+                    return await GetMermaFromQuery(query, res);
+                }
                 else { return await GetMermaFromId(req, res); }
 
             case 'PUT':
@@ -47,10 +49,12 @@ const GetMermaFromQuery = async (userQuery: queryString.ParsedQuery<string>, res
     if (!userQuery.query) { res.status(300).json({ message: `La query no puede estar vacía`, successful: false }); }
 
     const serverRes = await GQLQuery({
-        query: QUERY_MERMA,
+        query: QUERY_MERMAS,
         variables: {
-            "find": {
-                "_id": userQuery
+            find: {
+                fechaInicial: userQuery.fechaFinal || null,
+                fechaFinal: userQuery.fechaFinal || null,
+                query: userQuery.query || null
             }
         }
     })

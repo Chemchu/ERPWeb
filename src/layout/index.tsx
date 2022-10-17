@@ -10,9 +10,9 @@ import { ToastContainer } from "react-toastify";
 import { SidebarOption } from "../tipos/Enums/SidebarOption";
 import { ComprasAparcadasContextProvider } from "../context/comprasAparcadas";
 import useDatosTiendaContext from "../context/datosTienda";
-import Cookies from 'js-cookie'
 import { notifyInfo } from "../utils/toastify";
 import StoreDataModal from "../components/modal/storeDataModal";
+import Cookies from 'js-cookie'
 
 const variants = {
     initial: {
@@ -62,7 +62,7 @@ const DashboardLayout = React.memo(({ children }: { children: React.ReactNode })
             <ProductCarritoContextProvider>
                 <ComprasAparcadasContextProvider>
                     {
-                        <div className="dark:bg-gray-800 h-screen w-screen overflow-hidden bg_food">
+                        <div className="dark:bg-gray-800 h-screen w-screen overflow-hidden bg-food">
                             <NextProgress />
                             <div className="flex items-start w-full h-full justify-start">
                                 <Sidebar isCollapsed={isSidebarCollapsed} setCollapsed={setSidebarCollapsed} IndexSeleccionado={IndexSidebar} setIndex={setSidebarIndex} />
