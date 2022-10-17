@@ -7,7 +7,7 @@ import getJwtFromString from "../../hooks/jwt";
 import DashboardLayout from "../../layout";
 import { SesionEmpleado } from "../../tipos/Empleado";
 import { Roles } from "../../tipos/Enums/Roles";
-import { Summary } from "../../tipos/Summary";
+import { Summary, VentasPorHora } from "../../tipos/Summary";
 import { FetchResumenDiario } from "../../utils/fetches/analisisFetches";
 import { Color } from "../../tipos/Enums/Color";
 import dynamic from "next/dynamic";
@@ -20,6 +20,8 @@ const Home = (props: { EmpleadoSesion: SesionEmpleado }) => {
   const { Empleado, SetEmpleado } = useEmpleadoContext();
   const [summaryToday, setSummaryToday] = useState<Summary | undefined>(undefined);
   const [summaryYesterday, setSummaryYesterday] = useState<Summary | undefined>(undefined);
+  const maxY = Math.max(summaryToday?.ventaMaxima || 100, summaryYesterday?.ventaMinima || 100)
+  const offset = 50;
 
   useEffect(() => {
     if (Object.keys(Empleado).length === 0) {
@@ -61,9 +63,16 @@ const Home = (props: { EmpleadoSesion: SesionEmpleado }) => {
             <div className="xl:w-72 w-44">
               <FinanceCard titulo="Ventas" dataActual={summaryToday?.totalVentas.toFixed(2)} dataPrevio={summaryYesterday?.totalVentas.toFixed(2)} />
             </div>
-            <div className="xl:w-72 w-44">
-              <FinanceCard titulo="Beneficio" dataActual={summaryToday?.beneficio.toFixed(2)} dataPrevio={summaryYesterday?.beneficio.toFixed(2)} />
-            </div>
+            {
+              Empleado.rol !== Roles.Cajero ?
+                <div className="xl:w-72 w-44">
+                  <FinanceCard titulo="Beneficio" dataActual={summaryToday?.beneficio.toFixed(2)} dataPrevio={summaryYesterday?.beneficio.toFixed(2)} />
+                </div>
+                :
+                <div className="xl:w-72 w-44">
+                  <FinanceCard titulo="Media" dataActual={summaryToday?.mediaVentas.toFixed(2)} dataPrevio={summaryYesterday?.mediaVentas.toFixed(2)} />
+                </div>
+            }
             <div className="xl:w-72 w-44">
               <FinanceCard titulo="Tickets" unidad="uds" dataActual={summaryToday && String(summaryToday?.numVentas)} dataPrevio={summaryToday && String(summaryYesterday?.numVentas)} />
             </div>
@@ -73,10 +82,12 @@ const Home = (props: { EmpleadoSesion: SesionEmpleado }) => {
           </div>
           <div className="flex w-full justify-between gap-4">
             <div className="w-1/2 h-full">
-              <VentasDelDia data={summaryToday} titulo="Ventas de hoy" ejeX="totalVentaHora" ejeY="hora" nombreEjeX="Vendido" color={Color.GREEN} colorID={"verde"} />
+              <VentasDelDia data={summaryToday} titulo="Ventas de hoy" ejeY="totalVentaHora" ejeX="hora" nombreEjeX="Vendido"
+                color={Color.GREEN} colorID={"verde"} maxY={maxY + offset} />
             </div>
             <div className="w-1/2 h-full">
-              <VentasDelDia data={summaryYesterday} titulo="Ventas de ayer" ejeX="totalVentaHora" ejeY="hora" nombreEjeX="Vendido" color={Color.BLUE} colorID={"azul"} />
+              <VentasDelDia data={summaryYesterday} titulo="Ventas de ayer" ejeY="totalVentaHora" ejeX="hora" nombreEjeX="Vendido"
+                color={Color.BLUE} colorID={"azul"} maxY={maxY + offset} />
             </div>
           </div>
         </div>

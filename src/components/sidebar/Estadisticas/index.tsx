@@ -145,9 +145,6 @@ const EstadisticasPage = () => {
                     <div className="xl:w-72 w-44">
                         <FinanceCard titulo="Mínima" unidad="€" dataActual={summary?.ventaMinima?.toFixed(2)} dataPrevio={summary?.ventaMinima?.toFixed(2)} />
                     </div>
-                    {/* <div className="xl:w-72 w-44">
-                        <FinanceCard titulo="Cantidad" unidad="uds" dataActual={String(summary?.cantidadProductosVendidos)} dataPrevio={String(summary?.cantidadProductosVendidos)} />
-                    </div> */}
                 </div>
             }
             {
