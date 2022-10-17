@@ -22,7 +22,7 @@ const VerMerma = (props: { showModal: Function, merma: Merma, updateMermasCallba
     return (
         <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} >
             <Backdrop onClick={(e) => { e.stopPropagation(); props.showModal(false) }} >
-                <motion.div className="h-5/6 w-5/6 flex flex-col gap-10 items-center bg-white rounded-2xl p-6"
+                <motion.div className="h-5/6 w-5/6 flex flex-col gap-10 items-center bg-white rounded-2xl p-4"
                     onClick={(e) => e.stopPropagation()}
                     variants={In}
                     initial="hidden"
