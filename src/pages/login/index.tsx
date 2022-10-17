@@ -1,5 +1,5 @@
-import { motion } from 'framer-motion';
-import React, { useState } from 'react';
+import { AnimatePresence, motion } from 'framer-motion';
+import React, { useRef, useState } from 'react';
 import { SplitLetters } from '../../components/elementos/compAnimados/SplitText';
 import Router from 'next/router';
 import { GetServerSideProps } from 'next';
@@ -62,29 +62,29 @@ const LoginPage = (props: { video: string }) => {
 }
 
 export const LoginForm = () => {
-    const [email, SetEmail] = useState<string>('');
-    const [password, SetPassword] = useState<string>('');
-    const [loginFallido, setLoginFallido] = useState<boolean>(false);
+    const emailRef = useRef<HTMLInputElement>(null);
+    const passwordRef = useRef<HTMLInputElement>(null);
     const [isLoading, setLoading] = useState<boolean>(false);
+    const [loginFallido, setLoginFallido] = useState<boolean>(false);
 
     const Volver = () => {
         Router.push('/');
     }
 
-    const Authenticate = async (userEmail: string, userPassword: string) => {
+    const Authenticate = async () => {
         setLoading(true);
         const loginFetch = await fetch(`/api/login`, {
             headers: { 'Content-Type': 'application/json' },
             method: 'POST',
-            body: JSON.stringify({ email: userEmail, password: userPassword })
+            body: JSON.stringify({ email: emailRef.current?.value, password: passwordRef.current?.value })
         });
 
         const loginJson = await loginFetch.json()
-        setLoading(false)
         if (loginJson.successful) {
             return Router.push("/dashboard");
         }
 
+        setLoading(false)
         setLoginFallido(true);
     }
 
@@ -106,16 +106,18 @@ export const LoginForm = () => {
                             <motion.div variants={item}>
                                 <label className="font-semibold text-sm text-black pb-1 block">Correo electrónico</label>
                                 <input name="email" type="text"
-                                    onChange={(e) => { SetEmail(e.target.value); setLoginFallido(false); }}
-                                    onKeyDown={(e) => { if (e.key === "Enter") { Authenticate(email, password); } }}
+                                    ref={emailRef}
+                                    onChange={() => { setLoginFallido(false); }}
+                                    onKeyDown={(e) => { if (e.key === "Enter") { Authenticate(); } }}
                                     className={`border border-gray-400 rounded-xl px-3 py-2 mt-1 mb-5 text-sm w-full ${loginFallido ? `outline-red-500 border-red-500 border-2` : `outline-blue-500`} `} />
                             </motion.div>
 
                             <motion.div variants={item}>
                                 <label className="font-semibold text-sm text-black pb-1 block">Contraseña</label>
                                 <input name="password" type="password"
-                                    onChange={(e) => { SetPassword(e.target.value); setLoginFallido(false); }}
-                                    onKeyDown={(e) => { if (e.key === "Enter") { Authenticate(email, password); } }}
+                                    ref={passwordRef}
+                                    onChange={() => { setLoginFallido(false); }}
+                                    onKeyDown={(e) => { if (e.key === "Enter") { Authenticate(); } }}
                                     className={`border border-gray-400 rounded-xl px-3 py-2 mt-1 mb-5 text-sm w-full
                                         ${loginFallido ? `outline-red-500 border-red-500 border-2` : `outline-blue-500`} `} />
                             </motion.div>
@@ -124,7 +126,7 @@ export const LoginForm = () => {
                                 <button className="mb-1 transition duration-200 bg-blue-500 hover:bg-blue-600 focus:bg-blue-700 
                                     focus:shadow-sm focus:ring-4 focus:ring-blue-500 focus:ring-opacity-50 text-white 
                                     w-full py-2.5 rounded-xl text-sm shadow-sm hover:shadow-md font-semibold text-center inline-block"
-                                    onClick={() => { Authenticate(email, password) }}>
+                                    onClick={() => { Authenticate() }}>
 
                                     <span className="inline-block mr-2">Acceder</span>
                                     <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" className="w-4 h-4 inline-block">
@@ -144,13 +146,15 @@ export const LoginForm = () => {
                         </motion.div>
                     </div>
                 </motion.div>
-                {
-                    isLoading &&
-                    <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
-                        className='flex items-center justify-center bg-white shadow w-full h-10 rounded-xl divide-y divide-gray-200 mt-2'>
-                        Iniciando sesión...
-                    </motion.div>
-                }
+                <AnimatePresence>
+                    {
+                        isLoading &&
+                        <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
+                            className='flex items-center justify-center bg-white shadow w-full h-10 rounded-xl divide-y divide-gray-200 mt-2'>
+                            Iniciando sesión...
+                        </motion.div>
+                    }
+                </AnimatePresence>
             </motion.div>
         </motion.div >
     );
