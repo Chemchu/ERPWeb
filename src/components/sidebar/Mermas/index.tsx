@@ -48,6 +48,8 @@ const MermaPage = () => {
 
 
     const Filtrar = async (f: string) => {
+        if (f === "") { return; }
+
         setMermasFiltradas(await FetchMermaByQuery(f));
     }
 
