@@ -169,7 +169,7 @@ const EstadisticasPage = () => {
                             </div>
                         }
                         <div className="w-full h-full">
-                            <VentasDelDia data={summary} titulo={titulo} ejeX="totalVentaHora" ejeY="hora" nombreEjeX="Vendido" color={Color.GREEN} colorID={"verde"} />
+                            <VentasDelDia data={summary} titulo={titulo} ejeY="totalVentaHora" ejeX="hora" nombreEjeX="Vendido" color={Color.GREEN} colorID={"verde"} />
                         </div>
                     </div>
             }

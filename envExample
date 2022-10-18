@@ -1,3 +1,5 @@
-## Nombre ".env.local"
-
+# Nombre ".env.local"
 ERPGATEWAY_URL=http://xxx.xxx.x.xxx:xxxx/
+
+# Desarrollo desde Windows
+ERPGATEWAY_URL=http://localhost/
