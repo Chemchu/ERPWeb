@@ -62,7 +62,7 @@ const VentasDelDia = (props: {
     }
 
     let maxY = 500
-    if (props.maxY) { maxY = Math.round(props.maxY * 1e2) / 1e2 }
+    if (props.maxY) { maxY = Math.round(props.maxY) }
 
     return (
         <div className='w-full rounded-xl border-x border-b shadow-xl hover:shadow-2xl'>
