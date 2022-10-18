@@ -61,6 +61,9 @@ const VentasDelDia = (props: {
         )
     }
 
+    let maxY = 500
+    if (props.maxY) { maxY = Math.round(props.maxY) }
+
     return (
         <div className='w-full rounded-xl border-x border-b shadow-xl hover:shadow-2xl'>
             <div className='flex justify-center py-4 font-semibold text-gray-600'>
@@ -77,7 +80,7 @@ const VentasDelDia = (props: {
                             </linearGradient>
                         </defs>
                         <XAxis dataKey={props.ejeX} />
-                        <YAxis dataKey={props.ejeY} domain={[props.minY || 0, props.maxY || 500]} />
+                        <YAxis dataKey={props.ejeY} domain={[props.minY || 0, maxY || 500]} />
                         <CartesianGrid strokeDasharray="3 3" />
                         <Tooltip content={CustomTooltip} />
                         <Area type="monotone" dataKey={props.ejeY} name={props.nombreEjeX} stroke={props.color || "#8884d8"} fillOpacity={1} fill={`url(#${props.colorID})`} />
