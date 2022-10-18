@@ -15,7 +15,7 @@ import { FetchClientes } from "../../../../utils/fetches/clienteFetches";
 import { AddVenta, FetchVentaByQuery } from "../../../../utils/fetches/ventasFetches";
 import GenerateQrBase64 from "../../../../utils/generateQr";
 import { AplicarDescuentos, PrecioTotalCarrito } from "../../../../utils/preciosUtils";
-import { notifyError, notifySuccess, notifyWarn } from "../../../../utils/toastify";
+import { notifyError, notifySuccess } from "../../../../utils/toastify";
 import { IsPositiveFloatingNumber, IsPositiveIntegerNumber, ValidatePositiveFloatingNumber } from "../../../../utils/validator";
 import GuardarCompra from "../../../modal/guardarCompra";
 import Ofertar from "../../../modal/ofertar";
@@ -242,11 +242,11 @@ const SidebarDerecho = React.memo((props: {
                         CARRITO VACÍO
                     </p>
                 </div>
-                <div className="flex flex-col gap-2 items-center justify-end">
+                <div className="flex flex-col gap-2 items-center justify-end text-gray-500">
                     {
                         ComprasAparcadasMap.size > 0 &&
                         <button className="flex gap-2" onClick={() => setRecuperarVentas(true)}>
-                            RECUPERAR VENTAS
+                            Recuperar ventas
                             <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
                                 <path strokeLinecap="round" strokeLinejoin="round" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
                             </svg>
@@ -254,17 +254,25 @@ const SidebarDerecho = React.memo((props: {
                     }
                     {
                         props.empleadoUsandoTPV ?
-                            <button className="flex gap-2 pb-4" onClick={() => { props.setShowModalCerrar(true) }}>
-                                CERRAR CAJA
-                                <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
-                                </svg>
-                            </button>
+                            <div className="flex flex-col w-full items-center gap-2 pb-6">
+                                <button className="flex gap-2 hover:text-blue-500" onClick={() => { props.setShowModalCerrar(true) }}>
+                                    Cerrar caja
+                                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" className="w-5 h-5">
+                                        <path fillRule="evenodd" d="M10 1a4.5 4.5 0 00-4.5 4.5V9H5a2 2 0 00-2 2v6a2 2 0 002 2h10a2 2 0 002-2v-6a2 2 0 00-2-2h-.5V5.5A4.5 4.5 0 0010 1zm3 8V5.5a3 3 0 10-6 0V9h6z" clipRule="evenodd" />
+                                    </svg>
+                                </button>
+                                <button className="flex gap-2 hover:text-blue-500" onClick={() => { props.setShowModalCerrar(true) }}>
+                                    Transferir caja
+                                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" className="w-5 h-5">
+                                        <path fillRule="evenodd" d="M10 4.5c1.215 0 2.417.055 3.604.162a.68.68 0 01.615.597c.124 1.038.208 2.088.25 3.15l-1.689-1.69a.75.75 0 00-1.06 1.061l2.999 3a.75.75 0 001.06 0l3.001-3a.75.75 0 10-1.06-1.06l-1.748 1.747a41.31 41.31 0 00-.264-3.386 2.18 2.18 0 00-1.97-1.913 41.512 41.512 0 00-7.477 0 2.18 2.18 0 00-1.969 1.913 41.16 41.16 0 00-.16 1.61.75.75 0 101.495.12c.041-.52.093-1.038.154-1.552a.68.68 0 01.615-.597A40.012 40.012 0 0110 4.5zM5.281 9.22a.75.75 0 00-1.06 0l-3.001 3a.75.75 0 101.06 1.06l1.748-1.747c.042 1.141.13 2.27.264 3.386a2.18 2.18 0 001.97 1.913 41.533 41.533 0 007.477 0 2.18 2.18 0 001.969-1.913c.064-.534.117-1.071.16-1.61a.75.75 0 10-1.495-.12c-.041.52-.093 1.037-.154 1.552a.68.68 0 01-.615.597 40.013 40.013 0 01-7.208 0 .68.68 0 01-.615-.597 39.785 39.785 0 01-.25-3.15l1.689 1.69a.75.75 0 001.06-1.061l-2.999-3z" clipRule="evenodd" />
+                                    </svg>
+                                </button>
+                            </div>
                             :
-                            <button className="flex gap-2 pb-4" onClick={() => { props.setShowModalAbrir(true) }}>
-                                ABRIR CAJA
-                                <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
+                            <button className="flex gap-2 hover:text-blue-500 w-full h-20 items-center justify-center" onClick={() => { props.setShowModalAbrir(true) }}>
+                                Abrir caja
+                                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" className="w-5 h-5">
+                                    <path fillRule="evenodd" d="M14.5 1A4.5 4.5 0 0010 5.5V9H3a2 2 0 00-2 2v6a2 2 0 002 2h10a2 2 0 002-2v-6a2 2 0 00-2-2h-1.5V5.5a3 3 0 116 0v2.75a.75.75 0 001.5 0V5.5A4.5 4.5 0 0014.5 1z" clipRule="evenodd" />
                                 </svg>
                             </button>
                     }
