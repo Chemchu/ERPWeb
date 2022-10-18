@@ -13,6 +13,7 @@ import { Roles } from "../../../tipos/Enums/Roles";
 import { FetchProductos } from "../../../utils/fetches/productosFetches";
 import { TPVStateContextProvider } from "../../../context/tpvContext";
 import { POSState } from "../../../tipos/POSState";
+import TransferirTpv from "../../../components/modal/transferirTpv";
 
 const PuntoDeVenta = (props: { isEmpleadoUsingTPV: boolean, EmpleadoSesion: SesionEmpleado }) => {
     const [empleadoUsandoTpv, setEmpleadoUsandoTPV] = useState<boolean>(props.isEmpleadoUsingTPV);
@@ -43,15 +44,14 @@ const PuntoDeVenta = (props: { isEmpleadoUsingTPV: boolean, EmpleadoSesion: Sesi
     }, []);
 
     return (
-        <TPVStateContextProvider isEmpleadoUsingTPV={empleadoUsandoTpv} setEmpleadoUsingTPV={setEmpleadoUsandoTPV}
-            State={posState}
+        <TPVStateContextProvider State={posState}
         >
             <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}>
                 <TPV productos={Productos} />
                 <AnimatePresence mode="wait">
                     {showCerrarCajaModal && <CerrarCaja />}
                     {showModalAbrirCaja && !empleadoUsandoTpv && <AbrirCaja />}
-                    {/* {showModalAbrirCaja && !empleadoUsandoTpv && <AbrirCaja setShowModal={setAbrirCajaModal} setEmpleadoUsandoTPV={setEmpleadoUsandoTPV} />} */}
+                    {showTransferirTPVModal && <TransferirTpv />}
                 </AnimatePresence>
             </motion.div>
         </TPVStateContextProvider>

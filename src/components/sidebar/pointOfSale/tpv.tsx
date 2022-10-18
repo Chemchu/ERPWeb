@@ -7,7 +7,7 @@ import useProductEnCarritoContext from "../../../context/productosEnCarritoConte
 import SkeletonProductCard from "../../Skeletons/skeletonProductCard";
 import SidebarDerecho from "./sidebarDerecho";
 import { motion } from "framer-motion";
-import useTpvContext from "../../../context/tpvContext";
+import useTpvStateContext from "../../../context/tpvContext";
 
 const frequenceRateTyping = 100;
 
@@ -19,7 +19,7 @@ const TPV = (props: { productos: Producto[] }) => {
     const [Familias, setFamilias] = useState<string[]>([]);
     const [, startTransition] = useTransition();
 
-    const { EmpleadoUsingTPVState: EmpleadoUsingTPV, AbrirCajaState: AbrirCaja } = useTpvContext()
+    const { EmpleadoUsingTPVState: EmpleadoUsingTPV, AbrirCajaState: AbrirCaja } = useTpvStateContext()
 
     const inputRef = useRef<any>(null);
 

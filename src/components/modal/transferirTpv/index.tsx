@@ -1,15 +1,18 @@
 import { motion } from "framer-motion";
 import { useEffect, useState } from "react";
 import useEmpleadoContext from "../../../context/empleadoContext";
+import useTpvStateContext from "../../../context/tpvContext";
 import { Empleado } from "../../../tipos/Empleado";
 import { In } from "../../../utils/animations";
+import { notifySuccess } from "../../../utils/toastify";
 import CargandoSpinner from "../../cargandoSpinner";
 import SimpleListBox from "../../elementos/Forms/simpleListBox";
 import { Backdrop } from "../backdrop";
 
-const TransferirTpv = (props: { setModal: Function }) => {
+const TransferirTpv = () => {
     const [empleados, setEmpleados] = useState<Empleado[]>([])
     const [empleadoSeleccionado, setEmpleadoSeleccionado] = useState<string>()
+    const { TransferirTPVState, EmpleadoUsingTPVState } = useTpvStateContext()
 
     useEffect(() => {
         const GetData = async () => {
@@ -26,14 +29,16 @@ const TransferirTpv = (props: { setModal: Function }) => {
     }, [])
 
     const Transferir = async () => {
-        console.log("Transferido!")
+        TransferirTPVState.setShowTransferirTPVModal(false)
+        EmpleadoUsingTPVState.setEmpleadoUsingTPV(false)
+        notifySuccess("TPV transferida correctamente")
     }
 
     if (empleados.length <= 0) {
         return (
             <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
                 className="h-full w-full ">
-                <Backdrop onClick={() => { props.setModal(false) }}>
+                <Backdrop onClick={() => { TransferirTPVState.setShowTransferirTPVModal(false) }}>
                     <motion.div className="flex h-2/5 w-2/5 items-center justify-center bg-white rounded-2xl p-4"
                         onClick={(e) => e.stopPropagation()}
                         variants={In}
@@ -51,7 +56,7 @@ const TransferirTpv = (props: { setModal: Function }) => {
     return (
         <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
             className="h-full w-full ">
-            <Backdrop onClick={() => { props.setModal(false) }}>
+            <Backdrop onClick={() => { TransferirTPVState.setShowTransferirTPVModal(false) }}>
                 <motion.div className="flex flex-col h-2/5 w-2/5 items-center bg-white rounded-2xl p-4"
                     onClick={(e) => e.stopPropagation()}
                     variants={In}
@@ -66,7 +71,7 @@ const TransferirTpv = (props: { setModal: Function }) => {
                         </div>
                         {empleadoSeleccionado && <span className="text-sm italic w-full text-center">Se pasará el control de la TPV a {empleadoSeleccionado.split('-')[0]}</span>}
                         <div className="flex items-end gap-2 w-full h-full text-white">
-                            <button onClick={() => props.setModal(false)}
+                            <button onClick={() => TransferirTPVState.setShowTransferirTPVModal(false)}
                                 className="bg-red-500 hover:bg-red-600 w-full h-10 rounded-lg">
                                 Cancelar
                             </button>

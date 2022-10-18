@@ -2,10 +2,7 @@ import React, { useContext, createContext } from 'react';
 import { POSState } from '../../tipos/POSState';
 
 const AppContext = createContext<POSState>({} as POSState);
-export const TPVStateContextProvider = (props: {
-    isEmpleadoUsingTPV: boolean, setEmpleadoUsingTPV: React.Dispatch<React.SetStateAction<boolean>>,
-    State: POSState, children: React.ReactNode
-}) => {
+export const TPVStateContextProvider = (props: { State: POSState, children: React.ReactNode }) => {
     const values: POSState = props.State
 
     return (
@@ -15,7 +12,7 @@ export const TPVStateContextProvider = (props: {
     );
 }
 
-export function useTpvContext() {
+export function useTpvStateContext() {
     const context = useContext(AppContext);
 
     if (!context) {
@@ -25,4 +22,4 @@ export function useTpvContext() {
     return context;
 }
 
-export default useTpvContext;
+export default useTpvStateContext;

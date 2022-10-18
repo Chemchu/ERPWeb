@@ -3,7 +3,7 @@ import React, { useRef } from "react";
 import { useEffect, useState } from "react";
 import { useReactToPrint } from "react-to-print";
 import useEmpleadoContext from "../../../context/empleadoContext";
-import useTpvContext from "../../../context/tpvContext";
+import useTpvStateContext from "../../../context/tpvContext";
 import { Cierre } from "../../../tipos/Cierre";
 import { SesionEmpleado } from "../../../tipos/Empleado";
 import { ITPV } from "../../../tipos/TPV";
@@ -41,7 +41,7 @@ export const CerrarCaja = (props: { Empleado?: SesionEmpleado }) => {
     const { Empleado, SetEmpleado } = useEmpleadoContext();
     const componentRef = useRef(null);
 
-    const { CerrarCajaState, EmpleadoUsingTPVState } = useTpvContext()
+    const { CerrarCajaState, EmpleadoUsingTPVState } = useTpvStateContext()
 
     const reactToPrintContent = React.useCallback(() => {
         return componentRef.current;

@@ -1,7 +1,7 @@
 import { AnimatePresence, motion } from "framer-motion";
 import { useEffect, useState } from "react";
 import useEmpleadoContext from "../../../context/empleadoContext";
-import useTpvContext from "../../../context/tpvContext";
+import useTpvStateContext from "../../../context/tpvContext";
 import { ITPV } from "../../../tipos/TPV";
 import { In } from "../../../utils/animations";
 import { FetchTPVsByDisponibilidad, OcuparTPV } from "../../../utils/fetches/tpvFetches";
@@ -18,7 +18,7 @@ const AbrirCaja = () => {
     const [showContador, setContador] = useState<boolean>(false);
     const [desglose, setDesglose] = useState<Map<number, number>>(new Map())
 
-    const { AbrirCajaState, EmpleadoUsingTPVState } = useTpvContext()
+    const { AbrirCajaState, EmpleadoUsingTPVState } = useTpvStateContext()
 
     useEffect(() => {
         const abortController = new AbortController();
