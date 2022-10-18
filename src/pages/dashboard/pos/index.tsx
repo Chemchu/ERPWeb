@@ -36,13 +36,13 @@ const PuntoDeVenta = (props: { isEmpleadoUsingTPV: boolean, EmpleadoSesion: Sesi
             <AnimatePresence mode="wait">
                 {showModalCerrarCaja && <CerrarCaja setModalOpen={setCerrarCajaModal} setEmpleadoUsandoTPV={setEmpleadoUsandoTPV} />}
                 {showModalAbrirCaja && !empleadoUsandoTpv && <AbrirCaja setShowModal={setAbrirCajaModal} setEmpleadoUsandoTPV={setEmpleadoUsandoTPV} />}
+                {/* {showModalAbrirCaja && !empleadoUsandoTpv && <AbrirCaja setShowModal={setAbrirCajaModal} setEmpleadoUsandoTPV={setEmpleadoUsandoTPV} />} */}
             </AnimatePresence>
         </motion.div>
     );
 }
 
 PuntoDeVenta.PageLayout = DashboardLayout;
-
 
 export const getServerSideProps: GetServerSideProps = async (context) => {
     const [jwt, isValidCookie] = getJwtFromString(context.req.cookies.authorization);

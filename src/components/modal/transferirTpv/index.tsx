@@ -1,8 +1,85 @@
-const TransferirTpv = () => {
+import { motion } from "framer-motion";
+import { useEffect, useState } from "react";
+import useEmpleadoContext from "../../../context/empleadoContext";
+import { Empleado } from "../../../tipos/Empleado";
+import { In } from "../../../utils/animations";
+import CargandoSpinner from "../../cargandoSpinner";
+import SimpleListBox from "../../elementos/Forms/simpleListBox";
+import { Backdrop } from "../backdrop";
+
+const TransferirTpv = (props: { setModal: Function }) => {
+    const [empleados, setEmpleados] = useState<Empleado[]>([])
+    const [empleadoSeleccionado, setEmpleadoSeleccionado] = useState<string>()
+
+    useEffect(() => {
+        const GetData = async () => {
+            // const empleados = await FetchEmpleados()
+            const empleados = [{ nombre: "Emp1", apellidos: "ape1", email: "emp1@gmail.com" } as Empleado,
+            { nombre: "Emp2", apellidos: "ape2", email: "emp2@gmail.com" } as Empleado,
+            { nombre: "Emp3", apellidos: "ape3", email: "emp3@gmail.com" } as Empleado]
+            if (empleados.length <= 0) { return; }
+
+            setEmpleados(empleados)
+            setEmpleadoSeleccionado(empleados[0].nombre)
+        }
+        GetData()
+    }, [])
+
+    const Transferir = async () => {
+        console.log("Transferido!")
+    }
+
+    if (empleados.length <= 0) {
+        return (
+            <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
+                className="h-full w-full ">
+                <Backdrop onClick={() => { props.setModal(false) }}>
+                    <motion.div className="flex h-2/5 w-2/5 items-center justify-center bg-white rounded-2xl p-4"
+                        onClick={(e) => e.stopPropagation()}
+                        variants={In}
+                        initial="hidden"
+                        animate="visible"
+                        exit="exit"
+                    >
+                        <CargandoSpinner />
+                    </motion.div>
+                </Backdrop>
+            </motion.div>
+        )
+    }
+
     return (
-        <div>
-            Yepa
-        </div>
+        <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
+            className="h-full w-full ">
+            <Backdrop onClick={() => { props.setModal(false) }}>
+                <motion.div className="flex flex-col h-2/5 w-2/5 items-center bg-white rounded-2xl p-4"
+                    onClick={(e) => e.stopPropagation()}
+                    variants={In}
+                    initial="hidden"
+                    animate="visible"
+                    exit="exit"
+                >
+                    <div className="text-lg text-center h-1/3 w-full font-semibold">Transferir TPV</div>
+                    <section className="flex flex-col gap-4 h-full w-full items-center justify-center px-2">
+                        <div className="w-full h-auto">
+                            <SimpleListBox elementos={empleados.map((emp) => `${emp.nombre} ${emp.apellidos} - (${emp.email})`)} setElemento={setEmpleadoSeleccionado} />
+                        </div>
+                        {empleadoSeleccionado && <span className="text-sm italic w-full text-center">Se pasará el control de la TPV a {empleadoSeleccionado.split('-')[0]}</span>}
+                        <div className="flex items-end gap-2 w-full h-full text-white">
+                            <button onClick={() => props.setModal(false)}
+                                className="bg-red-500 hover:bg-red-600 w-full h-10 rounded-lg">
+                                Cancelar
+                            </button>
+                            <button disabled={!empleadoSeleccionado}
+                                onClick={Transferir}
+                                className={`${!empleadoSeleccionado ? "bg-blue-400 cursor-default" : "bg-blue-500 hover:bg-blue-600"} w-full h-10 rounded-lg`}>
+                                Tranferir
+                            </button>
+                        </div>
+                    </section>
+                </motion.div>
+            </Backdrop>
+        </motion.div>
     )
 }
 
