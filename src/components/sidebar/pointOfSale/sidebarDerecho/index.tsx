@@ -1,9 +1,10 @@
-import { AnimatePresence, motion } from "framer-motion";
+import { AnimatePresence, motion, useTime } from "framer-motion";
 import React, { useCallback, useEffect, useRef, useState } from "react";
 import { useReactToPrint } from "react-to-print";
 import useComprasAparcadasContext from "../../../../context/comprasAparcadas";
 import useEmpleadoContext from "../../../../context/empleadoContext";
 import useProductEnCarritoContext from "../../../../context/productosEnCarritoContext";
+import useTpvContext from "../../../../context/tpvContext";
 import { Cliente } from "../../../../tipos/Cliente";
 import { CustomerPaymentInformation } from "../../../../tipos/CustomerPayment";
 import { SesionEmpleado } from "../../../../tipos/Empleado";
@@ -26,9 +27,7 @@ import Ticket from "../../../printable/ticket";
 import { ProductSelectedCard } from "../productCard";
 
 const SidebarDerecho = React.memo((props: {
-    productos: Producto[],
-    setProductosCarrito: React.Dispatch<React.SetStateAction<ProductoVendido[]>>, empleadoUsandoTPV: boolean,
-    setShowModalCerrar: Function, setShowModalAbrir: Function, inputRef?: any
+    productos: Producto[], setProductosCarrito: React.Dispatch<React.SetStateAction<ProductoVendido[]>>, inputRef?: any
 }) => {
     const { ProductosEnCarrito, SetProductosEnCarrito } = useProductEnCarritoContext();
     const { Empleado } = useEmpleadoContext();
@@ -52,6 +51,8 @@ const SidebarDerecho = React.memo((props: {
     const [Clientes, SetClientes] = useState<Cliente[]>([]);
     const componentRef = useRef(null);
     const [isButtonDisabled, setButtonDisabled] = useState<boolean>(false)
+
+    const { EmpleadoUsingTPVState, AbrirCajaState, CerrarCajaState } = useTpvContext()
 
     useEffect(() => {
         let isUnmounted = false;
@@ -255,9 +256,9 @@ const SidebarDerecho = React.memo((props: {
                         </button>
                     }
                     {
-                        props.empleadoUsandoTPV ?
+                        EmpleadoUsingTPVState.isEmpleadoUsingTPV ?
                             <div className="flex flex-col w-full items-center gap-2 pb-6">
-                                <button className="flex gap-2 hover:text-blue-500" onClick={() => { props.setShowModalCerrar(true) }}>
+                                <button className="flex gap-2 hover:text-blue-500" onClick={() => { CerrarCajaState.setShowCerrarCajaModal(true) }}>
                                     Cerrar caja
                                     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" className="w-5 h-5">
                                         <path fillRule="evenodd" d="M10 1a4.5 4.5 0 00-4.5 4.5V9H5a2 2 0 00-2 2v6a2 2 0 002 2h10a2 2 0 002-2v-6a2 2 0 00-2-2h-.5V5.5A4.5 4.5 0 0010 1zm3 8V5.5a3 3 0 10-6 0V9h6z" clipRule="evenodd" />
@@ -271,7 +272,7 @@ const SidebarDerecho = React.memo((props: {
                                 </button>
                             </div>
                             :
-                            <button className="flex gap-2 hover:text-blue-500 w-full h-20 items-center justify-center" onClick={() => { props.setShowModalAbrir(true) }}>
+                            <button className="flex gap-2 hover:text-blue-500 w-full h-20 items-center justify-center" onClick={() => { AbrirCajaState.setShowAbrirCajaModal(true) }}>
                                 Abrir caja
                                 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" className="w-5 h-5">
                                     <path fillRule="evenodd" d="M14.5 1A4.5 4.5 0 0010 5.5V9H3a2 2 0 00-2 2v6a2 2 0 002 2h10a2 2 0 002-2v-6a2 2 0 00-2-2h-1.5V5.5a3 3 0 116 0v2.75a.75.75 0 001.5 0V5.5A4.5 4.5 0 0014.5 1z" clipRule="evenodd" />
