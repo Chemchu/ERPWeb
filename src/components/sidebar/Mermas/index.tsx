@@ -48,8 +48,6 @@ const MermaPage = () => {
 
 
     const Filtrar = async (f: string) => {
-        if (!f.match('^[-_a-zA-Z0-9.\s ]*$')) { notifyWarn("Producto inválido"); return; }
-
         setMermasFiltradas(await FetchMermaByQuery(f));
     }
 
