@@ -4,6 +4,7 @@ import useEmpleadoContext from "../../../context/empleadoContext";
 import useTpvStateContext from "../../../context/tpvContext";
 import { Empleado } from "../../../tipos/Empleado";
 import { In } from "../../../utils/animations";
+import { FetchEmpleados, FetchEmpleadosByDisponibilidad } from "../../../utils/fetches/empleadoFetches";
 import { notifySuccess } from "../../../utils/toastify";
 import CargandoSpinner from "../../cargandoSpinner";
 import SimpleListBox from "../../elementos/Forms/simpleListBox";
@@ -16,10 +17,7 @@ const TransferirTpv = () => {
 
     useEffect(() => {
         const GetData = async () => {
-            // const empleados = await FetchEmpleados()
-            const empleados = [{ nombre: "Emp1", apellidos: "ape1", email: "emp1@gmail.com" } as Empleado,
-            { nombre: "Emp2", apellidos: "ape2", email: "emp2@gmail.com" } as Empleado,
-            { nombre: "Emp3", apellidos: "ape3", email: "emp3@gmail.com" } as Empleado]
+            const empleados = await FetchEmpleadosByDisponibilidad(true)
             if (empleados.length <= 0) { return; }
 
             setEmpleados(empleados)

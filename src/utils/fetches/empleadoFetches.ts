@@ -40,6 +40,26 @@ export const FetchEmpleados = async (): Promise<Empleado[]> => {
     }
 }
 
+export const FetchEmpleadosByDisponibilidad = async (libres: boolean): Promise<Empleado[]> => {
+    try {
+        let id: any = new Object;
+        id.isLibre = libres;
+
+        const query = queryString.stringify(id);
+        const fetchRes = await fetch(`/api/empleados/${query}`);
+        if (!fetchRes.ok) { notifyError("Error al buscar al empleado"); return []; }
+
+        const empleadoJson = await fetchRes.json();
+        return CreateEmployeeList(empleadoJson.data);
+    }
+    catch (e) {
+        console.error(e);
+        notifyError("Error de conexión");
+
+        return [];
+    }
+}
+
 export const UpdateEmpleado = async (empleado: Empleado): Promise<{ message: string, successful: boolean }> => {
     try {
         const pResponse = await fetch(`/api/empleados/${empleado._id}`, {
