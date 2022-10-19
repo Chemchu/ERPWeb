@@ -142,7 +142,6 @@ export const FetchVentasByTPVDate = async (TPV: string, fecha: string): Promise<
 
     try {
         const fetchVentasTPVPorFecha = await fetch(`/api/ventas/tpv/fecha/${TPV}/${fecha}`);
-
         if (!fetchVentasTPVPorFecha.ok) { notifyError("Error al buscar las ventas"); return []; }
 
         const ventasJson = await fetchVentasTPVPorFecha.json();

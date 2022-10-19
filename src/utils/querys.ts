@@ -305,19 +305,27 @@ export const QUERY_SALES = `
 export const QUERY_TPV = `
 query QueryTPV($find: TPVFind!) {
     tpv(find: $find) {
-            _id
-            nombre
-            enUsoPor {
-                _id
-                nombre
-                apellidos
-                rol
-                email
-            }
-            libre
-            cajaInicial
-            createdAt
-            updatedAt
+      _id
+      nombre
+      abiertoPor {
+          _id
+          nombre
+          apellidos
+          rol
+          email
+      }
+      enUsoPor {
+          _id
+          nombre
+          apellidos
+          rol
+          email
+      }
+      libre
+      cajaInicial
+      fechaApertura
+      createdAt
+      updatedAt
         }
     }
 `;
@@ -327,15 +335,23 @@ query Tpvs($find: TPVsFind, $limit: Int) {
   tpvs(find: $find, limit: $limit) {
     _id
     nombre
+    abiertoPor {
+        _id
+        nombre
+        apellidos
+        rol
+        email
+    }
     enUsoPor {
-      _id
-      nombre
-      apellidos
-      rol
-      email
+        _id
+        nombre
+        apellidos
+        rol
+        email
     }
     libre
     cajaInicial
+    fechaApertura
     createdAt
     updatedAt
   }
@@ -343,12 +359,12 @@ query Tpvs($find: TPVsFind, $limit: Int) {
 `;
 
 export const OCUPY_TPV = `
-    mutation OcupyTPV($idEmpleado: ID!, $idTpv: ID!, $cajaInicial: Float!) {
-        ocupyTPV(idEmpleado: $idEmpleado, idTPV: $idTpv, cajaInicial: $cajaInicial) {
-            token
-            successful
-        }
-    }
+mutation Mutation($idEmpleado: ID!, $idTpv: ID!, $cajaInicial: Float!) {
+  ocupyTPV(idEmpleado: $idEmpleado, idTPV: $idTpv, cajaInicial: $cajaInicial) {
+    token
+    successful
+  }
+}
 `;
 
 export const QUERY_CIERRES = `
