@@ -5,8 +5,8 @@ import { Color } from '../../../tipos/Enums/Color';
 import { Summary, VentasPorHora } from '../../../tipos/Summary';
 
 const VentasDelDia = (props: {
-    data: Summary | undefined, titulo: string, ejeY: string, ejeX: string, nombreEjeX: string, color: Color, colorID: string,
-    maxY?: number | undefined, minY?: number | undefined
+    data: Summary | undefined, titulo: string, ejeY: string, ejeX: string,
+    nombreEjeX: string, color: Color, colorID: string, maxY?: number | undefined
 }) => {
     const [ventas, setVentas] = useState<VentasPorHora[]>([])
     const offset = (new Date().getTimezoneOffset() / 60) * -1
@@ -61,10 +61,6 @@ const VentasDelDia = (props: {
         )
     }
 
-    let minY = props.minY || 0
-    let maxY = 500
-    if (props.maxY) { maxY = Math.round(props.maxY); }
-
     return (
         <div className='w-full rounded-xl border-x border-b shadow-xl hover:shadow-2xl'>
             <div className='flex justify-center py-4 font-semibold text-gray-600'>
@@ -81,7 +77,12 @@ const VentasDelDia = (props: {
                             </linearGradient>
                         </defs>
                         <XAxis dataKey={props.ejeX} />
-                        <YAxis dataKey={props.ejeY} domain={[minY, maxY]} />
+                        {
+                            props.maxY ?
+                                <YAxis dataKey={props.ejeY} domain={[0, props.maxY]} />
+                                :
+                                <YAxis dataKey={props.ejeY} />
+                        }
                         <CartesianGrid strokeDasharray="3 3" />
                         <Tooltip content={CustomTooltip} />
                         <Area type="monotone" dataKey={props.ejeY} name={props.nombreEjeX} stroke={props.color || "#8884d8"} fillOpacity={1} fill={`url(#${props.colorID})`} />
