@@ -20,8 +20,6 @@ const Home = (props: { EmpleadoSesion: SesionEmpleado }) => {
   const { Empleado, SetEmpleado } = useEmpleadoContext();
   const [summaryToday, setSummaryToday] = useState<Summary | undefined>(undefined);
   const [summaryYesterday, setSummaryYesterday] = useState<Summary | undefined>(undefined);
-  const maxY = Math.max(summaryToday?.ventaMaxima || 100, summaryYesterday?.ventaMinima || 100)
-  const offset = 50;
 
   useEffect(() => {
     if (Object.keys(Empleado).length === 0) {
@@ -41,9 +39,21 @@ const Home = (props: { EmpleadoSesion: SesionEmpleado }) => {
     }
     GetData()
     GetSummaryData()
-  }, [])
+  }, []);
 
-  if (!Empleado.nombre) {
+  let maxY = -1
+  const offset = 10;
+  if (summaryToday && summaryYesterday) {
+    const ventasHora = [...summaryToday.ventasPorHora, ...summaryYesterday.ventasPorHora]
+    for (let index = 0; index < ventasHora.length; index++) {
+      const ventaHora: VentasPorHora = ventasHora[index];
+
+      if (ventaHora.totalVentaHora > maxY) { maxY = ventaHora.totalVentaHora }
+    }
+    maxY = Math.ceil(maxY / 10) * 10
+  }
+
+  if (!Empleado || !Empleado.nombre) {
     return (
       <div>
         Cargando...

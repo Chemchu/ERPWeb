@@ -7,16 +7,19 @@ import useProductEnCarritoContext from "../../../context/productosEnCarritoConte
 import SkeletonProductCard from "../../Skeletons/skeletonProductCard";
 import SidebarDerecho from "./sidebarDerecho";
 import { motion } from "framer-motion";
+import useTpvStateContext from "../../../context/tpvContext";
 
 const frequenceRateTyping = 100;
 
-const TPV = (props: { productos: Producto[], empleadoUsandoTPV: boolean, setEmpleadoUsandoTPV: Function, setShowModalCerrar: Function, setShowModalAbrir: Function }) => {
+const TPV = (props: { productos: Producto[] }) => {
     const [ProductosFiltrados, setProductosFiltrados] = useState<Producto[]>(props.productos);
     const [dirtyInput, setDirtyInput] = useState<string>("")
     const [Filtro, setFiltro] = useState<string>("");
     const { ProductosEnCarrito, SetProductosEnCarrito } = useProductEnCarritoContext();
     const [Familias, setFamilias] = useState<string[]>([]);
     const [, startTransition] = useTransition();
+
+    const { EmpleadoUsingTPVState: EmpleadoUsingTPV, AbrirCajaState: AbrirCaja } = useTpvStateContext()
 
     const inputRef = useRef<any>(null);
 
@@ -90,7 +93,7 @@ const TPV = (props: { productos: Producto[], empleadoUsandoTPV: boolean, setEmpl
 
     const arrayNum = [...Array(3)];
 
-    if (!props.empleadoUsandoTPV) {
+    if (!EmpleadoUsingTPV.isEmpleadoUsingTPV) {
         return (<div className="antialiased overflow-hidden text-gray-800">
             <div className="grid grid-cols-3 bg-gray-100">
                 <div className="col-span-2 h-screen">
@@ -118,9 +121,7 @@ const TPV = (props: { productos: Producto[], empleadoUsandoTPV: boolean, setEmpl
                     </div>
                 </div>
                 <div className="h-screen p-3">
-                    <SidebarDerecho setProductosCarrito={SetProductosEnCarrito} empleadoUsandoTPV={props.empleadoUsandoTPV}
-                        setShowModalAbrir={props.setShowModalAbrir} setShowModalCerrar={props.setShowModalCerrar}
-                        productos={props.productos} />
+                    <SidebarDerecho setProductosCarrito={SetProductosEnCarrito} productos={props.productos} />
                 </div>
             </div>
         </div>)
@@ -194,10 +195,7 @@ const TPV = (props: { productos: Producto[], empleadoUsandoTPV: boolean, setEmpl
                     </div>
                 </div>
                 <div className="h-screen p-3">
-                    <SidebarDerecho setProductosCarrito={SetProductosEnCarrito} empleadoUsandoTPV={props.empleadoUsandoTPV}
-                        setShowModalAbrir={props.setShowModalAbrir} setShowModalCerrar={props.setShowModalCerrar}
-                        productos={props.productos}
-                        inputRef={inputRef} />
+                    <SidebarDerecho setProductosCarrito={SetProductosEnCarrito} productos={props.productos} inputRef={inputRef} />
                 </div>
             </div>
         </div>

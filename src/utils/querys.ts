@@ -305,19 +305,27 @@ export const QUERY_SALES = `
 export const QUERY_TPV = `
 query QueryTPV($find: TPVFind!) {
     tpv(find: $find) {
-            _id
-            nombre
-            enUsoPor {
-                _id
-                nombre
-                apellidos
-                rol
-                email
-            }
-            libre
-            cajaInicial
-            createdAt
-            updatedAt
+      _id
+      nombre
+      abiertoPor {
+          _id
+          nombre
+          apellidos
+          rol
+          email
+      }
+      enUsoPor {
+          _id
+          nombre
+          apellidos
+          rol
+          email
+      }
+      libre
+      cajaInicial
+      fechaApertura
+      createdAt
+      updatedAt
         }
     }
 `;
@@ -327,15 +335,23 @@ query Tpvs($find: TPVsFind, $limit: Int) {
   tpvs(find: $find, limit: $limit) {
     _id
     nombre
+    abiertoPor {
+        _id
+        nombre
+        apellidos
+        rol
+        email
+    }
     enUsoPor {
-      _id
-      nombre
-      apellidos
-      rol
-      email
+        _id
+        nombre
+        apellidos
+        rol
+        email
     }
     libre
     cajaInicial
+    fechaApertura
     createdAt
     updatedAt
   }
@@ -343,13 +359,22 @@ query Tpvs($find: TPVsFind, $limit: Int) {
 `;
 
 export const OCUPY_TPV = `
-    mutation OcupyTPV($idEmpleado: ID!, $idTpv: ID!, $cajaInicial: Float!) {
-        ocupyTPV(idEmpleado: $idEmpleado, idTPV: $idTpv, cajaInicial: $cajaInicial) {
-            token
-            successful
-        }
-    }
+mutation Mutation($idEmpleado: ID!, $idTpv: ID!, $cajaInicial: Float!) {
+  ocupyTPV(idEmpleado: $idEmpleado, idTPV: $idTpv, cajaInicial: $cajaInicial) {
+    token
+    successful
+  }
+}
 `;
+
+export const TRANSFERIR_TPV = `
+mutation Mutation($idTpv: ID!, $idEmpleadoDestinatario: ID!) {
+  transferirTpv(idTPV: $idTpv, idEmpleadoDestinatario: $idEmpleadoDestinatario) {
+    token
+    message
+    successful
+  }
+}`
 
 export const QUERY_CIERRES = `
     query CierresTPVs($find: CierresTPVFind) {
@@ -521,6 +546,105 @@ query Devoluciones($find: DevolucionFind, $limit: Int) {
   }
 }
 `
+
+export const QUERY_DEVOLUCION = `
+query Devolucion($id: ID!) {
+  devolucion(_id: $id) {
+    _id
+    productosDevueltos {
+      _id
+      nombre
+      proveedor
+      familia
+      precioVenta
+      precioCompra
+      precioFinal
+      iva
+      margen
+      ean
+      cantidadDevuelta
+      dto
+    }
+    dineroDevuelto
+    ventaOriginal {
+      _id
+      numFactura
+      productos {
+        _id
+        nombre
+        proveedor
+        familia
+        precioVenta
+        precioCompra
+        precioFinal
+        iva
+        margen
+        ean
+        cantidadVendida
+        createdAt
+        updatedAt
+        dto
+      }
+      dineroEntregadoEfectivo
+      dineroEntregadoTarjeta
+      precioVentaTotalSinDto
+      precioVentaTotal
+      cambio
+      cliente {
+        _id
+        nif
+        nombre
+        cp
+        calle
+      }
+      vendidoPor {
+        _id
+        nombre
+        apellidos
+        rol
+        email
+      }
+      modificadoPor {
+        _id
+        nombre
+        apellidos
+        rol
+        email
+      }
+      tipo
+      descuentoEfectivo
+      descuentoPorcentaje
+      tpv
+      createdAt
+      updatedAt
+    }
+    tpv
+    cliente {
+      _id
+      nif
+      nombre
+      calle
+      cp
+    }
+    trabajador {
+      _id
+      nombre
+      apellidos
+      rol
+      email
+    }
+    modificadoPor {
+      _id
+      nombre
+      apellidos
+      rol
+      email
+    }
+    createdAt
+    updatedAt
+  }
+}`
+
 
 export const ADD_DEVOLUCION = `
   mutation AddDevolucion($fields: DevolucionFields!) {

@@ -11,14 +11,27 @@ import { SesionEmpleado } from "../../../tipos/Empleado";
 import useEmpleadoContext from "../../../context/empleadoContext";
 import { Roles } from "../../../tipos/Enums/Roles";
 import { FetchProductos } from "../../../utils/fetches/productosFetches";
+import { TPVStateContextProvider } from "../../../context/tpvContext";
+import { POSState } from "../../../tipos/POSState";
+import TransferirTpv from "../../../components/modal/transferirTpv";
 
 const PuntoDeVenta = (props: { isEmpleadoUsingTPV: boolean, EmpleadoSesion: SesionEmpleado }) => {
-    const [Productos, SetProductos] = useState<Producto[]>([]);
-    const [showModalCerrarCaja, setCerrarCajaModal] = useState<boolean>(false);
-
     const [empleadoUsandoTpv, setEmpleadoUsandoTPV] = useState<boolean>(props.isEmpleadoUsingTPV);
+    const [showCerrarCajaModal, setCerrarCajaModal] = useState<boolean>(false);
     const [showModalAbrirCaja, setAbrirCajaModal] = useState<boolean>(!props.isEmpleadoUsingTPV);
+    const [showPagarModal, setShowPagarModal] = useState<boolean>(false);
+    const [showTransferirTPVModal, setShowTransferirTPVModal] = useState<boolean>(false);
     const { Empleado, SetEmpleado } = useEmpleadoContext();
+
+    const [Productos, SetProductos] = useState<Producto[]>([]);
+
+    const posState: POSState = {
+        EmpleadoUsingTPVState: { isEmpleadoUsingTPV: empleadoUsandoTpv, setEmpleadoUsingTPV: setEmpleadoUsandoTPV },
+        AbrirCajaState: { showAbrirCajaModal: showModalAbrirCaja, setShowAbrirCajaModal: setAbrirCajaModal },
+        CerrarCajaState: { showCerrarCajaModal: showCerrarCajaModal, setShowCerrarCajaModal: setCerrarCajaModal },
+        PagarState: { showPagarModal: showPagarModal, setShowPagarModal: setShowPagarModal },
+        TransferirTPVState: { showTransferirTPVModal: showTransferirTPVModal, setShowTransferirTPVModal: setShowTransferirTPVModal },
+    }
 
     useEffect(() => {
         if (Object.keys(Empleado).length === 0) {
@@ -31,18 +44,21 @@ const PuntoDeVenta = (props: { isEmpleadoUsingTPV: boolean, EmpleadoSesion: Sesi
     }, []);
 
     return (
-        <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}>
-            <TPV productos={Productos} empleadoUsandoTPV={empleadoUsandoTpv} setEmpleadoUsandoTPV={setEmpleadoUsandoTPV} setShowModalAbrir={setAbrirCajaModal} setShowModalCerrar={setCerrarCajaModal} />
-            <AnimatePresence mode="wait">
-                {showModalCerrarCaja && <CerrarCaja setModalOpen={setCerrarCajaModal} setEmpleadoUsandoTPV={setEmpleadoUsandoTPV} />}
-                {showModalAbrirCaja && !empleadoUsandoTpv && <AbrirCaja setShowModal={setAbrirCajaModal} setEmpleadoUsandoTPV={setEmpleadoUsandoTPV} />}
-            </AnimatePresence>
-        </motion.div>
+        <TPVStateContextProvider State={posState}
+        >
+            <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}>
+                <TPV productos={Productos} />
+                <AnimatePresence mode="wait">
+                    {showCerrarCajaModal && <CerrarCaja />}
+                    {showModalAbrirCaja && !empleadoUsandoTpv && <AbrirCaja />}
+                    {showTransferirTPVModal && <TransferirTpv />}
+                </AnimatePresence>
+            </motion.div>
+        </TPVStateContextProvider>
     );
 }
 
 PuntoDeVenta.PageLayout = DashboardLayout;
-
 
 export const getServerSideProps: GetServerSideProps = async (context) => {
     const [jwt, isValidCookie] = getJwtFromString(context.req.cookies.authorization);

@@ -280,8 +280,10 @@ export function CreateTPV(tpv: any): ITPV {
     let res: ITPV = {
         _id: tpv._id,
         nombre: tpv.nombre,
+        abiertoPor: tpv.abiertoPor,
         enUsoPor: tpv.enUsoPor,
         cajaInicial: tpv.cajaInicial,
+        fechaApertura: tpv.fechaApertura,
         libre: tpv.libre,
         createdAt: tpv.createdAt,
         updatedAt: tpv.updatedAt
@@ -325,6 +327,7 @@ export function CreateEmployeeList(empleados: any): Empleado[] {
 
 export function CreateDevolucionList(dList: any[]): Devolucion[] {
     if (dList === undefined) { return [] as Devolucion[]; }
+
 
     try {
         let res: Devolucion[] = [];

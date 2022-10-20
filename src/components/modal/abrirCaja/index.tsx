@@ -1,6 +1,7 @@
 import { AnimatePresence, motion } from "framer-motion";
 import { useEffect, useState } from "react";
 import useEmpleadoContext from "../../../context/empleadoContext";
+import useTpvStateContext from "../../../context/tpvContext";
 import { ITPV } from "../../../tipos/TPV";
 import { In } from "../../../utils/animations";
 import { FetchTPVsByDisponibilidad, OcuparTPV } from "../../../utils/fetches/tpvFetches";
@@ -9,13 +10,15 @@ import Droplist from "../../elementos/Forms/droplist";
 import { Backdrop } from "../backdrop";
 import ContarCaja from "../contarCaja";
 
-const AbrirCaja = (props: { setShowModal: Function, setEmpleadoUsandoTPV: Function }) => {
+const AbrirCaja = () => {
     const [tpvs, setTpvs] = useState<ITPV[]>([]);
     const [currentTpvName, setCurrentTpvName] = useState<string>();
     const [cajaInicial, setCajaInicial] = useState<string>('');
     const { Empleado, SetEmpleado } = useEmpleadoContext();
     const [showContador, setContador] = useState<boolean>(false);
     const [desglose, setDesglose] = useState<Map<number, number>>(new Map())
+
+    const { AbrirCajaState, EmpleadoUsingTPVState } = useTpvStateContext()
 
     useEffect(() => {
         const abortController = new AbortController();
@@ -48,15 +51,15 @@ const AbrirCaja = (props: { setShowModal: Function, setEmpleadoUsandoTPV: Functi
             const res = await OcuparTPV(tpv._id, Empleado, cInicial, SetEmpleado);
 
             if (res) {
-                props.setShowModal(false);
-                props.setEmpleadoUsandoTPV(true);
+                AbrirCajaState.setShowAbrirCajaModal(false);
+                EmpleadoUsingTPVState.setEmpleadoUsingTPV(true);
             }
         }
     }
 
     return (
         <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}>
-            <Backdrop onClick={() => props.setShowModal(false)}>
+            <Backdrop onClick={() => AbrirCajaState.setShowAbrirCajaModal(false)}>
                 <motion.div variants={In} initial="hidden" animate="visible" exit="exit"
                     className="flex flex-col h-3/6 w-3/6 max-h-96 max-w-lg bg-white rounded-xl  items-center"
                     onClick={(e) => e.stopPropagation()}>
@@ -95,7 +98,7 @@ const AbrirCaja = (props: { setShowModal: Function, setEmpleadoUsandoTPV: Functi
 
                     <div className="flex w-full gap-4 text-center justify-end items-end text-white p-4">
                         <div className="flex h-10 w-full m-auto bg-red-500 hover:bg-red-600 rounded-xl cursor-pointer items-center justify-center shadow-lg"
-                            onClick={() => { props.setShowModal(false) }}>
+                            onClick={() => { AbrirCajaState.setShowAbrirCajaModal(false) }}>
                             <div>
                                 Cancelar
                             </div>

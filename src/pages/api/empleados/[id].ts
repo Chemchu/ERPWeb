@@ -48,14 +48,15 @@ const GetEmpleadoFromId = async (req: NextApiRequest, res: NextApiResponse) => {
 }
 
 const GetEmpleadosFromQuery = async (userQuery: queryString.ParsedQuery<string>, res: NextApiResponse) => {
-    if (!userQuery.query) { res.status(300).json({ message: `La query no puede estar vacía` }); }
+    if (!userQuery.query && !userQuery.isLibre) { res.status(300).json({ message: `La query no puede estar vacía` }); }
 
     const serverRes = await GQLQuery(
         {
             query: QUERY_EMPLEADOS,
             variables: {
                 "find": {
-                    "query": userQuery.query
+                    "query": userQuery.query,
+                    "isLibre": userQuery.isLibre ? userQuery.isLibre === 'true' : null
                 }
             }
         }

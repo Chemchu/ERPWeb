@@ -3,6 +3,7 @@ import React, { useRef } from "react";
 import { useEffect, useState } from "react";
 import { useReactToPrint } from "react-to-print";
 import useEmpleadoContext from "../../../context/empleadoContext";
+import useTpvStateContext from "../../../context/tpvContext";
 import { Cierre } from "../../../tipos/Cierre";
 import { SesionEmpleado } from "../../../tipos/Empleado";
 import { ITPV } from "../../../tipos/TPV";
@@ -21,7 +22,7 @@ import { Backdrop } from "../backdrop";
 import ContarCaja from "../contarCaja";
 import RequestConfirmacion from "../requestConfirmacion";
 
-export const CerrarCaja = (props: { Empleado?: SesionEmpleado, setModalOpen: Function, setEmpleadoUsandoTPV: Function }) => {
+export const CerrarCaja = (props: { Empleado?: SesionEmpleado }) => {
     const [Ventas, setVentas] = useState<Venta[]>();
     const [Tpv, setTPV] = useState<ITPV>();
     const [TotalEfectivo, setTotalEfectivo] = useState<string>();
@@ -40,6 +41,8 @@ export const CerrarCaja = (props: { Empleado?: SesionEmpleado, setModalOpen: Fun
     const { Empleado, SetEmpleado } = useEmpleadoContext();
     const componentRef = useRef(null);
 
+    const { CerrarCajaState, EmpleadoUsingTPVState } = useTpvStateContext()
+
     const reactToPrintContent = React.useCallback(() => {
         return componentRef.current;
     }, []);
@@ -47,8 +50,8 @@ export const CerrarCaja = (props: { Empleado?: SesionEmpleado, setModalOpen: Fun
     const onAfterPrintHandler = React.useCallback(() => {
         setButtonDisabled(false)
         setAnyadiendoCierre(false)
-        props.setModalOpen(false)
-        props.setEmpleadoUsandoTPV(false);
+        CerrarCajaState.setShowCerrarCajaModal(false)
+        EmpleadoUsingTPVState.setEmpleadoUsingTPV(false);
     }, []);
 
     const handlePrint = useReactToPrint({
@@ -65,8 +68,8 @@ export const CerrarCaja = (props: { Empleado?: SesionEmpleado, setModalOpen: Fun
             const tpv = await FetchTPV(j.TPV, abortController);
             if (!tpv) { notifyError("No se ha encontrado la TPV que se quiere cerrar"); return; }
 
-            const devoluciones = await FetchDevolucionesByDateRange(tpv.updatedAt, new Date(Date.now()));
-            const ventas = await FetchVentasByTPVDate(j.TPV, tpv.updatedAt.toString());
+            const devoluciones = await FetchDevolucionesByDateRange(tpv.fechaApertura, String(Date.now()));
+            const ventas = await FetchVentasByTPVDate(j.TPV, tpv.fechaApertura);
 
             setVentas(ventas);
             setTPV(tpv);
@@ -120,7 +123,7 @@ export const CerrarCaja = (props: { Empleado?: SesionEmpleado, setModalOpen: Fun
             abortController.abort();
             setButtonDisabled(false)
             setAnyadiendoCierre(false)
-            props.setModalOpen(false)
+            CerrarCajaState.setShowCerrarCajaModal(false)
             return;
         }
     }
@@ -135,7 +138,7 @@ export const CerrarCaja = (props: { Empleado?: SesionEmpleado, setModalOpen: Fun
         return (
             <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
                 className="h-full w-full">
-                <Backdrop onClick={(e) => { e.stopPropagation(); props.setModalOpen(false) }} >
+                <Backdrop onClick={(e) => { e.stopPropagation(); CerrarCajaState.setShowCerrarCajaModal(false) }} >
                     <motion.div className="h-3/6 w-2/6 m-auto py-2 flex flex-col gap-4 items-center justify-center bg-white rounded-2xl"
                         onClick={(e) => e.stopPropagation()}
                         variants={In}
@@ -186,7 +189,7 @@ export const CerrarCaja = (props: { Empleado?: SesionEmpleado, setModalOpen: Fun
     return (
         <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
             className="h-full w-full ">
-            <Backdrop onClick={(e) => { e.stopPropagation(); props.setModalOpen(false) }} >
+            <Backdrop onClick={(e) => { e.stopPropagation(); CerrarCajaState.setShowCerrarCajaModal(false) }} >
                 <motion.div className="h-4/6 w-4/6 flex flex-col items-center bg-white rounded-2xl p-4"
                     onClick={(e) => e.stopPropagation()}
                     variants={In}
@@ -252,7 +255,7 @@ export const CerrarCaja = (props: { Empleado?: SesionEmpleado, setModalOpen: Fun
 
                         <div className="flex gap-4 h-auto w-full text-white">
                             <div className="flex h-10 w-2/3 m-auto bg-red-500 hover:bg-red-600 rounded-xl cursor-pointer items-center justify-center shadow-lg"
-                                onClick={() => { props.setModalOpen(false) }}>
+                                onClick={() => { CerrarCajaState.setShowCerrarCajaModal(false) }}>
                                 <div>
                                     Cancelar
                                 </div>
