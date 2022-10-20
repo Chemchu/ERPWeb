@@ -15,6 +15,7 @@ const TransferirTpv = () => {
     const [empleados, setEmpleados] = useState<Empleado[]>([])
     const [empleadoSeleccionado, setEmpleadoSeleccionado] = useState<string>()
     const { TransferirTPVState, EmpleadoUsingTPVState } = useTpvStateContext()
+    const [isTransfiriendoTPV, setTransfiriendoTPV] = useState<boolean>(false)
     const { Empleado } = useEmpleadoContext()
 
     useEffect(() => {
@@ -40,6 +41,7 @@ const TransferirTpv = () => {
         const empleadoDestinatario = empleados.find((emp) => emp.email === empEmail[0])
         if (!empleadoDestinatario) { throw "Empleado seleccionado no encontrado" }
 
+        setTransfiriendoTPV(true)
         const { message, successful } = await TransferirTPV(Empleado.TPV, empleadoDestinatario._id)
         if (successful) {
             TransferirTPVState.setShowTransferirTPVModal(false)
@@ -49,9 +51,10 @@ const TransferirTpv = () => {
         }
 
         notifyError(message)
+        setTransfiriendoTPV(false)
     }
 
-    if (empleados.length <= 0) {
+    if (empleados.length <= 0 || isTransfiriendoTPV) {
         return (
             <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
                 className="h-full w-full ">
@@ -92,11 +95,19 @@ const TransferirTpv = () => {
                                 className="bg-red-500 hover:bg-red-600 w-full h-10 rounded-lg">
                                 Cancelar
                             </button>
-                            <button disabled={!empleadoSeleccionado}
-                                onClick={Transferir}
-                                className={`${!empleadoSeleccionado ? "bg-blue-400 cursor-default" : "bg-blue-500 hover:bg-blue-600"} w-full h-10 rounded-lg`}>
-                                Tranferir
-                            </button>
+                            {
+                                isTransfiriendoTPV ?
+                                    <button disabled={true}
+                                        className={`bg-blue-400 cursor-default w-full h-10 rounded-lg`}>
+                                        Transferir
+                                    </button>
+                                    :
+                                    <button disabled={!empleadoSeleccionado}
+                                        onClick={Transferir}
+                                        className={`${!empleadoSeleccionado ? "bg-blue-400 cursor-default" : "bg-blue-500 hover:bg-blue-600"} w-full h-10 rounded-lg`}>
+                                        Transferir
+                                    </button>
+                            }
                         </div>
                     </section>
                 </motion.div>
