@@ -367,6 +367,15 @@ mutation Mutation($idEmpleado: ID!, $idTpv: ID!, $cajaInicial: Float!) {
 }
 `;
 
+export const TRANSFERIR_TPV = `
+mutation Mutation($idTpv: ID!, $idEmpleadoDestinatario: ID!) {
+  transferirTpv(idTPV: $idTpv, idEmpleadoDestinatario: $idEmpleadoDestinatario) {
+    token
+    message
+    successful
+  }
+}`
+
 export const QUERY_CIERRES = `
     query CierresTPVs($find: CierresTPVFind) {
   cierresTPVs(find: $find) {

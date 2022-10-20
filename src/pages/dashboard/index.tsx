@@ -53,7 +53,7 @@ const Home = (props: { EmpleadoSesion: SesionEmpleado }) => {
     maxY = Math.ceil(maxY / 10) * 10
   }
 
-  if (!Empleado.nombre) {
+  if (!Empleado || !Empleado.nombre) {
     return (
       <div>
         Cargando...

@@ -1,5 +1,5 @@
 import { NextApiRequest, NextApiResponse } from "next";
-import { ADD_CIERRE, OCUPY_TPV, QUERY_TPV, QUERY_TPVS } from "../../../utils/querys";
+import { ADD_CIERRE, OCUPY_TPV, QUERY_TPV, QUERY_TPVS, TRANSFERIR_TPV } from "../../../utils/querys";
 import GQLQuery, { GQLMutate } from "../../../utils/serverFetcher";
 import queryString from 'query-string';
 
@@ -10,11 +10,12 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
         const query = queryString.parse(req.query.id.toString());
         switch (req.method) {
             case 'GET':
-                if (query.isTpvFree !== undefined) { return await GetTpvsByUcupabilidad(req, res); }
+                if (query.isTpvFree !== undefined) { return await GetTpvsByDisponibilidad(req, res); }
                 else { return await GetTpvById(req, res); }
 
             case 'PUT':
-                return await OcuparTpvById(req, res);
+                if (query.transferirTpv !== undefined && query.transferirTpv) { return await TransferirTPV(req, res); }
+                else return await OcuparTpvById(req, res);
 
             default:
                 res.setHeader('Allow', ['GET', 'PUT']);
@@ -50,7 +51,7 @@ const GetTpvById = async (req: NextApiRequest, res: NextApiResponse) => {
     return res.status(serverRes.ok ? 200 : 300).json({ message: data.message, data: data.tpv, successful: data.successful });
 }
 
-const GetTpvsByUcupabilidad = async (req: NextApiRequest, res: NextApiResponse) => {
+const GetTpvsByDisponibilidad = async (req: NextApiRequest, res: NextApiResponse) => {
     try {
         if (!req.query.id) { return res.status(300).json({ message: `No se puede recibir una petición sin param por esta ruta`, successful: false }); }
 
@@ -105,50 +106,33 @@ const OcuparTpvById = async (req: NextApiRequest, res: NextApiResponse) => {
     }
 }
 
-const AddCierre = async (req: NextApiRequest, res: NextApiResponse) => {
-    const serverRes = await GQLMutate(
-        {
-            mutation: ADD_CIERRE,
-            variables: {
-                "cierre": {
-                    "tpv": req.body.TPV,
-                    "cajaInicial": req.body.cajaInicial,
-                    "abiertoPor": {
-                        "_id": req.body.enUsoPor._id,
-                        "nombre": req.body.enUsoPor.nombre,
-                        "apellidos": req.body.enUsoPor.apellidos,
-                        "rol": req.body.enUsoPor.rol,
-                        "email": req.body.enUsoPor.email
-                    },
-                    "cerradoPor": {
-                        "_id": req.body._id,
-                        "nombre": req.body.nombre,
-                        "apellidos": req.body.apellidos,
-                        "rol": req.body.rol,
-                        "email": req.body.email
-                    },
-                    "apertura": req.body.updatedAt,
-                    "ventasEfectivo": Number(req.body.TotalEfectivo),
-                    "ventasTarjeta": Number(req.body.TotalTarjeta),
-                    "ventasTotales": Number(req.body.TotalEfectivo) + Number(req.body.TotalTarjeta),
-                    "dineroRetirado": Number(req.body.DineroRetirado),
-                    "fondoDeCaja": Number(req.body.TotalRealEnCaja) - Number(req.body.DineroRetirado),
-                    "numVentas": req.body.Ventas.length || 0,
-                    "dineroEsperadoEnCaja": Number(req.body.TotalPrevistoEnCaja),
-                    "dineroRealEnCaja": Number(req.body.TotalRealEnCaja)
+const TransferirTPV = async (req: NextApiRequest, res: NextApiResponse) => {
+    try {
+        const serverRes = await GQLMutate(
+            {
+                mutation: TRANSFERIR_TPV,
+                variables: {
+                    "idEmpleadoDestinatario": req.body.empDestinoId,
+                    "idTpv": req.body.tpvId,
                 }
             }
+        )
+        const apiResponse = await serverRes.json()
+
+        const data = JSON.parse(apiResponse.data);
+        if (data.transferirTpv.successful) {
+            res.setHeader('Set-Cookie', `authorization=${data.transferirTpv.token}; HttpOnly; Path=/`);
+            res.status(200)
         }
-    )
-    const apiResponse = await serverRes.json()
-    const data = JSON.parse(apiResponse.data);
+        else {
+            res.status(300)
+        }
 
-    if (data.addCierreTPV.successful) {
-        res.setHeader('Set-Cookie', `authorization=${data.addCierreTPV.token}; HttpOnly; Path=/`);
-        return res.status(200).json({ message: `Éxito al cerrar la TPV`, successful: true });
+        return res.json({ message: data.transferirTpv.message, successful: data.transferirTpv.successful });
     }
-
-    return res.status(300).json({ message: `Fallo al cerrar la TPV`, successful: data.addCierreTPV.successful });
+    catch (err) {
+        return res.status(300).json({ message: "Error: " + err, successful: false });
+    }
 }
 
 export default handler;

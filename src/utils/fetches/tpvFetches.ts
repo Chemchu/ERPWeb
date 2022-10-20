@@ -72,6 +72,27 @@ export const OcuparTPV = async (tpvId: string, emp: SesionEmpleado, cajaInicial:
     }
 }
 
+export const TransferirTPV = async (tpvId: string, empDestinoId: string): Promise<{ message: string, successful: boolean }> => {
+    try {
+        const f = queryString.stringify({ transferirTpv: true });
+        const fetchRes = await fetch(`/api/tpv/${f}`,
+            {
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ tpvId: tpvId, empDestinoId: empDestinoId })
+            });
+
+        const responseJson = await fetchRes.json();
+        return { message: responseJson.message, successful: responseJson.successful };
+    }
+    catch (e) {
+        console.error(e);
+        return { message: "Error: " + e, successful: false };
+    }
+}
+
 export const AddCierreTPV = async (Empleado: SesionEmpleado, setEmpleado: Function, TotalEfectivo: number, TotalTarjeta: number, DineroRetirado: number,
     TotalPrevistoEnCaja: number, TotalRealEnCaja: number, abortController: AbortController): Promise<Cierre | undefined> => {
     try {
