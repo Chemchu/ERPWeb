@@ -16,7 +16,6 @@ export const FetchDevoluciones = async (): Promise<Devolucion[]> => {
         }
 
         const devoluciones = await vRes.json();
-
         return CreateDevolucionList(devoluciones.data);
     }
     catch (e) {
@@ -49,14 +48,13 @@ export const FetchDevolucionesByQuery = async (userQuery: string): Promise<Devol
     }
 }
 
-export const FetchDevolucionesByDateRange = async (fechaIni: Date, fechaFin: Date): Promise<Devolucion[]> => {
+export const FetchDevolucionesByDateRange = async (fechaIniEpoch: string, fechaFinEpoch: string): Promise<Devolucion[]> => {
     try {
         let fechas: any = new Object;
-        fechas.fechaInicial = fechaIni.valueOf();
-        fechas.fechaFinal = fechaFin.valueOf();
+        fechas.fechaInicial = fechaIniEpoch.valueOf();
+        fechas.fechaFinal = fechaFinEpoch.valueOf();
 
         const f = queryString.stringify(fechas);
-
         const vRes = await fetch(`/api/devoluciones/${f}`, {
             headers: { 'Content-type': 'application/json' },
             method: 'GET',

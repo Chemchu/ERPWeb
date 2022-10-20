@@ -7,7 +7,7 @@ export type ITPV = {
     enUsoPor: Empleado,
     cajaInicial: number,
     libre: boolean,
-    fechaApertura: number,
+    fechaApertura: string,
     createdAt: Date,
     updatedAt: Date
 }

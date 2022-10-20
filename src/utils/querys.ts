@@ -547,6 +547,105 @@ query Devoluciones($find: DevolucionFind, $limit: Int) {
 }
 `
 
+export const QUERY_DEVOLUCION = `
+query Devolucion($id: ID!) {
+  devolucion(_id: $id) {
+    _id
+    productosDevueltos {
+      _id
+      nombre
+      proveedor
+      familia
+      precioVenta
+      precioCompra
+      precioFinal
+      iva
+      margen
+      ean
+      cantidadDevuelta
+      dto
+    }
+    dineroDevuelto
+    ventaOriginal {
+      _id
+      numFactura
+      productos {
+        _id
+        nombre
+        proveedor
+        familia
+        precioVenta
+        precioCompra
+        precioFinal
+        iva
+        margen
+        ean
+        cantidadVendida
+        createdAt
+        updatedAt
+        dto
+      }
+      dineroEntregadoEfectivo
+      dineroEntregadoTarjeta
+      precioVentaTotalSinDto
+      precioVentaTotal
+      cambio
+      cliente {
+        _id
+        nif
+        nombre
+        cp
+        calle
+      }
+      vendidoPor {
+        _id
+        nombre
+        apellidos
+        rol
+        email
+      }
+      modificadoPor {
+        _id
+        nombre
+        apellidos
+        rol
+        email
+      }
+      tipo
+      descuentoEfectivo
+      descuentoPorcentaje
+      tpv
+      createdAt
+      updatedAt
+    }
+    tpv
+    cliente {
+      _id
+      nif
+      nombre
+      calle
+      cp
+    }
+    trabajador {
+      _id
+      nombre
+      apellidos
+      rol
+      email
+    }
+    modificadoPor {
+      _id
+      nombre
+      apellidos
+      rol
+      email
+    }
+    createdAt
+    updatedAt
+  }
+}`
+
+
 export const ADD_DEVOLUCION = `
   mutation AddDevolucion($fields: DevolucionFields!) {
   addDevolucion(fields: $fields) {

@@ -1,6 +1,6 @@
 import { NextApiRequest, NextApiResponse } from "next";
 import queryString from 'query-string';
-import { QUERY_DEVOLUCIONES } from "../../../utils/querys";
+import { QUERY_DEVOLUCION, QUERY_DEVOLUCIONES } from "../../../utils/querys";
 import GQLQuery from "../../../utils/serverFetcher";
 
 const handler = async (req: NextApiRequest, res: NextApiResponse) => {
@@ -36,14 +36,24 @@ const GetDevolucionesByQuery = async (userQuery: queryString.ParsedQuery<string>
             }
         }
     );
-    const apiResponse = await serverRes.json();
 
+    const apiResponse = await serverRes.json();
     const data = JSON.parse(apiResponse.data);
     return res.status(serverRes.ok ? 200 : 300).json({ message: data.message, data: data.devoluciones, successful: data.successful });
 }
 
 const GetDevolucion = async (req: NextApiRequest, res: NextApiResponse) => {
+    const serverRes = await GQLQuery({
+        query: QUERY_DEVOLUCION, variables: {
+            "find": {
+                "_id": req.query.id
+            }
+        }
+    });
+    const apiResponse = await serverRes.json();
+    const data = JSON.parse(apiResponse.data);
 
+    return res.status(serverRes.ok ? 200 : 300).json({ message: data.message, data: data.devolucion, successful: data.successful ? data.successful : serverRes.ok });
 }
 
 export default handler;

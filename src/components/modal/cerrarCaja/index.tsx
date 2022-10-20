@@ -68,8 +68,8 @@ export const CerrarCaja = (props: { Empleado?: SesionEmpleado }) => {
             const tpv = await FetchTPV(j.TPV, abortController);
             if (!tpv) { notifyError("No se ha encontrado la TPV que se quiere cerrar"); return; }
 
-            const devoluciones = await FetchDevolucionesByDateRange(new Date(tpv.fechaApertura), new Date(Date.now()));
-            const ventas = await FetchVentasByTPVDate(j.TPV, new Date(tpv.fechaApertura).toString());
+            const devoluciones = await FetchDevolucionesByDateRange(tpv.fechaApertura, String(Date.now()));
+            const ventas = await FetchVentasByTPVDate(j.TPV, tpv.fechaApertura);
 
             setVentas(ventas);
             setTPV(tpv);

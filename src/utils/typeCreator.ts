@@ -328,6 +328,7 @@ export function CreateEmployeeList(empleados: any): Empleado[] {
 export function CreateDevolucionList(dList: any[]): Devolucion[] {
     if (dList === undefined) { return [] as Devolucion[]; }
 
+
     try {
         let res: Devolucion[] = [];
         dList.forEach((d: any) => {
