@@ -9,12 +9,13 @@ import { SesionEmpleado } from "../../../tipos/Empleado";
 import { ITPV } from "../../../tipos/TPV";
 import { Venta } from "../../../tipos/Venta";
 import { In } from "../../../utils/animations";
+import { NuevoCierreTPV } from "../../../utils/fetches/cierresFetches";
 import { FetchDevolucionesByDateRange } from "../../../utils/fetches/devolucionesFetches";
-import { AddCierreTPV, FetchTPV } from "../../../utils/fetches/tpvFetches";
+import { FetchTPV } from "../../../utils/fetches/tpvFetches";
 import { FetchVentasByTPVDate } from "../../../utils/fetches/ventasFetches";
 import GenerateQrBase64 from "../../../utils/generateQr";
 import { GetEfectivoTotal, GetTarjetaTotal, GetTotalEnCaja } from "../../../utils/preciosUtils";
-import { notifyError, notifyWarn } from "../../../utils/toastify";
+import { notifyError } from "../../../utils/toastify";
 import { ValidatePositiveFloatingNumber } from "../../../utils/validator";
 import CargandoSpinner from "../../cargandoSpinner";
 import CierrePrintable from "../../printable/cierrePrintable";
@@ -106,7 +107,7 @@ export const CerrarCaja = (props: { Empleado?: SesionEmpleado }) => {
             setButtonDisabled(true);
             if (!Tpv || !Tpv._id) { return; }
 
-            const cierre = await AddCierreTPV(Empleado, SetEmpleado, Number(TotalEfectivo),
+            const cierre = await NuevoCierreTPV(Empleado, SetEmpleado, Number(TotalEfectivo),
                 Number(TotalTarjeta), Number(DineroRetirado),
                 Number(TotalPrevistoEnCaja), Number(TotalRealEnCaja), abortController);
 

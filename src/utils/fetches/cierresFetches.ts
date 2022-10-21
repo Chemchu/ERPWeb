@@ -2,6 +2,8 @@ import { Cierre } from "../../tipos/Cierre";
 import { notifyError, notifySuccess } from "../toastify";
 import { CreateCierreList } from "../typeCreator";
 import queryString from 'query-string';
+import { SesionEmpleado } from "../../tipos/Empleado";
+import { FetchTPV } from "./tpvFetches";
 
 export const FetchCierres = async (): Promise<Cierre[]> => {
     try {
@@ -41,6 +43,53 @@ export const FetchCierresByQuery = async (userQuery?: string, fechas?: string[])
         console.error(e);
         notifyError(String(e));
         return [];
+    }
+}
+
+export const NuevoCierreTPV = async (Empleado: SesionEmpleado, setEmpleado: Function, TotalEfectivo: number, TotalTarjeta: number, DineroRetirado: number,
+    TotalPrevistoEnCaja: number, TotalRealEnCaja: number, abortController: AbortController): Promise<Cierre | undefined> => {
+    try {
+        if (!Empleado.TPV) { return undefined; }
+
+        const Tpv = await FetchTPV(Empleado.TPV, abortController);
+        if (!Tpv) { return undefined; }
+
+        const fetchRes = await fetch(`/api/cierres/`,
+            {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    tpv: Tpv._id,
+                    empleadoCerrandoId: Empleado._id,
+                    ventasEfectivo: TotalEfectivo,
+                    ventasTarjeta: TotalTarjeta,
+                    ventasTotales: TotalEfectivo + TotalTarjeta,
+                    dineroEsperadoEnCaja: TotalPrevistoEnCaja,
+                    dineroRealEnCaja: TotalRealEnCaja,
+                    dineroRetirado: DineroRetirado,
+                }),
+                signal: abortController.signal
+            });
+
+        const tpvOcupadaJson = await fetchRes.json();
+        if (tpvOcupadaJson.successful) {
+            notifySuccess(tpvOcupadaJson.message);
+            let e = Empleado;
+            e.TPV = undefined;
+            setEmpleado(e);
+        }
+        else { notifyError(tpvOcupadaJson.message); return undefined }
+
+        const cierre = CreateCierreList([tpvOcupadaJson.data])[0];
+        return cierre;
+    }
+    catch (e) {
+        console.error(e);
+        notifyError("Error de conexión");
+
+        return undefined;
     }
 }
 

@@ -93,54 +93,6 @@ export const TransferirTPV = async (tpvId: string, empDestinoId: string): Promis
     }
 }
 
-export const AddCierreTPV = async (Empleado: SesionEmpleado, setEmpleado: Function, TotalEfectivo: number, TotalTarjeta: number, DineroRetirado: number,
-    TotalPrevistoEnCaja: number, TotalRealEnCaja: number, abortController: AbortController): Promise<Cierre | undefined> => {
-    try {
-        if (!Empleado.TPV) { return undefined; }
-
-        const Tpv = await FetchTPV(Empleado.TPV, abortController);
-        if (!Tpv) { return undefined; }
-
-        const fetchRes = await fetch(`/api/cierres/`,
-            {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify({
-                    Empleado: Empleado,
-                    TotalEfectivo: TotalEfectivo,
-                    TotalTarjeta: TotalTarjeta,
-                    ventasTotales: TotalEfectivo + TotalTarjeta,
-                    TotalPrevistoEnCaja: TotalPrevistoEnCaja,
-                    TotalRealEnCaja: TotalRealEnCaja,
-                    DineroRetirado: DineroRetirado,
-                    TPV: Tpv
-                }),
-                signal: abortController.signal
-            });
-        const tpvOcupadaJson = await fetchRes.json();
-
-        if (tpvOcupadaJson.successful) {
-            notifySuccess(tpvOcupadaJson.message);
-            let e = Empleado;
-            e.TPV = undefined;
-            setEmpleado(e);
-        }
-        else { notifyError(tpvOcupadaJson.message); return undefined }
-
-        const cierre = CreateCierreList([tpvOcupadaJson.data])[0];
-        return cierre;
-    }
-    catch (e) {
-        console.error(e);
-        notifyError("Error de conexión");
-
-        return undefined;
-    }
-
-}
-
 export const FetchTPVsByDisponibilidad = async (isTpvFree: boolean, abortController: AbortController): Promise<ITPV[] | undefined> => {
     try {
         const f = queryString.stringify({ isTpvFree: isTpvFree });
