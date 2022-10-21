@@ -1,5 +1,4 @@
 import { NextApiRequest, NextApiResponse } from "next";
-import { SesionEmpleado } from "../../../tipos/Empleado";
 import { ADD_CIERRE, QUERY_CIERRES } from "../../../utils/querys";
 import GQLQuery, { GQLMutate } from "../../../utils/serverFetcher";
 
@@ -44,48 +43,23 @@ const GetCierres = async (req: NextApiRequest, res: NextApiResponse) => {
 
 const AddCierre = async (req: NextApiRequest, res: NextApiResponse) => {
     try {
-        const Empleado: SesionEmpleado = req.body.Empleado;
-        const TotalEfectivo = req.body.TotalEfectivo;
-        const TotalTarjeta = req.body.TotalTarjeta;
-        const DineroRetirado = req.body.DineroRetirado;
-        const TotalPrevistoEnCaja = req.body.TotalPrevistoEnCaja;
-        const TotalRealEnCaja = req.body.TotalRealEnCaja;
-        const Tpv = req.body.TPV;
-
         const apiResponse = await (await GQLMutate({
             mutation: ADD_CIERRE,
             variables: {
                 "cierre": {
-                    "tpv": Empleado.TPV,
-                    "cajaInicial": Tpv.cajaInicial,
-                    "abiertoPor": {
-                        "_id": Tpv.enUsoPor._id,
-                        "nombre": Tpv.enUsoPor.nombre,
-                        "apellidos": Tpv.enUsoPor.apellidos,
-                        "rol": Tpv.enUsoPor.rol,
-                        "email": Tpv.enUsoPor.email
-                    },
-                    "cerradoPor": {
-                        "_id": Empleado._id,
-                        "nombre": Empleado.nombre,
-                        "apellidos": Empleado.apellidos,
-                        "rol": Empleado.rol,
-                        "email": Empleado.email
-                    },
-                    "apertura": Tpv.updatedAt,
-                    "ventasEfectivo": Number(TotalEfectivo),
-                    "ventasTarjeta": Number(TotalTarjeta),
-                    "ventasTotales": Number(TotalEfectivo) + Number(TotalTarjeta),
-                    "dineroRetirado": Number(DineroRetirado),
-                    "fondoDeCaja": Number(TotalRealEnCaja) - Number(DineroRetirado),
-                    "dineroEsperadoEnCaja": Number(TotalPrevistoEnCaja),
-                    "dineroRealEnCaja": Number(TotalRealEnCaja)
+                    "tpv": req.body.tpv,
+                    "empleadoCerrandoId": req.body.empleadoCerrandoId,
+                    "ventasEfectivo": Number(req.body.ventasEfectivo),
+                    "ventasTarjeta": Number(req.body.ventasTarjeta),
+                    "ventasTotales": Number(req.body.ventasTotales),
+                    "dineroEsperadoEnCaja": Number(req.body.dineroEsperadoEnCaja),
+                    "dineroRealEnCaja": Number(req.body.dineroRealEnCaja),
+                    "dineroRetirado": Number(req.body.dineroRetirado),
                 }
             }
         })).json();
 
         const data = JSON.parse(apiResponse.data);
-
         if (data.addCierreTPV.successful) {
             res.setHeader('Set-Cookie', `authorization=${data.addCierreTPV.token}; HttpOnly; Path=/`);
             res.status(200).json({ message: data.addCierreTPV.message, successful: data.addCierreTPV.successful, data: data.addCierreTPV.cierre });

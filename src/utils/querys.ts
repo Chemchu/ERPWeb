@@ -41,7 +41,6 @@ export const ADD_CIERRE = `mutation AddCierreTPV($cierre: CierreTPVInput!) {
       dineroRealEnCaja
       dineroRetirado
       fondoDeCaja
-      beneficio
     }
   }
 }
