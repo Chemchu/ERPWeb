@@ -60,8 +60,8 @@ const MermaPage = () => {
     }
 
     return (
-        <div className="flex flex-col h-full w-full bg-white rounded-b-2xl rounded-r-2xl p-4 shadow-lg border-x">
-            <div className="flex w-full h-auto py-4">
+        <div className="flex flex-col gap-4 h-full w-full bg-white rounded-b-2xl rounded-r-2xl p-4 shadow-lg border-x">
+            <div className="flex w-full h-auto">
                 <div className="flex gap-4 w-full h-full justify-start">
                     <NuevoBoton accionEvent={() => { setAddMermaModal(true); }} />
                 </div>
@@ -104,7 +104,7 @@ const TablaMerma = (props: { Mermas: Merma[], SetMermas: Function, isLoading: bo
     }
 
     return (
-        <>
+        <div className="flex flex-col w-full h-full">
             <div className="flex items-center border-t-2 border-x-2 rounded-t-2xl p-2 font-semibold">
                 <div className="w-2/5 ">
                     Fecha
@@ -119,17 +119,21 @@ const TablaMerma = (props: { Mermas: Merma[], SetMermas: Function, isLoading: bo
                     Beneficios perdidos
                 </div>
             </div>
-            <div className="h-full overflow-clip">
+            <div className="flex flex-col w-full h-full">
                 {
                     props.isLoading ?
-                        arrayNum.map((_, i) => {
-                            return (
-                                <SkeletonCard key={`SkeletonProdList-${i}`} />
-                            );
-                        })
+                        <div className="flex flex-col w-full h-10 grow overflow-y-scroll">
+                            {
+                                arrayNum.map((_, i) => {
+                                    return (
+                                        <SkeletonCard key={`SkeletonProdList-${i}`} />
+                                    );
+                                })
+                            }
+                        </div>
                         :
                         <>
-                            <div className="h-full w-full border-2 rounded-b overflow-y-scroll">
+                            <div className="w-full h-10 grow border-2 rounded-b overflow-y-scroll">
                                 {
                                     props.Mermas.length <= 0 ?
                                         <div className="flex justify-center items-center h-full w-full text-xl">
@@ -151,7 +155,7 @@ const TablaMerma = (props: { Mermas: Merma[], SetMermas: Function, isLoading: bo
                         </>
                 }
             </div>
-        </>
+        </div>
     )
 }
 

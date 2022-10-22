@@ -62,7 +62,7 @@ const Home = (props: { EmpleadoSesion: SesionEmpleado }) => {
   }
 
   return (
-    <div className="w-full h-screen py-3 text-gray-700">
+    <div className="w-full h-screen p-2 text-gray-700">
       <div className="flex flex-col gap-8 w-full h-full p-4 overflow-y-scroll bg-white rounded-2xl border shadow-lg">
         <h1 className="text-2xl lg:text-4xl">
           {`${saludo},  ${Empleado.nombre.charAt(0).toUpperCase() + Empleado.nombre.slice(1)}`}
