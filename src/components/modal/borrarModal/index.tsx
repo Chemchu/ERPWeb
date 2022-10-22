@@ -23,6 +23,14 @@ const BorrarButton = (props: { title?: string, subtitle?: string, acceptCallback
 }
 
 const BorrarModal = (props: { title?: string, subtitle?: string, acceptCallback: Function, cancelCallback: Function }) => {
+    const [isDeleting, setIsDeleting] = useState<boolean>(false);
+
+    const AcceptCallback = async () => {
+        setIsDeleting(true);
+        await props.acceptCallback()
+        setIsDeleting(false)
+    }
+
     return (
         <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} >
             <Backdrop onClick={(e) => { e.stopPropagation(); props.cancelCallback() }} >
@@ -50,9 +58,16 @@ const BorrarModal = (props: { title?: string, subtitle?: string, acceptCallback:
                                 </p>
                             }
                             <div className="flex items-center justify-between gap-4 w-full mt-8">
-                                <button onClick={async () => await props.acceptCallback()} type="button" className="py-2 px-4 bg-blue-600 hover:bg-blue-700 focus:ring-blue-500 focus:ring-offset-blue-200 text-white w-full transition ease-in duration-200 text-center text-base font-semibold shadow-md focus:outline-none focus:ring-2 focus:ring-offset-2  rounded-lg ">
-                                    Sí
-                                </button>
+                                {
+                                    isDeleting ?
+                                        <button disabled type="button" className="py-2 px-4 bg-blue-700 focus:ring-blue-500 focus:ring-offset-blue-200 text-white w-full transition ease-in duration-200 text-center text-base font-semibold shadow-md focus:outline-none focus:ring-2 focus:ring-offset-2  rounded-lg cursor-default">
+                                            Borrando...
+                                        </button>
+                                        :
+                                        <button onClick={async () => await AcceptCallback()} type="button" className="py-2 px-4 bg-blue-600 hover:bg-blue-700 focus:ring-blue-500 focus:ring-offset-blue-200 text-white w-full transition ease-in duration-200 text-center text-base font-semibold shadow-md focus:outline-none focus:ring-2 focus:ring-offset-2  rounded-lg ">
+                                            Sí
+                                        </button>
+                                }
                                 <button onClick={() => props.cancelCallback()} type="button" className="py-2 px-4 bg-white hover:bg-gray-100 focus:ring-blue-500 focus:ring-offset-blue-200 text-blue-500 w-full transition ease-in duration-200 text-center text-base font-semibold shadow-md focus:outline-none focus:ring-2 focus:ring-offset-2  rounded-lg ">
                                     No
                                 </button>
