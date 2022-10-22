@@ -90,7 +90,7 @@ const CierrePage = () => {
     if (isLoading) {
         return (
             <div className="flex flex-col h-full w-full bg-white rounded-b-2xl rounded-r-2xl p-4 shadow-lg border-x">
-                <div className="flex w-full h-auto py-4 gap-2 justify-end ">
+                <div className="flex w-full h-auto gap-2 justify-end ">
                     <UploadFileRestricted tipoDocumento={TipoDocumento.Cierres} />
                     <DownloadFile tipoDocumento={TipoDocumento.Cierres} />
                     <DateRange titulo="Fecha" dateRange={dateRange} setDateRange={setDateRange} endDate={endDate} startDate={startDate} />
@@ -107,7 +107,7 @@ const CierrePage = () => {
                             </button>
                     }
                 </div>
-                <div className="flex justify-between border-t-2 border-x-2 rounded-t-2xl px-5 py-2">
+                <div className="flex justify-between border-t-2 border-x-2 rounded-t-2xl ">
                     <div className="text-left text-sm font-semibold w-1/4">
                         TPV
                     </div>
@@ -139,7 +139,7 @@ const CierrePage = () => {
     }
 
     return (
-        <div className="flex flex-col h-full w-full bg-white rounded-b-2xl rounded-r-2xl p-4 shadow-lg border-x">
+        <div className="flex flex-col gap-4 h-full w-full bg-white rounded-b-2xl rounded-r-2xl p-4 shadow-lg border-x">
             <div className="flex w-full h-auto py-4 gap-2 justify-end">
                 <div className="flex gap-2 justify-start w-full">
                     <UploadFileRestricted tipoDocumento={TipoDocumento.Cierres} />
@@ -161,7 +161,7 @@ const CierrePage = () => {
                         </button>
                 }
             </div>
-            <div className="flex flex-col w-full h-4/5 ">
+            <div className="flex flex-col w-full h-10 grow">
                 <div className="flex justify-between border-t-2 border-x-2 rounded-t-2xl px-5 py-2">
                     <div className="text-left font-semibold w-1/4">
                         TPV
@@ -177,11 +177,11 @@ const CierrePage = () => {
                         Ventas totales
                     </div>
                 </div>
-                <div className="h-full w-full border-2 rounded-b overflow-y-scroll">
+                <div className="flex flex-col h-full w-full border-2 rounded-b overflow-y-scroll">
                     <TablaCierre CierresList={CierresFiltrados || CierresList} SetCierres={CierresFiltrados ? setCierresFiltrados : SetCierres} currentPage={currentPage} Tpvs={Tpvs} />
                 </div>
             </div>
-            <div className="flex pt-2 items-center justify-center">
+            <div className="flex items-center justify-center">
                 <Paginador numPages={numPages} paginaActual={currentPage} maxPages={10} cambiarPaginaActual={setPaginaActual} />
             </div>
         </div >
@@ -193,7 +193,7 @@ export default CierrePage;
 const TablaCierre = (props: { CierresList: Cierre[], SetCierres: Function, currentPage: number, Tpvs: ITPV[] }) => {
     if (!props.CierresList) {
         return (
-            <div className="flex justify-center items-center h-full w-full border-2 rounded-b text-xl overflow-y-scroll">
+            <div className="flex justify-center items-center h-full w-full border-2 rounded-b text-xl">
                 No hay registros de cierres en la base de datos
             </div>
         )
@@ -202,13 +202,13 @@ const TablaCierre = (props: { CierresList: Cierre[], SetCierres: Function, curre
         <>
             {
                 props.CierresList.length <= 0 ?
-                    <div className="flex justify-center items-center h-full w-full border-2 rounded-b text-xl overflow-y-scroll">
+                    <div className="flex justify-center items-center h-full w-full border-2 rounded-b text-xl">
                         No hay registros de cierres en la base de datos
                     </div>
                     :
                     props.CierresList.slice((elementsPerPage * (props.currentPage - 1)), props.currentPage * elementsPerPage).map((p, index) => {
                         return (
-                            <div className="w-full h-10" key={`FilaProdTable${p._id}`}>
+                            <div key={`FilaProdTable${p._id}`}>
                                 <FilaCierre cierres={props.CierresList} setAllCierres={props.SetCierres} cierre={p} tpvs={props.Tpvs} />
                             </div>
                         );

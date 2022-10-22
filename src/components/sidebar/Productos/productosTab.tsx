@@ -73,8 +73,8 @@ const ProductPage = () => {
     }
 
     return (
-        <div className="flex flex-col h-full w-full bg-white rounded-b-2xl rounded-r-2xl p-4 shadow-lg border-x">
-            <div className="flex w-full h-auto py-4">
+        <div className="flex flex-col gap-4 h-full w-full bg-white rounded-b-2xl rounded-r-2xl p-4 shadow-lg border-x">
+            <div className="flex w-full h-auto grow-0">
                 <div className="flex gap-4 w-full h-full justify-start">
                     <NuevoBoton accionEvent={() => setAddProdModal(true)} />
                     <UploadFile tipoDocumento={TipoDocumento.Productos} extension={["csv"]} />
@@ -122,7 +122,7 @@ const TablaProductos = (props: { isLoading: boolean, Productos: Producto[], SetP
     }
 
     return (
-        <>
+        <div className="flex flex-col w-full h-10 grow">
             <div className="flex justify-between border-t-2 border-x-2 rounded-t-2xl px-5 py-2">
                 <div className="text-left font-semibold w-2/5">
                     Nombre
@@ -170,7 +170,7 @@ const TablaProductos = (props: { isLoading: boolean, Productos: Producto[], SetP
                         </div>
                     </>
             }
-        </>
+        </div>
     )
 }
 

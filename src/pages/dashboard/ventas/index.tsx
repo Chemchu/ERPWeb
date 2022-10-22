@@ -19,8 +19,8 @@ const Ventas = (props: { EmpleadoSesion: SesionEmpleado }) => {
     }, []);
 
     return (
-        <Tab.Group as="div" className="flex flex-col w-full h-full pt-3 pr-2">
-            <Tab.List className="flex gap-1 h-10">
+        <Tab.Group as="div" className="flex flex-col w-full h-screen p-2">
+            <Tab.List className="flex gap-1 grow-0 h-10">
                 <Tab
                     key={"Ventas"}
                     className={(props: { selected: any }) =>
@@ -54,11 +54,11 @@ const Ventas = (props: { EmpleadoSesion: SesionEmpleado }) => {
                     </span>
                 </Tab>
             </Tab.List>
-            <Tab.Panels className="flex flex-col h-90v w-full pr-2">
+            <Tab.Panels className="flex flex-col h-10 grow w-full">
                 <Tab.Panel
                     key={"Ventas"}
                     className={classNames(
-                        'pb-3 h-full w-full',
+                        'h-full w-full',
                         'focus:outline-none ring-white ring-opacity-60'
                     )}
                 >
@@ -68,7 +68,7 @@ const Ventas = (props: { EmpleadoSesion: SesionEmpleado }) => {
                 <Tab.Panel
                     key={"Devoluciones"}
                     className={classNames(
-                        'pb-3 h-full w-full',
+                        'h-full w-full',
                         'focus:outline-none ring-white ring-opacity-60'
                     )}
                 >
