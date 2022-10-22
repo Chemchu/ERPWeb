@@ -1,4 +1,4 @@
-import { AnimatePresence, motion } from "framer-motion";
+import { motion } from "framer-motion";
 import React, { useEffect } from "react";
 import { useRef, useState } from "react";
 import { useReactToPrint } from "react-to-print";
@@ -9,16 +9,14 @@ import Etiqueta from "../../printable/etiqueta";
 import EditableLabel from "../../elementos/Forms/editableLabel";
 import ProductoForm from "../../elementos/Forms/productoForm";
 import { Backdrop } from "../backdrop";
-import BorrarProductoModal from "../borrarProductoModal";
-import { UpdateProducto } from "../../../utils/fetches/productosFetches";
-import RequireHigherAuth from "../../sidebar/RequireHigherAuth";
+import { DeleteProducto, UpdateProducto } from "../../../utils/fetches/productosFetches";
+import BorrarButton from "../borrarModal";
 
 export const VerProducto = (props: { producto: Producto, setProducto: Function, showModal: Function }) => {
     const [Nombre, setNombre] = useState<string>(props.producto.nombre || "");
     const [ProductoAux, setProductoAux] = useState<Producto>();
     const [hayCambios, setHayCambios] = useState<boolean>(false);
     const [imprimible, setImprimible] = useState<boolean>(true);
-    const [showDeleteModal, setDeleteModal] = useState<boolean>(false);
 
     useEffect(() => {
         if (!ProductoAux) { setHayCambios(false); return; }
@@ -75,6 +73,15 @@ export const VerProducto = (props: { producto: Producto, setProducto: Function, 
         }
     }
 
+    const Eliminar = async () => {
+        const deletedCorrectly = await DeleteProducto(props.producto._id);
+
+        if (deletedCorrectly) {
+            props.showModal(false);
+            props.setProducto(null);
+        }
+    }
+
     return (
         <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} >
             <Backdrop onClick={(e) => { e.stopPropagation(); props.showModal(false) }} >
@@ -94,16 +101,10 @@ export const VerProducto = (props: { producto: Producto, setProducto: Function, 
                                 placeholder="Nombre del producto"
                                 type="input"
                             />
-                            <RequireHigherAuth>
-                                <motion.button
-                                    whileHover={{ scale: 1.2 }}
-                                    onClick={() => { setDeleteModal(true); }}
-                                    className="self-center">
-                                    <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-                                        <path strokeLinecap="round" strokeLinejoin="round" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
-                                    </svg>
-                                </motion.button>
-                            </RequireHigherAuth>
+                            <BorrarButton
+                                title={`¿Borrar producto?`}
+                                subtitle={`Vas a borrar ${props.producto.nombre}`}
+                                acceptCallback={Eliminar} />
                         </div>
                         <ProductoForm setProducto={setProductoAux} producto={props.producto} setHayCambios={setHayCambios} />
                         <div className="flex w-full h-full gap-10 text-white self-end items-end justify-around">
@@ -130,12 +131,6 @@ export const VerProducto = (props: { producto: Producto, setProducto: Function, 
                                     </div>
                             }
                         </div>
-                        <AnimatePresence>
-                            {
-                                showDeleteModal &&
-                                <BorrarProductoModal showProductModal={props.showModal} showModal={setDeleteModal} setProducto={props.setProducto} producto={props.producto} />
-                            }
-                        </AnimatePresence>
                         {
                             ProductoAux?.ean &&
                             ProductoAux?.precioVenta > 0 &&

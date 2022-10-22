@@ -1,15 +1,14 @@
-import { AnimatePresence, motion } from "framer-motion";
-import { useState } from "react";
+import { motion } from "framer-motion";
+import { Roles } from "../../../tipos/Enums/Roles";
 import { Merma } from "../../../tipos/Merma";
 import { In } from "../../../utils/animations";
 import { DeleteMerma } from "../../../utils/fetches/mermasFetches";
 import { notifyError, notifySuccess } from "../../../utils/toastify";
-import RequireHigherAuth from "../../sidebar/RequireHigherAuth";
+import AuthorizationWrapper from "../../authorizationWrapper";
 import { Backdrop } from "../backdrop";
-import BorrarMermaModal from "../borrarMermaModal";
+import BorrarButton from "../borrarModal";
 
 const VerMerma = (props: { showModal: Function, merma: Merma, updateMermasCallback: Function }) => {
-    const [showDeleteModal, setShowDeleteModal] = useState<boolean>(false);
     const DeleteCurrentMerma = async () => {
         const { message, successful } = await DeleteMerma(props.merma._id);
         await props.updateMermasCallback();
@@ -32,16 +31,16 @@ const VerMerma = (props: { showModal: Function, merma: Merma, updateMermasCallba
                     <div className="flex flex-col w-full h-full gap-4">
                         <div className="flex self-start text-2xl w-full h-auto xl:text-3xl justify-between">
                             <span>Merma de: {new Date(Number(props.merma.createdAt)).toLocaleString()}</span>
-                            <RequireHigherAuth>
-                                <motion.button
-                                    whileHover={{ scale: 1.1 }}
-                                    onClick={() => setShowDeleteModal(true)}
-                                    className="self-center">
-                                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-6 h-6 hover:stroke-red-600">
-                                        <path strokeLinecap="round" strokeLinejoin="round" d="M14.74 9l-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 01-2.244 2.077H8.084a2.25 2.25 0 01-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 00-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 013.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 00-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 00-7.5 0" />
-                                    </svg>
-                                </motion.button>
-                            </RequireHigherAuth>
+                            {
+                                AuthorizationWrapper([Roles.Administrador, Roles.Gerente])(() => {
+                                    return (
+                                        <BorrarButton
+                                            title={`¿Borrar esta merma?`}
+                                            subtitle="Las cantidades mermadas se ajustarán automáticamente 😉"
+                                            acceptCallback={DeleteCurrentMerma} />
+                                    )
+                                })({})
+                            }
                         </div>
                         <section className="flex gap-4 h-full">
                             <div className="flex flex-col gap-1 w-1/2 h-full">
@@ -77,45 +76,7 @@ const VerMerma = (props: { showModal: Function, merma: Merma, updateMermasCallba
                             <button className="h-12 w-full rounded-xl bg-red-500 hover:bg-red-600 shadow-lg" onClick={() => { props.showModal(false) }}>
                                 Cerrar
                             </button>
-                            {/* <button disabled={!imprimible} className={`${imprimible ? 'bg-orange-500 hover:bg-orange-600' : 'bg-orange-400'} h-12 w-full rounded-xl shadow-lg`}
-                                onClick={Print}>
-                                Imprimir etiqueta
-                            </button> */}
-                            {/* {
-                                hayCambios ?
-                                    <button className={`flex bg-blue-500 hover:bg-blue-600 h-12 w-full rounded-xl shadow-lg justify-center items-center`}
-                                        onClick={async () => { await GuardarCambios(ProductoAux, props.producto._id) }}>
-                                        <p>
-                                            Guardar cambios
-                                        </p>
-                                    </button>
-                                    :
-                                    <div className={`flex bg-blue-400 h-12 w-full rounded-xl shadow-lg justify-center items-center `}>
-                                        <p>
-                                            Guardar cambios
-                                        </p>
-                                    </div>
-                            } */}
                         </div>
-                        <AnimatePresence>
-                            {
-                                showDeleteModal &&
-                                <BorrarMermaModal showModal={setShowDeleteModal} acceptCallback={DeleteCurrentMerma} />
-                            }
-                        </AnimatePresence>
-                        {
-                            // ProductoAux?.ean &&
-                            // ProductoAux?.precioVenta > 0 &&
-                            // imprimible &&
-                            // <div style={{ display: "none" }}>
-                            //     <Etiqueta
-                            //         ref={componentRef}
-                            //         nombre={Nombre}
-                            //         ean={ProductoAux?.ean}
-                            //         precio={Number(ProductoAux?.precioVenta)}
-                            //     />
-                            // </div>
-                        }
                     </div>
                 </motion.div>
             </Backdrop>

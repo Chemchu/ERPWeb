@@ -1,22 +1,22 @@
-import { AnimatePresence, motion } from "framer-motion";
+import { motion } from "framer-motion";
 import React, { useEffect } from "react";
 import { useState } from "react";
 import useEmpleadoContext from "../../../context/empleadoContext";
 import { Empleado } from "../../../tipos/Empleado";
 import { Roles } from "../../../tipos/Enums/Roles";
 import { In } from "../../../utils/animations";
-import { UpdateEmpleado } from "../../../utils/fetches/empleadoFetches";
+import { DeleteEmpleado, UpdateEmpleado } from "../../../utils/fetches/empleadoFetches";
 import { notifyLoading } from "../../../utils/toastify";
+import AuthorizationWrapper from "../../authorizationWrapper";
 import EditableLabel from "../../elementos/Forms/editableLabel";
 import EmpleadoForm from "../../elementos/Forms/empleadoForm";
 import { Backdrop } from "../backdrop";
-import BorrarEmpleadoModal from "../borrarEmpleadoModal";
+import BorrarButton from "../borrarModal";
 
 export const VerEmpleado = (props: { empleado: Empleado, setEmpleado: Function, setEmpleados: Function, showModal: Function }) => {
     const [Nombre, setNombre] = useState<string>(props.empleado.nombre || "");
     const [EmpleadoAux, setEmpleadoAux] = useState<Empleado>();
     const [hayCambios, setHayCambios] = useState<boolean>(false);
-    const [showDeleteModal, setDeleteModal] = useState<boolean>(false);
 
     const { Empleado } = useEmpleadoContext();
 
@@ -44,6 +44,15 @@ export const VerEmpleado = (props: { empleado: Empleado, setEmpleado: Function, 
         })
     }
 
+    const Eliminar = async () => {
+        const deletedCorrectly = await DeleteEmpleado(props.empleado._id);
+
+        if (deletedCorrectly) {
+            props.setEmpleados((empleados: any) => empleados.filter((c: Empleado) => c._id !== props.empleado._id));
+            props.showModal(false);
+        }
+    }
+
     return (
         <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} >
             <Backdrop onClick={(e) => { e.stopPropagation(); props.showModal(false) }} >
@@ -64,14 +73,16 @@ export const VerEmpleado = (props: { empleado: Empleado, setEmpleado: Function, 
                                 placeholder="Nombre del producto"
                                 type="input"
                             />
-                            <motion.button
-                                whileHover={{ scale: 1.2 }}
-                                onClick={() => { setDeleteModal(true); }}
-                                className="self-center">
-                                <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-                                    <path strokeLinecap="round" strokeLinejoin="round" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
-                                </svg>
-                            </motion.button>
+                            {
+                                AuthorizationWrapper([Roles.Administrador, Roles.Gerente])(() => {
+                                    return (
+                                        <BorrarButton title="¿Borrar empleado?"
+                                            subtitle={`Vas a borrar a ${props.empleado.nombre} (${props.empleado.email})`}
+                                            acceptCallback={Eliminar}
+                                        />
+                                    )
+                                })({})
+                            }
                         </div>
                         <EmpleadoForm setEmpleado={setEmpleadoAux} empleado={props.empleado} setHayCambios={setHayCambios} />
                         <div className="flex w-full h-full gap-10 text-white self-end items-end justify-around">
@@ -94,12 +105,6 @@ export const VerEmpleado = (props: { empleado: Empleado, setEmpleado: Function, 
                                     </div>
                             }
                         </div>
-                        <AnimatePresence>
-                            {
-                                showDeleteModal &&
-                                <BorrarEmpleadoModal showModal={setDeleteModal} showEmpleadoModal={props.showModal} setEmpleados={props.setEmpleados} empleado={props.empleado} />
-                            }
-                        </AnimatePresence>
                     </div>
                 </motion.div>
             </Backdrop>

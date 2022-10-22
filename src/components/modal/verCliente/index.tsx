@@ -1,18 +1,18 @@
 import { AnimatePresence, motion } from "framer-motion";
 import React, { Dispatch, SetStateAction, useEffect, useState } from "react";
 import { Cliente } from "../../../tipos/Cliente";
+import { Roles } from "../../../tipos/Enums/Roles";
 import { In } from "../../../utils/animations";
-import { UpdateCliente } from "../../../utils/fetches/clienteFetches";
+import { DeleteCliente, UpdateCliente } from "../../../utils/fetches/clienteFetches";
+import AuthorizationWrapper from "../../authorizationWrapper";
 import ClienteForm from "../../elementos/Forms/clienteForm";
 import EditableLabel from "../../elementos/Forms/editableLabel";
-import RequireHigherAuth from "../../sidebar/RequireHigherAuth";
 import { Backdrop } from "../backdrop";
-import BorrarClienteModal from "../borrarClienteModal";
+import BorrarButton from "../borrarModal";
 
 const VerCliente = (props: { showModal: Function, cliente: Cliente, setCliente: Function, setClientes: Dispatch<SetStateAction<Cliente[]>> }) => {
     const [nombre, setNombre] = useState<string>(props.cliente.nombre);
     const [hayCambios, setHayCambios] = useState<boolean>(false);
-    const [showDeleteModal, setDeleteModal] = useState<boolean>(false);
     const [clienteAux, setClienteAux] = useState<Cliente>(props.cliente);
 
     const GuardarCliente = async () => {
@@ -25,6 +25,15 @@ const VerCliente = (props: { showModal: Function, cliente: Cliente, setCliente: 
         if (result) {
             props.setCliente(clienteAux);
             props.showModal(false);
+        }
+    }
+
+    const Eliminar = async () => {
+        const deletedCorrectly = await DeleteCliente(props.cliente._id);
+
+        if (deletedCorrectly) {
+            props.showModal(false);
+            props.setClientes((clientes) => clientes.filter((c: Cliente) => c._id !== props.cliente._id));
         }
     }
 
@@ -48,16 +57,14 @@ const VerCliente = (props: { showModal: Function, cliente: Cliente, setCliente: 
                                 type="input"
                             />
                             {
-                                <RequireHigherAuth>
-                                    <motion.button
-                                        whileHover={{ scale: 1.2 }}
-                                        onClick={() => { setDeleteModal(true); }}
-                                        className="self-center">
-                                        <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-                                            <path strokeLinecap="round" strokeLinejoin="round" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
-                                        </svg>
-                                    </motion.button>
-                                </RequireHigherAuth>
+                                AuthorizationWrapper([Roles.Administrador, Roles.Gerente])(() => {
+                                    return (
+                                        <BorrarButton
+                                            title="¿Borrar cliente?"
+                                            subtitle={`Vas a borrar a ${props.cliente.nombre} (${props.cliente.nif})`}
+                                            acceptCallback={Eliminar} />
+                                    )
+                                })({})
                             }
                         </div>
                         <ClienteForm setCliente={setClienteAux} cliente={clienteAux} setHayCambios={setHayCambios} />
@@ -81,15 +88,7 @@ const VerCliente = (props: { showModal: Function, cliente: Cliente, setCliente: 
                                     </div>
                             }
                         </div>
-                        <AnimatePresence>
-                            {
-                                showDeleteModal &&
-                                <BorrarClienteModal showClienteModal={props.showModal} showModal={setDeleteModal} cliente={props.cliente} setClientes={props.setClientes} />
-                            }
-                        </AnimatePresence>
-
                     </div>
-
                 </motion.div>
             </Backdrop>
         </motion.div>
