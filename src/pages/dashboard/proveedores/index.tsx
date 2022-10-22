@@ -56,7 +56,7 @@ const Proveedores = (props: { EmpleadoSesion: SesionEmpleado }) => {
                     </Tab>
 
                 </Tab.List>
-                <Tab.Panels className="flex flex-col h-full w-full pr-2">
+                <Tab.Panels className="flex flex-col h-full w-full">
                     <Tab.Panel
                         key={"ProveedoresContent"}
                         className={classNames(

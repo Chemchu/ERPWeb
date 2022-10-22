@@ -38,7 +38,7 @@ const ProveedoresPage = () => {
                 </div>
             </section>
             <section className="w-full h-full">
-                Tabla
+                En desarrollo!
             </section>
         </main>
     )
