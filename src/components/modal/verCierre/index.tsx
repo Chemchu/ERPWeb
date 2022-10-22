@@ -3,15 +3,17 @@ import React, { useEffect, useState } from "react";
 import { useRef } from "react";
 import { useReactToPrint } from "react-to-print";
 import { Cierre } from "../../../tipos/Cierre";
+import { Roles } from "../../../tipos/Enums/Roles";
 import { In } from "../../../utils/animations";
+import { DeleteCierre } from "../../../utils/fetches/cierresFetches";
 import GenerateQrBase64 from "../../../utils/generateQr";
+import AuthorizationWrapper from "../../authorizationWrapper";
 import CierrePrintable from "../../printable/cierrePrintable";
 import { Backdrop } from "../backdrop";
-import BorrarCierreModal from "../borrarCierreModal";
+import BorrarButton from "../borrarModal";
 
 const VerCierre = (props: { showModal: Function, cierre: Cierre, setCierre: Function, tpv: string }) => {
     const [qrImage, setQrImage] = useState<string>();
-    const [showModalDelete, setModalDelete] = useState<boolean>(false);
     const componentRef = useRef(null);
 
     useEffect(() => {
@@ -36,6 +38,15 @@ const VerCierre = (props: { showModal: Function, cierre: Cierre, setCierre: Func
         content: reactToPrintContent,
     });
 
+    const Eliminar = async () => {
+        const deletedCorrectly = await DeleteCierre(props.cierre._id);
+
+        if (deletedCorrectly) {
+            props.showModal(false)
+            props.setCierre(null);
+        }
+    }
+
     const fechaCierre = new Date(Number(props.cierre.cierre)).toLocaleString();
     const fechaApertura = new Date(Number(props.cierre.apertura)).toLocaleString();
 
@@ -55,12 +66,16 @@ const VerCierre = (props: { showModal: Function, cierre: Cierre, setCierre: Func
                                 <span>
                                     Cierre de {fechaCierre}
                                 </span>
-                                <div className="hover:text-red-500 cursor-pointer"
-                                    onClick={() => { setModalDelete(true) }}>
-                                    <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-                                        <path strokeLinecap="round" strokeLinejoin="round" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
-                                    </svg>
-                                </div>
+                                {
+                                    AuthorizationWrapper([Roles.Administrador, Roles.Gerente])(() => {
+                                        return (
+                                            <BorrarButton
+                                                title="¿Borrar cierre?"
+                                                subtitle="¿Seguro que quieres borrar el cierre?"
+                                                acceptCallback={Eliminar} />
+                                        )
+                                    })({})
+                                }
                             </div>
                             <span className="text-base">
                                 ID: {props.cierre._id}
@@ -119,10 +134,6 @@ const VerCierre = (props: { showModal: Function, cierre: Cierre, setCierre: Func
                                 Imprimir
                             </button>
                         </div>
-                        {
-                            showModalDelete &&
-                            <BorrarCierreModal cierre={props.cierre} showCierreModal={props.showModal} setCierre={props.setCierre} showModal={setModalDelete} />
-                        }
                         {
                             <div style={{ display: "none" }}>
                                 <CierrePrintable

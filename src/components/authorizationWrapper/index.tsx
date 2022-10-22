@@ -10,7 +10,6 @@ const ComprobarAutorizaciones = (requiredAuthorities: Roles[]): boolean => {
     }
 
     const currentUserAuthorities = Empleado.rol;
-
     return requiredAuthorities.includes(currentUserAuthorities);
 };
 
