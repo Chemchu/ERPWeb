@@ -3,6 +3,7 @@ import { GetServerSideProps } from "next";
 import { useEffect } from "react";
 import EnDesarrolloPage from "../../../components/enDesarrollo";
 import ProveedoresPage from "../../../components/sidebar/Proveedores";
+import AlbaranesPage from "../../../components/sidebar/Proveedores/Albaranes";
 import useEmpleadoContext from "../../../context/empleadoContext";
 import getJwtFromString from "../../../hooks/jwt";
 import DashboardLayout from "../../../layout";
@@ -71,12 +72,11 @@ const Proveedores = (props: { EmpleadoSesion: SesionEmpleado }) => {
                     <Tab.Panel
                         key={"AlbaranesContent"}
                         className={classNames(
-                            'pb-3 h-full w-full',
+                            'h-full w-full',
                             'focus:outline-none ring-white ring-opacity-60'
                         )}
                     >
-                        <EnDesarrolloPage />
-                        {/* <AlbaranesPage /> */}
+                        <AlbaranesPage />
                     </Tab.Panel>
                 </Tab.Panels>
             </Tab.Group >
