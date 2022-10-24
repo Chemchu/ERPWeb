@@ -12,17 +12,21 @@ const Sidebar = React.memo(
     setIndex: React.Dispatch<React.SetStateAction<SidebarOption>>;
   }) => {
     return props.isCollapsed ? (
-      <CollapsedSidebar
-        setCollapsed={props.setCollapsed}
-        IndexSeleccionado={props.IndexSeleccionado}
-        setIndex={props.setIndex}
-      />
+      <div className="h-full w-auto hidden sm:flex">
+        <CollapsedSidebar
+          setCollapsed={props.setCollapsed}
+          IndexSeleccionado={props.IndexSeleccionado}
+          setIndex={props.setIndex}
+        />
+      </div>
     ) : (
-      <OpenedSidebar
-        setCollapsed={props.setCollapsed}
-        IndexSeleccionado={props.IndexSeleccionado}
-        setIndex={props.setIndex}
-      />
+      <div className="h-full w-auto hidden sm:flex">
+        <OpenedSidebar
+          setCollapsed={props.setCollapsed}
+          IndexSeleccionado={props.IndexSeleccionado}
+          setIndex={props.setIndex}
+        />
+      </div>
     );
   }
 );
