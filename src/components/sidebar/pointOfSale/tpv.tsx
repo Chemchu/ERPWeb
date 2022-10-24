@@ -101,32 +101,46 @@ const TPV = (props: { productos: Producto[] }) => {
   if (!EmpleadoUsingTPV.isEmpleadoUsingTPV) {
     return (
       <div className="antialiased overflow-hidden text-gray-800">
-        <div className="grid grid-cols-3 bg-gray-100">
+        <div className="grid grid-cols-3 gap-2 bg-gray-100">
           <div className="col-span-2 h-screen">
-            <div className="flex flex-col h-full w-full py-4">
-              <div className="flex px-2 flex-row relative">
-                <div className="absolute left-5 top-3 px-2 py-2 rounded-full bg-blue-400 text-white">
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    className="h-6 w-6"
-                    fill="none"
-                    viewBox="0 0 24 24"
-                    stroke="currentColor"
-                  >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
+            <div className="flex flex-col h-full w-full py-1">
+              <div className="px-2 text-lg h-16">
+                <div className="flex w-full gap-2 flex-row bg-white rounded-3xl shadow transition-shadow focus:outline-none p-2">
+                  <div className="flex p-2 items-center rounded-full bg-blue-400 text-white">
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      className="h-6 w-6"
+                      fill="none"
+                      viewBox="0 0 24 24"
+                      stroke="currentColor"
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth={2}
+                        d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
+                      />
+                    </svg>
+                  </div>
+                  <input
+                    className="w-full transition-shadow focus:outline-none"
+                    placeholder="Buscar producto o código de barras..."
+                    disabled
+                    value={dirtyInput}
+                  />
+                  <button disabled className="flex p-2 items-center rounded-full text-gray-400 hover:text-red-500">
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      className="h-6 w-6"
+                      fill="none"
+                      viewBox="0 0 24 24"
+                      stroke="currentColor"
                       strokeWidth={2}
-                      d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
-                    />
-                  </svg>
+                    >
+                      <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
+                    </svg>
+                  </button>
                 </div>
-                <input
-                  disabled
-                  value={Filtro}
-                  className="bg-white rounded-3xl shadow text-lg full w-full h-16 py-4 pl-16 transition-shadow focus:shadow-2xl focus:outline-none"
-                  placeholder="Buscar producto o código de barras"
-                />
               </div>
               <div className="flex gap-2 p-4">
                 {arrayNum.map((n, i) => {
@@ -143,7 +157,7 @@ const TPV = (props: { productos: Producto[] }) => {
               </div>
             </div>
           </div>
-          <div className="h-screen p-3">
+          <div className="h-screen">
             <SidebarDerecho setProductosCarrito={SetProductosEnCarrito} productos={props.productos} />
           </div>
         </div>
@@ -158,9 +172,9 @@ const TPV = (props: { productos: Producto[] }) => {
         inputRef?.current?.focus();
       }}
     >
-      <div className="grid grid-cols-3 bg-gray-100">
+      <div className="grid grid-cols-3 gap-2 bg-gray-100">
         <div className="col-span-2 h-screen">
-          <div className="flex flex-col h-full w-full py-4">
+          <div className="flex flex-col h-full w-full py-1">
             <div className="px-2 text-lg h-16">
               <div className="flex w-full gap-2 flex-row bg-white rounded-3xl shadow transition-shadow focus:outline-none p-2">
                 <div className="flex p-2 items-center rounded-full bg-blue-400 text-white">
@@ -260,7 +274,7 @@ const TPV = (props: { productos: Producto[] }) => {
             </div>
           </div>
         </div>
-        <div className="h-screen p-3">
+        <div className="h-screen">
           <SidebarDerecho setProductosCarrito={SetProductosEnCarrito} productos={props.productos} inputRef={inputRef} />
         </div>
       </div>

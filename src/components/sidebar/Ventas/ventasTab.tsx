@@ -76,7 +76,7 @@ const SalesPage = () => {
   };
 
   return (
-    <div className="flex flex-col h-full w-full bg-white rounded-b-2xl rounded-r-2xl p-4 shadow-lg border-x">
+    <div className="flex flex-col h-full w-full bg-white rounded-bl-3xl rounded-tr-3xl p-4 shadow-lg border-x">
       <div className="flex w-full h-auto py-4">
         <div className="flex justify-start w-1/3 h-full gap-4 items-start">
           <UploadFileRestricted extension="json" tipoDocumento={TipoDocumento.Ventas} />

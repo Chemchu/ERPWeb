@@ -64,7 +64,7 @@ const MermaPage = () => {
   };
 
   return (
-    <div className="flex flex-col gap-4 h-full w-full bg-white rounded-b-2xl rounded-r-2xl p-4 shadow-lg border-x">
+    <div className="flex flex-col gap-4 h-full w-full bg-white rounded-bl-3xl rounded-tr-3xl p-4 shadow-lg border-x">
       <div className="flex w-full h-auto">
         <div className="flex gap-4 w-full h-full justify-start">
           <NuevoBoton
@@ -142,7 +142,7 @@ const TablaMerma = (props: {
   };
 
   return (
-    <div className="flex flex-col w-full h-full">
+    <div className="flex flex-col w-full h-full rounded-bl-3xl">
       <div className="flex items-center border-t-2 border-x-2 rounded-t-2xl p-2 font-semibold">
         <div className="w-2/5 ">Fecha</div>
         <div className="w-1/5 text-left ">Coste</div>

@@ -231,8 +231,8 @@ const SidebarDerecho = React.memo(
 
     if (!PagoRapido?.cliente || !Empleado) {
       return (
-        <div className="h-full p-2">
-          <div className="bg-white rounded-3xl shadow h-full">
+        <div className="h-full">
+          <div className="bg-white rounded-l-3xl shadow h-full">
             <div className="flex flex-col gap-2 h-full justify-center opacity-25">
               <div className="flex justify-center animate-bounce">
                 <svg
@@ -259,7 +259,7 @@ const SidebarDerecho = React.memo(
 
     if (ProductosEnCarrito.length <= 0) {
       return (
-        <div className="bg-white grid grid-rows-2 grid-cols-1 h-full rounded-3xl shadow">
+        <div className="bg-white grid grid-rows-2 grid-cols-1 h-full rounded-l-3xl shadow">
           <div className="flex flex-col gap-2 justify-items-center justify-self-center opacity-25 self-end">
             <div className="flex justify-center animate-bounce">
               <svg

@@ -27,7 +27,7 @@ const ProveedoresPage = () => {
   };
 
   return (
-    <main className="flex flex-col gap-4 w-full h-full max-h-full bg-white border-x border-b rounded-b-3xl rounded-r-3xl shadow-lg p-4">
+    <main className="flex flex-col gap-4 w-full h-full max-h-full bg-white border-x border-b rounded-bl-3xl rounded-tr-3xl shadow-lg p-4">
       <section className="flex justify-between items-start w-full">
         <NuevoBoton accionEvent={() => {}} />
         <div className="flex gap-2">

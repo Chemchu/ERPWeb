@@ -33,9 +33,9 @@ const OpenedSidebar = (props: { setCollapsed: Function; IndexSeleccionado: Sideb
       initial={{ x: "-10vh", opacity: 0 }}
       animate={{ x: 0, opacity: 1 }}
       exit={{ x: "-10vh", opacity: 0 }}
-      className="h-screen p-2"
+      className="h-screen"
     >
-      <div className="flex flex-col w-full h-full justify-between bg-white border shadow-lg rounded-3xl">
+      <div className="flex flex-col w-full h-full justify-between bg-white border shadow-lg rounded-r-3xl">
         <div
           className="flex justify-center items-end gap-2 w-full h-1/6 cursor-pointer"
           onClick={() => {
@@ -391,9 +391,9 @@ const CollapsedSidebar = (props: { setCollapsed: Function; IndexSeleccionado: Si
       initial={{ x: "-10vh", opacity: 0 }}
       animate={{ x: 0, opacity: 1 }}
       exit={{ x: "-10vh", opacity: 0 }}
-      className="w-auto h-screen p-2"
+      className="w-auto h-screen"
     >
-      <div className="flex flex-col h-full justify-between bg-white border shadow-lg rounded-3xl">
+      <div className="flex flex-col h-full justify-between bg-white border shadow-lg rounded-r-3xl">
         <div
           className="flex justify-center items-end w-full h-1/6 cursor-pointer hover:text-blue-500"
           onClick={() => {

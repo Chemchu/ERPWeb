@@ -19,13 +19,13 @@ const Ventas = (props: { EmpleadoSesion: SesionEmpleado }) => {
   }, []);
 
   return (
-    <Tab.Group as="div" className="flex flex-col w-full h-screen p-2">
+    <Tab.Group as="div" className="flex flex-col w-full h-screen">
       <Tab.List className="flex gap-1 grow-0 h-10">
         <Tab
           key={"Ventas"}
           className={(props: { selected: any }) =>
             classNames(
-              "w-1/4 h-full text-sm rounded-t-2xl border-t border-x",
+              "w-1/4 h-full text-sm rounded-t-3xl border-t border-x",
               "focus:outline-none ring-white ring-opacity-60",
               props.selected ? "bg-white shadow-lg" : "bg-gray-200 hover:bg-blue-400 hover:text-white"
             )
@@ -37,7 +37,7 @@ const Ventas = (props: { EmpleadoSesion: SesionEmpleado }) => {
           key={"Devoluciones"}
           className={(props: { selected: any }) =>
             classNames(
-              "w-1/4 h-full text-sm rounded-t-2xl border-t border-x",
+              "w-1/4 h-full text-sm rounded-t-3xl border-t border-x",
               "focus:outline-none  ring-white ring-opacity-60",
               props.selected ? "bg-white shadow-md" : "bg-gray-200 hover:bg-blue-400 hover:text-white"
             )

@@ -60,80 +60,78 @@ const Home = (props: { EmpleadoSesion: SesionEmpleado }) => {
   }
 
   return (
-    <div className="w-full h-screen p-2 text-gray-700">
-      <div className="flex flex-col gap-8 w-full h-full p-4 overflow-y-scroll bg-white rounded-2xl border shadow-lg">
-        <h1 className="text-2xl lg:text-4xl">
-          {`${saludo},  ${Empleado.nombre.charAt(0).toUpperCase() + Empleado.nombre.slice(1)}`}
-        </h1>
-        <div className="flex flex-col w-full gap-3">
-          <SummaryCard titulo="Ventas totales" data={summaryToday} />
-          <div className="flex flex-wrap gap-2 justify-between">
-            <div className="xl:w-72 w-44">
-              <FinanceCard
-                titulo="Ventas"
-                dataActual={summaryToday?.totalVentas.toFixed(2)}
-                dataPrevio={summaryYesterday?.totalVentas.toFixed(2)}
-              />
-            </div>
-            {Empleado.rol !== Roles.Cajero ? (
-              <div className="xl:w-72 w-44">
-                <FinanceCard
-                  titulo="Beneficio"
-                  dataActual={summaryToday?.beneficio.toFixed(2)}
-                  dataPrevio={summaryYesterday?.beneficio.toFixed(2)}
-                />
-              </div>
-            ) : (
-              <div className="xl:w-72 w-44">
-                <FinanceCard
-                  titulo="Media"
-                  dataActual={summaryToday?.mediaVentas.toFixed(2)}
-                  dataPrevio={summaryYesterday?.mediaVentas.toFixed(2)}
-                />
-              </div>
-            )}
-            <div className="xl:w-72 w-44">
-              <FinanceCard
-                titulo="Tickets"
-                unidad="uds"
-                dataActual={summaryToday && String(summaryToday?.numVentas)}
-                dataPrevio={summaryToday && String(summaryYesterday?.numVentas)}
-              />
-            </div>
-            <div className="xl:w-72 w-44">
-              <FinanceCard
-                titulo="Productos"
-                unidad="uds"
-                dataActual={summaryToday && String(summaryToday?.cantidadProductosVendidos)}
-                dataPrevio={summaryYesterday && String(summaryYesterday?.cantidadProductosVendidos)}
-              />
-            </div>
+    <div className="flex flex-col gap-8 w-full h-full p-4 overflow-y-scroll bg-white rounded-l-3xl border shadow-lg">
+      <h1 className="text-2xl lg:text-4xl">
+        {`${saludo},  ${Empleado.nombre.charAt(0).toUpperCase() + Empleado.nombre.slice(1)}`}
+      </h1>
+      <div className="flex flex-col w-full gap-3">
+        <SummaryCard titulo="Ventas totales" data={summaryToday} />
+        <div className="flex flex-wrap gap-2 justify-between">
+          <div className="xl:w-72 w-44">
+            <FinanceCard
+              titulo="Ventas"
+              dataActual={summaryToday?.totalVentas.toFixed(2)}
+              dataPrevio={summaryYesterday?.totalVentas.toFixed(2)}
+            />
           </div>
-          <div className="flex w-full justify-between gap-4">
-            <div className="w-1/2 h-full">
-              <VentasDelDia
-                data={summaryToday}
-                titulo="Ventas de hoy"
-                ejeY="totalVentaHora"
-                ejeX="hora"
-                nombreEjeX="Vendido"
-                color={Color.GREEN}
-                colorID={"verde"}
-                maxY={maxY + offset}
+          {Empleado.rol !== Roles.Cajero ? (
+            <div className="xl:w-72 w-44">
+              <FinanceCard
+                titulo="Beneficio"
+                dataActual={summaryToday?.beneficio.toFixed(2)}
+                dataPrevio={summaryYesterday?.beneficio.toFixed(2)}
               />
             </div>
-            <div className="w-1/2 h-full">
-              <VentasDelDia
-                data={summaryYesterday}
-                titulo="Ventas de ayer"
-                ejeY="totalVentaHora"
-                ejeX="hora"
-                nombreEjeX="Vendido"
-                color={Color.BLUE}
-                colorID={"azul"}
-                maxY={maxY + offset}
+          ) : (
+            <div className="xl:w-72 w-44">
+              <FinanceCard
+                titulo="Media"
+                dataActual={summaryToday?.mediaVentas.toFixed(2)}
+                dataPrevio={summaryYesterday?.mediaVentas.toFixed(2)}
               />
             </div>
+          )}
+          <div className="xl:w-72 w-44">
+            <FinanceCard
+              titulo="Tickets"
+              unidad="uds"
+              dataActual={summaryToday && String(summaryToday?.numVentas)}
+              dataPrevio={summaryToday && String(summaryYesterday?.numVentas)}
+            />
+          </div>
+          <div className="xl:w-72 w-44">
+            <FinanceCard
+              titulo="Productos"
+              unidad="uds"
+              dataActual={summaryToday && String(summaryToday?.cantidadProductosVendidos)}
+              dataPrevio={summaryYesterday && String(summaryYesterday?.cantidadProductosVendidos)}
+            />
+          </div>
+        </div>
+        <div className="flex w-full justify-between gap-4">
+          <div className="w-1/2 h-full">
+            <VentasDelDia
+              data={summaryToday}
+              titulo="Ventas de hoy"
+              ejeY="totalVentaHora"
+              ejeX="hora"
+              nombreEjeX="Vendido"
+              color={Color.GREEN}
+              colorID={"verde"}
+              maxY={maxY + offset}
+            />
+          </div>
+          <div className="w-1/2 h-full">
+            <VentasDelDia
+              data={summaryYesterday}
+              titulo="Ventas de ayer"
+              ejeY="totalVentaHora"
+              ejeX="hora"
+              nombreEjeX="Vendido"
+              color={Color.BLUE}
+              colorID={"azul"}
+              maxY={maxY + offset}
+            />
           </div>
         </div>
       </div>
