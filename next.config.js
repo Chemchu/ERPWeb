@@ -5,7 +5,7 @@ module.exports = {
   publicRuntimeConfig: {
     ERPGATEWAY_URL: process.env.ERPGATEWAY_URL,
   },
-}
+};
 
 // const withPWA = require("next-pwa");
 // module.exports = withPWA({

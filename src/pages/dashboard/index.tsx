@@ -13,7 +13,7 @@ import { Color } from "../../tipos/Enums/Color";
 import dynamic from "next/dynamic";
 
 const VentasDelDia = dynamic(() => import("../../components/dataDisplay/ventasDelDia"), { ssr: false });
-const saludos = ['Bienvenido otra vez', 'Hola', 'Saludos'];
+const saludos = ["Bienvenido otra vez", "Hola", "Saludos"];
 
 const Home = (props: { EmpleadoSesion: SesionEmpleado }) => {
   const [saludo, setSaludo] = useState<string>();
@@ -28,37 +28,35 @@ const Home = (props: { EmpleadoSesion: SesionEmpleado }) => {
 
     const GetData = () => {
       setSaludo(`${saludos[Math.floor(Math.random() * (saludos.length - 0))]}`);
-    }
+    };
     const GetSummaryData = async () => {
-      const hoy = new Date()
+      const hoy = new Date();
       const ayer = new Date();
       ayer.setDate(ayer.getDate() - 1);
 
-      setSummaryToday(await FetchResumenDiario(hoy))
-      setSummaryYesterday(await FetchResumenDiario(ayer))
-    }
-    GetData()
-    GetSummaryData()
+      setSummaryToday(await FetchResumenDiario(hoy));
+      setSummaryYesterday(await FetchResumenDiario(ayer));
+    };
+    GetData();
+    GetSummaryData();
   }, []);
 
-  let maxY = -1
+  let maxY = -1;
   const offset = 10;
   if (summaryToday && summaryYesterday) {
-    const ventasHora = [...summaryToday.ventasPorHora, ...summaryYesterday.ventasPorHora]
+    const ventasHora = [...summaryToday.ventasPorHora, ...summaryYesterday.ventasPorHora];
     for (let index = 0; index < ventasHora.length; index++) {
       const ventaHora: VentasPorHora = ventasHora[index];
 
-      if (ventaHora.totalVentaHora > maxY) { maxY = ventaHora.totalVentaHora }
+      if (ventaHora.totalVentaHora > maxY) {
+        maxY = ventaHora.totalVentaHora;
+      }
     }
-    maxY = Math.ceil(maxY / 10) * 10
+    maxY = Math.ceil(maxY / 10) * 10;
   }
 
   if (!Empleado || !Empleado.nombre) {
-    return (
-      <div>
-        Cargando...
-      </div>
-    );
+    return <div>Cargando...</div>;
   }
 
   return (
@@ -71,40 +69,77 @@ const Home = (props: { EmpleadoSesion: SesionEmpleado }) => {
           <SummaryCard titulo="Ventas totales" data={summaryToday} />
           <div className="flex flex-wrap gap-2 justify-between">
             <div className="xl:w-72 w-44">
-              <FinanceCard titulo="Ventas" dataActual={summaryToday?.totalVentas.toFixed(2)} dataPrevio={summaryYesterday?.totalVentas.toFixed(2)} />
+              <FinanceCard
+                titulo="Ventas"
+                dataActual={summaryToday?.totalVentas.toFixed(2)}
+                dataPrevio={summaryYesterday?.totalVentas.toFixed(2)}
+              />
             </div>
-            {
-              Empleado.rol !== Roles.Cajero ?
-                <div className="xl:w-72 w-44">
-                  <FinanceCard titulo="Beneficio" dataActual={summaryToday?.beneficio.toFixed(2)} dataPrevio={summaryYesterday?.beneficio.toFixed(2)} />
-                </div>
-                :
-                <div className="xl:w-72 w-44">
-                  <FinanceCard titulo="Media" dataActual={summaryToday?.mediaVentas.toFixed(2)} dataPrevio={summaryYesterday?.mediaVentas.toFixed(2)} />
-                </div>
-            }
+            {Empleado.rol !== Roles.Cajero ? (
+              <div className="xl:w-72 w-44">
+                <FinanceCard
+                  titulo="Beneficio"
+                  dataActual={summaryToday?.beneficio.toFixed(2)}
+                  dataPrevio={summaryYesterday?.beneficio.toFixed(2)}
+                />
+              </div>
+            ) : (
+              <div className="xl:w-72 w-44">
+                <FinanceCard
+                  titulo="Media"
+                  dataActual={summaryToday?.mediaVentas.toFixed(2)}
+                  dataPrevio={summaryYesterday?.mediaVentas.toFixed(2)}
+                />
+              </div>
+            )}
             <div className="xl:w-72 w-44">
-              <FinanceCard titulo="Tickets" unidad="uds" dataActual={summaryToday && String(summaryToday?.numVentas)} dataPrevio={summaryToday && String(summaryYesterday?.numVentas)} />
+              <FinanceCard
+                titulo="Tickets"
+                unidad="uds"
+                dataActual={summaryToday && String(summaryToday?.numVentas)}
+                dataPrevio={summaryToday && String(summaryYesterday?.numVentas)}
+              />
             </div>
             <div className="xl:w-72 w-44">
-              <FinanceCard titulo="Productos" unidad="uds" dataActual={summaryToday && String(summaryToday?.cantidadProductosVendidos)} dataPrevio={summaryYesterday && String(summaryYesterday?.cantidadProductosVendidos)} />
+              <FinanceCard
+                titulo="Productos"
+                unidad="uds"
+                dataActual={summaryToday && String(summaryToday?.cantidadProductosVendidos)}
+                dataPrevio={summaryYesterday && String(summaryYesterday?.cantidadProductosVendidos)}
+              />
             </div>
           </div>
           <div className="flex w-full justify-between gap-4">
             <div className="w-1/2 h-full">
-              <VentasDelDia data={summaryToday} titulo="Ventas de hoy" ejeY="totalVentaHora" ejeX="hora" nombreEjeX="Vendido"
-                color={Color.GREEN} colorID={"verde"} maxY={maxY + offset} />
+              <VentasDelDia
+                data={summaryToday}
+                titulo="Ventas de hoy"
+                ejeY="totalVentaHora"
+                ejeX="hora"
+                nombreEjeX="Vendido"
+                color={Color.GREEN}
+                colorID={"verde"}
+                maxY={maxY + offset}
+              />
             </div>
             <div className="w-1/2 h-full">
-              <VentasDelDia data={summaryYesterday} titulo="Ventas de ayer" ejeY="totalVentaHora" ejeX="hora" nombreEjeX="Vendido"
-                color={Color.BLUE} colorID={"azul"} maxY={maxY + offset} />
+              <VentasDelDia
+                data={summaryYesterday}
+                titulo="Ventas de ayer"
+                ejeY="totalVentaHora"
+                ejeX="hora"
+                nombreEjeX="Vendido"
+                color={Color.BLUE}
+                colorID={"azul"}
+                maxY={maxY + offset}
+              />
             </div>
           </div>
         </div>
       </div>
     </div>
-  )
-}
+  );
+};
 
 Home.PageLayout = DashboardLayout;
 
@@ -115,7 +150,7 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
     return {
       redirect: {
         permanent: false,
-        destination: `/login`
+        destination: `/login`,
       },
     };
   }
@@ -126,17 +161,17 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
     email: jwt.email,
     nombre: jwt.nombre,
     rol: Roles[jwt.rol as keyof typeof Roles] || Roles.Cajero,
-  }
+  };
 
   if (jwt.TPV) {
-    emp.TPV = jwt.TPV
+    emp.TPV = jwt.TPV;
   }
 
   return {
     props: {
-      EmpleadoSesion: emp as SesionEmpleado
-    }
-  }
-}
+      EmpleadoSesion: emp as SesionEmpleado,
+    },
+  };
+};
 
 export default Home;

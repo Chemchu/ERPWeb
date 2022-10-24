@@ -373,7 +373,7 @@ mutation Mutation($idTpv: ID!, $idEmpleadoDestinatario: ID!) {
     message
     successful
   }
-}`
+}`;
 
 export const QUERY_CIERRES = `
     query CierresTPVs($find: CierresTPVFind) {
@@ -430,7 +430,7 @@ export const DELETE_EMPLEADO = `
     successful
   }
 }
-`
+`;
 
 export const UPDATE_EMPLEADO = `
 mutation Mutation($id: ID!, $empleadoInput: EmpleadoUpdateFields!) {
@@ -439,7 +439,7 @@ mutation Mutation($id: ID!, $empleadoInput: EmpleadoUpdateFields!) {
     successful
   }
 }
-`
+`;
 
 export const LOGIN = `
   query Login($loginValues: Credentials!) {
@@ -449,7 +449,7 @@ export const LOGIN = `
       token
     }
   }
-`
+`;
 
 export const QUERY_DEVOLUCIONES = `
 query Devoluciones($find: DevolucionFind, $limit: Int) {
@@ -544,7 +544,7 @@ query Devoluciones($find: DevolucionFind, $limit: Int) {
     }
   }
 }
-`
+`;
 
 export const QUERY_DEVOLUCION = `
 query Devolucion($id: ID!) {
@@ -642,8 +642,7 @@ query Devolucion($id: ID!) {
     createdAt
     updatedAt
   }
-}`
-
+}`;
 
 export const ADD_DEVOLUCION = `
   mutation AddDevolucion($fields: DevolucionFields!) {
@@ -654,7 +653,7 @@ export const ADD_DEVOLUCION = `
     createdAt
   }
 }
-`
+`;
 
 export const ADD_CIERRES_FILE = `
     mutation AddCierresFile($csv: String!) {
@@ -674,7 +673,7 @@ mutation UpdateVenta($id: ID!, $precioVentaTotal: Float!, $tipo: String, $client
     createdAt
   }
 }
-`
+`;
 
 export const DELETE_CIERRE = `
 mutation DeleteCierreTPV($id: ID!) {
@@ -683,7 +682,7 @@ mutation DeleteCierreTPV($id: ID!) {
     successful
   }
 }
-`
+`;
 export const QUERY_MERMA = `
 query Merma($find: MermaFind!) {
   merma(find: $find) {
@@ -715,7 +714,7 @@ query Merma($find: MermaFind!) {
     updatedAt
   }
 }
-`
+`;
 
 export const QUERY_MERMAS = `
 query Mermas($find: MermasFind, $limit: Int) {
@@ -748,7 +747,7 @@ query Mermas($find: MermasFind, $limit: Int) {
     updatedAt
   }
 }
-`
+`;
 
 export const ADD_MERMA = `
 mutation Mutation($merma: MermaInput!) {
@@ -756,7 +755,7 @@ mutation Mutation($merma: MermaInput!) {
     message
     successful
   }
-}`
+}`;
 
 export const DELETE_MERMA = `
 mutation Mutation($id: ID!) {
@@ -764,7 +763,7 @@ mutation Mutation($id: ID!) {
     message
     successful
   }
-}`
+}`;
 
 export const UPDATE_MERMA = `
 mutation Mutation($id: ID!, $merma: MermaInput!) {
@@ -772,4 +771,4 @@ mutation Mutation($id: ID!, $merma: MermaInput!) {
     message
     successful
   }
-}`
+}`;

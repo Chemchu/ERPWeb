@@ -1,25 +1,21 @@
-import React, { useContext, createContext } from 'react';
-import { POSState } from '../../tipos/POSState';
+import React, { useContext, createContext } from "react";
+import { POSState } from "../../tipos/POSState";
 
 const AppContext = createContext<POSState>({} as POSState);
-export const TPVStateContextProvider = (props: { State: POSState, children: React.ReactNode }) => {
-    const values: POSState = props.State
+export const TPVStateContextProvider = (props: { State: POSState; children: React.ReactNode }) => {
+  const values: POSState = props.State;
 
-    return (
-        <AppContext.Provider value={values}>
-            {props.children}
-        </AppContext.Provider>
-    );
-}
+  return <AppContext.Provider value={values}>{props.children}</AppContext.Provider>;
+};
 
 export function useTpvStateContext() {
-    const context = useContext(AppContext);
+  const context = useContext(AppContext);
 
-    if (!context) {
-        console.error('Error arrancando el contexto del punto de venta');
-    }
+  if (!context) {
+    console.error("Error arrancando el contexto del punto de venta");
+  }
 
-    return context;
+  return context;
 }
 
 export default useTpvStateContext;

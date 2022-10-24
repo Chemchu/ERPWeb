@@ -12,144 +12,168 @@ import { Backdrop } from "../backdrop";
 import { DeleteProducto, UpdateProducto } from "../../../utils/fetches/productosFetches";
 import BorrarButton from "../borrarModal";
 
-export const VerProducto = (props: { producto: Producto, setProducto: Function, showModal: Function }) => {
-    const [Nombre, setNombre] = useState<string>(props.producto.nombre || "");
-    const [ProductoAux, setProductoAux] = useState<Producto>();
-    const [hayCambios, setHayCambios] = useState<boolean>(false);
-    const [imprimible, setImprimible] = useState<boolean>(true);
+export const VerProducto = (props: { producto: Producto; setProducto: Function; showModal: Function }) => {
+  const [Nombre, setNombre] = useState<string>(props.producto.nombre || "");
+  const [ProductoAux, setProductoAux] = useState<Producto>();
+  const [hayCambios, setHayCambios] = useState<boolean>(false);
+  const [imprimible, setImprimible] = useState<boolean>(true);
 
-    useEffect(() => {
-        if (!ProductoAux) { setHayCambios(false); return; }
-        if (!ProductoAux.precioVenta) { setImprimible(false); return; }
-        if (!ProductoAux.nombre) { setImprimible(false); return; }
-        if (!ProductoAux.ean) { setImprimible(false); return; }
-        setImprimible(true);
+  useEffect(() => {
+    if (!ProductoAux) {
+      setHayCambios(false);
+      return;
+    }
+    if (!ProductoAux.precioVenta) {
+      setImprimible(false);
+      return;
+    }
+    if (!ProductoAux.nombre) {
+      setImprimible(false);
+      return;
+    }
+    if (!ProductoAux.ean) {
+      setImprimible(false);
+      return;
+    }
+    setImprimible(true);
+  }, [ProductoAux]);
 
-    }, [ProductoAux]);
+  const componentRef = useRef(null);
 
-    const componentRef = useRef(null);
+  const reactToPrintContent = React.useCallback(() => {
+    return componentRef.current;
+  }, []);
 
-    const reactToPrintContent = React.useCallback(() => {
-        return componentRef.current;
-    }, []);
+  const handlePrint = useReactToPrint({
+    documentTitle: "Etiqueta de producto",
+    content: reactToPrintContent,
+  });
 
-    const handlePrint = useReactToPrint({
-        documentTitle: "Etiqueta de producto",
-        content: reactToPrintContent,
-    })
+  const Print = () => {
+    try {
+      handlePrint();
+    } catch (e) {
+      notifyError("Rellene los campos necesarios para imprimir la etiqueta");
+      console.log(e);
+    }
+  };
 
-    const Print = () => {
-        try {
-            handlePrint()
-        }
-        catch (e) {
-            notifyError("Rellene los campos necesarios para imprimir la etiqueta");
-            console.log(e);
-        }
+  const GuardarCambios = async (Prod: Producto | undefined, id: string) => {
+    if (!Prod) {
+      return;
+    }
+
+    const p: Producto = {
+      _id: id,
+      alta: Prod.alta,
+      cantidad: Number(Prod.cantidad),
+      cantidadRestock: Number(Prod.cantidadRestock),
+      ean: String(Prod.ean),
+      familia: Prod.familia,
+      iva: Number(Prod.iva),
+      margen: Number(Prod.margen),
+      nombre: Nombre,
+      precioCompra: Number(Prod.precioCompra),
+      precioVenta: Number(Prod.precioVenta),
+      proveedor: Prod.proveedor,
     };
 
-    const GuardarCambios = async (Prod: Producto | undefined, id: string) => {
-        if (!Prod) { return; }
-
-        const p: Producto = {
-            _id: id,
-            alta: Prod.alta,
-            cantidad: Number(Prod.cantidad),
-            cantidadRestock: Number(Prod.cantidadRestock),
-            ean: String(Prod.ean),
-            familia: Prod.familia,
-            iva: Number(Prod.iva),
-            margen: Number(Prod.margen),
-            nombre: Nombre,
-            precioCompra: Number(Prod.precioCompra),
-            precioVenta: Number(Prod.precioVenta),
-            proveedor: Prod.proveedor
-        }
-
-        const updatedCorrectly = await UpdateProducto(p);
-        if (updatedCorrectly) {
-            props.setProducto(p);
-            setHayCambios(false);
-        }
+    const updatedCorrectly = await UpdateProducto(p);
+    if (updatedCorrectly) {
+      props.setProducto(p);
+      setHayCambios(false);
     }
+  };
 
-    const Eliminar = async () => {
-        const deletedCorrectly = await DeleteProducto(props.producto._id);
+  const Eliminar = async () => {
+    const deletedCorrectly = await DeleteProducto(props.producto._id);
 
-        if (deletedCorrectly) {
-            props.showModal(false);
-            props.setProducto(null);
-        }
+    if (deletedCorrectly) {
+      props.showModal(false);
+      props.setProducto(null);
     }
+  };
 
-    return (
-        <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} >
-            <Backdrop onClick={(e) => { e.stopPropagation(); props.showModal(false) }} >
-                <motion.div className="h-5/6 w-5/6 flex flex-col gap-10 items-center bg-white rounded-2xl p-6"
-                    onClick={(e) => e.stopPropagation()}
-                    variants={In}
-                    initial="hidden"
-                    animate="visible"
-                    exit="exit"
+  return (
+    <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}>
+      <Backdrop
+        onClick={(e) => {
+          e.stopPropagation();
+          props.showModal(false);
+        }}
+      >
+        <motion.div
+          className="h-5/6 w-5/6 flex flex-col gap-10 items-center bg-white rounded-2xl p-6"
+          onClick={(e) => e.stopPropagation()}
+          variants={In}
+          initial="hidden"
+          animate="visible"
+          exit="exit"
+        >
+          <div className="flex flex-col w-full h-full">
+            <div className="flex self-start font-semibold text-2xl w-full h-auto xl:text-3xl justify-between">
+              <EditableLabel
+                text={Nombre}
+                setText={setNombre}
+                cambiosHandler={setHayCambios}
+                placeholder="Nombre del producto"
+                type="input"
+              />
+              <BorrarButton
+                title={`¿Borrar producto?`}
+                subtitle={`Vas a borrar ${props.producto.nombre}`}
+                acceptCallback={Eliminar}
+              />
+            </div>
+            <ProductoForm setProducto={setProductoAux} producto={props.producto} setHayCambios={setHayCambios} />
+            <div className="flex w-full h-full gap-10 text-white self-end items-end justify-around">
+              <button
+                className="h-12 w-full rounded-xl bg-red-500 hover:bg-red-600 shadow-lg"
+                onClick={() => {
+                  props.showModal(false);
+                }}
+              >
+                Cerrar
+              </button>
+              <button
+                disabled={!imprimible}
+                className={`${
+                  imprimible ? "bg-orange-500 hover:bg-orange-600" : "bg-orange-400"
+                } h-12 w-full rounded-xl shadow-lg`}
+                onClick={Print}
+              >
+                Imprimir etiqueta
+              </button>
+              {hayCambios ? (
+                <button
+                  className={`flex bg-blue-500 hover:bg-blue-600 h-12 w-full rounded-xl shadow-lg justify-center items-center`}
+                  onClick={async () => {
+                    await GuardarCambios(ProductoAux, props.producto._id);
+                  }}
                 >
-                    <div className="flex flex-col w-full h-full">
-                        <div className="flex self-start font-semibold text-2xl w-full h-auto xl:text-3xl justify-between">
-                            <EditableLabel
-                                text={Nombre}
-                                setText={setNombre}
-                                cambiosHandler={setHayCambios}
-                                placeholder="Nombre del producto"
-                                type="input"
-                            />
-                            <BorrarButton
-                                title={`¿Borrar producto?`}
-                                subtitle={`Vas a borrar ${props.producto.nombre}`}
-                                acceptCallback={Eliminar} />
-                        </div>
-                        <ProductoForm setProducto={setProductoAux} producto={props.producto} setHayCambios={setHayCambios} />
-                        <div className="flex w-full h-full gap-10 text-white self-end items-end justify-around">
-                            <button className="h-12 w-full rounded-xl bg-red-500 hover:bg-red-600 shadow-lg" onClick={() => { props.showModal(false) }}>
-                                Cerrar
-                            </button>
-                            <button disabled={!imprimible} className={`${imprimible ? 'bg-orange-500 hover:bg-orange-600' : 'bg-orange-400'} h-12 w-full rounded-xl shadow-lg`}
-                                onClick={Print}>
-                                Imprimir etiqueta
-                            </button>
-                            {
-                                hayCambios ?
-                                    <button className={`flex bg-blue-500 hover:bg-blue-600 h-12 w-full rounded-xl shadow-lg justify-center items-center`}
-                                        onClick={async () => { await GuardarCambios(ProductoAux, props.producto._id) }}>
-                                        <p>
-                                            Guardar cambios
-                                        </p>
-                                    </button>
-                                    :
-                                    <div className={`flex bg-blue-400 h-12 w-full rounded-xl shadow-lg justify-center items-center `}>
-                                        <p>
-                                            Guardar cambios
-                                        </p>
-                                    </div>
-                            }
-                        </div>
-                        {
-                            ProductoAux?.ean &&
-                            ProductoAux?.precioVenta > 0 &&
-                            imprimible &&
-                            <div style={{ display: "none" }}>
-                                <Etiqueta
-                                    ref={componentRef}
-                                    nombre={Nombre}
-                                    ean={ProductoAux?.ean}
-                                    precio={Number(ProductoAux?.precioVenta)}
-                                />
-                            </div>
-                        }
-
-                    </div>
-                </motion.div>
-            </Backdrop>
+                  <p>Guardar cambios</p>
+                </button>
+              ) : (
+                <div className={`flex bg-blue-400 h-12 w-full rounded-xl shadow-lg justify-center items-center `}>
+                  <p>Guardar cambios</p>
+                </div>
+              )}
+            </div>
+            {ProductoAux?.ean && ProductoAux?.precioVenta > 0 && imprimible && (
+              <div style={{ display: "none" }}>
+                <Etiqueta
+                  ref={componentRef}
+                  nombre={Nombre}
+                  ean={ProductoAux?.ean}
+                  precio={Number(ProductoAux?.precioVenta)}
+                />
+              </div>
+            )}
+          </div>
         </motion.div>
-    );
-}
+      </Backdrop>
+    </motion.div>
+  );
+};
 
 export default VerProducto;

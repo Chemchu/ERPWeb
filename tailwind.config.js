@@ -1,17 +1,17 @@
 module.exports = {
-  content: ['./src/pages/**/*.{js,ts,jsx,tsx}', './src/components/**/*.{js,ts,jsx,tsx}'],
-  darkMode: 'media', // or 'media' or 'class'
+  content: ["./src/pages/**/*.{js,ts,jsx,tsx}", "./src/components/**/*.{js,ts,jsx,tsx}"],
+  darkMode: "media", // or 'media' or 'class'
   theme: {
     extend: {
       spacing: {
-        '112': '28rem',
-        '128': '32rem',
-        '144': '36rem',
-        '160': '40rem'
+        112: "28rem",
+        128: "32rem",
+        144: "36rem",
+        160: "40rem",
       },
       fontFamily: {
-        sans: ['"Open Sans"', '"Public Sans"', 'sans-serif', 'system-ui'],
-        mono: ['monospace', 'SFMono-Regular'],
+        sans: ['"Open Sans"', '"Public Sans"', "sans-serif", "system-ui"],
+        mono: ["monospace", "SFMono-Regular"],
       },
       height: {
         "5v": "5vh",
@@ -36,18 +36,18 @@ module.exports = {
         "100v": "100vh",
       },
       backgroundImage: {
-        'supermarket1': "url('/img/market-1.jpg')",
-        'supermarket2': "url('/img/market-2.jpg')",
-        'supermarket3': "url('/img/market-3.jpg')",
-        'supermarket4': "url('/img/market-4.jpg')",
-        'supermarket5': "url('/img/market-5.jpg')",
-        'landing1': "url('/img/landing-1.jpg')",
-        'landing2': "url('/img/landing-2.jpg')"
-      }
+        supermarket1: "url('/img/market-1.jpg')",
+        supermarket2: "url('/img/market-2.jpg')",
+        supermarket3: "url('/img/market-3.jpg')",
+        supermarket4: "url('/img/market-4.jpg')",
+        supermarket5: "url('/img/market-5.jpg')",
+        landing1: "url('/img/landing-1.jpg')",
+        landing2: "url('/img/landing-2.jpg')",
+      },
     },
   },
   variants: {
     extend: {},
   },
-  plugins: [require("@tailwindcss/line-clamp")]
-}
+  plugins: [require("@tailwindcss/line-clamp")],
+};
