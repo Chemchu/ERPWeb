@@ -2,7 +2,7 @@ import { Tab } from "@headlessui/react";
 import { GetServerSideProps } from "next";
 import { useEffect } from "react";
 import EnDesarrolloPage from "../../../components/enDesarrollo";
-import AyudaPage from "../../../components/sidebar/Ayuda";
+import AyudaPage from "../../../components/content/Ayuda";
 import useEmpleadoContext from "../../../context/empleadoContext";
 import getJwtFromString from "../../../hooks/jwt";
 import DashboardLayout from "../../../layout";
@@ -20,12 +20,12 @@ const ConfiguracionPage = (props: { EmpleadoSesion: SesionEmpleado }) => {
 
   return (
     <Tab.Group as="div" className="flex flex-col w-full h-screen">
-      <Tab.List className="flex gap-1 h-10">
+      <Tab.List className="flex sm:gap-1 h-10">
         <Tab
           key={"Configuracion"}
           className={(props: { selected: any }) =>
             classNames(
-              "w-1/4 h-full text-sm rounded-t-3xl border-t border-x",
+              "w-2/5 sm:w-1/4 h-full text-sm sm:rounded-t-3xl border-t border-x border-gray-300 px-1",
               "focus:outline-none ring-white ring-opacity-60",
               props.selected ? "bg-white shadow-lg" : "bg-gray-200 hover:bg-blue-400 hover:text-white"
             )
@@ -37,7 +37,7 @@ const ConfiguracionPage = (props: { EmpleadoSesion: SesionEmpleado }) => {
           key={"TPV"}
           className={(props: { selected: any }) =>
             classNames(
-              "w-1/4 h-full text-sm rounded-t-3xl border-t border-x",
+              "w-2/5 sm:w-1/4 h-full text-sm sm:rounded-t-3xl border-t border-x border-gray-300 px-1",
               "focus:outline-none  ring-white ring-opacity-60",
               props.selected ? "bg-white shadow-md" : "bg-gray-200 hover:bg-blue-400 hover:text-white"
             )
@@ -49,7 +49,7 @@ const ConfiguracionPage = (props: { EmpleadoSesion: SesionEmpleado }) => {
           key={"Ayuda"}
           className={(props: { selected: any }) =>
             classNames(
-              "w-1/4 h-full text-sm rounded-t-3xl border-t border-x",
+              "w-2/5 sm:w-1/4 h-full text-sm sm:rounded-t-3xl border-t border-x  border-gray-300 px-1",
               "focus:outline-none  ring-white ring-opacity-60",
               props.selected ? "bg-white shadow-md" : "bg-gray-200 hover:bg-blue-400 hover:text-white"
             )

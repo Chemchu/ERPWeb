@@ -60,8 +60,8 @@ const Home = (props: { EmpleadoSesion: SesionEmpleado }) => {
   }
 
   return (
-    <div className="flex flex-col gap-8 w-full h-full p-4 overflow-y-scroll bg-white rounded-l-3xl border shadow-lg">
-      <h1 className="text-2xl lg:text-4xl">
+    <div className="flex flex-col gap-8 w-full h-full p-4 overflow-y-scroll bg-white sm:rounded-l-3xl border sm:shadow-lg">
+      <h1 className="text-3xl lg:text-4xl text-gray-700">
         {`${saludo},  ${Empleado.nombre.charAt(0).toUpperCase() + Empleado.nombre.slice(1)}`}
       </h1>
       <div className="flex flex-col w-full gap-3">

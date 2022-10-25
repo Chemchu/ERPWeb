@@ -116,7 +116,7 @@ const EstadisticasPage = () => {
   }, [summary]);
 
   return (
-    <div className="flex flex-col gap-4 h-full w-full bg-white rounded-bl-3xl rounded-tr-3xl p-4 shadow-lg border-x overflow-y-scroll">
+    <div className="flex flex-col gap-4 h-full w-full bg-white sm:rounded-bl-3xl sm:rounded-tr-3xl p-4 shadow-lg border-x overflow-y-scroll">
       <div id="filtros" className="flex justify-end w-full z-20 gap-4">
         <DateRange
           titulo="Fecha"

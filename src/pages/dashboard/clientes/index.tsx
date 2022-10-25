@@ -1,15 +1,12 @@
 import { Tab } from "@headlessui/react";
 import { GetServerSideProps } from "next";
-import { useEffect, useState } from "react";
-import EnDesarrolloPage from "../../../components/enDesarrollo";
-import ClientesPage from "../../../components/sidebar/Clientes";
+import { useEffect } from "react";
+import ClientesPage from "../../../components/content/Clientes";
 import useEmpleadoContext from "../../../context/empleadoContext";
 import getJwtFromString from "../../../hooks/jwt";
 import DashboardLayout from "../../../layout";
-import { Cliente } from "../../../tipos/Cliente";
 import { SesionEmpleado } from "../../../tipos/Empleado";
 import { Roles } from "../../../tipos/Enums/Roles";
-import { FetchClientes } from "../../../utils/fetches/clienteFetches";
 
 const Clientes = (props: { EmpleadoSesion: SesionEmpleado }) => {
   const { Empleado, SetEmpleado } = useEmpleadoContext();
@@ -22,12 +19,12 @@ const Clientes = (props: { EmpleadoSesion: SesionEmpleado }) => {
 
   return (
     <Tab.Group as="div" className="flex flex-col w-full h-screen">
-      <Tab.List className="flex gap-1 grow-0 h-10">
+      <Tab.List className="flex sm:gap-1 grow-0 h-10">
         <Tab
           key={"Clientes"}
           className={(props: { selected: any }) =>
             classNames(
-              "w-1/4 h-full text-sm rounded-t-3xl border-t border-x",
+              "w-2/5 sm:w-1/4 h-full text-sm sm:rounded-t-3xl border-t border-x border-gray-300 px-1",
               "focus:outline-none ring-white ring-opacity-60",
               props.selected ? "bg-white shadow-lg" : "bg-gray-200 hover:bg-blue-400 hover:text-white"
             )

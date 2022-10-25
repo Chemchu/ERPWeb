@@ -13,6 +13,7 @@ import useDatosTiendaContext from "../context/datosTienda";
 import { notifyInfo } from "../utils/toastify";
 import StoreDataModal from "../components/modal/storeDataModal";
 import Cookies from "js-cookie";
+import Navbar from "../components/navbar";
 
 const variants = {
   initial: {
@@ -64,15 +65,26 @@ const DashboardLayout = React.memo(({ children }: { children: React.ReactNode })
       <ProductCarritoContextProvider>
         <ComprasAparcadasContextProvider>
           {
-            <div className="dark:bg-gray-800 h-screen w-screen overflow-hidden">
+            <div className="dark:bg-gray-800 h-full w-screen overflow-hidden">
               <NextProgress />
-              <div className="flex gap-1 items-start w-full h-full justify-start bg-gray-100">
-                <Sidebar
-                  isCollapsed={isSidebarCollapsed}
-                  setCollapsed={setSidebarCollapsed}
-                  IndexSeleccionado={IndexSidebar}
-                  setIndex={setSidebarIndex}
-                />
+              <div className="relative flex flex-row sm:flex-col gap-1 items-start w-full h-full justify-start bg-gray-100">
+                <div className="h-full w-auto hidden sm:flex">
+                  <Sidebar
+                    isCollapsed={isSidebarCollapsed}
+                    setCollapsed={setSidebarCollapsed}
+                    IndexSeleccionado={IndexSidebar}
+                    setIndex={setSidebarIndex}
+                  />
+                </div>
+
+                <div className="fixed inset-x-0 bottom-0 z-50 shadow h-14 w-full sm:hidden">
+                  <Navbar
+                    setCollapsed={setSidebarCollapsed}
+                    IndexSeleccionado={IndexSidebar}
+                    setIndex={setSidebarIndex}
+                  />
+                </div>
+
                 <motion.div
                   key={router.route}
                   className="w-full h-full"
@@ -82,6 +94,7 @@ const DashboardLayout = React.memo(({ children }: { children: React.ReactNode })
                 >
                   {children}
                 </motion.div>
+
                 {showStoreDataModal && <StoreDataModal showModal={setStoreDataModal} />}
               </div>
               <ToastContainer

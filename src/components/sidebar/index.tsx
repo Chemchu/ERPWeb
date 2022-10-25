@@ -2,7 +2,7 @@ import { motion } from "framer-motion";
 import Link from "next/dist/client/link";
 import React from "react";
 import { SidebarOption } from "../../tipos/Enums/SidebarOption";
-import RequireHigherAuthorization from "./RequireHigherAuth";
+import RequireHigherAuth from "../RequireHigherAuth";
 
 const Sidebar = React.memo(
   (props: {
@@ -12,21 +12,17 @@ const Sidebar = React.memo(
     setIndex: React.Dispatch<React.SetStateAction<SidebarOption>>;
   }) => {
     return props.isCollapsed ? (
-      <div className="h-full w-auto hidden sm:flex">
-        <CollapsedSidebar
-          setCollapsed={props.setCollapsed}
-          IndexSeleccionado={props.IndexSeleccionado}
-          setIndex={props.setIndex}
-        />
-      </div>
+      <CollapsedSidebar
+        setCollapsed={props.setCollapsed}
+        IndexSeleccionado={props.IndexSeleccionado}
+        setIndex={props.setIndex}
+      />
     ) : (
-      <div className="h-full w-auto hidden sm:flex">
-        <OpenedSidebar
-          setCollapsed={props.setCollapsed}
-          IndexSeleccionado={props.IndexSeleccionado}
-          setIndex={props.setIndex}
-        />
-      </div>
+      <OpenedSidebar
+        setCollapsed={props.setCollapsed}
+        IndexSeleccionado={props.IndexSeleccionado}
+        setIndex={props.setIndex}
+      />
     );
   }
 );
@@ -137,7 +133,7 @@ const OpenedSidebar = (props: { setCollapsed: Function; IndexSeleccionado: Sideb
             </div>
           </Link>
 
-          <RequireHigherAuthorization>
+          <RequireHigherAuth>
             <Link href="/dashboard/estadisticas">
               <div
                 onClick={(e) => {
@@ -166,7 +162,7 @@ const OpenedSidebar = (props: { setCollapsed: Function; IndexSeleccionado: Sideb
                 <span>Estadísticas</span>
               </div>
             </Link>
-          </RequireHigherAuthorization>
+          </RequireHigherAuth>
 
           <Link href="/dashboard/ventas">
             <div
@@ -255,7 +251,7 @@ const OpenedSidebar = (props: { setCollapsed: Function; IndexSeleccionado: Sideb
             </div>
           </Link>
 
-          <RequireHigherAuthorization>
+          <RequireHigherAuth>
             <Link href="/dashboard/empleados">
               <div
                 onClick={(e) => {
@@ -284,9 +280,9 @@ const OpenedSidebar = (props: { setCollapsed: Function; IndexSeleccionado: Sideb
                 <span>Empleados</span>
               </div>
             </Link>
-          </RequireHigherAuthorization>
+          </RequireHigherAuth>
 
-          <RequireHigherAuthorization>
+          <RequireHigherAuth>
             <Link href="/dashboard/proveedores">
               <div
                 onClick={(e) => {
@@ -316,7 +312,7 @@ const OpenedSidebar = (props: { setCollapsed: Function; IndexSeleccionado: Sideb
                 <span>Proveedores</span>
               </div>
             </Link>
-          </RequireHigherAuthorization>
+          </RequireHigherAuth>
         </div>
 
         <div className="flex flex-col w-full h-1/6 xl:gap-6 gap-4  justify-center px-5 pb-10">
@@ -498,7 +494,7 @@ const CollapsedSidebar = (props: { setCollapsed: Function; IndexSeleccionado: Si
             </div>
           </Link>
 
-          <RequireHigherAuthorization>
+          <RequireHigherAuth>
             <Link href="/dashboard/estadisticas">
               <div
                 onClick={(e) => {
@@ -525,7 +521,7 @@ const CollapsedSidebar = (props: { setCollapsed: Function; IndexSeleccionado: Si
                 </svg>
               </div>
             </Link>
-          </RequireHigherAuthorization>
+          </RequireHigherAuth>
 
           <Link href="/dashboard/ventas">
             <div
@@ -608,7 +604,7 @@ const CollapsedSidebar = (props: { setCollapsed: Function; IndexSeleccionado: Si
             </div>
           </Link>
 
-          <RequireHigherAuthorization>
+          <RequireHigherAuth>
             <Link href="/dashboard/empleados">
               <div
                 onClick={(e) => {
@@ -636,9 +632,9 @@ const CollapsedSidebar = (props: { setCollapsed: Function; IndexSeleccionado: Si
                 </svg>
               </div>
             </Link>
-          </RequireHigherAuthorization>
+          </RequireHigherAuth>
 
-          <RequireHigherAuthorization>
+          <RequireHigherAuth>
             <Link href="/dashboard/proveedores">
               <div
                 onClick={(e) => {
@@ -667,7 +663,7 @@ const CollapsedSidebar = (props: { setCollapsed: Function; IndexSeleccionado: Si
                 </svg>
               </div>
             </Link>
-          </RequireHigherAuthorization>
+          </RequireHigherAuth>
         </div>
 
         <div className="flex flex-col w-full h-1/6 xl:gap-6 gap-4 justify-center px-5 pb-10">

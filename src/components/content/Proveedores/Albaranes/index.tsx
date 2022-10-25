@@ -1,17 +1,16 @@
 import { AnimatePresence } from "framer-motion";
 import { useEffect, useState } from "react";
-import { Roles } from "../../../tipos/Enums/Roles";
-import { Proveedor } from "../../../tipos/Proveedor";
-import { notifyWarn } from "../../../utils/toastify";
-import { ValidateSearchString } from "../../../utils/validator";
-import AuthorizationWrapper from "../../authorizationWrapper";
-import NuevoBoton from "../../elementos/botones/nuevoBoton";
-import { Paginador } from "../../elementos/Forms/paginador";
-import SkeletonCard from "../../Skeletons/skeletonCard";
+import { Roles } from "../../../../tipos/Enums/Roles";
+import { notifyWarn } from "../../../../utils/toastify";
+import { ValidateSearchString } from "../../../../utils/validator";
+import AuthorizationWrapper from "../../../authorizationWrapper";
+import NuevoBoton from "../../../elementos/botones/nuevoBoton";
+import { Paginador } from "../../../elementos/Forms/paginador";
+import SkeletonCard from "../../../Skeletons/skeletonCard";
 
-const ProveedoresPage = () => {
+const AlbaranesPage = () => {
   const [filtro, setFiltro] = useState<string>("");
-  const [proveedores, setProveedores] = useState<Proveedor[]>([]);
+  const [albaranes, setAlbaranes] = useState<any[]>([]);
   useEffect(() => {}, []);
 
   const Filtrar = async (f: string) => {
@@ -19,7 +18,7 @@ const ProveedoresPage = () => {
       return;
     }
     if (!ValidateSearchString(f)) {
-      notifyWarn("Proveedor inválido");
+      notifyWarn("Albarán inválido");
       return;
     }
 
@@ -27,7 +26,7 @@ const ProveedoresPage = () => {
   };
 
   return (
-    <main className="flex flex-col gap-4 w-full h-full max-h-full bg-white border-x border-b rounded-bl-3xl rounded-tr-3xl shadow-lg p-4">
+    <main className="flex flex-col gap-4 w-full h-full max-h-full bg-white border-x border-b sm:rounded-bl-3xl sm:rounded-tr-3xl shadow-lg p-4">
       <section className="flex justify-between items-start w-full">
         <NuevoBoton accionEvent={() => {}} />
         <div className="flex gap-2">
@@ -62,18 +61,18 @@ const ProveedoresPage = () => {
           )}
         </div>
       </section>
-      <ProveedorTable isLoading={false} setProveedores={() => {}} proveedores={[]} />
+      <AlbaranTable isLoading={false} setAlbaran={() => {}} albaranes={[]} />
     </main>
   );
 };
 
 const arrayNum = [...Array(8)];
 
-const ProveedorTable = (props: { isLoading: boolean; proveedores: Proveedor[]; setProveedores: Function }) => {
+const AlbaranTable = (props: { isLoading: boolean; albaranes: any[]; setAlbaran: Function }) => {
   const [currentPage, setCurrentPage] = useState<number>(1);
 
   const elementsPerPage = 50;
-  const numPages = Math.ceil(props.proveedores.length / elementsPerPage);
+  const numPages = Math.ceil(props.albaranes.length / elementsPerPage);
 
   const setPaginaActual = (page: number) => {
     if (page < 1) {
@@ -103,12 +102,12 @@ const ProveedorTable = (props: { isLoading: boolean; proveedores: Proveedor[]; s
       ) : (
         <>
           <div className="h-full w-full border-2 rounded-b overflow-y-scroll">
-            {props.proveedores.length <= 0 ? (
+            {props.albaranes.length <= 0 ? (
               <div className="flex justify-center items-center h-full w-full text-xl">
-                No se ha encontrado registros de proveedores en el sistema (todavía en desarrollo)
+                No se ha encontrado registros de albaranes en el sistema (todavía en desarrollo)
               </div>
             ) : (
-              props.proveedores
+              props.albaranes
                 .slice(elementsPerPage * (currentPage - 1), currentPage * elementsPerPage)
                 .map((p, index) => {
                   return (
@@ -134,21 +133,21 @@ const ProveedorTable = (props: { isLoading: boolean; proveedores: Proveedor[]; s
   );
 };
 
-const FilaProveedor = (props: { proveedor: Proveedor; proveedores: Proveedor[]; setAllProveedores: Function }) => {
+const FilaAlbaran = (props: { albaran: any; albaranes: any[]; setAllAlbaranes: Function }) => {
   const [showModal, setModal] = useState<boolean>(false);
-  const [proeveedor, setProveedor] = useState<Proveedor>(props.proveedor);
+  const [albaran, setAlbaran] = useState<any>(props.albaran);
 
-  const SetCurrentProveedor = (p: Proveedor | null) => {
+  const SetCurrentAlbaran = (p: any | null) => {
     if (p === null) {
-      const provs = props.proveedores.filter((p) => {
-        return p._id !== proeveedor._id;
+      const provs = props.albaranes.filter((p) => {
+        return p._id !== albaran._id;
       });
-      props.setAllProveedores(provs);
+      props.setAllAlbaranes(provs);
 
       return;
     }
 
-    setProveedor(p);
+    setAlbaran(p);
   };
 
   return (
@@ -159,10 +158,10 @@ const FilaProveedor = (props: { proveedor: Proveedor; proveedores: Proveedor[]; 
           setModal(true);
         }}
       >
-        <div className="text-left truncate">{proeveedor.nombre}</div>
-        <div className="text-left">{proeveedor.localidad}</div>
-        <div className="text-left truncate">{proeveedor.telefono}</div>
-        <div className="text-right">{proeveedor.email}</div>
+        <div className="text-left truncate">{albaran.nombre}</div>
+        <div className="text-left">{albaran.localidad}</div>
+        <div className="text-left truncate">{albaran.telefono}</div>
+        <div className="text-right">{albaran.email}</div>
       </div>
       <AnimatePresence>
         {/* {showModal && <VerProducto showModal={setModal} producto={proeveedor} setProducto={SetCurrentProveedor} />} */}
@@ -171,4 +170,4 @@ const FilaProveedor = (props: { proveedor: Proveedor; proveedores: Proveedor[]; 
   );
 };
 
-export default AuthorizationWrapper([Roles.Administrador, Roles.Gerente], true)(ProveedoresPage);
+export default AuthorizationWrapper([Roles.Administrador, Roles.Gerente], true)(AlbaranesPage);

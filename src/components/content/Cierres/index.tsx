@@ -105,7 +105,7 @@ const CierrePage = () => {
 
   if (isLoading) {
     return (
-      <div className="flex flex-col h-full w-full bg-white rounded-b-2xl rounded-r-2xl p-4 shadow-lg border-x">
+      <div className="flex flex-col h-full w-full bg-white sm:rounded-b-3xl sm:rounded-r-3xl p-4 shadow-lg border-x">
         <div className="flex w-full h-auto gap-2 justify-end ">
           <UploadFileRestricted tipoDocumento={TipoDocumento.Cierres} />
           <DownloadFile tipoDocumento={TipoDocumento.Cierres} />
@@ -166,7 +166,7 @@ const CierrePage = () => {
   }
 
   return (
-    <div className="flex flex-col gap-4 h-full w-full bg-white rounded-bl-3xl rounded-tr-3xl p-4 shadow-lg border-x">
+    <div className="flex flex-col gap-4 h-full w-full bg-white sm:rounded-b-3xl sm:rounded-r-3xl p-4 shadow-lg border-x">
       <div className="flex w-full h-auto py-4 gap-2 justify-end">
         <div className="flex gap-2 justify-start w-full">
           <UploadFileRestricted tipoDocumento={TipoDocumento.Cierres} />

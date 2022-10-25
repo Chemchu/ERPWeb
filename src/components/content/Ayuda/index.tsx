@@ -2,7 +2,7 @@ import { motion } from "framer-motion";
 
 const AyudaPage = () => {
   return (
-    <div className="flex flex-col h-full bg-white w-full pb-20 rounded-bl-3xl rounded-tr-3xl shadow-lg p-4">
+    <div className="flex flex-col h-full bg-white w-full pb-20 sm:rounded-l-3xl  sm:shadow-lg sm:rounded-tr-3xl shadow-lg p-4">
       <span>
         ¡Buenas! ERPSolution es un trabajo final de máster, desarrollado por solo una persona cuyo tiempo es bastante
         escaso.

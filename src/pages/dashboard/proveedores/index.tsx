@@ -2,8 +2,8 @@ import { Tab } from "@headlessui/react";
 import { GetServerSideProps } from "next";
 import { useEffect } from "react";
 import EnDesarrolloPage from "../../../components/enDesarrollo";
-import ProveedoresPage from "../../../components/sidebar/Proveedores";
-import AlbaranesPage from "../../../components/sidebar/Proveedores/Albaranes";
+import ProveedoresPage from "../../../components/content/Proveedores";
+import AlbaranesPage from "../../../components/content/Proveedores/Albaranes";
 import useEmpleadoContext from "../../../context/empleadoContext";
 import getJwtFromString from "../../../hooks/jwt";
 import DashboardLayout from "../../../layout";
@@ -22,12 +22,12 @@ const Proveedores = (props: { EmpleadoSesion: SesionEmpleado }) => {
   return (
     <div className="flex w-full h-screen max-h-screen">
       <Tab.Group as="div" className="flex flex-col w-full h-full">
-        <Tab.List className="flex gap-1 h-10">
+        <Tab.List className="flex sm:gap-1 h-10">
           <Tab
             key={"ProveedoresTab"}
             className={(props: { selected: any }) =>
               classNames(
-                "w-1/4 h-full text-sm rounded-t-3xl border-t border-x",
+                "w-2/5 sm:w-1/4 h-full text-sm sm:rounded-t-3xl border-t border-x border-gray-300 px-1",
                 "focus:outline-none ring-white ring-opacity-60",
                 props.selected ? "bg-white shadow-lg" : "bg-gray-200 hover:bg-blue-400 hover:text-white"
               )
@@ -39,7 +39,7 @@ const Proveedores = (props: { EmpleadoSesion: SesionEmpleado }) => {
             key={"AlbaranesTab"}
             className={(props: { selected: any }) =>
               classNames(
-                "w-1/4 h-full text-sm rounded-t-3xl border-t border-x",
+                "w-2/5 sm:w-1/4 h-full text-sm sm:rounded-t-3xl border-t border-x border-gray-300 px-1",
                 "focus:outline-none ring-white ring-opacity-60",
                 props.selected ? "bg-white shadow-lg" : "bg-gray-200 hover:bg-blue-400 hover:text-white"
               )

@@ -49,7 +49,7 @@ const ClientesPage = () => {
 
   if (isLoading) {
     return (
-      <div className="flex flex-col h-full w-full bg-white rounded-bl-3xl rounded-tr-3xl p-4 shadow-lg border-x">
+      <div className="flex flex-col h-full w-full bg-white sm:rounded-bl-3xl sm:rounded-tr-3xl p-4 shadow-lg border-x">
         <div className="flex w-full h-auto py-4 gap-10 justify-end">
           <div className="flex gap-4 w-full h-full">
             <NuevoBoton accionEvent={() => setModal(true)} />
@@ -102,7 +102,7 @@ const ClientesPage = () => {
 
   if (Clientes.length <= 0) {
     return (
-      <div className="flex flex-col h-full w-full bg-white rounded-bl-3xl rounded-tr-3xl p-4 shadow-lg border-x">
+      <div className="flex flex-col h-full w-full bg-white sm:rounded-bl-3xl sm:rounded-tr-3xl p-4 shadow-lg border-x">
         <div className="flex w-full h-auto py-4 gap-10 justify-end">
           <div className="flex gap-4 w-full h-full">
             <NuevoBoton accionEvent={() => setModal(true)} />
@@ -156,7 +156,7 @@ const ClientesPage = () => {
   }
 
   return (
-    <div className="flex flex-col h-full w-full bg-white rounded-bl-3xl rounded-tr-3xl p-4 shadow-lg border-x">
+    <div className="flex flex-col h-full w-full bg-white sm:rounded-bl-3xl sm:rounded-tr-3xl p-4 shadow-lg border-x">
       <div className="flex w-full h-auto py-4 gap-10 justify-end">
         <div className="flex gap-4 w-full h-full">
           <NuevoBoton accionEvent={() => setModal(true)} />

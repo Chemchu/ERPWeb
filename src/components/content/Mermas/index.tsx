@@ -64,7 +64,7 @@ const MermaPage = () => {
   };
 
   return (
-    <div className="flex flex-col gap-4 h-full w-full bg-white rounded-bl-3xl rounded-tr-3xl p-4 shadow-lg border-x">
+    <div className="flex flex-col gap-4 h-full w-full bg-white sm:rounded-bl-3xl sm:rounded-tr-3xl p-4 shadow-lg border-x">
       <div className="flex w-full h-auto">
         <div className="flex gap-4 w-full h-full justify-start">
           <NuevoBoton
