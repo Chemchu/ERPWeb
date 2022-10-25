@@ -23,7 +23,7 @@ const Empleados = (props: { EmpleadoSesion: SesionEmpleado }) => {
   }, []);
 
   return (
-    <Tab.Group as="div" className="flex flex-col w-full h-screen">
+    <Tab.Group as="div" className="flex flex-col w-full h-full">
       <Tab.List className="flex sm:gap-1 grow-0 h-10 sm:pr-10">
         <Tab
           key={"Empleados"}

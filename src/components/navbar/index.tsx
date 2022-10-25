@@ -17,9 +17,9 @@ const Navbar = React.memo(
 const BottomNavbar = (props: { IndexSeleccionado: SidebarOption; setIndex: Function }) => {
   return (
     <motion.div
-      initial={{ x: "-10vh", opacity: 0 }}
-      animate={{ x: 0, opacity: 1 }}
-      exit={{ x: "-10vh", opacity: 0 }}
+      initial={{ y: "10vh", opacity: 0 }}
+      animate={{ y: 0, opacity: 1 }}
+      exit={{ y: "10vh", opacity: 0 }}
       className="w-full bg-blue-600 flex justify-between border p-2 z-50 h-12 sm:hidden"
     >
       <div className="flex grow h-full justify-evenly items-center">

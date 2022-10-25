@@ -87,17 +87,23 @@ const ProductPage = () => {
 
   return (
     <div className="flex flex-col gap-4 h-full w-full bg-white sm:rounded-bl-3xl sm:rounded-tr-3xl p-4 shadow-lg border-x">
-      <div className="flex w-full h-auto grow-0">
-        <div className="flex gap-4 w-full h-full justify-start">
-          <NuevoBoton accionEvent={() => setAddProdModal(true)} />
-          <UploadFile tipoDocumento={TipoDocumento.Productos} extension={["csv"]} />
-          <DownloadProductsFile productos={Productos} />
+      <div className="flex justify-end w-full h-auto">
+        <div className="hidden sm:flex gap-4 w-full h-full justify-start items-center">
+          <div>
+            <NuevoBoton accionEvent={() => setAddProdModal(true)} />
+          </div>
+          <div className="hidden md:inline-block">
+            <UploadFile tipoDocumento={TipoDocumento.Productos} extension={["csv"]} />
+          </div>
+          <div className="hidden md:inline-block">
+            <DownloadProductsFile productos={Productos} />
+          </div>
         </div>
-        <div>
+        <div className="w-2/3 sm:max-w-xs">
           <div className="flex gap-2 items-center">
             <input
               autoFocus={true}
-              className="rounded-lg border appearance-none shadow-lg w-40 xl:w-96 h-full py-2 px-4 bg-white text-gray-700 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-600"
+              className="rounded-lg border appearance-none shadow-lg w-full h-full py-2 px-4 bg-white text-gray-700 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-600"
               placeholder="Buscar..."
               onChange={(e) => {
                 setFiltro(e.target.value);
@@ -179,18 +185,16 @@ const TablaProductos = (props: { isLoading: boolean; Productos: Producto[]; SetP
                 No se ha encontrado registros de productos en el sistema
               </div>
             ) : (
-              props.Productos.slice(elementsPerPage * (currentPage - 1), currentPage * elementsPerPage).map(
-                (p, index) => {
-                  return (
-                    <div key={`FilaProdTable${p._id}`}>
-                      <FilaProducto producto={p} productos={props.Productos} setAllProductos={props.SetProductos} />
-                    </div>
-                  );
-                }
-              )
+              props.Productos.slice(elementsPerPage * (currentPage - 1), currentPage * elementsPerPage).map((p) => {
+                return (
+                  <div key={`FilaProdTable${p._id}`}>
+                    <FilaProducto producto={p} productos={props.Productos} setAllProductos={props.SetProductos} />
+                  </div>
+                );
+              })
             )}
           </div>
-          <div className="flex pt-2 items-center justify-center">
+          <div className="flex h-auto pt-2 items-start justify-center">
             <Paginador
               numPages={numPages}
               paginaActual={currentPage}

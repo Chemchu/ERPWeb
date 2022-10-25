@@ -391,7 +391,7 @@ const CollapsedSidebar = (props: { setCollapsed: Function; IndexSeleccionado: Si
       initial={{ x: "-10vh", opacity: 0 }}
       animate={{ x: 0, opacity: 1 }}
       exit={{ x: "-10vh", opacity: 0 }}
-      className="w-auto h-screen"
+      className="h-full w-auto hidden sm:flex"
     >
       <div className="flex flex-col h-full justify-between bg-white border shadow-lg rounded-r-3xl">
         <div

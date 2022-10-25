@@ -75,7 +75,7 @@ const DashboardLayout = React.memo(({ children }: { children: React.ReactNode })
                   setIndex={setSidebarIndex}
                 />
 
-                <div className="w-full h-full flex flex-col">
+                <div className="flex flex-col w-full h-full ">
                   <motion.div
                     key={router.route}
                     className="w-full sm:h-full h-10 grow"
