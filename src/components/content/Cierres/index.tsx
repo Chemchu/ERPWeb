@@ -172,7 +172,7 @@ const CierrePage = () => {
   }
 
   return (
-    <div className="flex flex-col gap-4 h-full w-full bg-white sm:rounded-b-3xl sm:rounded-r-3xl p-4 shadow-lg border-x">
+    <div className="flex flex-col gap-2 h-full w-full bg-white sm:rounded-b-3xl sm:rounded-r-3xl p-4 shadow-lg border-x">
       <div className="flex w-full gap-2 justify-end">
         <div className="flex gap-2 justify-start w-full">
           <div className="hidden sm:inline-block">

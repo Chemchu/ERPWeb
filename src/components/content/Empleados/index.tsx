@@ -2,15 +2,12 @@ import { AnimatePresence } from "framer-motion";
 import { useEffect, useState } from "react";
 import { Empleado } from "../../../tipos/Empleado";
 import { TipoDocumento } from "../../../tipos/Enums/TipoDocumentos";
-import { notifyWarn } from "../../../utils/toastify";
 import { Paginador } from "../../elementos/Forms/paginador";
 import UploadFile from "../../elementos/botones/uploadFile";
 import AddEmpleado from "../../modal/addEmpleado";
 import VerEmpleado from "../../modal/verEmpleado";
 import SkeletonCard from "../../Skeletons/skeletonCard";
 import NuevoBoton from "../../elementos/botones/nuevoBoton";
-import DownloadProductsFile from "../../elementos/botones/downloadProductsFile";
-import useEmpleadoContext from "../../../context/empleadoContext";
 import { FetchEmpleados, FetchEmpleadosByQuery } from "../../../utils/fetches/empleadoFetches";
 import AuthorizationWrapper from "../../authorizationWrapper";
 import { Roles } from "../../../tipos/Enums/Roles";
@@ -51,8 +48,12 @@ const EmpleadosPage = () => {
       <div className="flex flex-col h-full w-full bg-white sm:rounded-bl-3xl sm:rounded-tr-3xl p-4 shadow-lg border-x">
         <div className="flex w-full h-auto py-4 gap-10 justify-end">
           <div className="flex gap-4 w-full h-full">
-            <NuevoBoton accionEvent={() => setModal(true)} />
-            <UploadFile tipoDocumento={TipoDocumento.Clientes} />
+            <div className="hidden sm:inline-block">
+              <NuevoBoton accionEvent={() => setModal(true)} />
+            </div>
+            <div className="hidden sm:inline-block">
+              <UploadFile tipoDocumento={TipoDocumento.Clientes} />
+            </div>
             {/* <DownloadProductsFile tipoDocumento={TipoDocumento.Empleado} /> */}
           </div>
           <div className="flex gap-2">
@@ -108,8 +109,12 @@ const EmpleadosPage = () => {
       <div className="flex flex-col h-full w-full bg-white sm:rounded-bl-3xl sm:rounded-tr-3xl p-4 shadow-lg border-x">
         <div className="flex w-full h-auto py-4 gap-10 justify-end">
           <div className="flex gap-4 w-full h-full">
-            <NuevoBoton accionEvent={() => setModal(true)} />
-            <UploadFile tipoDocumento={TipoDocumento.Clientes} />
+            <div className="hidden sm:inline-block">
+              <NuevoBoton accionEvent={() => setModal(true)} />
+            </div>
+            <div className="hidden sm:inline-block">
+              <UploadFile tipoDocumento={TipoDocumento.Clientes} />
+            </div>
             {/* <DownloadProductsFile tipoDocumento={TipoDocumento.Empleado} /> */}
           </div>
           <div className="flex gap-2">
@@ -162,14 +167,18 @@ const EmpleadosPage = () => {
     <div className="flex flex-col h-full w-full bg-white sm:rounded-bl-3xl sm:rounded-tr-3xl p-4 shadow-lg border-x">
       <div className="flex w-full h-auto py-4 gap-10 justify-end">
         <div className="flex gap-4 w-full h-full">
-          <NuevoBoton accionEvent={() => setModal(true)} />
-          <UploadFile tipoDocumento={TipoDocumento.Clientes} />
+          <div className="hidden sm:inline-block">
+            <NuevoBoton accionEvent={() => setModal(true)} />
+          </div>
+          <div className="hidden sm:inline-block">
+            <UploadFile tipoDocumento={TipoDocumento.Clientes} />
+          </div>
           {/* <DownloadProductsFile tipoDocumento={TipoDocumento.Empleado} /> */}
         </div>
         <div className="flex gap-2">
           <input
             autoFocus={true}
-            className="rounded-lg border appearance-none shadow-lg w-72 xl:w-96 h-full py-2 px-4 bg-white text-gray-700 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-600"
+            className="rounded-lg border appearance-none shadow-lg w-40 xl:w-96 h-full py-2 px-4 bg-white text-gray-700 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-600"
             placeholder="Empleado a buscar"
             onChange={(e) => {
               setFiltro(e.target.value);

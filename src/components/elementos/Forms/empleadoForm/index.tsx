@@ -44,7 +44,7 @@ const EmpleadoForm = (props: { setEmpleado: Function; empleado?: Empleado; setHa
   }
 
   return (
-    <form className="flex flex-col gap-4 w-full pt-10">
+    <form className="flex flex-col gap-4 w-full h-full overflow-y-scroll">
       {props.empleado && (
         <div className="w-full">
           <label className="block tracking-wide text-gray-700 font-bold">ID</label>
@@ -56,8 +56,8 @@ const EmpleadoForm = (props: { setEmpleado: Function; empleado?: Empleado; setHa
           />
         </div>
       )}
-      <div className="flex gap-10 w-full ">
-        <div className="flex flex-col gap-4 w-1/2 h-full ">
+      <div className="flex flex-col sm:flex-row gap-4 sm:gap-10 w-full">
+        <div className="flex flex-col gap-4 w-full sm:w-1/2 h-full ">
           <div>
             <label className="block tracking-wide text-gray-700 font-bold">Nombre</label>
             <input
@@ -87,26 +87,10 @@ const EmpleadoForm = (props: { setEmpleado: Function; empleado?: Empleado; setHa
               }}
             />
           </div>
-          {!props.empleado ? (
-            <div className="w-full">
-              <label className="block tracking-wide text-gray-700 font-bold">Rol</label>
-              <SimpleListBox elementos={roles} setElemento={setRol} />
-            </div>
-          ) : (
-            <div className="w-full">
-              <label className="block tracking-wide text-gray-700 font-bold">Rol</label>
-              <SimpleListBox
-                disabled={disabled}
-                elementos={roles}
-                setElemento={setRol}
-                defaultValue={props.empleado.rol}
-              />
-            </div>
-          )}
         </div>
-        <div className="flex flex-col gap-4 w-1/2">
+        <div className="flex flex-col gap-4 w-full sm:w-1/2 h-full">
           <div className="w-full">
-            <label className="block tracking-wide text-gray-700 font-bold">Apellidos</label>
+            <label className="text-gray-700 font-bold">Apellidos</label>
             <input
               disabled={disabled}
               className="appearance-none ring-blue-500 block w-full bg-gray-200 text-gray-700 border rounded py-3 px-4 leading-tight focus:outline-none focus:bg-white"
@@ -136,6 +120,17 @@ const EmpleadoForm = (props: { setEmpleado: Function; empleado?: Empleado; setHa
           </div>
         </div>
       </div>
+      {!props.empleado ? (
+        <div className="w-full">
+          <label className="text-gray-700 font-bold">Rol</label>
+          <SimpleListBox elementos={roles} setElemento={setRol} />
+        </div>
+      ) : (
+        <div className="w-full">
+          <label className="text-gray-700 font-bold">Rol</label>
+          <SimpleListBox disabled={disabled} elementos={roles} setElemento={setRol} defaultValue={props.empleado.rol} />
+        </div>
+      )}
     </form>
   );
 };

@@ -79,7 +79,7 @@ export const VerEmpleado = (props: {
           exit="exit"
         >
           <div className="flex flex-col w-full h-full">
-            <div className="flex self-start font-semibold text-2xl w-full h-auto xl:text-3xl justify-between">
+            <div className="flex self-start font-semibold text-2xl w-full h-auto xl:text-3xl justify-between pb-10">
               <EditableLabel
                 disabled={Empleado.rol === Roles.Cajero && Empleado._id !== props.empleado._id}
                 text={Nombre}
@@ -99,7 +99,7 @@ export const VerEmpleado = (props: {
               })({})}
             </div>
             <EmpleadoForm setEmpleado={setEmpleadoAux} empleado={props.empleado} setHayCambios={setHayCambios} />
-            <div className="flex w-full h-full gap-10 text-white self-end items-end justify-around">
+            <div className="flex w-full gap-10 text-white self-end items-end justify-around pt-10">
               <button
                 className="h-12 w-full rounded-xl bg-red-500 hover:bg-red-600 shadow-lg"
                 onClick={() => {

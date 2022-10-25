@@ -59,7 +59,7 @@ const VerCliente = (props: {
           exit="exit"
         >
           <div className="flex flex-col w-full h-full">
-            <div className="flex self-start font-semibold text-2xl w-full h-auto xl:text-3xl justify-between">
+            <div className="flex self-start font-semibold text-2xl w-full h-auto xl:text-3xl justify-between pb-10">
               <EditableLabel
                 text={nombre}
                 setText={setNombre}
@@ -78,7 +78,7 @@ const VerCliente = (props: {
               })({})}
             </div>
             <ClienteForm setCliente={setClienteAux} cliente={clienteAux} setHayCambios={setHayCambios} />
-            <div className="flex w-full h-full gap-4 justify-around items-end text-white">
+            <div className="flex w-full gap-4 justify-around items-end text-white">
               <button
                 className="w-full h-12 rounded-xl bg-red-500 hover:bg-red-600 shadow-lg"
                 onClick={() => {

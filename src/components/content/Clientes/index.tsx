@@ -53,7 +53,9 @@ const ClientesPage = () => {
         <div className="flex w-full h-auto py-4 gap-10 justify-end">
           <div className="flex gap-4 w-full h-full">
             <NuevoBoton accionEvent={() => setModal(true)} />
-            <UploadFile tipoDocumento={TipoDocumento.Clientes} />
+            <div className="hidden sm:inline-block">
+              <UploadFile tipoDocumento={TipoDocumento.Clientes} />
+            </div>
             {/* <DownloadProductsFile tipoDocumento={TipoDocumento.Clientes} /> */}
           </div>
           <div className="flex gap-2">
@@ -105,7 +107,9 @@ const ClientesPage = () => {
       <div className="flex flex-col h-full w-full bg-white sm:rounded-bl-3xl sm:rounded-tr-3xl p-4 shadow-lg border-x">
         <div className="flex w-full h-auto py-4 gap-10 justify-end">
           <div className="flex gap-4 w-full h-full">
-            <NuevoBoton accionEvent={() => setModal(true)} />
+            <div className="hidden sm:inline-block">
+              <NuevoBoton accionEvent={() => setModal(true)} />
+            </div>
             <UploadFile tipoDocumento={TipoDocumento.Clientes} />
             {/* <DownloadProductsFile tipoDocumento={TipoDocumento.Clientes} /> */}
           </div>
@@ -156,17 +160,21 @@ const ClientesPage = () => {
   }
 
   return (
-    <div className="flex flex-col h-full w-full bg-white sm:rounded-bl-3xl sm:rounded-tr-3xl p-4 shadow-lg border-x">
-      <div className="flex w-full h-auto py-4 gap-10 justify-end">
+    <div className="flex flex-col gap-2 h-full w-full bg-white sm:rounded-bl-3xl sm:rounded-tr-3xl p-4 shadow-lg">
+      <div className="flex w-full h-auto gap-4 justify-end">
         <div className="flex gap-4 w-full h-full">
-          <NuevoBoton accionEvent={() => setModal(true)} />
-          <UploadFile tipoDocumento={TipoDocumento.Clientes} />
+          <div className="hidden sm:inline-block">
+            <NuevoBoton accionEvent={() => setModal(true)} />
+          </div>
+          <div className="hidden sm:inline-block">
+            <UploadFile tipoDocumento={TipoDocumento.Clientes} />
+          </div>
           {/* <DownloadProductsFile tipoDocumento={TipoDocumento.Clientes} /> */}
         </div>
-        <div className="flex gap-2">
+        <div className="flex justify-between items-end gap-2">
           <input
             autoFocus={true}
-            className="rounded-lg border appearance-none shadow-lg w-72 xl:w-96 h-full py-2 px-4 bg-white text-gray-700 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-600"
+            className="rounded-lg border appearance-none shadow-lg w-40 xl:w-96 h-full py-2 px-4 bg-white text-gray-700 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-600"
             placeholder="Cliente a buscar"
             onChange={(e) => {
               setFiltro(e.target.value);
@@ -195,11 +203,6 @@ const ClientesPage = () => {
             </button>
           )}
         </div>
-      </div>
-      <div className="flex justify-between border-t border-x rounded-t-2xl px-5 py-2">
-        <div className="text-left font-semibold w-1/3">Nombre</div>
-        <div className="text-left font-semibold w-1/3">CIF</div>
-        <div className="text-left font-semibold w-1/3">Dirección</div>
       </div>
       {ClientesFiltrados ? <TablaClientes clientes={ClientesFiltrados} /> : <TablaClientes clientes={Clientes} />}
       <AnimatePresence>{showModal && <AddCliente showModal={setModal} setClientes={setClientes} />}</AnimatePresence>
@@ -231,22 +234,27 @@ const TablaClientes = (props: { clientes: Cliente[] }) => {
 
   return (
     <>
-      <div className="h-full w-full border overflow-y-scroll">
-        {Clientes.length <= 0
-          ? arrayNum.map((n, i) => {
-              return <SkeletonCard key={`SkeletonProdList-${i}`} />;
-            })
-          : Clientes.slice(elementsPerPage * (currentPage - 1), currentPage * elementsPerPage).map(
-              (c: Cliente, index) => {
+      <div className="flex flex-col w-full h-full border-t border-x rounded-t-2xl">
+        <div className="flex justify-between px-5 py-2">
+          <div className="text-left font-semibold w-1/3">Nombre</div>
+          <div className="text-left font-semibold w-1/3">CIF</div>
+          <div className="text-left font-semibold w-1/3">Dirección</div>
+        </div>
+        <div className="flex flex-col grow h-10 w-full border overflow-y-scroll">
+          {Clientes.length <= 0
+            ? arrayNum.map((n, i) => {
+                return <SkeletonCard key={`SkeletonProdList-${i}`} />;
+              })
+            : Clientes.slice(elementsPerPage * (currentPage - 1), currentPage * elementsPerPage).map((c: Cliente) => {
                 return (
                   <div key={`FilaProdTable${c._id}`}>
                     <FilaCliente cliente={c} setClientes={setClientes} />
                   </div>
                 );
-              }
-            )}
+              })}
+        </div>
       </div>
-      <div className="flex pt-2 items-center justify-center">
+      <div className="flex items-center justify-center">
         <Paginador numPages={numPages} paginaActual={currentPage} maxPages={10} cambiarPaginaActual={setPaginaActual} />
       </div>
     </>

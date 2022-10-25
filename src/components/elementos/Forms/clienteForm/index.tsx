@@ -18,10 +18,10 @@ const ClienteForm = (props: { cliente?: Cliente; setCliente: Function; setHayCam
   }, [Calle, CP, Cif]);
 
   return (
-    <form className="flex gap-10 w-full pt-10">
-      <div className="flex flex-col gap-4 w-1/2 h-full ">
+    <form className="flex flex-col sm:flex-row gap-4 w-full h-full overflow-y-scroll">
+      <div className="flex flex-col gap-4 w-full sm:w-1/2">
         <div className="w-full">
-          <label className="block tracking-wide text-gray-700 font-bold">Calle</label>
+          <label className="block text-gray-700 font-bold">Calle</label>
           <input
             className="appearance-none ring-blue-500 block w-full bg-gray-200 text-gray-700 border rounded py-3 px-4 leading-tight focus:outline-none focus:bg-white"
             type="text"
@@ -48,7 +48,7 @@ const ClienteForm = (props: { cliente?: Cliente; setCliente: Function; setHayCam
           />
         </div>
       </div>
-      <div className="flex flex-col gap-4 w-1/2">
+      <div className="flex flex-col gap-4 w-full sm:w-1/2">
         <div className="w-full">
           <label className="block tracking-wide text-gray-700 font-bold">Código postal</label>
           <input
