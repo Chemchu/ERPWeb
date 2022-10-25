@@ -67,7 +67,7 @@ const DashboardLayout = React.memo(({ children }: { children: React.ReactNode })
           {
             <div className="dark:bg-gray-800 h-screen w-screen overflow-hidden">
               <NextProgress />
-              <div className="relative flex flex-row sm:flex-col gap-1 items-start w-full h-full justify-start bg-gray-100">
+              <div className="flex gap-1 items-start w-full h-full justify-start bg-gray-100">
                 <Sidebar
                   isCollapsed={isSidebarCollapsed}
                   setCollapsed={setSidebarCollapsed}
@@ -75,21 +75,23 @@ const DashboardLayout = React.memo(({ children }: { children: React.ReactNode })
                   setIndex={setSidebarIndex}
                 />
 
-                <Navbar
-                  setCollapsed={setSidebarCollapsed}
-                  IndexSeleccionado={IndexSidebar}
-                  setIndex={setSidebarIndex}
-                />
+                <div className="w-full h-full flex flex-col">
+                  <motion.div
+                    key={router.route}
+                    className="w-full sm:h-full h-10 grow"
+                    initial={variants.initial}
+                    animate={variants.animate}
+                    exit={variants.exit}
+                  >
+                    {children}
+                  </motion.div>
 
-                <motion.div
-                  key={router.route}
-                  className="w-full h-screen"
-                  initial={variants.initial}
-                  animate={variants.animate}
-                  exit={variants.exit}
-                >
-                  {children}
-                </motion.div>
+                  <Navbar
+                    setCollapsed={setSidebarCollapsed}
+                    IndexSeleccionado={IndexSidebar}
+                    setIndex={setSidebarIndex}
+                  />
+                </div>
 
                 {showStoreDataModal && <StoreDataModal showModal={setStoreDataModal} />}
               </div>

@@ -20,9 +20,9 @@ const BottomNavbar = (props: { IndexSeleccionado: SidebarOption; setIndex: Funct
       initial={{ x: "-10vh", opacity: 0 }}
       animate={{ x: 0, opacity: 1 }}
       exit={{ x: "-10vh", opacity: 0 }}
-      className="w-full bg-white flex justify-between border p-2 fixed inset-x-0 bottom-0 z-50 h-14 sm:hidden"
+      className="w-full bg-white flex justify-between border p-2 z-50 h-14 sm:hidden"
     >
-      <div className="flex grow h-full xl:gap-6 gap-4 justify-between items-center">
+      <div className="flex grow h-full justify-between items-center">
         <Link href="/dashboard">
           <div
             className={`${
@@ -201,7 +201,7 @@ const BottomNavbar = (props: { IndexSeleccionado: SidebarOption; setIndex: Funct
         </RequireHigherAuth>
       </div>
 
-      <div className="flex w-1/3 xl:gap-6 gap-4 justify-end items-center">
+      <div className="flex w-1/4 gap-2 justify-end items-center">
         <Link href="/dashboard/configuracion">
           <div
             onClick={(e) => {
