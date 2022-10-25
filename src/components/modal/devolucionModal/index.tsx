@@ -8,7 +8,6 @@ import { ITPV } from "../../../tipos/TPV";
 import { In } from "../../../utils/animations";
 import { FetchTPV } from "../../../utils/fetches/tpvFetches";
 import GenerateQrBase64 from "../../../utils/generateQr";
-import { notifySuccess } from "../../../utils/toastify";
 import DevolucionTicket from "../../printable/devolucionTicket";
 import { Backdrop } from "../backdrop";
 
@@ -88,9 +87,12 @@ const DevolucionModal = (props: { devolucion: Devolucion | undefined; setModal: 
           animate="visible"
           exit="exit"
         >
-          <div className="flex flex-col w-full h-full text-left ">
-            <span className="text-2xl">Devolución en: {`${fecha.toLocaleString()}`}</span>
-            <div className="flex w-full h-5/6 justify-between align-middle py-6">
+          <div className="flex flex-col w-full h-full text-left">
+            <span className="text-xl sm:text-2xl pb-6">Devolución en: {`${fecha.toLocaleString()}`}</span>
+            <div
+              className="flex flex-col gap-4 sm:flex-row w-full h-5/6 justify-between align-middle 
+              text-sm sm:text-base overflow-y-scroll sm:overflow-y-clip"
+            >
               <div className="flex flex-col w-1/2">
                 <span className="font-semibold pb-4 w-full h-full">
                   Detalles de la devolución
@@ -129,7 +131,7 @@ const DevolucionModal = (props: { devolucion: Devolucion | undefined; setModal: 
                   </div>
                 </span>
               </div>
-              <div className="flex flex-col font-semibold text-right w-1/2 h-full gap-2">
+              <div className="flex flex-col font-semibold text-left sm:text-right w-full sm:w-1/2 h-full gap-2">
                 <span>Lista de productos devueltos</span>
                 <div className="bg-gray-100 rounded-lg border-2 w-full h-full font-normal overflow-y-scroll">
                   <div className="flex w-full justify-around p-2 cursor-default">
@@ -154,7 +156,7 @@ const DevolucionModal = (props: { devolucion: Devolucion | undefined; setModal: 
                 </div>
               </div>
             </div>
-            <div className="flex w-full h-1/6 justify-around items-end text-white gap-4">
+            <div className="flex w-full justify-around self-end text-white gap-4 pt-6">
               <button
                 className="w-1/2 h-12 rounded-xl bg-red-500 hover:bg-red-600 shadow-lg"
                 onClick={() => {

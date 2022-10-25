@@ -105,9 +105,9 @@ const VerVenta = (props: { venta: Venta | undefined; setModal: Function }) => {
           animate="visible"
           exit="exit"
         >
-          <div className="flex flex-col w-full h-full text-left ">
+          <div className="flex flex-col w-full h-full text-left">
             <div className="flex justify-between items-center">
-              <span className="text-2xl">Venta en: {`${fecha.toLocaleString()}`}</span>
+              <span className="text-xl sm:text-2xl">Venta en: {`${fecha.toLocaleString()}`}</span>
               <svg
                 xmlns="http://www.w3.org/2000/svg"
                 fill="none"
@@ -126,8 +126,8 @@ const VerVenta = (props: { venta: Venta | undefined; setModal: Function }) => {
                 />
               </svg>
             </div>
-            <div className="flex w-full h-5/6 justify-between align-middle py-6">
-              <span className="font-semibold w-1/2 h-full">
+            <div className="flex flex-col gap-4 sm:gap-0 sm:flex-row w-full h-full justify-between items-center py-6 overflow-y-scroll sm:overflow-y-hidden">
+              <span className="font-semibold sm:w-1/2 w-full h-full">
                 Resumen de la compra
                 <div className="flex flex-col pt-4 font-normal">
                   <span>
@@ -161,7 +161,7 @@ const VerVenta = (props: { venta: Venta | undefined; setModal: Function }) => {
                   <span>ID: {props.venta._id}</span>
                 </div>
               </span>
-              <div className="bg-gray-100 rounded-lg border-2 w-1/2 h-full font-normal overflow-y-scroll">
+              <div className="bg-gray-100 rounded-lg border-2 sm:w-1/2 w-full h-full font-normal overflow-y-scroll text-sm sm:text-base">
                 <div className="flex w-full justify-around p-2 cursor-default">
                   <p className="w-1/4 text-left font-semibold">Producto</p>
                   <p className="w-1/4 text-center font-semibold">Cantidad</p>
@@ -180,7 +180,7 @@ const VerVenta = (props: { venta: Venta | undefined; setModal: Function }) => {
                 </div>
               </div>
             </div>
-            <div className="flex gap-4 w-full h-1/6 justify-around items-end text-white">
+            <div className="flex gap-4 w-full justify-around items-end text-white">
               <button
                 className="w-1/3 h-12 rounded-xl bg-red-500 hover:bg-red-600 shadow-lg"
                 onClick={() => {

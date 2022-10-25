@@ -106,40 +106,46 @@ const CierrePage = () => {
   if (isLoading) {
     return (
       <div className="flex flex-col h-full w-full bg-white sm:rounded-b-3xl sm:rounded-r-3xl p-4 shadow-lg border-x">
-        <div className="flex w-full h-auto gap-2 justify-end ">
-          <UploadFileRestricted tipoDocumento={TipoDocumento.Cierres} />
-          <DownloadFile tipoDocumento={TipoDocumento.Cierres} />
-          <DateRange
-            titulo="Fecha"
-            dateRange={dateRange}
-            setDateRange={setDateRange}
-            endDate={endDate}
-            startDate={startDate}
-          />
-          <input
-            disabled
-            autoFocus={true}
-            className="rounded-lg border appearance-none shadow-lg w-max-72 xl:w-96 h-full py-2 px-4 bg-white text-gray-700 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-600"
-            placeholder="ID del cierre"
-          />
-          {filtro ? (
-            <button
-              className="px-4 py-2 font-semibold text-white bg-blue-500 rounded-lg shadow-md hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-400 focus:ring-offset-2 focus:ring-offset-purple-200"
-              onClick={async (e) => {
-                e.preventDefault();
-                await Filtrar(filtro);
-              }}
-            >
-              Filtrar
-            </button>
-          ) : (
-            <button
+        <div className="flex w-full h-auto gap-2 justify-end">
+          <div className="hidden sm:inline-block">
+            <UploadFileRestricted tipoDocumento={TipoDocumento.Cierres} />
+          </div>
+          <div className="hidden sm:inline-block">
+            <DownloadFile tipoDocumento={TipoDocumento.Cierres} />
+          </div>
+          <div className="hidden">
+            <DateRange
+              titulo="Fecha"
+              dateRange={dateRange}
+              setDateRange={setDateRange}
+              endDate={endDate}
+              startDate={startDate}
+            />
+            <input
               disabled
-              className="px-4 py-2 font-semibold text-white bg-blue-300 rounded-lg shadow-md cursor-default"
-            >
-              Filtrar
-            </button>
-          )}
+              autoFocus={true}
+              className="rounded-lg border appearance-none shadow-lg w-max-72 xl:w-96 h-full py-2 px-4 bg-white text-gray-700 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-600"
+              placeholder="ID del cierre"
+            />
+            {filtro ? (
+              <button
+                className="px-4 py-2 font-semibold text-white bg-blue-500 rounded-lg shadow-md hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-400 focus:ring-offset-2 focus:ring-offset-purple-200"
+                onClick={async (e) => {
+                  e.preventDefault();
+                  await Filtrar(filtro);
+                }}
+              >
+                Filtrar
+              </button>
+            ) : (
+              <button
+                disabled
+                className="px-4 py-2 font-semibold text-white bg-blue-300 rounded-lg shadow-md cursor-default"
+              >
+                Filtrar
+              </button>
+            )}
+          </div>
         </div>
         <div className="flex justify-between border-t-2 border-x-2 rounded-t-2xl ">
           <div className="text-left text-sm font-semibold w-1/4">TPV</div>
@@ -167,40 +173,54 @@ const CierrePage = () => {
 
   return (
     <div className="flex flex-col gap-4 h-full w-full bg-white sm:rounded-b-3xl sm:rounded-r-3xl p-4 shadow-lg border-x">
-      <div className="flex w-full h-auto py-4 gap-2 justify-end">
+      <div className="flex w-full gap-2 justify-end">
         <div className="flex gap-2 justify-start w-full">
-          <UploadFileRestricted tipoDocumento={TipoDocumento.Cierres} />
-          <DownloadFile tipoDocumento={TipoDocumento.Cierres} />
+          <div className="hidden sm:inline-block">
+            <UploadFileRestricted tipoDocumento={TipoDocumento.Cierres} />
+          </div>
+          <div className="hidden sm:inline-block">
+            <DownloadFile tipoDocumento={TipoDocumento.Cierres} />
+          </div>
         </div>
-        <DateRange dateRange={dateRange} setDateRange={setDateRange} endDate={endDate} startDate={startDate} />
-        <input
-          autoFocus={true}
-          className="rounded-lg border appearance-none shadow-lg w-max-72 xl:w-96 h-full py-2 px-4 bg-white text-gray-700 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-600"
-          placeholder="ID del cierre"
-          onChange={(e) => {
-            setFiltro(e.target.value);
-          }}
-          value={filtro}
-        />
+        <div className="flex justify-between flex-col sm:flex-row-reverse w-full h-full items-end gap-2">
+          <div className="flex gap-1">
+            <input
+              autoFocus={true}
+              className="rounded-lg border appearance-none shadow-lg w-max-72 xl:w-96 h-full py-2 px-4 bg-white text-gray-700 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-600"
+              placeholder="ID del cierre"
+              onChange={(e) => {
+                setFiltro(e.target.value);
+              }}
+              value={filtro}
+            />
 
-        {filtro ? (
-          <button
-            className="px-4 py-2 font-semibold text-white bg-blue-500 rounded-lg shadow-md hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-400 focus:ring-offset-2 focus:ring-offset-purple-200"
-            onClick={async (e) => {
-              e.preventDefault();
-              await Filtrar(filtro);
-            }}
-          >
-            Filtrar
-          </button>
-        ) : (
-          <button
-            disabled
-            className="px-4 py-2 font-semibold text-white bg-blue-300 rounded-lg shadow-md cursor-default"
-          >
-            Filtrar
-          </button>
-        )}
+            {filtro ? (
+              <button
+                className="px-4 py-2 font-semibold text-white bg-blue-500 rounded-lg shadow-md hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-400 focus:ring-offset-2 focus:ring-offset-purple-200"
+                onClick={async (e) => {
+                  e.preventDefault();
+                  await Filtrar(filtro);
+                }}
+              >
+                Filtrar
+              </button>
+            ) : (
+              <button
+                disabled
+                className="px-4 py-2 font-semibold text-white bg-blue-300 rounded-lg shadow-md cursor-default"
+              >
+                Filtrar
+              </button>
+            )}
+          </div>
+          <DateRange
+            titulo="Fecha"
+            dateRange={dateRange}
+            setDateRange={setDateRange}
+            endDate={endDate}
+            startDate={startDate}
+          />
+        </div>
       </div>
       <div className="flex flex-col w-full h-10 grow">
         <div className="flex justify-between border-t-2 border-x-2 rounded-t-2xl px-5 py-2">

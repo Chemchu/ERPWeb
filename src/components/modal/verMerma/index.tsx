@@ -50,7 +50,7 @@ const VerMerma = (props: { showModal: Function; merma: Merma; updateMermasCallba
                 );
               })({})}
             </div>
-            <section className="flex gap-4 h-full">
+            <section className="flex flex-col sm:flex-row gap-4 h-full overflow-y-scroll sm:overflow-y-hidden">
               <div className="flex flex-col gap-1 w-1/2 h-full">
                 <span>ID: {props.merma._id}</span>
                 <span>
@@ -60,7 +60,7 @@ const VerMerma = (props: { showModal: Function; merma: Merma; updateMermasCallba
                 <span>Venta perdida: {props.merma.ventasPerdidas}€</span>
                 <span>Beneficio perdido: {props.merma.beneficioPerdido}€</span>
               </div>
-              <div className="flex flex-col gap-1 h-full w-1/2 border rounded-lg">
+              <div className="flex flex-col gap-1 h-full w-full sm:w-1/2 border rounded-lg">
                 <div className="flex justify-between gap-2 w-full h-auto hover:bg-gray-300 p-2 border-b font-semibold">
                   <span className="w-2/4">Nombre</span>
                   <span className="w-1/4 text-right">Cantidad</span>

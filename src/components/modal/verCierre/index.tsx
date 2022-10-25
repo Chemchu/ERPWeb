@@ -81,8 +81,8 @@ const VerCierre = (props: { showModal: Function; cierre: Cierre; setCierre: Func
                 })({})}
               </div>
               <span className="text-base">ID: {props.cierre._id}</span>
-              <div className="grid grid-cols-2 pt-2">
-                <div className="flex flex-col gap-1 text-base">
+              <div className="flex flex-col sm:flex-row justify-between w-full pt-2 overflow-y-scroll sm:overflow-y-auto">
+                <div className="flex flex-col w-full gap-1 text-base">
                   <span>TPV: {props.tpv}</span>
                   <span>Venta total: {props.cierre.ventasTotales.toFixed(2)}€</span>
                   <span>Ventas en efectivo: {props.cierre.ventasEfectivo.toFixed(2)}€</span>
@@ -91,7 +91,7 @@ const VerCierre = (props: { showModal: Function; cierre: Cierre; setCierre: Func
                   <span>Caja final esperada: {props.cierre.dineroEsperadoEnCaja.toFixed(2)}€</span>
                   <span>Caja final real: {props.cierre.dineroRealEnCaja.toFixed(2)}€</span>
                 </div>
-                <div className="flex flex-col gap-1 text-base">
+                <div className="flex flex-col w-full gap-1 text-base sm:items-end">
                   <span>Dinero retirado: {props.cierre.dineroRetirado.toFixed(2)}€</span>
                   <span>Fondo de caja dejado: {props.cierre.fondoDeCaja.toFixed(2)}€</span>
                   <span>Abierto por: {props.cierre.abiertoPor.nombre}</span>
