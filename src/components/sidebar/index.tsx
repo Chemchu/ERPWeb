@@ -33,7 +33,7 @@ const OpenedSidebar = (props: { setCollapsed: Function; IndexSeleccionado: Sideb
       initial={{ x: "-10vh", opacity: 0 }}
       animate={{ x: 0, opacity: 1 }}
       exit={{ x: "-10vh", opacity: 0 }}
-      className="h-screen"
+      className="h-full w-auto hidden sm:flex"
     >
       <div className="flex flex-col w-full h-full justify-between bg-white border shadow-lg rounded-r-3xl">
         <div

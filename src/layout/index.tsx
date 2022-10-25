@@ -65,29 +65,25 @@ const DashboardLayout = React.memo(({ children }: { children: React.ReactNode })
       <ProductCarritoContextProvider>
         <ComprasAparcadasContextProvider>
           {
-            <div className="dark:bg-gray-800 h-full w-screen overflow-hidden">
+            <div className="dark:bg-gray-800 h-screen w-screen overflow-hidden">
               <NextProgress />
               <div className="relative flex flex-row sm:flex-col gap-1 items-start w-full h-full justify-start bg-gray-100">
-                <div className="h-full w-auto hidden sm:flex">
-                  <Sidebar
-                    isCollapsed={isSidebarCollapsed}
-                    setCollapsed={setSidebarCollapsed}
-                    IndexSeleccionado={IndexSidebar}
-                    setIndex={setSidebarIndex}
-                  />
-                </div>
+                <Sidebar
+                  isCollapsed={isSidebarCollapsed}
+                  setCollapsed={setSidebarCollapsed}
+                  IndexSeleccionado={IndexSidebar}
+                  setIndex={setSidebarIndex}
+                />
 
-                <div className="fixed inset-x-0 bottom-0 z-50 shadow h-14 w-full sm:hidden">
-                  <Navbar
-                    setCollapsed={setSidebarCollapsed}
-                    IndexSeleccionado={IndexSidebar}
-                    setIndex={setSidebarIndex}
-                  />
-                </div>
+                <Navbar
+                  setCollapsed={setSidebarCollapsed}
+                  IndexSeleccionado={IndexSidebar}
+                  setIndex={setSidebarIndex}
+                />
 
                 <motion.div
                   key={router.route}
-                  className="w-full h-full"
+                  className="w-full h-screen"
                   initial={variants.initial}
                   animate={variants.animate}
                   exit={variants.exit}
