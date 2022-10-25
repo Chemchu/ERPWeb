@@ -60,14 +60,17 @@ const Home = (props: { EmpleadoSesion: SesionEmpleado }) => {
   }
 
   return (
-    <div className="flex flex-col gap-8 w-full h-full p-4 overflow-y-scroll bg-white sm:rounded-l-3xl border sm:shadow-lg">
+    <div
+      className="flex flex-col gap-8 w-full h-full p-4 overflow-y-scroll bg-white dark:bg-gray-800
+      sm:rounded-l-3xl border sm:shadow-lg"
+    >
       <h1 className="text-3xl lg:text-4xl text-gray-700">
         {`${saludo},  ${Empleado.nombre.charAt(0).toUpperCase() + Empleado.nombre.slice(1)}`}
       </h1>
       <div className="flex flex-col w-full gap-3">
         <SummaryCard titulo="Ventas totales" data={summaryToday} />
         <div className="flex flex-wrap gap-2 justify-between">
-          <div className="xl:w-72 w-44">
+          <div className="w-full sm:w-44 xl:w-72">
             <FinanceCard
               titulo="Ventas"
               dataActual={summaryToday?.totalVentas.toFixed(2)}
@@ -75,7 +78,7 @@ const Home = (props: { EmpleadoSesion: SesionEmpleado }) => {
             />
           </div>
           {Empleado.rol !== Roles.Cajero ? (
-            <div className="xl:w-72 w-44">
+            <div className="w-full sm:w-44 xl:w-72">
               <FinanceCard
                 titulo="Beneficio"
                 dataActual={summaryToday?.beneficio.toFixed(2)}
@@ -83,7 +86,7 @@ const Home = (props: { EmpleadoSesion: SesionEmpleado }) => {
               />
             </div>
           ) : (
-            <div className="xl:w-72 w-44">
+            <div className="w-full sm:w-44 xl:w-72">
               <FinanceCard
                 titulo="Media"
                 dataActual={summaryToday?.mediaVentas.toFixed(2)}
@@ -91,7 +94,7 @@ const Home = (props: { EmpleadoSesion: SesionEmpleado }) => {
               />
             </div>
           )}
-          <div className="xl:w-72 w-44">
+          <div className="w-full sm:w-44 xl:w-72">
             <FinanceCard
               titulo="Tickets"
               unidad="uds"
@@ -99,7 +102,7 @@ const Home = (props: { EmpleadoSesion: SesionEmpleado }) => {
               dataPrevio={summaryToday && String(summaryYesterday?.numVentas)}
             />
           </div>
-          <div className="xl:w-72 w-44">
+          <div className="w-full sm:w-44 xl:w-72">
             <FinanceCard
               titulo="Productos"
               unidad="uds"
@@ -108,8 +111,8 @@ const Home = (props: { EmpleadoSesion: SesionEmpleado }) => {
             />
           </div>
         </div>
-        <div className="flex w-full justify-between gap-4">
-          <div className="w-1/2 h-full">
+        <div className="flex flex-col sm:flex-row w-full justify-between gap-4">
+          <div className="w-full sm:w-1/2 h-full">
             <VentasDelDia
               data={summaryToday}
               titulo="Ventas de hoy"
@@ -121,7 +124,7 @@ const Home = (props: { EmpleadoSesion: SesionEmpleado }) => {
               maxY={maxY + offset}
             />
           </div>
-          <div className="w-1/2 h-full">
+          <div className="w-full sm:w-1/2 h-full">
             <VentasDelDia
               data={summaryYesterday}
               titulo="Ventas de ayer"

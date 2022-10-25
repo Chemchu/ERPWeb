@@ -60,7 +60,7 @@ const PuntoDeVenta = (props: { isEmpleadoUsingTPV: boolean; EmpleadoSesion: Sesi
 
   return (
     <TPVStateContextProvider State={posState}>
-      <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}>
+      <motion.div className="w-full h-full" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}>
         <TPV productos={Productos} />
         <AnimatePresence mode="wait">
           {showCerrarCajaModal && <CerrarCaja />}

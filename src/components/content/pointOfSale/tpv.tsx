@@ -100,9 +100,9 @@ const TPV = (props: { productos: Producto[] }) => {
 
   if (!EmpleadoUsingTPV.isEmpleadoUsingTPV) {
     return (
-      <div className="antialiased overflow-hidden text-gray-800">
-        <div className="grid grid-cols-3 gap-2 bg-gray-100">
-          <div className="col-span-2 h-screen">
+      <div className="w-full h-full antialiased overflow-hidden text-gray-800">
+        <div className="flex w-full h-full gap-2 bg-gray-100">
+          <div className="w-10 grow h-full">
             <div className="flex flex-col h-full w-full py-1">
               <div className="px-2 text-lg h-16">
                 <div className="flex w-full gap-2 flex-row bg-white rounded-3xl shadow transition-shadow focus:outline-none p-2">
@@ -152,12 +152,12 @@ const TPV = (props: { productos: Producto[] }) => {
                   );
                 })}
               </div>
-              <div className="h-full overflow-hidden">
+              <div className="h-full w-full">
                 <ListaProductos productosFiltrados={ProductosFiltrados} />
               </div>
             </div>
           </div>
-          <div className="h-screen">
+          <div className="min-w-[10rem] max-w-[12rem] sm:max-w-[22rem] grow h-ful">
             <SidebarDerecho setProductosCarrito={SetProductosEnCarrito} productos={props.productos} />
           </div>
         </div>
@@ -167,13 +167,13 @@ const TPV = (props: { productos: Producto[] }) => {
 
   return (
     <div
-      className="antialiased overflow-hidden text-gray-800"
+      className="w-full h-full antialiased overflow-hidden text-gray-800"
       onClick={() => {
         inputRef?.current?.focus();
       }}
     >
-      <div className="grid grid-cols-3 gap-2 bg-gray-100">
-        <div className="col-span-2 h-screen">
+      <div className="flex w-full h-full gap-2 bg-gray-100">
+        <div className="w-10 grow h-full">
           <div className="flex flex-col h-full w-full py-1">
             <div className="px-2 text-lg h-16">
               <div className="flex w-full gap-2 flex-row bg-white rounded-3xl shadow transition-shadow focus:outline-none p-2">
@@ -228,7 +228,7 @@ const TPV = (props: { productos: Producto[] }) => {
                   return (
                     <div
                       key={`SkeletonFav-${i}`}
-                      className="animate-pulse h-10 w-16 md:w-32 lg:w-48 border-2 rounded-xl mx-auto bg-gray-300"
+                      className="animate-pulse h-10 w-16 md:w-32 lg:w-48 border-2 rounded-lg mx-auto bg-gray-300"
                     />
                   );
                 })}
@@ -269,12 +269,12 @@ const TPV = (props: { productos: Producto[] }) => {
                 </div>
               )
             )}
-            <div className="h-full overflow-hidden">
+            <div className="h-full w-full">
               <ListaProductos productos={props.productos} productosFiltrados={ProductosFiltrados} inputRef={inputRef} />
             </div>
           </div>
         </div>
-        <div className="h-screen">
+        <div className="min-w-[10rem] max-w-[12rem] sm:max-w-[22rem] grow h-full">
           <SidebarDerecho setProductosCarrito={SetProductosEnCarrito} productos={props.productos} inputRef={inputRef} />
         </div>
       </div>
@@ -290,7 +290,7 @@ const ListaProductos = (props: { productos?: Producto[]; productosFiltrados: Pro
     const arrayNum = [...Array(30)];
 
     return (
-      <div className="h-full overflow-y-auto overflow-x-hidden px-2">
+      <div className="h-full overflow-y-auto overflow-x-hidden p-4">
         <div className="grid gap-4 pb-3 sm:grid-cols-1 sm:gap-2 md:grid-cols-2 lg:grid-cols-3 lg:gap-3 xl:grid-cols-4 2xl:grid-cols-5 text-xs">
           {arrayNum.map((n, i) => {
             return <SkeletonProductCard key={"SkeletonTPVCard-" + i} />;
@@ -302,8 +302,8 @@ const ListaProductos = (props: { productos?: Producto[]; productosFiltrados: Pro
 
   if (props.productosFiltrados.length > 0 && props.productos.length > 0) {
     return (
-      <div className="h-full overflow-y-auto overflow-x-hidden px-3 pt-2">
-        <div className="grid gap-4 sm:grid-cols-1 sm:gap-2 md:grid-cols-3 xl:grid-cols-3 lg:gap-3 2xl:grid-cols-4 text-xs">
+      <div className="h-full overflow-y-auto overflow-x-hidden p-4">
+        <div className="grid h-20 grow gap-4 sm:grid-cols-1 sm:gap-2 md:grid-cols-3 xl:grid-cols-3 lg:gap-3 2xl:grid-cols-4 text-xs">
           {props.productosFiltrados.slice(0, maxItems).map((prod: Producto) => {
             return (
               <button
@@ -322,7 +322,7 @@ const ListaProductos = (props: { productos?: Producto[]; productosFiltrados: Pro
     );
   } else {
     return (
-      <div className="h-full overflow-y-auto overflow-x-hidden px-2">
+      <div className="h-full overflow-y-auto overflow-x-hidden p-4">
         <div className="bg-blue-gray-100 rounded-3xl flex flex-wrap content-center justify-center h-full opacity-25">
           <div className="w-full text-center">
             <svg
@@ -339,7 +339,7 @@ const ListaProductos = (props: { productos?: Producto[]; productosFiltrados: Pro
                 d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
               />
             </svg>
-            <p className="text-xl">PRODUCTO NO ENCONTRADO</p>
+            <p className="text-xl">Producto no encontrado</p>
           </div>
         </div>
       </div>

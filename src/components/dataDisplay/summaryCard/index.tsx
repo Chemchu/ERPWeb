@@ -62,24 +62,70 @@ const SummaryCard = (props: { titulo: string; data: Summary | undefined }) => {
   }
 
   return (
-    <div className="md:p-6 p-4 bg-white shadow-lg hover:shadow-xl rounded-lg flex justify-between dark:bg-gray-800 md:items-center gap-4">
-      <div className="flex flex-col">
-        <span className="text-2xl text-gray-700 font-semibold pb-2">Total</span>
-        <span>Ventas: {props.data.totalVentas.toFixed(2)}€</span>
-        <span>Efectivo: {props.data.totalEfectivo.toFixed(2)}€</span>
-        <span>Tarjeta: {props.data.totalTarjeta.toFixed(2)}€</span>
+    <div className="w-full h-full">
+      <div className="flex flex-col gap-2 w-full h-full sm:hidden">
+        <div className="flex flex-col shadow-lg hover:shadow-xl rounded-lg bg-white text-left p-2">
+          <div className="flex justify-between items-baseline text-xl px-2">
+            <span>Total</span>
+            <span>{props.data.totalVentas.toFixed(2)}€</span>
+          </div>
+          <div className="flex justify-between items-baseline px-2">
+            <span>Efectivo</span>
+            <span>{props.data.totalEfectivo.toFixed(2)}€</span>
+          </div>
+          <div className="flex justify-between items-baseline px-2">
+            <span>Tarjeta</span>
+            <span>{props.data.totalTarjeta.toFixed(2)}€</span>
+          </div>
+        </div>
+        <div className="flex flex-col shadow-lg hover:shadow-xl rounded-lg bg-white text-left p-2">
+          <div className="flex justify-between items-baseline text-xl px-2">
+            <span>Mañana</span>
+            <span>{totalMañana.toFixed(2)}€</span>
+          </div>
+          <div className="flex justify-between items-baseline px-2">
+            <span>Efectivo</span>
+            <span>{totalMañanaEfectivo.toFixed(2)}€</span>
+          </div>
+          <div className="flex justify-between items-baseline px-2">
+            <span>Tarjeta</span>
+            <span>{totalMañanaTarjeta.toFixed(2)}€</span>
+          </div>
+        </div>
+        <div className="flex flex-col shadow-lg hover:shadow-xl rounded-lg bg-white text-left p-2">
+          <div className="flex justify-between items-baseline text-xl px-2">
+            <span>Tarde</span>
+            <span>{totalTarde.toFixed(2)}€</span>
+          </div>
+          <div className="flex justify-between items-baseline px-2">
+            <span>Efectivo</span>
+            <span>{totalTardeEfectivo.toFixed(2)}€</span>
+          </div>
+          <div className="flex justify-between items-baseline px-2">
+            <span>Tarjeta</span>
+            <span>{totalTardeTarjeta.toFixed(2)}€</span>
+          </div>
+        </div>
       </div>
-      <div className="flex flex-col">
-        <span className="text-2xl text-gray-700 font-semibold pb-2">Mañana</span>
-        <span>Ventas: {totalMañana.toFixed(2)}€</span>
-        <span>Efectivo: {totalMañanaEfectivo.toFixed(2)}€</span>
-        <span>Tarjeta: {totalMañanaTarjeta.toFixed(2)}€</span>
-      </div>
-      <div className="flex flex-col">
-        <span className="text-2xl text-gray-700 font-semibold pb-2">Tarde</span>
-        <span>Ventas: {totalTarde.toFixed(2)}€</span>
-        <span>Efectivo: {totalTardeEfectivo.toFixed(2)}€</span>
-        <span>Tarjeta: {totalTardeTarjeta.toFixed(2)}€</span>
+      <div className="hidden md:p-6 p-4 bg-white shadow-lg hover:shadow-xl rounded-lg sm:flex justify-between dark:bg-gray-800 md:items-center gap-4">
+        <div className="flex flex-col">
+          <span className="text-2xl text-gray-700 font-semibold pb-2">Total</span>
+          <span>Ventas: {props.data.totalVentas.toFixed(2)}€</span>
+          <span>Efectivo: {props.data.totalEfectivo.toFixed(2)}€</span>
+          <span>Tarjeta: {props.data.totalTarjeta.toFixed(2)}€</span>
+        </div>
+        <div className="flex flex-col">
+          <span className="text-2xl text-gray-700 font-semibold pb-2">Mañana</span>
+          <span>Ventas: {totalMañana.toFixed(2)}€</span>
+          <span>Efectivo: {totalMañanaEfectivo.toFixed(2)}€</span>
+          <span>Tarjeta: {totalMañanaTarjeta.toFixed(2)}€</span>
+        </div>
+        <div className="flex flex-col">
+          <span className="text-2xl text-gray-700 font-semibold pb-2">Tarde</span>
+          <span>Ventas: {totalTarde.toFixed(2)}€</span>
+          <span>Efectivo: {totalTardeEfectivo.toFixed(2)}€</span>
+          <span>Tarjeta: {totalTardeTarjeta.toFixed(2)}€</span>
+        </div>
       </div>
     </div>
   );
