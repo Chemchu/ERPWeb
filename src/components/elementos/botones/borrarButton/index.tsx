@@ -1,7 +1,7 @@
 import { AnimatePresence, motion } from "framer-motion";
 import { useState } from "react";
-import { In } from "../../../utils/animations";
-import { Backdrop } from "../backdrop";
+import { In } from "../../../../utils/animations";
+import { Backdrop } from "../../../modal/backdrop";
 
 const BorrarButton = (props: { title?: string; subtitle?: string; acceptCallback: Function }) => {
   const [showModalBorrar, setModalBorrar] = useState<boolean>(false);

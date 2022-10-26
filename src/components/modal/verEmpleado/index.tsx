@@ -11,7 +11,7 @@ import AuthorizationWrapper from "../../authorizationWrapper";
 import EditableLabel from "../../elementos/Forms/editableLabel";
 import EmpleadoForm from "../../elementos/Forms/empleadoForm";
 import { Backdrop } from "../backdrop";
-import BorrarButton from "../borrarModal";
+import BorrarButton from "../../elementos/botones/borrarButton";
 
 export const VerEmpleado = (props: {
   empleado: Empleado;

@@ -10,7 +10,7 @@ import EditableLabel from "../../elementos/Forms/editableLabel";
 import ProductoForm from "../../elementos/Forms/productoForm";
 import { Backdrop } from "../backdrop";
 import { DeleteProducto, UpdateProducto } from "../../../utils/fetches/productosFetches";
-import BorrarButton from "../borrarModal";
+import BorrarButton from "../../elementos/botones/borrarButton";
 
 export const VerProducto = (props: { producto: Producto; setProducto: Function; showModal: Function }) => {
   const [Nombre, setNombre] = useState<string>(props.producto.nombre || "");

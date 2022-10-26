@@ -8,7 +8,7 @@ import AuthorizationWrapper from "../../authorizationWrapper";
 import ClienteForm from "../../elementos/Forms/clienteForm";
 import EditableLabel from "../../elementos/Forms/editableLabel";
 import { Backdrop } from "../backdrop";
-import BorrarButton from "../borrarModal";
+import BorrarButton from "../../elementos/botones/borrarButton";
 
 const VerCliente = (props: {
   showModal: Function;

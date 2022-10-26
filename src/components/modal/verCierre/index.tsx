@@ -10,7 +10,7 @@ import GenerateQrBase64 from "../../../utils/generateQr";
 import AuthorizationWrapper from "../../authorizationWrapper";
 import CierrePrintable from "../../printable/cierrePrintable";
 import { Backdrop } from "../backdrop";
-import BorrarButton from "../borrarModal";
+import BorrarButton from "../../elementos/botones/borrarButton";
 
 const VerCierre = (props: { showModal: Function; cierre: Cierre; setCierre: Function; tpv: string }) => {
   const [qrImage, setQrImage] = useState<string>();

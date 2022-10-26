@@ -6,7 +6,7 @@ import { DeleteMerma } from "../../../utils/fetches/mermasFetches";
 import { notifyError, notifySuccess } from "../../../utils/toastify";
 import AuthorizationWrapper from "../../authorizationWrapper";
 import { Backdrop } from "../backdrop";
-import BorrarButton from "../borrarModal";
+import BorrarButton from "../../elementos/botones/borrarButton";
 
 const VerMerma = (props: { showModal: Function; merma: Merma; updateMermasCallback: Function }) => {
   const DeleteCurrentMerma = async () => {
