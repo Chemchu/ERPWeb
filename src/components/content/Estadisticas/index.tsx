@@ -117,7 +117,7 @@ const EstadisticasPage = () => {
 
   return (
     <div className="flex flex-col gap-4 h-full w-full bg-white sm:rounded-bl-3xl sm:rounded-tr-3xl p-4 shadow-lg border-x overflow-y-scroll">
-      <div id="filtros" className="flex justify-end w-full z-20 gap-4">
+      <div id="filtros" className="flex flex-col sm:flex-row items-end sm:justify-end w-full z-20 gap-4">
         <DateRange
           titulo="Fecha"
           dateRange={dateRange}
@@ -143,14 +143,14 @@ const EstadisticasPage = () => {
       </div>
       {!isLoading && (
         <div className="flex flex-wrap gap-2 justify-start xl:justify-center">
-          <div className="xl:w-72 w-44">
+          <div className="w-full sm:w-44 xl:w-72">
             <FinanceCard
               titulo="Ventas"
               dataActual={summary?.totalVentas?.toFixed(2)}
               dataPrevio={summary?.totalVentas?.toFixed(2)}
             />
           </div>
-          <div className="xl:w-72 w-44">
+          <div className="w-full sm:w-44 xl:w-72">
             <FinanceCard
               titulo="Efectivo"
               unidad="€"
@@ -158,7 +158,7 @@ const EstadisticasPage = () => {
               dataPrevio={summary?.totalEfectivo?.toFixed(2)}
             />
           </div>
-          <div className="xl:w-72 w-44">
+          <div className="w-full sm:w-44 xl:w-72">
             <FinanceCard
               titulo="Tarjeta"
               unidad="€"
@@ -166,7 +166,7 @@ const EstadisticasPage = () => {
               dataPrevio={summary?.totalTarjeta?.toFixed(2)}
             />
           </div>
-          <div className="xl:w-72 w-44">
+          <div className="w-full sm:w-44 xl:w-72">
             <FinanceCard
               titulo="Tickets"
               unidad="uds"
@@ -174,14 +174,14 @@ const EstadisticasPage = () => {
               dataPrevio={String(summary?.numVentas)}
             />
           </div>
-          <div className="xl:w-72 w-44">
+          <div className="w-full sm:w-44 xl:w-72">
             <FinanceCard
               titulo="Beneficio"
               dataActual={summary?.beneficio?.toFixed(2)}
               dataPrevio={summary?.beneficio?.toFixed(2)}
             />
           </div>
-          <div className="xl:w-72 w-44">
+          <div className="w-full sm:w-44 xl:w-72">
             <FinanceCard
               titulo="Media"
               unidad="€"
@@ -189,7 +189,7 @@ const EstadisticasPage = () => {
               dataPrevio={summary?.mediaVentas?.toFixed(2)}
             />
           </div>
-          <div className="xl:w-72 w-44">
+          <div className="w-full sm:w-44 xl:w-72">
             <FinanceCard
               titulo="Máxima"
               unidad="€"
@@ -197,7 +197,7 @@ const EstadisticasPage = () => {
               dataPrevio={summary?.ventaMaxima?.toFixed(2)}
             />
           </div>
-          <div className="xl:w-72 w-44">
+          <div className="w-full sm:w-44 xl:w-72">
             <FinanceCard
               titulo="Mínima"
               unidad="€"
@@ -229,11 +229,11 @@ const EstadisticasPage = () => {
       ) : (
         <div className="flex flex-col w-full justify-between gap-4">
           {summary && (
-            <div className="flex gap-4">
-              <div className="w-1/2 h-full">
+            <div className="flex flex-col sm:flex-row gap-4">
+              <div className="w-full sm:w-1/2 h-full">
                 <ProductosMasVendidosStats titulo="Productos más vendidos" data={summary?.productosMasVendidos} />
               </div>
-              <div className="w-1/2 h-full">
+              <div className="w-full sm:w-1/2 h-full">
                 <FamiliasMasVendidasStats titulo="Familias más vendidas" data={summary?.familiasMasVendidas} />
               </div>
             </div>
