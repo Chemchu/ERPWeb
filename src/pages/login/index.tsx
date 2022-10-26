@@ -104,7 +104,11 @@ export const LoginForm = () => {
       initial={exitVariant.initial}
       animate={exitVariant.animate}
     >
-      <motion.div className="p-10 xs:p-0 mx-auto md:w-full md:max-w-md" animate="visible" initial="hidden">
+      <motion.div
+        className="p-10 mx-auto w-full h-full sm:w-full sm:max-w-md max-w-sm"
+        animate="visible"
+        initial="hidden"
+      >
         <motion.div
           animate={loginFallido ? { rotate: [-2, 1.9, -0.87, 1.1, -0.5, 0.5, 0] } : { rotate: 0 }}
           variants={container}
@@ -162,18 +166,17 @@ export const LoginForm = () => {
                       Authenticate();
                     }
                   }}
-                  className={`border border-gray-400 rounded-xl px-3 py-2 mt-1 mb-5 text-sm w-full
-                                        ${
-                                          loginFallido ? `outline-red-500 border-red-500 border-2` : `outline-blue-500`
-                                        } `}
+                  className={`border border-gray-400 rounded-xl px-3 py-2 mt-1 mb-5 text-sm w-full ${
+                    loginFallido ? `outline-red-500 border-red-500 border-2` : `outline-blue-500`
+                  } `}
                 />
               </motion.div>
 
               <motion.div variants={item}>
                 <button
                   className="mb-1 transition duration-200 bg-blue-500 hover:bg-blue-600 focus:bg-blue-700 
-                                    focus:shadow-sm focus:ring-4 focus:ring-blue-500 focus:ring-opacity-50 text-white 
-                                    w-full py-2.5 rounded-xl text-sm shadow-sm hover:shadow-md font-semibold text-center inline-block"
+                    focus:shadow-sm focus:ring-4 focus:ring-blue-500 focus:ring-opacity-50 text-white 
+                    w-full py-2.5 rounded-xl text-sm shadow-sm hover:shadow-md text-center inline-block"
                   onClick={() => {
                     Authenticate();
                   }}

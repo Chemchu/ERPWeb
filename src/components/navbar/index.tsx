@@ -173,7 +173,7 @@ const BottomNavbar = (props: { IndexSeleccionado: SidebarOption; setIndex: Funct
         <PopOver
           ButtonIndex={SidebarOption.Ajustes}
           CurrentIndex={props.IndexSeleccionado}
-          className="flex flex-col absolute bottom-11 -left-16 cursor-pointer text-center border border-blue-500 rounded-lg bg-white text-blue-500 p-2 w-36"
+          className="flex flex-col absolute bottom-11 -left-14 cursor-pointer text-center border rounded-lg bg-blue-600 text-white p-2 w-36"
           rutas={[
             {
               nombre: "Ajustes",
