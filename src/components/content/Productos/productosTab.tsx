@@ -99,10 +99,9 @@ const ProductPage = () => {
             <DownloadProductsFile productos={Productos} />
           </div>
         </div>
-        <div className="w-2/3 sm:max-w-xs">
+        <div className="flex flex-col gap-1 w-2/3 sm:max-w-xs">
           <div className="flex gap-2 items-center">
             <input
-              autoFocus={true}
               className="rounded-lg border appearance-none shadow-lg w-full h-full py-2 px-4 bg-white text-gray-700 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-600"
               placeholder="Buscar..."
               onChange={(e) => {
@@ -164,12 +163,11 @@ const TablaProductos = (props: { isLoading: boolean; Productos: Producto[]; SetP
 
   return (
     <div className="flex flex-col w-full h-10 grow">
-      <div className="flex justify-between border-t-2 border-x-2 rounded-t-2xl px-5 py-2">
-        <div className="text-left font-semibold w-2/5">Nombre</div>
-
-        <div className="text-left font-semibold w-1/5">Precio</div>
-        <div className="text-left font-semibold w-1/5 ">Familia</div>
-        <div className="text-right font-semibold w-1/5">Cantidad</div>
+      <div className="flex border-t-2 border-x-2 rounded-t-2xl px-5 py-2">
+        <div className="text-left font-semibold w-full sm:w-2/5">Nombre</div>
+        <div className="text-right sm:text-left font-semibold w-full sm:w-1/5">Precio</div>
+        <div className="text-left hidden sm:block font-semibold w-1/5">Familia</div>
+        <div className="text-right hidden sm:block font-semibold w-1/5">Cantidad</div>
       </div>
       {props.isLoading ? (
         <div className="h-full w-full border-2 rounded-b overflow-y-scroll">
@@ -179,26 +177,28 @@ const TablaProductos = (props: { isLoading: boolean; Productos: Producto[]; SetP
         </div>
       ) : (
         <>
-          <div className="h-full w-full border-2 rounded-b overflow-y-scroll">
+          <div className="flex flex-col h-full w-full border-2 rounded-b overflow-y-scroll">
             {props.Productos.length <= 0 ? (
               <div className="flex justify-center items-center h-full w-full text-xl">
                 No se ha encontrado registros de productos en el sistema
               </div>
             ) : (
-              props.Productos.slice(elementsPerPage * (currentPage - 1), currentPage * elementsPerPage).map((p) => {
-                return (
-                  <div key={`FilaProdTable${p._id}`}>
-                    <FilaProducto producto={p} productos={props.Productos} setAllProductos={props.SetProductos} />
-                  </div>
-                );
-              })
+              <div className="flex flex-col w-full">
+                {props.Productos.slice(elementsPerPage * (currentPage - 1), currentPage * elementsPerPage).map((p) => {
+                  return (
+                    <div key={`FilaProdTable${p._id}`} className="w-full">
+                      <FilaProducto producto={p} productos={props.Productos} setAllProductos={props.SetProductos} />
+                    </div>
+                  );
+                })}
+              </div>
             )}
           </div>
           <div className="flex h-auto pt-2 items-start justify-center">
             <Paginador
               numPages={numPages}
               paginaActual={currentPage}
-              maxPages={10}
+              maxPages={5}
               cambiarPaginaActual={setPaginaActual}
             />
           </div>
@@ -233,12 +233,12 @@ const FilaProducto = (props: { producto: Producto; productos: Producto[]; setAll
           setModal(true);
         }}
       >
-        <div className="w-2/5 text-left truncate">{producto.nombre}</div>
-        <div className="w-1/5 text-left">{producto.precioVenta.toFixed(2)}€</div>
-        <div className="w-1/5 text-left truncate">{producto.familia}</div>
-        <div className="w-1/5 text-right">
+        <div className="w-full sm:w-2/5 text-left md:truncate">{producto.nombre}</div>
+        <div className="w-full sm:w-1/5 text-right sm:text-left">{producto.precioVenta.toFixed(2)}€</div>
+        <div className="w-1/5 hidden sm:block text-left md:truncate">{producto.familia}</div>
+        <div className="hidden sm:flex justify-end w-1/5 text-right">
           <span
-            className={`w-full px-3 py-1 rounded-full ${
+            className={`flex items-center justify-center w-12 px-3 py-1 rounded-full ${
               producto.cantidad > 0 ? " text-green-900 bg-green-300" : "text-red-900 bg-red-300"
             }`}
           >

@@ -14,7 +14,7 @@ export const Paginador = (props: {
   return (
     <div className="flex items-center">
       <button
-        className="w-full p-4 border text-base rounded-l-xl text-gray-600 bg-white hover:bg-gray-100"
+        className="w-full p-3 sm:p-4 border text-base rounded-l-xl text-gray-600 bg-white hover:bg-gray-100"
         onClick={() => {
           props.cambiarPaginaActual(props.paginaActual - 1);
         }}
@@ -35,7 +35,7 @@ export const Paginador = (props: {
             return (
               <button
                 key={`paginador${n}`}
-                className={`w-full px-4 py-2 border-t border-b text-base ${
+                className={`w-full px-3 py-1 sm:px-4 sm:py-2 border-t border-b text-base ${
                   n + 1 == props.paginaActual
                     ? "text-blue-700 font-semibold bg-gray-200"
                     : "text-gray-600 hover:bg-gray-100 bg-white"
@@ -52,7 +52,7 @@ export const Paginador = (props: {
             return (
               <button
                 key={`paginador${n}`}
-                className={`w-full px-4 py-2 border-t border-b text-base ${
+                className={`w-full px-3 py-1 sm:px-4 sm:py-2 border-t border-b text-base ${
                   n + 1 == props.paginaActual
                     ? "text-blue-700 font-semibold bg-gray-200"
                     : "text-gray-600 hover:bg-gray-100 bg-white"
@@ -67,7 +67,7 @@ export const Paginador = (props: {
           })}
 
       <button
-        className="w-full p-4 border text-base rounded-r-xl text-gray-600 bg-white hover:bg-gray-100"
+        className="w-full p-3 sm:p-4 border text-base rounded-r-xl text-gray-600 bg-white hover:bg-gray-100"
         onClick={() => {
           props.cambiarPaginaActual(props.paginaActual + 1);
         }}

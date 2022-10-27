@@ -77,17 +77,23 @@ const SalesPage = () => {
 
   return (
     <div className="flex flex-col h-full w-full bg-white sm:rounded-bl-3xl sm:rounded-tr-3xl p-4 shadow-lg border-x">
-      <div className="flex justify-between w-full h-auto py-4">
+      <div className="flex justify-between w-full h-auto pb-4">
         <div className="flex justify-start w-1/3 h-full gap-4 items-start">
           <div className="hidden sm:inline-block">
             <UploadFileRestricted extension="json" tipoDocumento={TipoDocumento.Ventas} />
           </div>
           <DownloadFile tipoDocumento={TipoDocumento.Ventas} />
         </div>
-        <div className="flex flex-col md:w-2/3 gap-4 items-end">
+        <div className="flex flex-col md:w-2/3 gap-2 items-end">
+          <DateRange
+            titulo="Fecha"
+            dateRange={dateRange}
+            setDateRange={setDateRange}
+            endDate={endDate}
+            startDate={startDate}
+          />
           <div className="flex gap-2">
             <input
-              autoFocus={true}
               className="rounded-lg border appearance-none shadow-lg w-40 xl:w-96 h-full py-2 px-4 bg-white text-gray-700 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-600"
               placeholder="Buscar venta..."
               onChange={(e) => {
@@ -117,13 +123,6 @@ const SalesPage = () => {
               </button>
             )}
           </div>
-          <DateRange
-            titulo="Fecha"
-            dateRange={dateRange}
-            setDateRange={setDateRange}
-            endDate={endDate}
-            startDate={startDate}
-          />
         </div>
       </div>
       <div className="grid grid-cols-4 justify-evenly border-t border-x rounded-t-2xl">
@@ -172,12 +171,7 @@ const SalesPage = () => {
         )}
       </div>
       <div className="flex w-full pt-2 items-center justify-center">
-        <Paginador
-          numPages={numPages}
-          paginaActual={CurrentPage}
-          maxPages={elementsPerPage}
-          cambiarPaginaActual={setPaginaActual}
-        />
+        <Paginador numPages={numPages} paginaActual={CurrentPage} maxPages={5} cambiarPaginaActual={setPaginaActual} />
       </div>
       <AnimatePresence initial={false}>
         {showModalEditarVenta && (

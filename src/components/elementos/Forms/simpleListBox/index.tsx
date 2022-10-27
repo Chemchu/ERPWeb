@@ -6,6 +6,7 @@ export default function SimpleListBox(props: {
   elementos: string[];
   setElemento: Function;
   defaultValue?: string;
+  classNameButton?: string;
 }) {
   const [selected, setSelected] = useState(props.defaultValue || props.elementos[0]);
 
@@ -16,8 +17,14 @@ export default function SimpleListBox(props: {
   return (
     <div className="w-full h-full">
       <Listbox disabled={props.disabled} value={selected} onChange={setSelected}>
-        <div className="relative mt-1">
-          <Listbox.Button className="focus:outline-none relative w-full cursor-default rounded-lg bg-white py-2 pl-3 pr-10 text-left shadow-md focus-visible:border-indigo-500 focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-opacity-75 focus-visible:ring-offset-2 focus-visible:ring-offset-orange-300 sm:text-sm">
+        <div className="relative">
+          <Listbox.Button
+            className={`${
+              props.classNameButton
+                ? props.classNameButton
+                : "focus:outline-none relative w-full cursor-default rounded-lg bg-white py-2 pl-3 pr-10 text-left shadow-md focus-visible:border-indigo-500 focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-opacity-75 focus-visible:ring-offset-2 focus-visible:ring-offset-orange-300 sm:text-sm"
+            }`}
+          >
             <span className="block truncate">{selected}</span>
             <span className="pointer-events-none absolute inset-y-0 right-0 flex items-center pr-2">
               <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" className="w-5 h-5">

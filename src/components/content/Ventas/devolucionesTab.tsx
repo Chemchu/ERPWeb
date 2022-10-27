@@ -76,7 +76,6 @@ const DevolucionesPage = () => {
 
         <div className="flex max-w-xs gap-2">
           <input
-            autoFocus={true}
             className="rounded-lg border appearance-none shadow-lg w-72 xl:w-96 h-full py-2 px-4 bg-white text-gray-700 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-600"
             placeholder="ID del reembolso..."
             onChange={(e) => {
@@ -150,12 +149,7 @@ const DevolucionesPage = () => {
         )}
       </div>
       <div className="flex pt-2 items-center justify-center">
-        <Paginador
-          numPages={numPages}
-          paginaActual={CurrentPage}
-          maxPages={elementsPerPage}
-          cambiarPaginaActual={setPaginaActual}
-        />
+        <Paginador numPages={numPages} paginaActual={CurrentPage} maxPages={5} cambiarPaginaActual={setPaginaActual} />
       </div>
       <AnimatePresence initial={false}>
         {showModalEditarVenta && (
