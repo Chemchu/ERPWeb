@@ -1,7 +1,5 @@
 const AjustesVentas = () => {
-    return (
-        <div></div>
-    )
-}
+  return <div></div>;
+};
 
 export default AjustesVentas;
