@@ -49,6 +49,7 @@ const GuardarCompra = (props: { setModal: Function; compraActual: ProductoVendid
           <div className="text-lg text-center h-1/3 w-full font-semibold">Guardar compra</div>
           <div className="flex flex-col h-full w-full items-center justify-center px-2">
             <input
+              autoFocus
               className="w-full outline outline-blue-300 rounded-lg p-2"
               type="text"
               placeholder="Nombre del cliente..."

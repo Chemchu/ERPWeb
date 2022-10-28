@@ -11,6 +11,41 @@ import { SesionEmpleado } from "../../../tipos/Empleado";
 import { Roles } from "../../../tipos/Enums/Roles";
 import SimpleListBox from "../../../components/elementos/Forms/simpleListBox";
 
+const renderTabPages = (currentElemento: string) => {
+  switch (currentElemento) {
+    case "Productos":
+      return (
+        <div key={"Productos"} className={classNames("h-full w-full", "focus:outline-none ring-white ring-opacity-60")}>
+          <ProductPage />
+        </div>
+      );
+    case "Mermas":
+      return (
+        <div key={"Mermas"} className={classNames("h-full w-full", "focus:outline-none ring-white ring-opacity-60")}>
+          <MermaPage />
+        </div>
+      );
+    case "Inventario":
+      return (
+        <div
+          key={"Inventario"}
+          className={classNames("h-full w-full", "focus:outline-none ring-white ring-opacity-60")}
+        >
+          <EnDesarrolloPage />
+        </div>
+      );
+    case "Pedidos":
+      return (
+        <div key={"Pedidos"} className={classNames("h-full w-full", "focus:outline-none ring-white ring-opacity-60")}>
+          <EnDesarrolloPage />
+        </div>
+      );
+
+    default:
+      return <span>Tab no encontrado!</span>;
+  }
+};
+
 const Productos = (props: { EmpleadoSesion: SesionEmpleado }) => {
   const { Empleado, SetEmpleado } = useEmpleadoContext();
   const [currentElemento, setElemento] = useState<string>("Productos");
@@ -21,44 +56,6 @@ const Productos = (props: { EmpleadoSesion: SesionEmpleado }) => {
     }
   }, []);
 
-  const renderTabPages = () => {
-    switch (currentElemento) {
-      case "Productos":
-        return (
-          <div
-            key={"Productos"}
-            className={classNames("h-full w-full", "focus:outline-none ring-white ring-opacity-60")}
-          >
-            <ProductPage />
-          </div>
-        );
-      case "Mermas":
-        return (
-          <div key={"Mermas"} className={classNames("h-full w-full", "focus:outline-none ring-white ring-opacity-60")}>
-            <MermaPage />
-          </div>
-        );
-      case "Inventario":
-        return (
-          <div
-            key={"Inventario"}
-            className={classNames("h-full w-full", "focus:outline-none ring-white ring-opacity-60")}
-          >
-            <EnDesarrolloPage />
-          </div>
-        );
-      case "Pedidos":
-        return (
-          <div key={"Pedidos"} className={classNames("h-full w-full", "focus:outline-none ring-white ring-opacity-60")}>
-            <EnDesarrolloPage />
-          </div>
-        );
-
-      default:
-        return <span>Tab no encontrado!</span>;
-    }
-  };
-
   return (
     <main className="w-full h-full">
       <div className="flex flex-col w-full h-full sm:hidden">
@@ -67,10 +64,10 @@ const Productos = (props: { EmpleadoSesion: SesionEmpleado }) => {
             elementos={["Productos", "Mermas", "Inventario", "Pedidos"]}
             defaultValue={"Productos"}
             setElemento={setElemento}
-            classNameButton="bg-white w-full h-full p-2 border-b text-xl"
+            className="w-full h-full p-2 border-b text-xl bg-blue-500 text-white"
           />
         </div>
-        <div className="w-full h-10 grow bg-white">{renderTabPages()}</div>
+        <div className="w-full h-10 grow bg-white">{renderTabPages(currentElemento)}</div>
       </div>
 
       <Tab.Group as="div" className="hidden sm:flex sm:flex-col w-full h-full">

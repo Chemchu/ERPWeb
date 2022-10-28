@@ -11,7 +11,7 @@ import { FetchVentaByQuery, FetchVentas, FetchVentasByDateRange } from "../../..
 import DownloadFile from "../../elementos/botones/downloadFile";
 import FiltrarInput from "../../elementos/input/filtrarInput";
 
-const SalesPage = () => {
+const VentasPage = () => {
   const [Ventas, setVentas] = useState<Venta[]>([]);
   const [CurrentPage, setCurrentPage] = useState<number>(1);
   const [CurrentVenta, setCurrentVenta] = useState<Venta>();
@@ -183,4 +183,4 @@ const FilaVenta = (props: { venta: Venta }) => {
   );
 };
 
-export default SalesPage;
+export default VentasPage;
