@@ -1,11 +1,15 @@
-const FiltrarInput = (props: { filtro: string; setFiltro: Function; FiltrarCallback: Function }) => {
+const FiltrarInput = (props: {
+  filtro: string;
+  setFiltro: React.Dispatch<React.SetStateAction<string>>;
+  FiltrarCallback: Function;
+}) => {
   return (
     <>
       <input
         className="rounded-lg border appearance-none shadow-lg w-44 xl:w-96 h-full py-2 px-4 bg-white text-gray-700 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-600"
         placeholder="Buscar..."
         onChange={(e) => {
-          props.setFiltro(e.target.value);
+          props.setFiltro(() => e.target.value);
         }}
         onKeyPress={async (e) => {
           e.key === "Enter" && (await props.FiltrarCallback());

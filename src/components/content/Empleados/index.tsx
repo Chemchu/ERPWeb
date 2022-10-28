@@ -36,12 +36,12 @@ const EmpleadosPage = () => {
     }
   }, [filtro]);
 
-  const Filtrar = async (f: string) => {
-    if (f === "") {
+  const Filtrar = async () => {
+    if (filtro === "") {
       return;
     }
 
-    setEmpleadosFiltrados(await FetchEmpleadosByQuery(f));
+    setEmpleadosFiltrados(await FetchEmpleadosByQuery(filtro));
   };
 
   if (isLoading) {
@@ -66,7 +66,7 @@ const EmpleadosPage = () => {
                 setFiltro(e.target.value);
               }}
               onKeyPress={async (e) => {
-                e.key === "Enter" && (await Filtrar(filtro));
+                e.key === "Enter" && (await Filtrar());
               }}
             />
 
@@ -75,7 +75,7 @@ const EmpleadosPage = () => {
                 className="px-4 py-2 font-semibold text-white bg-blue-500 rounded-lg shadow-md hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-400 focus:ring-offset-2 focus:ring-offset-purple-200"
                 onClick={async (e) => {
                   e.preventDefault();
-                  await Filtrar(filtro);
+                  await Filtrar();
                 }}
               >
                 Filtrar
@@ -127,7 +127,7 @@ const EmpleadosPage = () => {
                 setFiltro(e.target.value);
               }}
               onKeyPress={async (e) => {
-                e.key === "Enter" && (await Filtrar(filtro));
+                e.key === "Enter" && (await Filtrar());
               }}
             />
 
@@ -136,7 +136,7 @@ const EmpleadosPage = () => {
                 className="px-4 py-2 font-semibold text-white bg-blue-500 rounded-lg shadow-md hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-400 focus:ring-offset-2 focus:ring-offset-purple-200"
                 onClick={async (e) => {
                   e.preventDefault();
-                  await Filtrar(filtro);
+                  await Filtrar();
                 }}
               >
                 Filtrar

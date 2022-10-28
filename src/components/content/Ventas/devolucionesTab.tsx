@@ -51,17 +51,17 @@ const DevolucionesPage = () => {
     setCurrentPage(page);
   };
 
-  const Filtrar = async (f: string) => {
-    if (f === "") {
+  const Filtrar = async () => {
+    if (filtro === "") {
       setDevolucionesFiltradas(undefined);
       return;
     }
-    if (!f.match("^[0-9a-fA-F]{24}$")) {
+    if (!filtro.match("^[0-9a-fA-F]{24}$")) {
       notifyWarn("Introduce un ID de venta válido");
       return;
     }
 
-    setDevolucionesFiltradas(await FetchDevolucionesByQuery(f));
+    setDevolucionesFiltradas(await FetchDevolucionesByQuery(filtro));
   };
 
   return (

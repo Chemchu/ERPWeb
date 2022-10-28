@@ -14,11 +14,11 @@ const AlbaranesPage = () => {
   const [albaranes, setAlbaranes] = useState<any[]>([]);
   useEffect(() => {}, []);
 
-  const Filtrar = async (f: string) => {
-    if (f === "") {
+  const Filtrar = async () => {
+    if (filtro === "") {
       return;
     }
-    if (!ValidateSearchString(f)) {
+    if (!ValidateSearchString(filtro)) {
       notifyWarn("Albarán inválido");
       return;
     }
@@ -78,7 +78,7 @@ const AlbaranTable = (props: { isLoading: boolean; albaranes: any[]; setAlbaran:
         <>
           <div className="h-full w-full border-2 rounded-b overflow-y-scroll">
             {props.albaranes.length <= 0 ? (
-              <div className="flex justify-center items-center h-full w-full text-xl">
+              <div className="flex justify-center items-center h-full w-full text-xl p-2">
                 No se ha encontrado registros de albaranes en el sistema (todavía en desarrollo)
               </div>
             ) : (

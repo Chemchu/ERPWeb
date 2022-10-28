@@ -61,7 +61,6 @@ const CierrePage = () => {
     const GetData = async () => {
       if (dateRange[0] && dateRange[1]) {
         const fechas: string[] = [dateRange[0], dateRange[1]];
-        setLoading(true);
         setCierresFiltrados(await FetchCierresByQuery(undefined, fechas));
       }
 
@@ -78,7 +77,6 @@ const CierrePage = () => {
     if (!isMounted) {
       return;
     }
-    setLoading(false);
   }, [CierresFiltrados]);
 
   const numPages = Math.ceil(CierresList.length / elementsPerPage);
@@ -94,14 +92,13 @@ const CierrePage = () => {
     setCurrentPage(page);
   };
 
-  const Filtrar = async (f: string) => {
-    if (f === "") {
+  const Filtrar = async () => {
+    if (filtro === "") {
       setCierresFiltrados(undefined);
       return;
     }
 
-    setLoading(true);
-    setCierresFiltrados(await FetchCierresByQuery(f));
+    setCierresFiltrados(await FetchCierresByQuery(filtro));
   };
 
   if (isLoading) {
@@ -200,6 +197,7 @@ const TablaCierre = (props: { CierresList: Cierre[]; SetCierres: Function; curre
       </div>
     );
   }
+
   return (
     <>
       {props.CierresList.length <= 0 ? (

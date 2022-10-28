@@ -50,12 +50,12 @@ const MermaPage = () => {
     }
   }, [filtro]);
 
-  const Filtrar = async (f: string) => {
-    if (f === "") {
+  const Filtrar = async () => {
+    if (filtro === "") {
       return;
     }
 
-    setMermasFiltradas(await FetchMermaByQuery(f));
+    setMermasFiltradas(await FetchMermaByQuery(filtro));
   };
 
   const UpdateMermasCallback = async () => {

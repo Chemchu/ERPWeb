@@ -66,20 +66,20 @@ const ProductPage = () => {
     }
   }, [filtro]);
 
-  const Filtrar = async (f: string) => {
+  const Filtrar = async () => {
     if (!isMounted) {
       return;
     }
 
-    if (f === "") {
+    if (filtro === "") {
       return;
     }
-    if (!ValidateSearchString(f)) {
+    if (!ValidateSearchString(filtro)) {
       notifyWarn("Producto inválido");
       return;
     }
 
-    setProductosFiltradas(await FetchProductoByQuery(f, tipoProductos));
+    setProductosFiltradas(await FetchProductoByQuery(filtro, tipoProductos));
   };
 
   const SetTipoProductos = (e: string) => {

@@ -39,12 +39,12 @@ const ClientesPage = () => {
     }
   }, [filtro]);
 
-  const Filtrar = async (f: string) => {
-    if (f === "") {
+  const Filtrar = async () => {
+    if (filtro === "") {
       return;
     }
 
-    const clientes = await FetchClientesByQuery(f);
+    const clientes = await FetchClientesByQuery(filtro);
     setClientesFiltrados(clientes.filter((c) => c.nif !== "General"));
   };
 

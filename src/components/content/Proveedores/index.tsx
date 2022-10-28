@@ -15,11 +15,11 @@ const ProveedoresPage = () => {
   const [proveedores, setProveedores] = useState<Proveedor[]>([]);
   useEffect(() => {}, []);
 
-  const Filtrar = async (f: string) => {
-    if (f === "") {
+  const Filtrar = async () => {
+    if (filtro === "") {
       return;
     }
-    if (!ValidateSearchString(f)) {
+    if (!ValidateSearchString(filtro)) {
       notifyWarn("Proveedor inválido");
       return;
     }
