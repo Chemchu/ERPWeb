@@ -9,6 +9,7 @@ import SkeletonCard from "../../Skeletons/skeletonCard";
 import UploadFileRestricted from "../../elementos/botones/uploadFileRestricted";
 import { FetchVentaByQuery, FetchVentas, FetchVentasByDateRange } from "../../../utils/fetches/ventasFetches";
 import DownloadFile from "../../elementos/botones/downloadFile";
+import FiltrarInput from "../../elementos/input/filtrarInput";
 
 const SalesPage = () => {
   const [Ventas, setVentas] = useState<Venta[]>([]);
@@ -62,27 +63,31 @@ const SalesPage = () => {
     setCurrentPage(page);
   };
 
-  const Filtrar = async (f: string) => {
-    if (f === "") {
+  const Filtrar = async () => {
+    if (filtro === "") {
       setVentasFiltradas(undefined);
       return;
     }
 
     if (dateRange[0] !== null && dateRange[1] !== null) {
-      setVentasFiltradas(await FetchVentaByQuery(f, [String(dateRange[0].getTime()), String(dateRange[1].getTime())]));
+      setVentasFiltradas(
+        await FetchVentaByQuery(filtro, [String(dateRange[0].getTime()), String(dateRange[1].getTime())])
+      );
       return;
     }
-    setVentasFiltradas(await FetchVentaByQuery(f));
+    setVentasFiltradas(await FetchVentaByQuery(filtro));
   };
 
   return (
-    <div className="flex flex-col h-full w-full bg-white sm:rounded-bl-3xl sm:rounded-tr-3xl p-4 shadow-lg border-x">
+    <div className="flex flex-col h-full w-full bg-white sm:rounded-bl-3xl sm:rounded-tr-3xl p-2 sm:p-4 shadow-lg border-x">
       <div className="flex justify-between w-full h-auto pb-4">
         <div className="flex justify-start w-1/3 h-full gap-4 items-start">
           <div className="hidden sm:inline-block">
             <UploadFileRestricted extension="json" tipoDocumento={TipoDocumento.Ventas} />
           </div>
-          <DownloadFile tipoDocumento={TipoDocumento.Ventas} />
+          <div className="hidden sm:inline-block">
+            <DownloadFile tipoDocumento={TipoDocumento.Ventas} />
+          </div>
         </div>
         <div className="flex flex-col md:w-2/3 gap-2 items-end">
           <DateRange
@@ -92,44 +97,16 @@ const SalesPage = () => {
             endDate={endDate}
             startDate={startDate}
           />
-          <div className="flex gap-2">
-            <input
-              className="rounded-lg border appearance-none shadow-lg w-40 xl:w-96 h-full py-2 px-4 bg-white text-gray-700 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-600"
-              placeholder="Buscar venta..."
-              onChange={(e) => {
-                setFiltro(e.target.value);
-              }}
-              onKeyPress={async (e) => {
-                e.key === "Enter" && (await Filtrar(filtro));
-              }}
-            />
-
-            {filtro ? (
-              <button
-                className="px-4 py-2 font-semibold text-white bg-blue-500 rounded-lg shadow-md hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-400 focus:ring-offset-2 focus:ring-offset-purple-200"
-                onClick={async (e) => {
-                  e.preventDefault();
-                  await Filtrar(filtro);
-                }}
-              >
-                Filtrar
-              </button>
-            ) : (
-              <button
-                disabled
-                className="px-4 py-2 font-semibold text-white bg-blue-300 rounded-lg shadow-md cursor-default"
-              >
-                Filtrar
-              </button>
-            )}
+          <div className="flex w-full gap-2 items-center justify-end">
+            <FiltrarInput filtro={filtro} setFiltro={setFiltro} FiltrarCallback={Filtrar} />
           </div>
         </div>
       </div>
-      <div className="grid grid-cols-4 justify-evenly border-t border-x rounded-t-2xl">
-        <div className="px-5 py-3 border-gray-200 text-gray-800 text-left font-semibold">Cliente</div>
-        <div className="py-3 border-gray-200 text-gray-800 text-left font-semibold">Fecha de compra</div>
-        <div className="py-3 border-gray-200 text-gray-800 text-left font-semibold">Método de pago</div>
-        <div className="py-3 border-gray-200 text-gray-800 text-left font-semibold">Valor total</div>
+      <div className="flex text-base justify-between w-full h-12 items-center border-t border-x rounded-t-2xl font-semibold p-2">
+        <div className="hidden sm:inline-flex border-gray-200 text-gray-800 w-full text-left">Cliente</div>
+        <div className="border-gray-200 text-gray-800 w-full text-left sm:text-center">Fecha</div>
+        <div className="hidden sm:inline-flex border-gray-200 text-gray-800 w-full text-right">Pago</div>
+        <div className="border-gray-200 text-gray-800 w-full text-right">Total</div>
       </div>
       <div className="h-full w-full pb-4 border overflow-y-scroll">
         {isLoading ? (
@@ -189,17 +166,17 @@ const FilaVenta = (props: { venta: Venta }) => {
   fecha.setUTCMilliseconds(Number(props.venta.createdAt));
 
   return (
-    <div className="grid grid-cols-4 w-full justify-evenly gap-x-6 border-t">
-      <div className="px-5 py-3 border-gray-200 ">
+    <div className="flex w-full h-12 p-2 justify-between items-center border-t">
+      <div className="hidden sm:inline-flex w-full border-gray-200 text-left">
         <p>{props.venta.cliente.nombre}</p>
       </div>
-      <div className="py-3 border-gray-200 ">
+      <div className="w-full text-sm sm:text-base border-gray-200 text-left sm:text-center">
         <p className="whitespace-no-wrap">{fecha.toLocaleString()}</p>
       </div>
-      <div className="py-3 border-gray-200 ">
+      <div className="hidden sm:inline-flex w-full border-gray-200 text-right">
         <p className="whitespace-no-wrap">{props.venta.tipo}</p>
       </div>
-      <div className="py-3 border-gray-200">
+      <div className="w-full border-gray-200 text-right">
         <p className="whitespace-no-wrap">{props.venta.precioVentaTotal.toFixed(2)}€</p>
       </div>
     </div>

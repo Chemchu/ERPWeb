@@ -98,16 +98,16 @@ const VerVenta = (props: { venta: Venta | undefined; setModal: Function }) => {
         }}
       >
         <motion.div
-          className="h-5/6 w-5/6 flex flex-col items-center bg-white rounded-2xl p-4"
+          className="h-5/6 w-11/12 sm:w-5/6 flex flex-col items-center bg-white rounded-2xl p-4"
           onClick={(e) => e.stopPropagation()}
           variants={In}
           initial="hidden"
           animate="visible"
           exit="exit"
         >
-          <div className="flex flex-col w-full h-full text-left">
+          <div className="flex flex-col gap-4 w-full h-10 grow text-left">
             <div className="flex justify-between items-center">
-              <span className="text-xl sm:text-2xl">Venta en: {`${fecha.toLocaleString()}`}</span>
+              <span className="text-lg sm:text-2xl">Venta en: {`${fecha.toLocaleString()}`}</span>
               <svg
                 xmlns="http://www.w3.org/2000/svg"
                 fill="none"
@@ -126,10 +126,10 @@ const VerVenta = (props: { venta: Venta | undefined; setModal: Function }) => {
                 />
               </svg>
             </div>
-            <div className="flex flex-col gap-4 sm:gap-0 sm:flex-row w-full h-full justify-between items-center py-6 overflow-y-scroll sm:overflow-y-hidden">
-              <span className="font-semibold sm:w-1/2 w-full h-full">
+            <div className="flex flex-col gap-4 sm:gap-0 sm:flex-row w-full h-10 grow justify-between items-center">
+              <div className="font-semibold sm:w-1/2 w-full h-full overflow-y-scroll sm:overflow-y-hidden text-sm sm:text-base">
                 Resumen de la compra
-                <div className="flex flex-col pt-4 font-normal">
+                <div className="flex flex-col pt-2 font-normal">
                   <span>
                     Cliente:{" "}
                     {props.venta.cliente.nombre === "General"
@@ -160,13 +160,13 @@ const VerVenta = (props: { venta: Venta | undefined; setModal: Function }) => {
                   <span>Porcentaje de descuento aplicado: {props.venta.descuentoPorcentaje}%</span>
                   <span>ID: {props.venta._id}</span>
                 </div>
-              </span>
+              </div>
               <div className="bg-gray-100 rounded-lg border-2 sm:w-1/2 w-full h-full font-normal overflow-y-scroll text-sm sm:text-base">
-                <div className="flex w-full justify-around p-2 cursor-default">
-                  <p className="w-1/4 text-left font-semibold">Producto</p>
-                  <p className="w-1/4 text-center font-semibold">Cantidad</p>
-                  <p className="w-1/4 text-center font-semibold">Descuento</p>
-                  <p className="w-1/4 text-center font-semibold">Total</p>
+                <div className="flex w-full p-2 cursor-default font-semibold items-center">
+                  <p className="w-1/3 sm:w-1/4 text-left">Producto</p>
+                  <p className="w-1/3 sm:w-1/4 text-right sm:text-center">Cantidad</p>
+                  <p className="hidden sm:inline-flex sm:w-1/4 text-center">Descuento</p>
+                  <p className="w-1/3 sm:w-1/4 text-right sm:text-center">Total</p>
                 </div>
                 <hr className="border-2 border-gray-300" />
                 <div className="flex flex-col gap-2 w-full h-full p-2">
@@ -180,30 +180,64 @@ const VerVenta = (props: { venta: Venta | undefined; setModal: Function }) => {
                 </div>
               </div>
             </div>
-            <div className="flex gap-4 w-full justify-around items-end text-white">
+            <div className="flex gap-2 w-full justify-around items-end text-white">
               <button
-                className="w-1/3 h-12 rounded-xl bg-red-500 hover:bg-red-600 shadow-lg"
+                className="flex justify-center items-center w-1/3 h-12 rounded-xl bg-red-500 hover:bg-red-600 shadow-lg"
                 onClick={() => {
                   props.setModal(false);
                 }}
               >
-                Cerrar
+                <span className="hidden sm:inline-flex">Cerrar</span>
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  strokeWidth={1.5}
+                  stroke="currentColor"
+                  className="w-6 h-6 sm:hidden"
+                >
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
+                </svg>
               </button>
               <button
-                className="w-1/3 h-12 rounded-xl bg-orange-500 hover:bg-orange-600 shadow-lg"
+                className="flex justify-center items-center w-1/3 h-12 rounded-xl bg-orange-500 hover:bg-orange-600 shadow-lg"
                 onClick={() => {
                   setShowDevolverModal(true);
                 }}
               >
-                Devolver
+                <span className="hidden sm:inline-flex">Devolver</span>
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  strokeWidth={1.5}
+                  stroke="currentColor"
+                  className="w-6 h-6 sm:hidden"
+                >
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M15 15l-6 6m0 0l-6-6m6 6V9a6 6 0 0112 0v3" />
+                </svg>
               </button>
               <button
-                className="w-1/3 h-12 rounded-xl bg-blue-500 hover:bg-blue-600 shadow-lg"
+                className="flex items-center justify-center w-1/3 h-12 rounded-xl bg-blue-500 hover:bg-blue-600 shadow-lg"
                 onClick={() => {
                   handlePrint();
                 }}
               >
-                Imprimir
+                <span className="hidden sm:inline-flex">Imprimir</span>
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  strokeWidth={1.5}
+                  stroke="currentColor"
+                  className="w-6 h-6 sm:hidden"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    d="M6.72 13.829c-.24.03-.48.062-.72.096m.72-.096a42.415 42.415 0 0110.56 0m-10.56 0L6.34 18m10.94-4.171c.24.03.48.062.72.096m-.72-.096L17.66 18m0 0l.229 2.523a1.125 1.125 0 01-1.12 1.227H7.231c-.662 0-1.18-.568-1.12-1.227L6.34 18m11.318 0h1.091A2.25 2.25 0 0021 15.75V9.456c0-1.081-.768-2.015-1.837-2.175a48.055 48.055 0 00-1.913-.247M6.34 18H5.25A2.25 2.25 0 013 15.75V9.456c0-1.081.768-2.015 1.837-2.175a48.041 48.041 0 011.913-.247m10.5 0a48.536 48.536 0 00-10.5 0m10.5 0V3.375c0-.621-.504-1.125-1.125-1.125h-8.25c-.621 0-1.125.504-1.125 1.125v3.659M18 10.5h.008v.008H18V10.5zm-3 0h.008v.008H15V10.5z"
+                  />
+                </svg>
               </button>
             </div>
             {props.venta && PagoDelCliente && (
@@ -235,11 +269,13 @@ const GenerarFilaProducto = (props: { numFila: number; producto: ProductoVendido
 
   return (
     <>
-      <div className="flex w-full ">
-        <div className="w-1/4 text-left">{props.producto.nombre}</div>
-        <div className="w-1/4 text-center">{props.producto.cantidadVendida}</div>
-        <div className="w-1/4 text-center">{props.producto.dto}</div>
-        <div className="w-1/4 text-center">{(precio * props.producto.cantidadVendida).toFixed(2)}€</div>
+      <div className="flex w-full items-center justify-between">
+        <div className="w-1/3 sm:w-1/4 text-left">{props.producto.nombre}</div>
+        <div className="w-1/3 sm:w-1/4 text-right sm:text-center">{props.producto.cantidadVendida}</div>
+        <div className="hidden sm:inline-flex sm:w-1/4 text-center">{props.producto.dto}</div>
+        <div className="w-1/3 sm:w-1/4 text-right sm:text-center">
+          {(precio * props.producto.cantidadVendida).toFixed(2)}€
+        </div>
       </div>
       <hr />
     </>

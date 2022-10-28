@@ -14,6 +14,7 @@ import { FetchProductoByQuery, FetchProductos } from "../../../utils/fetches/pro
 import { ValidateSearchString } from "../../../utils/validator";
 import SimpleListBox from "../../elementos/Forms/simpleListBox";
 import { TipoProductos } from "../../../tipos/Enums/TipoProductos";
+import FiltrarInput from "../../elementos/input/filtrarInput";
 
 const arrayNum = [...Array(8)];
 
@@ -100,36 +101,8 @@ const ProductPage = () => {
           </div>
         </div>
         <div className="flex flex-col gap-1 w-2/3 sm:max-w-xs">
-          <div className="flex gap-2 items-center">
-            <input
-              className="rounded-lg border appearance-none shadow-lg w-full h-full py-2 px-4 bg-white text-gray-700 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-600"
-              placeholder="Buscar..."
-              onChange={(e) => {
-                setFiltro(e.target.value);
-              }}
-              onKeyPress={async (e) => {
-                e.key === "Enter" && (await Filtrar(filtro));
-              }}
-            />
-
-            {filtro ? (
-              <button
-                className="px-4 py-2 font-semibold text-white bg-blue-500 rounded-lg shadow-md hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-400 focus:ring-offset-2 focus:ring-offset-purple-200"
-                onClick={async (e) => {
-                  e.preventDefault();
-                  await Filtrar(filtro);
-                }}
-              >
-                Filtrar
-              </button>
-            ) : (
-              <button
-                disabled
-                className="px-4 py-2 font-semibold text-white bg-blue-300 rounded-lg shadow-md cursor-default"
-              >
-                Filtrar
-              </button>
-            )}
+          <div className="flex w-full gap-2 items-center justify-end">
+            <FiltrarInput filtro={filtro} setFiltro={setFiltro} FiltrarCallback={Filtrar} />
           </div>
           <SimpleListBox
             elementos={[TipoProductos.Todos, TipoProductos.Alta, TipoProductos.Baja]}

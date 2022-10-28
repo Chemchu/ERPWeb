@@ -51,15 +51,15 @@ const VerCliente = (props: {
         }}
       >
         <motion.div
-          className="h-5/6 w-5/6 flex flex-col gap-10 items-center bg-white rounded-2xl p-6"
+          className="h-5/6 w-5/6 flex flex-col gap-10 items-center bg-white rounded-2xl p-4"
           onClick={(e) => e.stopPropagation()}
           variants={In}
           initial="hidden"
           animate="visible"
           exit="exit"
         >
-          <div className="flex flex-col w-full h-full">
-            <div className="flex self-start font-semibold text-2xl w-full h-auto xl:text-3xl justify-between pb-10">
+          <div className="flex flex-col gap-4 w-full h-full">
+            <div className="flex self-start font-semibold text-2xl w-full h-auto xl:text-3xl justify-between">
               <EditableLabel
                 text={nombre}
                 setText={setNombre}
@@ -80,12 +80,22 @@ const VerCliente = (props: {
             <ClienteForm setCliente={setClienteAux} cliente={clienteAux} setHayCambios={setHayCambios} />
             <div className="flex w-full gap-4 justify-around items-end text-white">
               <button
-                className="w-full h-12 rounded-xl bg-red-500 hover:bg-red-600 shadow-lg"
+                className="flex items-center justify-center w-full h-12 rounded-xl bg-red-500 hover:bg-red-600 shadow-lg"
                 onClick={() => {
                   props.showModal(false);
                 }}
               >
-                Cerrar
+                <span className="hidden sm:inline-flex">Cerrar</span>
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  strokeWidth={1.5}
+                  stroke="currentColor"
+                  className="w-6 h-6 sm:hidden"
+                >
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
+                </svg>
               </button>
               {hayCambios ? (
                 <button
@@ -94,11 +104,31 @@ const VerCliente = (props: {
                     await GuardarCliente();
                   }}
                 >
-                  <p>Guardar cambios</p>
+                  <span className="hidden sm:inline-flex">Guardar</span>
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    strokeWidth={1.5}
+                    stroke="currentColor"
+                    className="w-6 h-6 sm:hidden"
+                  >
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M4.5 12.75l6 6 9-13.5" />
+                  </svg>
                 </button>
               ) : (
-                <div className={`flex bg-blue-400 h-12 w-full rounded-xl shadow-lg justify-center items-center `}>
-                  <p>Guardar cambios</p>
+                <div className={`flex bg-blue-400 h-12 w-full rounded-xl shadow-lg justify-center items-center`}>
+                  <span className="hidden sm:inline-flex">Guardar</span>
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    strokeWidth={1.5}
+                    stroke="currentColor"
+                    className="w-6 h-6 sm:hidden"
+                  >
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M4.5 12.75l6 6 9-13.5" />
+                  </svg>
                 </div>
               )}
             </div>

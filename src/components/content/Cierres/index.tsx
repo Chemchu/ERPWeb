@@ -13,6 +13,7 @@ import VerCierre from "../../modal/verCierre";
 import SkeletonCard from "../../Skeletons/skeletonCard";
 import { FetchTPVs } from "../../../utils/fetches/tpvFetches";
 import DownloadFile from "../../elementos/botones/downloadFile";
+import FiltrarInput from "../../elementos/input/filtrarInput";
 
 const arrayNum = [...Array(8)];
 const elementsPerPage = 50;
@@ -105,7 +106,7 @@ const CierrePage = () => {
 
   if (isLoading) {
     return (
-      <div className="flex flex-col h-full w-full bg-white sm:rounded-b-3xl sm:rounded-r-3xl p-4 shadow-lg border-x">
+      <div className="flex flex-col gap-4 h-full w-full bg-white sm:rounded-b-3xl sm:rounded-r-3xl p-4 shadow-lg border-x">
         <div className="flex w-full h-auto gap-2 justify-end">
           <div className="hidden sm:inline-block">
             <UploadFileRestricted tipoDocumento={TipoDocumento.Cierres} />
@@ -113,53 +114,24 @@ const CierrePage = () => {
           <div className="hidden sm:inline-block">
             <DownloadFile tipoDocumento={TipoDocumento.Cierres} />
           </div>
-          <div className="hidden">
-            <DateRange
-              titulo="Fecha"
-              dateRange={dateRange}
-              setDateRange={setDateRange}
-              endDate={endDate}
-              startDate={startDate}
-            />
-            <input
-              disabled
-              autoFocus={true}
-              className="rounded-lg border appearance-none shadow-lg w-max-72 xl:w-96 h-full py-2 px-4 bg-white text-gray-700 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-600"
-              placeholder="ID del cierre"
-            />
-            {filtro ? (
-              <button
-                className="px-4 py-2 font-semibold text-white bg-blue-500 rounded-lg shadow-md hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-400 focus:ring-offset-2 focus:ring-offset-purple-200"
-                onClick={async (e) => {
-                  e.preventDefault();
-                  await Filtrar(filtro);
-                }}
-              >
-                Filtrar
-              </button>
-            ) : (
-              <button
-                disabled
-                className="px-4 py-2 font-semibold text-white bg-blue-300 rounded-lg shadow-md cursor-default"
-              >
-                Filtrar
-              </button>
-            )}
+          <div className="flex w-full gap-2 items-center justify-end">
+            <FiltrarInput filtro={filtro} setFiltro={setFiltro} FiltrarCallback={Filtrar} />
           </div>
         </div>
-        <div className="flex justify-between border-t-2 border-x-2 rounded-t-2xl ">
-          <div className="text-left text-sm font-semibold w-1/4">TPV</div>
-
-          <div className="text-left text-sm font-semibold w-1/4">Fecha</div>
-          <div className="text-right text-sm font-semibold w-1/4 ">Trabajador</div>
-          <div className="text-right text-sm font-semibold w-1/4">Ventas totales</div>
+        <div className="flex flex-col w-full h-10 grow">
+          <div className="flex justify-between border-t-2 border-x-2 rounded-t-2xl p-2">
+            <div className="text-left text-sm font-semibold w-1/4">TPV</div>
+            <div className="text-left text-sm font-semibold w-1/4">Fecha</div>
+            <div className="text-right text-sm font-semibold w-1/4 ">Trabajador</div>
+            <div className="text-right text-sm font-semibold w-1/4">Ventas totales</div>
+          </div>
+          <div className="h-10 grow w-full border-2 rounded-b overflow-y-scroll">
+            {arrayNum.map((n, i) => {
+              return <SkeletonCard key={`SkeletonProdList-${i}`} />;
+            })}
+          </div>
         </div>
-        <div className="h-full w-full border-2 rounded-b overflow-y-scroll">
-          {arrayNum.map((n, i) => {
-            return <SkeletonCard key={`SkeletonProdList-${i}`} />;
-          })}
-        </div>
-        <div className="flex pt-2 items-center justify-center">
+        <div className="flex items-center justify-center">
           <Paginador
             numPages={numPages}
             paginaActual={currentPage}
@@ -183,35 +155,8 @@ const CierrePage = () => {
           </div>
         </div>
         <div className="flex justify-between flex-col sm:flex-row-reverse w-full h-full items-end gap-2">
-          <div className="flex gap-1">
-            <input
-              autoFocus={true}
-              className="rounded-lg border appearance-none shadow-lg w-max-72 xl:w-96 h-full py-2 px-4 bg-white text-gray-700 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-600"
-              placeholder="ID del cierre"
-              onChange={(e) => {
-                setFiltro(e.target.value);
-              }}
-              value={filtro}
-            />
-
-            {filtro ? (
-              <button
-                className="px-4 py-2 font-semibold text-white bg-blue-500 rounded-lg shadow-md hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-400 focus:ring-offset-2 focus:ring-offset-purple-200"
-                onClick={async (e) => {
-                  e.preventDefault();
-                  await Filtrar(filtro);
-                }}
-              >
-                Filtrar
-              </button>
-            ) : (
-              <button
-                disabled
-                className="px-4 py-2 font-semibold text-white bg-blue-300 rounded-lg shadow-md cursor-default"
-              >
-                Filtrar
-              </button>
-            )}
+          <div className="flex w-full gap-2 items-center justify-end">
+            <FiltrarInput filtro={filtro} setFiltro={setFiltro} FiltrarCallback={Filtrar} />
           </div>
           <DateRange
             titulo="Fecha"
@@ -224,11 +169,10 @@ const CierrePage = () => {
       </div>
       <div className="flex flex-col w-full h-10 grow">
         <div className="flex justify-between border-t-2 border-x-2 rounded-t-2xl px-5 py-2">
-          <div className="text-left font-semibold w-1/4">TPV</div>
-
-          <div className="text-left font-semibold w-1/4">Fecha</div>
-          <div className="text-right font-semibold w-1/4 ">Trabajador</div>
-          <div className="text-right font-semibold w-1/4">Ventas totales</div>
+          <div className="hidden sm:block text-left font-semibold w-full sm:w-1/4">TPV</div>
+          <div className="text-left font-semibold w-full sm:w-1/4">Fecha</div>
+          <div className="hidden sm:block text-right font-semibold w-full sm:w-1/4">Trabajador</div>
+          <div className="text-right font-semibold w-full sm:w-1/4">Ventas totales</div>
         </div>
         <div className="flex flex-col h-full w-full border-2 rounded-b overflow-y-scroll">
           <TablaCierre
@@ -311,10 +255,10 @@ const FilaCierre = (props: { cierres: Cierre[]; setAllCierres: Function; cierre:
           setModal(true);
         }}
       >
-        <div className="w-1/4 text-left">{tpv}</div>
-        <div className="w-1/4 text-left">{new Date(Number(currentCierre.cierre)).toLocaleString()}</div>
-        <div className="w-1/4 text-right">{currentCierre.cerradoPor.nombre}</div>
-        <div className="w-1/4 text-right">{currentCierre.ventasTotales.toFixed(2)}€</div>
+        <div className="hidden sm:block w-full sm:w-1/4 text-left">{tpv}</div>
+        <div className="w-full sm:w-1/4 text-left">{new Date(Number(currentCierre.cierre)).toLocaleString()}</div>
+        <div className="hidden sm:block w-full sm:w-1/4 text-left sm:text-right">{currentCierre.cerradoPor.nombre}</div>
+        <div className="w-full sm:w-1/4 text-right">{currentCierre.ventasTotales.toFixed(2)}€</div>
       </div>
       <AnimatePresence>
         {showModal && <VerCierre showModal={setModal} setCierre={SetCurrentCierre} cierre={currentCierre} tpv={tpv} />}

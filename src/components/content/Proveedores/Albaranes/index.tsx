@@ -6,6 +6,7 @@ import { ValidateSearchString } from "../../../../utils/validator";
 import AuthorizationWrapper from "../../../authorizationWrapper";
 import NuevoBoton from "../../../elementos/botones/nuevoBoton";
 import { Paginador } from "../../../elementos/Forms/paginador";
+import FiltrarInput from "../../../elementos/input/filtrarInput";
 import SkeletonCard from "../../../Skeletons/skeletonCard";
 
 const AlbaranesPage = () => {
@@ -27,38 +28,12 @@ const AlbaranesPage = () => {
 
   return (
     <main className="flex flex-col gap-4 w-full h-full max-h-full bg-white border-x border-b sm:rounded-bl-3xl sm:rounded-tr-3xl shadow-lg p-4">
-      <section className="flex justify-between items-start w-full">
-        <NuevoBoton accionEvent={() => {}} />
-        <div className="flex gap-2">
-          <input
-            autoFocus={true}
-            className="rounded-lg border appearance-none shadow-lg w-40 xl:w-96 h-full py-2 px-4 bg-white text-gray-700 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-600"
-            placeholder="Buscar..."
-            onChange={(e) => {
-              setFiltro(e.target.value);
-            }}
-            onKeyPress={async (e) => {
-              e.key === "Enter" && (await Filtrar(filtro));
-            }}
-          />
-          {filtro ? (
-            <button
-              className="px-4 py-2 font-semibold text-white bg-blue-500 rounded-lg shadow-md hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-400 focus:ring-offset-2 focus:ring-offset-purple-200"
-              onClick={async (e) => {
-                e.preventDefault();
-                await Filtrar(filtro);
-              }}
-            >
-              Filtrar
-            </button>
-          ) : (
-            <button
-              disabled
-              className="px-4 py-2 font-semibold text-white bg-blue-300 rounded-lg shadow-md cursor-default"
-            >
-              Filtrar
-            </button>
-          )}
+      <section className="flex sm:justify-between justify-end items-start w-full">
+        <div className="hidden sm:block">
+          <NuevoBoton accionEvent={() => {}} />
+        </div>
+        <div className="flex w-full gap-2 items-center justify-end">
+          <FiltrarInput filtro={filtro} setFiltro={setFiltro} FiltrarCallback={Filtrar} />
         </div>
       </section>
       <AlbaranTable isLoading={false} setAlbaran={() => {}} albaranes={[]} />

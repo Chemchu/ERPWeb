@@ -8,6 +8,7 @@ import { Merma } from "../../../tipos/Merma";
 import { FetchMermaByQuery, FetchMermas } from "../../../utils/fetches/mermasFetches";
 import VerMerma from "../../modal/verMerma";
 import AddMerma from "../../modal/addMerma";
+import FiltrarInput from "../../elementos/input/filtrarInput";
 
 const arrayNum = [...Array(16)];
 
@@ -73,36 +74,8 @@ const MermaPage = () => {
             }}
           />
         </div>
-        <div className="flex gap-2">
-          <input
-            className="rounded-lg border appearance-none shadow-lg w-40 xl:w-96 h-full py-2 px-4 bg-white text-gray-700 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-600"
-            placeholder="Buscar..."
-            onChange={(e) => {
-              setFiltro(e.target.value);
-            }}
-            onKeyDown={async (e) => {
-              e.key === "Enter" ? await Filtrar(filtro) : null;
-            }}
-          />
-
-          {filtro ? (
-            <button
-              className="px-4 py-2 font-semibold text-white bg-blue-500 rounded-lg shadow-md hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-400 focus:ring-offset-2 focus:ring-offset-purple-200"
-              onClick={async (e) => {
-                e.preventDefault();
-                await Filtrar(filtro);
-              }}
-            >
-              Filtrar
-            </button>
-          ) : (
-            <button
-              disabled
-              className="px-4 py-2 font-semibold text-white bg-blue-300 rounded-lg shadow-md cursor-default"
-            >
-              Filtrar
-            </button>
-          )}
+        <div className="flex w-full gap-2 items-center justify-end">
+          <FiltrarInput filtro={filtro} setFiltro={setFiltro} FiltrarCallback={Filtrar} />
         </div>
       </div>
       <TablaMerma
@@ -143,10 +116,10 @@ const TablaMerma = (props: {
   return (
     <div className="flex flex-col w-full h-full rounded-bl-3xl">
       <div className="flex items-center border-t-2 border-x-2 rounded-t-2xl p-2 font-semibold">
-        <div className="w-2/5 ">Fecha</div>
-        <div className="w-1/5 text-left ">Coste</div>
-        <div className="w-1/5 text-center">Ventas</div>
-        <div className="w-1/5 text-right ">Beneficios perdidos</div>
+        <div className="w-full sm:w-2/5">Fecha</div>
+        <div className="w-full sm:w-1/5 text-right sm:text-left">Coste</div>
+        <div className="hidden sm:inline-flex w-full sm:w-1/5 text-center">Ventas</div>
+        <div className="hidden sm:inline-flex w-full sm:w-1/5 text-right ">Beneficios perdidos</div>
       </div>
       <div className="flex flex-col w-full h-full">
         {props.isLoading ? (
@@ -200,10 +173,10 @@ const FilaMerma = (props: { merma: Merma; UpdateMermasCallback: Function }) => {
           setModal(true);
         }}
       >
-        <div className="w-2/5">{new Date(Number(props.merma.createdAt)).toLocaleString()}</div>
-        <div className="w-1/5 text-left">{props.merma.costeProductos}€</div>
-        <div className="w-1/5 text-center">{props.merma.ventasPerdidas}€</div>
-        <div className="w-1/5 text-right ">{props.merma.beneficioPerdido}€</div>
+        <div className="w-full sm:w-2/5">{new Date(Number(props.merma.createdAt)).toLocaleString()}</div>
+        <div className="w-full sm:w-1/5 text-right sm:text-left">{props.merma.costeProductos}€</div>
+        <div className="hidden sm:inline-flex w-full sm:w-1/5 text-center">{props.merma.ventasPerdidas}€</div>
+        <div className="hidden sm:inline-flex w-full sm:w-1/5 text-right ">{props.merma.beneficioPerdido}€</div>
       </div>
       <AnimatePresence>
         {showModal && (

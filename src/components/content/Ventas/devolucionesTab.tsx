@@ -6,6 +6,7 @@ import { FetchDevoluciones, FetchDevolucionesByQuery } from "../../../utils/fetc
 import { notifyWarn } from "../../../utils/toastify";
 import DateRange from "../../elementos/Forms/dateRange";
 import { Paginador } from "../../elementos/Forms/paginador";
+import FiltrarInput from "../../elementos/input/filtrarInput";
 import DevolucionModal from "../../modal/devolucionModal";
 import SkeletonCard from "../../Skeletons/skeletonCard";
 
@@ -74,41 +75,15 @@ const DevolucionesPage = () => {
           startDate={startDate}
         />
 
-        <div className="flex max-w-xs gap-2">
-          <input
-            className="rounded-lg border appearance-none shadow-lg w-72 xl:w-96 h-full py-2 px-4 bg-white text-gray-700 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-600"
-            placeholder="ID del reembolso..."
-            onChange={(e) => {
-              setFiltro(e.target.value);
-            }}
-            onKeyPress={async (e) => {}}
-          />
-
-          {filtro ? (
-            <button
-              className="px-4 py-2 font-semibold text-white bg-blue-500 rounded-lg shadow-md hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-400 focus:ring-offset-2 focus:ring-offset-purple-200"
-              onClick={async (e) => {
-                e.preventDefault();
-                await Filtrar(filtro);
-              }}
-            >
-              Filtrar
-            </button>
-          ) : (
-            <button
-              disabled
-              className="px-4 py-2 font-semibold text-white bg-blue-300 rounded-lg shadow-md cursor-default"
-            >
-              Filtrar
-            </button>
-          )}
+        <div className="flex w-full gap-2 items-center justify-end">
+          <FiltrarInput filtro={filtro} setFiltro={setFiltro} FiltrarCallback={Filtrar} />
         </div>
       </div>
-      <div className="grid grid-cols-4 justify-evenly border-t border-x rounded-t-2xl">
-        <div className="px-5 py-3 border-gray-200 text-gray-800 text-left text-sm font-semibold">Cliente</div>
-        <div className="py-3 border-gray-200 text-gray-800 text-left text-sm font-semibold">Fecha de compra</div>
-        <div className="py-3 border-gray-200 text-gray-800 text-left text-sm font-semibold">Fecha de reembolso</div>
-        <div className="py-3 border-gray-200 text-gray-800 text-left text-sm font-semibold">Dinero devuelto</div>
+      <div className="flex justify-between items-center border-t border-x rounded-t-2xl font-semibold">
+        <div className="p-2 w-full border-gray-200 text-gray-800 text-left">Cliente</div>
+        <div className="hidden sm:inline-flex p-2 w-full border-gray-200 text-gray-800 text-left">Fecha de compra</div>
+        <div className="hidden sm:inline-flex w-full border-gray-200 text-right">Fecha de devolución</div>
+        <div className="p-2 w-full border-gray-200 text-gray-800 text-right">Dinero devuelto</div>
       </div>
       <div className="h-full w-full pb-4 border overflow-y-scroll">
         {isLoading ? (
@@ -167,17 +142,17 @@ const FilaReembolso = (props: { devolucion: Devolucion }) => {
   const fechaReembolso = new Date(Number(props.devolucion.updatedAt));
 
   return (
-    <div className="grid grid-cols-4 w-full justify-evenly gap-x-6 border-t">
-      <div className="px-5 py-3 border-gray-200 text-sm">
+    <div className="flex justify-between items-center border-t p-2">
+      <div className="w-full border-gray-200">
         <p className="text-gray-900">{props.devolucion.cliente.nombre}</p>
       </div>
-      <div className="py-3 border-gray-200 text-sm">
+      <div className="hidden sm:inline-flex w-full border-gray-200">
         <p className="text-gray-900 whitespace-no-wrap">{fecha.toLocaleString()}</p>
       </div>
-      <div className="py-3 border-gray-200 text-sm">
+      <div className="hidden sm:inline-flex w-full border-gray-200 text-right">
         <p className="text-gray-900 whitespace-no-wrap">{fechaReembolso.toLocaleString()}</p>
       </div>
-      <div className="py-3 border-gray-200 text-lg">
+      <div className="w-full border-gray-200 text-right sm:text-lg">
         <p className="whitespace-no-wrap">{props.devolucion.dineroDevuelto.toFixed(2)}€</p>
       </div>
     </div>

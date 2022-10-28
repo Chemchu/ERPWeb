@@ -11,6 +11,7 @@ import NuevoBoton from "../../elementos/botones/nuevoBoton";
 import { FetchEmpleados, FetchEmpleadosByQuery } from "../../../utils/fetches/empleadoFetches";
 import AuthorizationWrapper from "../../authorizationWrapper";
 import { Roles } from "../../../tipos/Enums/Roles";
+import FiltrarInput from "../../elementos/input/filtrarInput";
 
 const arrayNum = [...Array(8)];
 
@@ -170,47 +171,14 @@ const EmpleadosPage = () => {
           <div className="hidden sm:inline-block">
             <NuevoBoton accionEvent={() => setModal(true)} />
           </div>
-          <div className="hidden sm:inline-block">
-            <UploadFile tipoDocumento={TipoDocumento.Clientes} />
-          </div>
-          {/* <DownloadProductsFile tipoDocumento={TipoDocumento.Empleado} /> */}
         </div>
-        <div className="flex gap-2">
-          <input
-            autoFocus={true}
-            className="rounded-lg border appearance-none shadow-lg w-40 xl:w-96 h-full py-2 px-4 bg-white text-gray-700 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-600"
-            placeholder="Empleado a buscar"
-            onChange={(e) => {
-              setFiltro(e.target.value);
-            }}
-            onKeyPress={async (e) => {
-              e.key === "Enter" && (await Filtrar(filtro));
-            }}
-          />
-
-          {filtro ? (
-            <button
-              className="px-4 py-2 font-semibold text-white bg-blue-500 rounded-lg shadow-md hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-400 focus:ring-offset-2 focus:ring-offset-purple-200"
-              onClick={async (e) => {
-                e.preventDefault();
-                await Filtrar(filtro);
-              }}
-            >
-              Filtrar
-            </button>
-          ) : (
-            <button
-              disabled
-              className="px-4 py-2 font-semibold text-white bg-blue-300 rounded-lg shadow-md cursor-default"
-            >
-              Filtrar
-            </button>
-          )}
+        <div className="flex w-full gap-2 items-center justify-end">
+          <FiltrarInput filtro={filtro} setFiltro={setFiltro} FiltrarCallback={Filtrar} />
         </div>
       </div>
-      <div className="flex justify-between border-t border-x rounded-t-2xl px-5 py-2">
+      <div className="flex justify-between border-t border-x rounded-t-2xl p-2">
         <div className="text-left font-semibold w-1/3">Nombre</div>
-        <div className="text-left font-semibold w-1/3">Correo</div>
+        <div className="hidden sm:block text-left font-semibold w-1/3">Correo</div>
         <div className="text-right font-semibold w-1/3">Rol</div>
       </div>
       <TablaEmpleado Empleados={EmpleadosFiltrados || EmpleadosList} />
@@ -268,14 +236,14 @@ const FilaEmpleado = (props: { empleado: Empleado; setEmpleados: Function }) => 
   return (
     <div className="hover:bg-gray-200">
       <div
-        className="flex justify-between border-b px-5 py-2 cursor-pointer"
+        className="flex justify-between border-b p-2 cursor-pointer"
         onClick={() => {
           setModal(true);
         }}
       >
-        <div className="w-1/3 text-left">{empleado.nombre}</div>
-        <div className="w-1/3 text-left truncate">{empleado.email}</div>
-        <div className="w-1/3 text-right">{empleado.rol}</div>
+        <div className="w-full sm:w-1/3 text-left">{empleado.nombre}</div>
+        <div className="hidden sm:block w-full sm:w-1/3 text-left truncate">{empleado.email}</div>
+        <div className="w-full sm:w-1/3 text-right">{empleado.rol}</div>
       </div>
       <AnimatePresence>
         {showModal && (
