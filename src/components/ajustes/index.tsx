@@ -1,5 +1,5 @@
 const Ajustes = () => {
-  return <div></div>;
+    return <div>Hola</div>;
 };
 
 export default Ajustes;
