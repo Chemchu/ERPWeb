@@ -29,6 +29,8 @@ function CreateProduct(p: any): Producto | undefined {
       precioVenta: p.precioVenta,
       proveedor: p.proveedor,
       margen: p.margen,
+      createdAt: p.createdAt,
+      updatedAt: p.updatedAt
     } as Producto;
 
     return producto;

@@ -14,6 +14,7 @@ import { notifyInfo } from "../utils/toastify";
 import StoreDataModal from "../components/modal/storeDataModal";
 import Cookies from "js-cookie";
 import Navbar from "../components/navbar";
+import { NotificacionesContextProvider } from "../context/notificaciones";
 
 const variants = {
   initial: {
@@ -64,49 +65,51 @@ const DashboardLayout = React.memo(({ children }: { children: React.ReactNode })
     <EmpleadoContextProvider>
       <ProductCarritoContextProvider>
         <ComprasAparcadasContextProvider>
-          {
-            <div className="dark:bg-gray-800 h-screen w-screen overflow-hidden">
-              <NextProgress />
-              <div className="flex gap-1 items-start w-full h-full justify-start bg-gray-100">
-                <Sidebar
-                  isCollapsed={isSidebarCollapsed}
-                  setCollapsed={setSidebarCollapsed}
-                  IndexSeleccionado={IndexSidebar}
-                  setIndex={setSidebarIndex}
-                />
-
-                <div className="flex flex-col w-full h-full ">
-                  <motion.div
-                    key={router.route}
-                    className="w-full sm:h-full h-10 grow"
-                    initial={variants.initial}
-                    animate={variants.animate}
-                    exit={variants.exit}
-                  >
-                    {children}
-                  </motion.div>
-
-                  <Navbar
+          <NotificacionesContextProvider>
+            {
+              <div className="dark:bg-gray-800 h-screen w-screen overflow-hidden">
+                <NextProgress />
+                <div className="flex gap-1 items-start w-full h-full justify-start bg-gray-100">
+                  <Sidebar
+                    isCollapsed={isSidebarCollapsed}
                     setCollapsed={setSidebarCollapsed}
                     IndexSeleccionado={IndexSidebar}
                     setIndex={setSidebarIndex}
                   />
-                </div>
 
-                {showStoreDataModal && <StoreDataModal showModal={setStoreDataModal} />}
+                  <div className="flex flex-col w-full h-full ">
+                    <motion.div
+                      key={router.route}
+                      className="w-full sm:h-full h-10 grow"
+                      initial={variants.initial}
+                      animate={variants.animate}
+                      exit={variants.exit}
+                    >
+                      {children}
+                    </motion.div>
+
+                    <Navbar
+                      setCollapsed={setSidebarCollapsed}
+                      IndexSeleccionado={IndexSidebar}
+                      setIndex={setSidebarIndex}
+                    />
+                  </div>
+
+                  {showStoreDataModal && <StoreDataModal showModal={setStoreDataModal} />}
+                </div>
+                <ToastContainer
+                  position="bottom-right"
+                  autoClose={3000}
+                  hideProgressBar={false}
+                  newestOnTop={false}
+                  closeOnClick
+                  rtl={false}
+                  draggable
+                  pauseOnHover={false}
+                />
               </div>
-              <ToastContainer
-                position="bottom-right"
-                autoClose={3000}
-                hideProgressBar={false}
-                newestOnTop={false}
-                closeOnClick
-                rtl={false}
-                draggable
-                pauseOnHover={false}
-              />
-            </div>
-          }
+            }
+          </NotificacionesContextProvider>
         </ComprasAparcadasContextProvider>
       </ProductCarritoContextProvider>
     </EmpleadoContextProvider>
