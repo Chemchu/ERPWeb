@@ -144,7 +144,7 @@ const TablaProductos = (props: { isLoading: boolean; Productos: Producto[]; SetP
       </div>
       {props.isLoading ? (
         <div className="h-full w-full border-2 rounded-b overflow-y-scroll">
-          {arrayNum.map((n, i) => {
+          {arrayNum.map((_, i) => {
             return <SkeletonCard key={`SkeletonProdList-${i}`} />;
           })}
         </div>
@@ -211,9 +211,8 @@ const FilaProducto = (props: { producto: Producto; productos: Producto[]; setAll
         <div className="w-1/5 hidden sm:block text-left md:truncate">{producto.familia}</div>
         <div className="hidden sm:flex justify-end w-1/5 text-right">
           <span
-            className={`flex items-center justify-center w-12 px-3 py-1 rounded-full ${
-              producto.cantidad > 0 ? " text-green-900 bg-green-300" : "text-red-900 bg-red-300"
-            }`}
+            className={`flex items-center justify-center w-12 px-3 py-1 rounded-full ${producto.cantidad > 0 ? " text-green-900 bg-green-300" : "text-red-900 bg-red-300"
+              }`}
           >
             {producto.cantidad ? producto.cantidad : 0}
           </span>

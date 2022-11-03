@@ -54,6 +54,8 @@ const ProductoForm = (props: { setProducto: Function; producto?: Producto; setHa
       iva: Number(Iva),
       margen: Number(Margen),
       proveedor: Proveedor,
+      createdAt: Date.now(),
+      updatedAt: Date.now()
     };
     props.setProducto(p);
     props.setHayCambios && props.setHayCambios(true);

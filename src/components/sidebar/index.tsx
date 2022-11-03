@@ -1,7 +1,9 @@
-import { motion } from "framer-motion";
+import { AnimatePresence, motion } from "framer-motion";
 import Link from "next/dist/client/link";
-import React from "react";
+import React, { useState } from "react";
+import useNotificacionesContext from "../../context/notificaciones";
 import { SidebarOption } from "../../tipos/Enums/SidebarOption";
+import VerNotificacionesModal from "../modal/NotificacionesModal";
 import RequireHigherAuth from "../RequireHigherAuth";
 
 const Sidebar = React.memo(
@@ -11,6 +13,8 @@ const Sidebar = React.memo(
     IndexSeleccionado: SidebarOption;
     setIndex: React.Dispatch<React.SetStateAction<SidebarOption>>;
   }) => {
+    const { ShowModal, SetShowModal } = useNotificacionesContext()
+
     return props.isCollapsed ? (
       <CollapsedSidebar
         setCollapsed={props.setCollapsed}
@@ -18,16 +22,22 @@ const Sidebar = React.memo(
         setIndex={props.setIndex}
       />
     ) : (
-      <OpenedSidebar
-        setCollapsed={props.setCollapsed}
-        IndexSeleccionado={props.IndexSeleccionado}
-        setIndex={props.setIndex}
-      />
+      <>
+        <OpenedSidebar
+          setCollapsed={props.setCollapsed}
+          IndexSeleccionado={props.IndexSeleccionado}
+          setIndex={props.setIndex}
+        />
+        <AnimatePresence>
+          {ShowModal && <VerNotificacionesModal showModal={SetShowModal} />}
+        </AnimatePresence>
+      </>
     );
   }
 );
 
 const OpenedSidebar = (props: { setCollapsed: Function; IndexSeleccionado: SidebarOption; setIndex: Function }) => {
+  const { Mensajes, SetShowModal } = useNotificacionesContext();
   return (
     <motion.div
       initial={{ x: "-10vh", opacity: 0 }}
@@ -36,21 +46,37 @@ const OpenedSidebar = (props: { setCollapsed: Function; IndexSeleccionado: Sideb
       className="h-full w-auto hidden sm:flex"
     >
       <div className="flex flex-col w-full h-full justify-between bg-white border shadow-lg rounded-r-3xl">
-        <div
-          className="flex justify-center items-end gap-2 w-full h-1/6 cursor-pointer"
-          onClick={() => {
-            props.setCollapsed(true);
-          }}
+        <div className="flex justify-center items-end gap-2 w-full h-1/6"
         >
-          <span className="text-gray-600 dark:text-gray-300 hover:text-blue-500 text-2xl font-bold">ERPWeb</span>
+          <div className="flex justify-center w-full">
+            <span className="text-gray-600 dark:text-gray-300 hover:text-blue-500 text-2xl font-bold cursor-pointer"
+              onClick={() => {
+                props.setCollapsed(true);
+              }}
+            >
+              ERPWeb
+            </span>
+            {
+              Mensajes.length > 0 ?
+                <div className="relative inline-block cursor-pointer"
+                  onClick={() => { SetShowModal(true) }}>
+                  <span className="absolute top-0 right-0 inline-flex items-center justify-center px-2 py-1 
+              text-xs leading-none text-red-100 transform translate-x-1/2 -translate-y-1/2 
+              bg-red-500 rounded-full animate-pulse">
+                    {Mensajes.length}
+                  </span>
+                </div>
+                :
+                null
+            }
+          </div>
         </div>
 
         <div className="flex flex-col w-full h-full xl:gap-6 gap-4  justify-center items-stretch px-6">
           <Link href="/dashboard">
             <div
-              className={`${
-                props.IndexSeleccionado === SidebarOption.Inicio && "bg-gray-100 text-blue-500"
-              } hover:text-blue-500 hover:bg-gray-100 flex items-center gap-4 transition-colors dark:hover:text-white dark:hover:bg-gray-600 duration-200
+              className={`${props.IndexSeleccionado === SidebarOption.Inicio && "bg-gray-100 text-blue-500"
+                } hover:text-blue-500 hover:bg-gray-100 flex items-center gap-4 transition-colors dark:hover:text-white dark:hover:bg-gray-600 duration-200
                         text-gray-600 dark:text-gray-400 rounded-lg cursor-pointer`}
               onClick={(e) => {
                 props.setIndex(SidebarOption.Inicio);
@@ -81,9 +107,8 @@ const OpenedSidebar = (props: { setCollapsed: Function; IndexSeleccionado: Sideb
                 props.setIndex(SidebarOption.TPV);
                 e.stopPropagation();
               }}
-              className={`${
-                props.IndexSeleccionado === SidebarOption.TPV && "bg-gray-100 text-blue-500"
-              } hover:text-blue-500 hover:bg-gray-100 flex items-center gap-4 transition-colors dark:hover:text-white dark:hover:bg-gray-600 duration-200
+              className={`${props.IndexSeleccionado === SidebarOption.TPV && "bg-gray-100 text-blue-500"
+                } hover:text-blue-500 hover:bg-gray-100 flex items-center gap-4 transition-colors dark:hover:text-white dark:hover:bg-gray-600 duration-200
                         text-gray-600 dark:text-gray-400 rounded-lg cursor-pointer`}
             >
               <svg
@@ -110,9 +135,8 @@ const OpenedSidebar = (props: { setCollapsed: Function; IndexSeleccionado: Sideb
                 props.setIndex(SidebarOption.Productos);
                 e.stopPropagation();
               }}
-              className={`${
-                props.IndexSeleccionado === SidebarOption.Productos && "bg-gray-100 text-blue-500"
-              } hover:text-blue-500 hover:bg-gray-100 flex items-center gap-4 transition-colors dark:hover:text-white dark:hover:bg-gray-600 duration-200
+              className={`${props.IndexSeleccionado === SidebarOption.Productos && "bg-gray-100 text-blue-500"
+                } hover:text-blue-500 hover:bg-gray-100 flex items-center gap-4 transition-colors dark:hover:text-white dark:hover:bg-gray-600 duration-200
                         text-gray-600 dark:text-gray-400 rounded-lg cursor-pointer`}
             >
               <svg
@@ -140,9 +164,8 @@ const OpenedSidebar = (props: { setCollapsed: Function; IndexSeleccionado: Sideb
                   props.setIndex(SidebarOption.Estadisticas);
                   e.stopPropagation();
                 }}
-                className={`${
-                  props.IndexSeleccionado === SidebarOption.Estadisticas && "bg-gray-100 text-blue-500"
-                } hover:text-blue-500 hover:bg-gray-100 flex items-center gap-4 transition-colors dark:hover:text-white dark:hover:bg-gray-600 duration-200
+                className={`${props.IndexSeleccionado === SidebarOption.Estadisticas && "bg-gray-100 text-blue-500"
+                  } hover:text-blue-500 hover:bg-gray-100 flex items-center gap-4 transition-colors dark:hover:text-white dark:hover:bg-gray-600 duration-200
                         text-gray-600 dark:text-gray-400 rounded-lg cursor-pointer`}
               >
                 <svg
@@ -170,9 +193,8 @@ const OpenedSidebar = (props: { setCollapsed: Function; IndexSeleccionado: Sideb
                 props.setIndex(SidebarOption.Ventas);
                 e.stopPropagation();
               }}
-              className={`${
-                props.IndexSeleccionado === SidebarOption.Ventas && "bg-gray-100 text-blue-500"
-              } hover:text-blue-500 hover:bg-gray-100 flex items-center gap-4 transition-colors dark:hover:text-white dark:hover:bg-gray-600 duration-200
+              className={`${props.IndexSeleccionado === SidebarOption.Ventas && "bg-gray-100 text-blue-500"
+                } hover:text-blue-500 hover:bg-gray-100 flex items-center gap-4 transition-colors dark:hover:text-white dark:hover:bg-gray-600 duration-200
                         text-gray-600 dark:text-gray-400 rounded-lg cursor-pointer`}
             >
               <svg
@@ -199,9 +221,8 @@ const OpenedSidebar = (props: { setCollapsed: Function; IndexSeleccionado: Sideb
                 props.setIndex(SidebarOption.Cierres);
                 e.stopPropagation();
               }}
-              className={`${
-                props.IndexSeleccionado === SidebarOption.Cierres && "bg-gray-100 text-blue-500"
-              } hover:text-blue-500 hover:bg-gray-100 flex items-center gap-4 transition-colors dark:hover:text-white dark:hover:bg-gray-600 duration-200
+              className={`${props.IndexSeleccionado === SidebarOption.Cierres && "bg-gray-100 text-blue-500"
+                } hover:text-blue-500 hover:bg-gray-100 flex items-center gap-4 transition-colors dark:hover:text-white dark:hover:bg-gray-600 duration-200
                         text-gray-600 dark:text-gray-400 rounded-lg cursor-pointer`}
             >
               <svg
@@ -228,9 +249,8 @@ const OpenedSidebar = (props: { setCollapsed: Function; IndexSeleccionado: Sideb
                 props.setIndex(SidebarOption.Clientes);
                 e.stopPropagation();
               }}
-              className={`${
-                props.IndexSeleccionado === SidebarOption.Clientes && "bg-gray-100 text-blue-500"
-              } hover:text-blue-500 hover:bg-gray-100 flex items-center gap-4 transition-colors dark:hover:text-white dark:hover:bg-gray-600 duration-200
+              className={`${props.IndexSeleccionado === SidebarOption.Clientes && "bg-gray-100 text-blue-500"
+                } hover:text-blue-500 hover:bg-gray-100 flex items-center gap-4 transition-colors dark:hover:text-white dark:hover:bg-gray-600 duration-200
                         text-gray-600 dark:text-gray-400 rounded-lg cursor-pointer`}
             >
               <svg
@@ -258,9 +278,8 @@ const OpenedSidebar = (props: { setCollapsed: Function; IndexSeleccionado: Sideb
                   props.setIndex(SidebarOption.Empleados);
                   e.stopPropagation();
                 }}
-                className={`${
-                  props.IndexSeleccionado === SidebarOption.Empleados && "bg-gray-100 text-blue-500"
-                } hover:text-blue-500 hover:bg-gray-100 flex items-center gap-4 transition-colors dark:hover:text-white dark:hover:bg-gray-600 duration-200
+                className={`${props.IndexSeleccionado === SidebarOption.Empleados && "bg-gray-100 text-blue-500"
+                  } hover:text-blue-500 hover:bg-gray-100 flex items-center gap-4 transition-colors dark:hover:text-white dark:hover:bg-gray-600 duration-200
                         text-gray-600 dark:text-gray-400 rounded-lg cursor-pointer`}
               >
                 <svg
@@ -289,9 +308,8 @@ const OpenedSidebar = (props: { setCollapsed: Function; IndexSeleccionado: Sideb
                   props.setIndex(SidebarOption.Proveedores);
                   e.stopPropagation();
                 }}
-                className={`${
-                  props.IndexSeleccionado === SidebarOption.Proveedores && "bg-gray-100 text-blue-500"
-                } hover:text-blue-500 hover:bg-gray-100 flex items-center gap-4 transition-colors dark:hover:text-white dark:hover:bg-gray-600 duration-200
+                className={`${props.IndexSeleccionado === SidebarOption.Proveedores && "bg-gray-100 text-blue-500"
+                  } hover:text-blue-500 hover:bg-gray-100 flex items-center gap-4 transition-colors dark:hover:text-white dark:hover:bg-gray-600 duration-200
                         text-gray-600 dark:text-gray-400 rounded-lg cursor-pointer`}
               >
                 <svg
@@ -357,9 +375,8 @@ const OpenedSidebar = (props: { setCollapsed: Function; IndexSeleccionado: Sideb
                 e.stopPropagation();
                 await fetch("/api/logout");
               }}
-              className={`${
-                props.IndexSeleccionado === SidebarOption.Salir && "bg-gray-100 text-blue-500"
-              } hover:text-blue-500 hover:bg-gray-100 gap-4 flex items-center transition-colors dark:hover:text-white dark:hover:bg-gray-600 duration-200
+              className={`${props.IndexSeleccionado === SidebarOption.Salir && "bg-gray-100 text-blue-500"
+                } hover:text-blue-500 hover:bg-gray-100 gap-4 flex items-center transition-colors dark:hover:text-white dark:hover:bg-gray-600 duration-200
                         text-gray-600 dark:text-gray-400 rounded-lg cursor-pointer`}
             >
               <svg
@@ -415,9 +432,8 @@ const CollapsedSidebar = (props: { setCollapsed: Function; IndexSeleccionado: Si
         <div className="flex flex-col w-full h-full xl:gap-6 gap-4 justify-center items-stretch px-5 ">
           <Link href="/dashboard">
             <div
-              className={`${
-                props.IndexSeleccionado === SidebarOption.Inicio && "bg-gray-100 text-blue-500"
-              } hover:text-gray-800 hover:bg-gray-100 cursor-pointer dark:hover:text-white dark:hover:bg-gray-600 duration-200 text-gray-600 dark:text-gray-400 rounded-lg `}
+              className={`${props.IndexSeleccionado === SidebarOption.Inicio && "bg-gray-100 text-blue-500"
+                } hover:text-gray-800 hover:bg-gray-100 cursor-pointer dark:hover:text-white dark:hover:bg-gray-600 duration-200 text-gray-600 dark:text-gray-400 rounded-lg `}
               onClick={(e) => {
                 props.setIndex(SidebarOption.Inicio);
                 e.stopPropagation();
@@ -442,9 +458,8 @@ const CollapsedSidebar = (props: { setCollapsed: Function; IndexSeleccionado: Si
 
           <Link href="/dashboard/pos">
             <div
-              className={`${
-                props.IndexSeleccionado === SidebarOption.TPV && "bg-gray-100 text-blue-500"
-              } hover:text-gray-800 hover:bg-gray-100 cursor-pointer dark:hover:text-white dark:hover:bg-gray-600 duration-200 text-gray-600 dark:text-gray-400 rounded-lg `}
+              className={`${props.IndexSeleccionado === SidebarOption.TPV && "bg-gray-100 text-blue-500"
+                } hover:text-gray-800 hover:bg-gray-100 cursor-pointer dark:hover:text-white dark:hover:bg-gray-600 duration-200 text-gray-600 dark:text-gray-400 rounded-lg `}
               onClick={(e) => {
                 props.setIndex(SidebarOption.TPV);
                 e.stopPropagation();
@@ -473,9 +488,8 @@ const CollapsedSidebar = (props: { setCollapsed: Function; IndexSeleccionado: Si
                 props.setIndex(SidebarOption.Productos);
                 e.stopPropagation();
               }}
-              className={`${
-                props.IndexSeleccionado === SidebarOption.Productos && "bg-gray-100 text-blue-500"
-              } hover:text-gray-800 hover:bg-gray-100 cursor-pointer dark:hover:text-white dark:hover:bg-gray-600 duration-200 text-gray-600 dark:text-gray-400 rounded-lg `}
+              className={`${props.IndexSeleccionado === SidebarOption.Productos && "bg-gray-100 text-blue-500"
+                } hover:text-gray-800 hover:bg-gray-100 cursor-pointer dark:hover:text-white dark:hover:bg-gray-600 duration-200 text-gray-600 dark:text-gray-400 rounded-lg `}
             >
               <svg
                 xmlns="http://www.w3.org/2000/svg"
@@ -501,9 +515,8 @@ const CollapsedSidebar = (props: { setCollapsed: Function; IndexSeleccionado: Si
                   props.setIndex(SidebarOption.Estadisticas);
                   e.stopPropagation();
                 }}
-                className={`${
-                  props.IndexSeleccionado === SidebarOption.Estadisticas && "bg-gray-100 text-blue-500"
-                } hover:text-gray-800 hover:bg-gray-100 cursor-pointer dark:hover:text-white dark:hover:bg-gray-600 duration-200 text-gray-600 dark:text-gray-400 rounded-lg `}
+                className={`${props.IndexSeleccionado === SidebarOption.Estadisticas && "bg-gray-100 text-blue-500"
+                  } hover:text-gray-800 hover:bg-gray-100 cursor-pointer dark:hover:text-white dark:hover:bg-gray-600 duration-200 text-gray-600 dark:text-gray-400 rounded-lg `}
               >
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
@@ -529,9 +542,8 @@ const CollapsedSidebar = (props: { setCollapsed: Function; IndexSeleccionado: Si
                 props.setIndex(SidebarOption.Ventas);
                 e.stopPropagation();
               }}
-              className={`${
-                props.IndexSeleccionado === SidebarOption.Ventas && "bg-gray-100 text-blue-500"
-              } hover:text-gray-800 hover:bg-gray-100 cursor-pointer dark:hover:text-white dark:hover:bg-gray-600 duration-200 text-gray-600 dark:text-gray-400 rounded-lg `}
+              className={`${props.IndexSeleccionado === SidebarOption.Ventas && "bg-gray-100 text-blue-500"
+                } hover:text-gray-800 hover:bg-gray-100 cursor-pointer dark:hover:text-white dark:hover:bg-gray-600 duration-200 text-gray-600 dark:text-gray-400 rounded-lg `}
             >
               <svg
                 xmlns="http://www.w3.org/2000/svg"
@@ -556,9 +568,8 @@ const CollapsedSidebar = (props: { setCollapsed: Function; IndexSeleccionado: Si
                 props.setIndex(SidebarOption.Cierres);
                 e.stopPropagation();
               }}
-              className={`${
-                props.IndexSeleccionado === SidebarOption.Cierres && "bg-gray-100 text-blue-500"
-              } hover:text-gray-800 hover:bg-gray-100 cursor-pointer dark:hover:text-white dark:hover:bg-gray-600 duration-200 text-gray-600 dark:text-gray-400 rounded-lg `}
+              className={`${props.IndexSeleccionado === SidebarOption.Cierres && "bg-gray-100 text-blue-500"
+                } hover:text-gray-800 hover:bg-gray-100 cursor-pointer dark:hover:text-white dark:hover:bg-gray-600 duration-200 text-gray-600 dark:text-gray-400 rounded-lg `}
             >
               <svg
                 xmlns="http://www.w3.org/2000/svg"
@@ -583,9 +594,8 @@ const CollapsedSidebar = (props: { setCollapsed: Function; IndexSeleccionado: Si
                 props.setIndex(SidebarOption.Clientes);
                 e.stopPropagation();
               }}
-              className={`${
-                props.IndexSeleccionado === SidebarOption.Clientes && "bg-gray-100 text-blue-500"
-              } hover:text-gray-800 hover:bg-gray-100 cursor-pointer dark:hover:text-white dark:hover:bg-gray-600 duration-200 text-gray-600 dark:text-gray-400 rounded-lg `}
+              className={`${props.IndexSeleccionado === SidebarOption.Clientes && "bg-gray-100 text-blue-500"
+                } hover:text-gray-800 hover:bg-gray-100 cursor-pointer dark:hover:text-white dark:hover:bg-gray-600 duration-200 text-gray-600 dark:text-gray-400 rounded-lg `}
             >
               <svg
                 xmlns="http://www.w3.org/2000/svg"
@@ -611,9 +621,8 @@ const CollapsedSidebar = (props: { setCollapsed: Function; IndexSeleccionado: Si
                   props.setIndex(SidebarOption.Empleados);
                   e.stopPropagation();
                 }}
-                className={`${
-                  props.IndexSeleccionado === SidebarOption.Empleados && "bg-gray-100 text-blue-500"
-                } hover:text-gray-800 hover:bg-gray-100 flex items-center gap-4 transition-colors dark:hover:text-white dark:hover:bg-gray-600 duration-200
+                className={`${props.IndexSeleccionado === SidebarOption.Empleados && "bg-gray-100 text-blue-500"
+                  } hover:text-gray-800 hover:bg-gray-100 flex items-center gap-4 transition-colors dark:hover:text-white dark:hover:bg-gray-600 duration-200
                         text-gray-600 dark:text-gray-400 rounded-lg cursor-pointer`}
               >
                 <svg
@@ -641,9 +650,8 @@ const CollapsedSidebar = (props: { setCollapsed: Function; IndexSeleccionado: Si
                   props.setIndex(SidebarOption.Proveedores);
                   e.stopPropagation();
                 }}
-                className={`${
-                  props.IndexSeleccionado === SidebarOption.Proveedores && "bg-gray-100 text-blue-500"
-                } hover:text-blue-500 hover:bg-gray-100 flex items-center gap-4 transition-colors dark:hover:text-white dark:hover:bg-gray-600 duration-200
+                className={`${props.IndexSeleccionado === SidebarOption.Proveedores && "bg-gray-100 text-blue-500"
+                  } hover:text-blue-500 hover:bg-gray-100 flex items-center gap-4 transition-colors dark:hover:text-white dark:hover:bg-gray-600 duration-200
                         text-gray-600 dark:text-gray-400 rounded-lg cursor-pointer`}
               >
                 <svg
@@ -673,9 +681,8 @@ const CollapsedSidebar = (props: { setCollapsed: Function; IndexSeleccionado: Si
                 props.setIndex(SidebarOption.Ajustes);
                 e.stopPropagation();
               }}
-              className={`${
-                props.IndexSeleccionado === SidebarOption.Ajustes && "bg-gray-100 text-blue-500"
-              } hover:text-gray-800 hover:bg-gray-100 cursor-pointer dark:hover:text-white dark:hover:bg-gray-600 duration-200 text-gray-600 dark:text-gray-400 rounded-lg `}
+              className={`${props.IndexSeleccionado === SidebarOption.Ajustes && "bg-gray-100 text-blue-500"
+                } hover:text-gray-800 hover:bg-gray-100 cursor-pointer dark:hover:text-white dark:hover:bg-gray-600 duration-200 text-gray-600 dark:text-gray-400 rounded-lg `}
             >
               <svg
                 xmlns="http://www.w3.org/2000/svg"
@@ -707,9 +714,8 @@ const CollapsedSidebar = (props: { setCollapsed: Function; IndexSeleccionado: Si
                 e.stopPropagation();
                 await fetch("/api/logout");
               }}
-              className={`${
-                props.IndexSeleccionado === SidebarOption.Salir && "bg-gray-100 text-blue-500"
-              } hover:text-gray-800 hover:bg-gray-100 cursor-pointer dark:hover:text-white dark:hover:bg-gray-600 duration-200 text-gray-600 dark:text-gray-400 rounded-lg `}
+              className={`${props.IndexSeleccionado === SidebarOption.Salir && "bg-gray-100 text-blue-500"
+                } hover:text-gray-800 hover:bg-gray-100 cursor-pointer dark:hover:text-white dark:hover:bg-gray-600 duration-200 text-gray-600 dark:text-gray-400 rounded-lg `}
             >
               <svg
                 xmlns="http://www.w3.org/2000/svg"

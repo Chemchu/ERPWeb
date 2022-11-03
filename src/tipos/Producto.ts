@@ -11,4 +11,6 @@ export type Producto = {
   alta: boolean;
   cantidad: number;
   cantidadRestock: number;
+  createdAt: number;
+  updatedAt: number;
 };

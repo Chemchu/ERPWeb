@@ -76,6 +76,8 @@ export const VerProducto = (props: { producto: Producto; setProducto: Function; 
       precioCompra: Number(Prod.precioCompra),
       precioVenta: Number(Prod.precioVenta),
       proveedor: Prod.proveedor,
+      updatedAt: Prod.updatedAt,
+      createdAt: Prod.createdAt
     };
 
     const updatedCorrectly = await UpdateProducto(p);
@@ -149,9 +151,8 @@ export const VerProducto = (props: { producto: Producto; setProducto: Function; 
               </button>
               <button
                 disabled={!imprimible}
-                className={`${
-                  imprimible ? "bg-orange-500 hover:bg-orange-600" : "bg-orange-400"
-                } h-10 sm:h-12 w-full rounded-xl shadow-lg flex justify-center items-center`}
+                className={`${imprimible ? "bg-orange-500 hover:bg-orange-600" : "bg-orange-400"
+                  } h-10 sm:h-12 w-full rounded-xl shadow-lg flex justify-center items-center`}
                 onClick={Print}
               >
                 <span className="hidden sm:inline-flex">Imprimir</span>
