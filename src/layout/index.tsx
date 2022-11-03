@@ -1,5 +1,5 @@
 import "react-toastify/dist/ReactToastify.css";
-import { motion } from "framer-motion";
+import { AnimatePresence, motion } from "framer-motion";
 import { useRouter } from "next/router";
 import React, { useEffect, useState } from "react";
 import Sidebar from "../components/sidebar";
@@ -15,6 +15,7 @@ import StoreDataModal from "../components/modal/storeDataModal";
 import Cookies from "js-cookie";
 import Navbar from "../components/navbar";
 import { NotificacionesContextProvider } from "../context/notificaciones";
+import VerNotificacionesModal from "../components/modal/NotificacionesModal";
 
 const variants = {
   initial: {
@@ -94,8 +95,9 @@ const DashboardLayout = React.memo(({ children }: { children: React.ReactNode })
                       setIndex={setSidebarIndex}
                     />
                   </div>
-
-                  {showStoreDataModal && <StoreDataModal showModal={setStoreDataModal} />}
+                  <AnimatePresence>
+                    {showStoreDataModal && <StoreDataModal showModal={setStoreDataModal} />}
+                  </AnimatePresence>
                 </div>
                 <ToastContainer
                   position="bottom-right"

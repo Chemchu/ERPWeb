@@ -1,8 +1,9 @@
-import { motion } from "framer-motion";
+import { AnimatePresence, motion } from "framer-motion";
 import Link from "next/dist/client/link";
-import React from "react";
+import React, { useState } from "react";
 import useNotificacionesContext from "../../context/notificaciones";
 import { SidebarOption } from "../../tipos/Enums/SidebarOption";
+import VerNotificacionesModal from "../modal/NotificacionesModal";
 import RequireHigherAuth from "../RequireHigherAuth";
 
 const Sidebar = React.memo(
@@ -12,6 +13,8 @@ const Sidebar = React.memo(
     IndexSeleccionado: SidebarOption;
     setIndex: React.Dispatch<React.SetStateAction<SidebarOption>>;
   }) => {
+    const { ShowModal, SetShowModal } = useNotificacionesContext()
+
     return props.isCollapsed ? (
       <CollapsedSidebar
         setCollapsed={props.setCollapsed}
@@ -19,17 +22,22 @@ const Sidebar = React.memo(
         setIndex={props.setIndex}
       />
     ) : (
-      <OpenedSidebar
-        setCollapsed={props.setCollapsed}
-        IndexSeleccionado={props.IndexSeleccionado}
-        setIndex={props.setIndex}
-      />
+      <>
+        <OpenedSidebar
+          setCollapsed={props.setCollapsed}
+          IndexSeleccionado={props.IndexSeleccionado}
+          setIndex={props.setIndex}
+        />
+        <AnimatePresence>
+          {ShowModal && <VerNotificacionesModal showModal={SetShowModal} />}
+        </AnimatePresence>
+      </>
     );
   }
 );
 
 const OpenedSidebar = (props: { setCollapsed: Function; IndexSeleccionado: SidebarOption; setIndex: Function }) => {
-  const { Mensajes } = useNotificacionesContext();
+  const { Mensajes, SetShowModal } = useNotificacionesContext();
   return (
     <motion.div
       initial={{ x: "-10vh", opacity: 0 }}
@@ -51,7 +59,7 @@ const OpenedSidebar = (props: { setCollapsed: Function; IndexSeleccionado: Sideb
             {
               Mensajes.length > 0 ?
                 <div className="relative inline-block cursor-pointer"
-                  onClick={() => { console.log("EY!!") }}>
+                  onClick={() => { SetShowModal(true) }}>
                   <span className="absolute top-0 right-0 inline-flex items-center justify-center px-2 py-1 
               text-xs leading-none text-red-100 transform translate-x-1/2 -translate-y-1/2 
               bg-red-500 rounded-full animate-pulse">

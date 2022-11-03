@@ -38,8 +38,9 @@ const AddProducto = (props: { showModal: Function }) => {
         >
           <div className="flex flex-col gap-2 w-full h-full text-left ">
             <span className="text-xl xl:text-3xl cursor-default">Añadir nuevo producto</span>
-
-            <ProductoForm setProducto={setProducto} />
+            <div className="w-full h-full">
+              <ProductoForm setProducto={setProducto} />
+            </div>
 
             <div className="flex w-full h-full items-end justify-around text-white gap-10">
               <button

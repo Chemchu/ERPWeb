@@ -46,7 +46,7 @@ const GetNotificacionesProductos = async (req: NextApiRequest, res: NextApiRespo
     const producto: Producto = data.productos[index];
     if (producto.updatedAt <= Number(cookies.productoUpdateStamp)) { continue; }
 
-    productosANotificar.push(`El producto ${producto.nombre} ha sido actualizado recientemente`);
+    productosANotificar.push(`El producto ${producto.nombre} ha sido actualizado recientemente. Tal vez sea necesario imprimir una nueva etiqueta.`);
   }
 
   return res.status(serverRes.ok ? 200 : 300).json({
