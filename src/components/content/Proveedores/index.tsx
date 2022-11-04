@@ -2,6 +2,7 @@ import { AnimatePresence } from "framer-motion";
 import { useEffect, useState } from "react";
 import { Roles } from "../../../tipos/Enums/Roles";
 import { Proveedor } from "../../../tipos/Proveedor";
+import { FetchProveedores } from "../../../utils/fetches/proveedorFetches";
 import { notifyWarn } from "../../../utils/toastify";
 import { ValidateSearchString } from "../../../utils/validator";
 import AuthorizationWrapper from "../../authorizationWrapper";
@@ -13,7 +14,13 @@ import SkeletonCard from "../../Skeletons/skeletonCard";
 const ProveedoresPage = () => {
   const [filtro, setFiltro] = useState<string>("");
   const [proveedores, setProveedores] = useState<Proveedor[]>([]);
-  useEffect(() => {}, []);
+  useEffect(() => {
+    const GetData = async () => {
+      const prov: Proveedor[] = await FetchProveedores();
+      setProveedores(prov)
+    }
+    GetData()
+  }, []);
 
   const Filtrar = async () => {
     if (filtro === "") {
@@ -31,13 +38,13 @@ const ProveedoresPage = () => {
     <main className="flex flex-col gap-4 w-full h-full max-h-full bg-white border-x border-b sm:rounded-bl-3xl sm:rounded-tr-3xl shadow-lg p-4">
       <section className="flex sm:justify-between justify-end items-start w-full">
         <div className="hidden sm:block">
-          <NuevoBoton accionEvent={() => {}} />
+          <NuevoBoton accionEvent={() => { }} />
         </div>
         <div className="flex w-full gap-2 items-center justify-end">
           <FiltrarInput filtro={filtro} setFiltro={setFiltro} FiltrarCallback={Filtrar} />
         </div>
       </section>
-      <ProveedorTable isLoading={false} setProveedores={() => {}} proveedores={[]} />
+      <ProveedorTable isLoading={false} setProveedores={() => { }} proveedores={proveedores} />
     </main>
   );
 };
@@ -63,7 +70,7 @@ const ProveedorTable = (props: { isLoading: boolean; proveedores: Proveedor[]; s
 
   return (
     <div className="flex flex-col w-full h-10 grow">
-      <div className="flex justify-between border-t-2 border-x-2 rounded-t-2xl p-2">
+      <div className="flex justify-between border-t-2 border-x-2 rounded-t-2xl px-3 py-2">
         <div className="text-left font-semibold">Nombre</div>
         <div className="hidden sm:block text-left font-semibold">Localidad</div>
         <div className="text-left font-semibold ">Teléfono</div>
@@ -71,7 +78,7 @@ const ProveedorTable = (props: { isLoading: boolean; proveedores: Proveedor[]; s
       </div>
       {props.isLoading ? (
         <div className="h-full w-full border-2 rounded-b overflow-y-scroll">
-          {arrayNum.map((n, i) => {
+          {arrayNum.map((_, i) => {
             return <SkeletonCard key={`SkeletonProdList-${i}`} />;
           })}
         </div>
@@ -88,8 +95,7 @@ const ProveedorTable = (props: { isLoading: boolean; proveedores: Proveedor[]; s
                 .map((p, index) => {
                   return (
                     <div key={`FilaProdTable${p._id}`}>
-                      {/* <FilaProducto producto={p} productos={props.Productos} setAllProductos={props.SetProductos} /> */}
-                      proveedor or smh
+                      <FilaProveedor proveedor={p} />
                     </div>
                   );
                 })
@@ -109,27 +115,27 @@ const ProveedorTable = (props: { isLoading: boolean; proveedores: Proveedor[]; s
   );
 };
 
-const FilaProveedor = (props: { proveedor: Proveedor; proveedores: Proveedor[]; setAllProveedores: Function }) => {
+const FilaProveedor = (props: { proveedor: Proveedor; }) => {
   const [showModal, setModal] = useState<boolean>(false);
   const [proeveedor, setProveedor] = useState<Proveedor>(props.proveedor);
-
-  const SetCurrentProveedor = (p: Proveedor | null) => {
-    if (p === null) {
-      const provs = props.proveedores.filter((p) => {
-        return p._id !== proeveedor._id;
-      });
-      props.setAllProveedores(provs);
-
-      return;
-    }
-
-    setProveedor(p);
-  };
+  //
+  // const SetCurrentProveedor = (p: Proveedor | null) => {
+  //   if (p === null) {
+  //     const provs = props.proveedores.filter((p) => {
+  //       return p._id !== proeveedor._id;
+  //     });
+  //     props.setAllProveedores(provs);
+  //
+  //     return;
+  //   }
+  //
+  //   setProveedor(p);
+  // };
 
   return (
     <div className="hover:bg-blue-200">
       <div
-        className="flex justify-between border-b px-5 py-2 cursor-pointer"
+        className="flex justify-between border-b px-3 py-2 cursor-pointer"
         onClick={() => {
           setModal(true);
         }}

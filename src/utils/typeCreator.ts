@@ -8,6 +8,7 @@ import { Producto } from "../tipos/Producto";
 import { ProductoDevuelto } from "../tipos/ProductoDevuelto";
 import { NuevoProductoMermado } from "../tipos/ProductoMermado";
 import { ProductoVendido } from "../tipos/ProductoVendido";
+import { Proveedor } from "../tipos/Proveedor";
 import { Summary, VentasPorHora } from "../tipos/Summary";
 import { ITPV } from "../tipos/TPV";
 import { Venta } from "../tipos/Venta";
@@ -384,6 +385,41 @@ export function CreateProductoDevueltoList(pList: any[]): ProductoDevuelto[] {
   });
 
   return res;
+}
+
+export function CreateProveedorList(pList: any[]): Proveedor[] {
+  let res: Proveedor[] = [];
+  pList.forEach((p: any) => {
+    const prod = CreateProveedor(p);
+
+    if (prod) res.push(prod);
+  });
+
+  return res;
+}
+
+
+function CreateProveedor(p: any): Proveedor | undefined {
+  try {
+    let prov: Proveedor = {
+      _id: p._id,
+      nombre: p.nombre,
+      cif: p.cif,
+      createdAt: p.createdAt,
+      updatedAt: p.updatedAt,
+      contacto: p.contacto,
+      cp: p.cp,
+      direccion: p.direccion,
+      email: p.email,
+      localidad: p.localidad,
+      pais: p.pais,
+      provincia: p.provincia,
+      telefono: p.telefono,
+    };
+    return prov;
+  } catch (e) {
+    return undefined;
+  }
 }
 
 function CreateProductoDevuelto(s: any): ProductoDevuelto | undefined {
