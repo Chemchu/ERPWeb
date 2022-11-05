@@ -58,7 +58,7 @@ const StoreDataModal = (props: { showModal: Function }) => {
         }}
       >
         <motion.div
-          className="flex flex-col xl:h-2/5 xl:w-2/5 h-2/4 w-2/4 gap-8 items-center bg-white rounded-2xl p-6"
+          className="flex flex-col xl:h-2/5 xl:w-2/5 h-2/4 w-2/4 gap-4 items-center bg-white rounded-2xl p-4"
           onClick={(e) => e.stopPropagation()}
           variants={In}
           initial="hidden"
@@ -83,7 +83,7 @@ const StoreDataModal = (props: { showModal: Function }) => {
               }}
             />
           </div>
-          <div className="flex gap-2 w-full h-full items-center">
+          <div className="flex gap-2 w-full items-center">
             <label className="w-full block tracking-wide text-gray-700 font-bold">Dirección</label>
             <input
               className="appearance-none ring-blue-500 block w-full bg-gray-200 text-gray-700 border rounded p-2 leading-tight focus:outline-none focus:bg-white"
@@ -126,9 +126,8 @@ const StoreDataModal = (props: { showModal: Function }) => {
               Cancelar
             </button>
             <button
-              className={`${
-                validData ? "bg-blue-500 hover:bg-blue-600" : "bg-blue-400 cursor-default"
-              } h-10 w-full rounded-xl shadow-lg`}
+              className={`${validData ? "bg-blue-500 hover:bg-blue-600" : "bg-blue-400 cursor-default"
+                } h-10 w-full rounded-xl shadow-lg`}
               onClick={Aceptar}
             >
               Aceptar

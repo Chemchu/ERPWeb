@@ -772,3 +772,36 @@ mutation Mutation($id: ID!, $merma: MermaInput!) {
     successful
   }
 }`;
+
+export const QUERY_PROVEEDORES = `
+query Query {
+  proveedores {
+    _id
+    nombre
+    localidad
+    direccion
+    provincia
+    cp
+    pais
+    telefono
+    email
+    createdAt
+    updatedAt
+    cif
+    contacto {
+      nombre
+      telefono
+      email
+    }
+  }
+}
+`
+
+export const ADD_PROVEEDOR = `
+mutation AddProveedor($fields: ProveedorInput!) {
+  addProveedor(fields: $fields) {
+    message
+    successful
+  }
+}
+`

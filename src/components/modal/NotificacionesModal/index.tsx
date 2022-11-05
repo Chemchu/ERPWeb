@@ -35,7 +35,7 @@ const VerNotificacionesModal = (props: { showModal: Function; }) => {
             Mensajes.length <= 0 ?
               <span className="w-full h-full items-center text-center align-middle">Bandeja vacía. No hay notificaciones.</span>
               :
-              <div className="flex flex-col w-full h-10 grow">
+              <div className="flex flex-col w-full h-10 grow overflow-y-auto border rounded-lg">
                 {
                   Mensajes.map((msg: string, i: number) => {
                     return (
@@ -45,7 +45,6 @@ const VerNotificacionesModal = (props: { showModal: Function; }) => {
                           {msg}
                         </span>
                       </div>
-
                     )
                   })
                 }
