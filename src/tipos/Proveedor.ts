@@ -14,6 +14,19 @@ export type Proveedor = {
   updatedAt: string;
 };
 
+export type NuevoProveedor = {
+  nombre: string;
+  cif: string;
+  direccion?: string;
+  contacto?: ProveedorContacto;
+  telefono?: string;
+  localidad?: string;
+  provincia?: string;
+  cp?: string;
+  pais?: string;
+  email?: string;
+};
+
 export type ProveedorContacto = {
   nombre: string;
   telefono?: string;
