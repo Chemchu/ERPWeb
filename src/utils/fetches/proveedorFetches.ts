@@ -1,5 +1,5 @@
 import { notifyError, notifySuccess } from "../toastify";
-import { Proveedor } from "../../tipos/Proveedor";
+import { NuevoProveedor, Proveedor } from "../../tipos/Proveedor";
 import { CreateProveedorList } from "../typeCreator";
 
 export const FetchProveedores = async (): Promise<Proveedor[]> => {
@@ -48,7 +48,7 @@ export const UpdateProveedor = async (proveedor: Proveedor): Promise<Boolean> =>
   }
 };
 
-export const CreateProveedor = async (proveedor: Proveedor): Promise<{ message: string; successful: boolean }> => {
+export const CreateProveedor = async (proveedor: NuevoProveedor): Promise<{ message: string; successful: boolean }> => {
   try {
     const pResponse = await fetch(`/api/proveedores`, {
       method: "POST",
@@ -76,7 +76,6 @@ export const DeleteProveedor = async (proveedorId: string): Promise<Boolean> => 
     });
 
     const msg = await pResponse.json();
-
     if (!pResponse.ok) {
       notifyError(msg.message);
       return false;

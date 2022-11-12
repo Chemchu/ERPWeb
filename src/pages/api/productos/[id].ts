@@ -1,6 +1,5 @@
 import { NextApiRequest, NextApiResponse } from "next";
 import {
-  ADD_PRODUCT,
   ADD_PRODUCTOS_FILE,
   DELETE_PRODUCT,
   QUERY_PRODUCT,

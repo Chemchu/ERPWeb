@@ -8,7 +8,7 @@ import { Producto } from "../tipos/Producto";
 import { ProductoDevuelto } from "../tipos/ProductoDevuelto";
 import { NuevoProductoMermado } from "../tipos/ProductoMermado";
 import { ProductoVendido } from "../tipos/ProductoVendido";
-import { Proveedor } from "../tipos/Proveedor";
+import { NuevoProveedor, Proveedor } from "../tipos/Proveedor";
 import { Summary, VentasPorHora } from "../tipos/Summary";
 import { ITPV } from "../tipos/TPV";
 import { Venta } from "../tipos/Venta";
@@ -398,6 +398,34 @@ export function CreateProveedorList(pList: any[]): Proveedor[] {
   return res;
 }
 
+export function CreateNuevoProveedor(nombre: string, cif: string, email?: string, tel?: string, direccion?: string,
+  localidad?: string, provincia?: string, pais?: string, cp?: string, cNombre?: string, cTel?: string,
+  cEmail?: string): NuevoProveedor | undefined {
+
+  try {
+    const proveedor: NuevoProveedor = {
+      nombre: nombre,
+      cif: cif,
+      cp: cp || undefined,
+      direccion: direccion || undefined,
+      email: email || undefined,
+      localidad: localidad || undefined,
+      pais: pais || undefined,
+      provincia: provincia || undefined,
+      telefono: tel || undefined,
+      contacto: {
+        nombre: cNombre || "Sin contacto",
+        telefono: cTel || undefined,
+        email: cEmail || undefined
+      }
+    }
+    return proveedor;
+  }
+  catch (err) {
+    return undefined
+  }
+
+}
 
 function CreateProveedor(p: any): Proveedor | undefined {
   try {

@@ -796,10 +796,51 @@ query Query {
   }
 }
 `
+export const QUERY_PROVEEDORES_BY_QUERY = `
+query Proveedores($find: ProveedorFind) {
+  proveedores(find: $find) {
+    _id
+    cif
+    contacto {
+      email
+      nombre
+      telefono
+    }
+    cp
+    createdAt
+    direccion
+    localidad
+    email
+    nombre
+    provincia
+    pais
+    telefono
+    updatedAt
+  }
+}
+`
 
 export const ADD_PROVEEDOR = `
 mutation AddProveedor($fields: ProveedorInput!) {
   addProveedor(fields: $fields) {
+    message
+    successful
+  }
+}
+`
+
+export const DELETE_PROVEEDOR = `
+mutation Mutation($id: ID!) {
+  deleteProveedor(_id: $id) {
+    message
+    successful
+  }
+}
+`
+
+export const UPDATE_PROVEEDOR = `
+mutation UpdateProveedor($id: ID!, $proveedorInput: ProveedorInput!) {
+  updateProveedor(_id: $id, proveedorInput: $proveedorInput) {
     message
     successful
   }

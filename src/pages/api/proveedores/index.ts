@@ -40,23 +40,25 @@ const GetProveedores = async (req: NextApiRequest, res: NextApiResponse) => {
 
 const AddProveedor = async (req: NextApiRequest, res: NextApiResponse) => {
   try {
+    const prov = req.body
+
     const serverRes = await GQLMutate({
       mutation: ADD_PROVEEDOR,
       variables: {
         fields: {
-          nombre: req.body.nombre,
-          direccion: req.body.direccion,
-          localidad: req.body.localidad,
-          provincia: req.body.provincia,
-          cp: req.body.cp,
-          pais: req.body.pais,
-          telefono: req.body.telefono,
-          email: req.body.email,
-          cif: req.body.cif,
+          nombre: prov.nombre,
+          direccion: prov.direccion,
+          localidad: prov.localidad,
+          provincia: prov.provincia,
+          cp: prov.cp,
+          pais: prov.pais,
+          telefono: prov.telefono,
+          email: prov.email,
+          cif: prov.cif,
           contacto: {
-            nombre: req.body.contacto.nombre,
-            telefono: req.body.contacto.telefono,
-            email: req.body.contacto.email
+            nombre: prov.contacto.nombre,
+            telefono: prov.contacto.telefono,
+            email: prov.contacto.email
           }
         }
       }
@@ -70,7 +72,7 @@ const AddProveedor = async (req: NextApiRequest, res: NextApiResponse) => {
     });
   } catch (err) {
     return res.status(500).json({
-      message: "Error al intentar crear el proveedor",
+      message: "Error al intentar crear el proveedor: " + err,
       successful: false,
     });
   }
