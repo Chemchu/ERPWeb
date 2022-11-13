@@ -5,7 +5,7 @@ export type ProductoVendido = {
   familia: string;
   precioVenta: number | string;
   precioCompra: number;
-  precioFinal: number;
+  precioFinal: number | string;
   iva: number;
   margen: number;
   ean: string;

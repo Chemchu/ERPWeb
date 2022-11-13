@@ -86,6 +86,7 @@ export const AddVenta = async (
 
     const productosVendidos = productosEnCarrito.map((prod) => {
       prod.precioVenta = Number(prod.precioVenta);
+      prod.precioFinal = Number(prod.precioFinal);
       return prod;
     });
 

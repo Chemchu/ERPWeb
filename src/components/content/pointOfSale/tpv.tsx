@@ -158,7 +158,7 @@ const TPV = (props: { productos: Producto[] }) => {
             </div>
           </div>
           <div className="min-w-[10rem] max-w-[12rem] sm:max-w-[22rem] grow h-ful">
-            <SidebarDerecho setProductosCarrito={SetProductosEnCarrito} productos={props.productos} />
+            <SidebarDerecho productos={props.productos} />
           </div>
         </div>
       </div>
@@ -275,7 +275,7 @@ const TPV = (props: { productos: Producto[] }) => {
           </div>
         </div>
         <div className="min-w-[10rem] max-w-[12rem] sm:max-w-[22rem] grow h-full">
-          <SidebarDerecho setProductosCarrito={SetProductosEnCarrito} productos={props.productos} inputRef={inputRef} />
+          <SidebarDerecho productos={props.productos} inputRef={inputRef} />
         </div>
       </div>
     </div>
