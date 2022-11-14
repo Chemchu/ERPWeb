@@ -99,7 +99,7 @@ export const AddDevolucion = async (
         familia: prod.familia,
         precioVenta: Number(prod.precioVenta),
         precioCompra: prod.precioCompra,
-        precioFinal: precio,
+        precioFinal: Number(precio),
         dto: prod.dto,
         iva: prod.iva,
         margen: prod.margen,

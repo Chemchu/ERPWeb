@@ -1,4 +1,4 @@
-import { AnimatePresence, motion, useTime } from "framer-motion";
+import { AnimatePresence, motion } from "framer-motion";
 import React, { useCallback, useEffect, useRef, useState } from "react";
 import { useReactToPrint } from "react-to-print";
 import useComprasAparcadasContext from "../../../../context/comprasAparcadas";
@@ -32,7 +32,6 @@ import { ProductSelectedCard } from "../productCard";
 const SidebarDerecho = React.memo(
   (props: {
     productos: Producto[];
-    setProductosCarrito: React.Dispatch<React.SetStateAction<ProductoVendido[]>>;
     inputRef?: any;
   }) => {
     const { ProductosEnCarrito, SetProductosEnCarrito } = useProductEnCarritoContext();
@@ -137,7 +136,7 @@ const SidebarDerecho = React.memo(
     }, []);
 
     const onAfterPrintHandler = React.useCallback(() => {
-      props.setProductosCarrito([]);
+      SetProductosEnCarrito([]);
       notifySuccess("Venta realizada correctamente");
       setButtonDisabled(false);
       props.inputRef?.current?.focus();
@@ -159,44 +158,43 @@ const SidebarDerecho = React.memo(
         return;
       }
 
-      props.setProductosCarrito((prevCarrito) => {
+      SetProductosEnCarrito((prevCarrito) => {
         const prodEnCarrito = prevCarrito.find((p) => p._id == idProd);
-        if (prodEnCarrito) {
-          if (Number(cantidad) === 0 && cantidad !== "") {
-            return prevCarrito.filter((p) => p._id != idProd);
-          }
-
-          props.setProductosCarrito((prevCarrito) => {
-            const dtoAjustado = Number(dto) > 100 ? "100" : dto;
-            const prodIndex = prevCarrito.indexOf(prodEnCarrito);
-            const prodAlCarrito = {
-              _id: prodEnCarrito._id,
-              nombre: prodEnCarrito.nombre,
-              familia: prodEnCarrito.familia,
-              proveedor: prodEnCarrito.proveedor,
-              cantidadVendida: Number(cantidad),
-              ean: prodEnCarrito.ean,
-              iva: prodEnCarrito.iva,
-              margen: prodEnCarrito.margen,
-              precioCompra: prodEnCarrito.precioCompra,
-              precioVenta: prodEnCarrito.precioVenta,
-              precioFinal: Number(prodEnCarrito.precioVenta) * ((100 - Number(dtoAjustado)) / 100),
-              dto: Number(dtoAjustado),
-            } as unknown as ProductoVendido;
-
-            if (precioVenta !== undefined) {
-              prodAlCarrito.precioVenta = String(precioVenta);
-            }
-
-            let ProductosEnCarritoUpdated = prevCarrito;
-            ProductosEnCarritoUpdated[prodIndex] = prodAlCarrito;
-
-            // Actualiza la lista de productos en carrito
-            return [...ProductosEnCarritoUpdated];
-          });
+        if (!prodEnCarrito) {
+          return [...prevCarrito]
         }
 
-        return [...prevCarrito];
+        if (Number(cantidad) === 0 && cantidad !== "") {
+          return prevCarrito.filter((p) => p._id != idProd);
+        }
+
+        const dtoAjustado = Number(dto) > 100 ? "100" : dto;
+        const prodIndex = prevCarrito.indexOf(prodEnCarrito);
+        const prodAlCarrito = {
+          _id: prodEnCarrito._id,
+          nombre: prodEnCarrito.nombre,
+          familia: prodEnCarrito.familia,
+          proveedor: prodEnCarrito.proveedor,
+          cantidadVendida: Number(cantidad),
+          ean: prodEnCarrito.ean,
+          iva: prodEnCarrito.iva,
+          margen: prodEnCarrito.margen,
+          precioCompra: prodEnCarrito.precioCompra,
+          precioVenta: prodEnCarrito.precioVenta,
+          precioFinal: Number(prodEnCarrito.precioVenta) * ((100 - Number(dtoAjustado)) / 100),
+          dto: Number(dtoAjustado),
+        } as unknown as ProductoVendido;
+
+        if (precioVenta !== undefined) {
+          prodAlCarrito.precioVenta = String(precioVenta);
+          prodAlCarrito.precioFinal = Number(precioVenta) * ((100 - Number(dtoAjustado)) / 100)
+        }
+
+        let ProductosEnCarritoUpdated = prevCarrito;
+        ProductosEnCarritoUpdated[prodIndex] = prodAlCarrito;
+
+        // Actualiza la lista de productos en carrito
+        return [...ProductosEnCarritoUpdated];
       });
     }, []);
 
@@ -211,7 +209,6 @@ const SidebarDerecho = React.memo(
         if (!emp.TPV) {
           throw "Error en la autenticación y el uso de la TPV";
         }
-
         const { data, error } = await AddVenta(pagoCliente, productosEnCarrito, emp, clientes, emp.TPV);
 
         if (!error && data) {
@@ -401,7 +398,7 @@ const SidebarDerecho = React.memo(
           <div
             className="flex justify-center text-blue-gray-300 hover:text-red-500 focus:outline-none cursor-pointer w-10"
             onClick={() => {
-              props.setProductosCarrito([]);
+              SetProductosEnCarrito([]);
             }}
           >
             <svg

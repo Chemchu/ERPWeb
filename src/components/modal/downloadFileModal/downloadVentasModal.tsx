@@ -131,7 +131,7 @@ const DownloadVentasModal = (props: { setModal: Function }) => {
             precioCompra: Number(pVendido.precioCompra.toFixed(2)),
             precioVenta: Number(Number(pVendido.precioVenta).toFixed(2)),
             cantidadVendida: pVendido.cantidadVendida,
-            valorTotalVendido: pVendido.precioFinal * pVendido.cantidadVendida,
+            valorTotalVendido: Number(pVendido.precioFinal) * pVendido.cantidadVendida,
             baseImponible: Number(bImponible.toFixed(2)),
             iva: Number(iva.toFixed(2)),
             margen: Number(margen.toFixed(2)),
@@ -150,7 +150,7 @@ const DownloadVentasModal = (props: { setModal: Function }) => {
             precioCompra: pVendido.precioCompra,
             precioVenta: pVendido.precioVenta,
             cantidadVendida: prod.cantidadVendida + pVendido.cantidadVendida,
-            valorTotalVendido: prod.valorTotalVendido + pVendido.precioFinal * pVendido.cantidadVendida,
+            valorTotalVendido: prod.valorTotalVendido + Number(pVendido.precioFinal) * pVendido.cantidadVendida,
             baseImponible: Number((prod.baseImponible + bImponible).toFixed(2)),
             iva: Number((prod.iva + iva).toFixed(2)),
             margen: Number((prod.margen + margen).toFixed(2)),
@@ -197,8 +197,7 @@ const DownloadVentasModal = (props: { setModal: Function }) => {
               <Tab
                 key={"exportarVentasTab"}
                 className={(props: { selected: boolean }) =>
-                  `${
-                    props.selected ? "bg-white cursor-default" : "bg-gray-300 hover:bg-blue-400 hover:text-white"
+                  `${props.selected ? "bg-white cursor-default" : "bg-gray-300 hover:bg-blue-400 hover:text-white"
                   } w-full rounded-t-xl`
                 }
               >
@@ -207,8 +206,7 @@ const DownloadVentasModal = (props: { setModal: Function }) => {
               <Tab
                 key={"exportarProdVendidosTab"}
                 className={(props: { selected: boolean }) =>
-                  `${
-                    props.selected ? "bg-white cursor-default" : "bg-gray-300 hover:bg-blue-400 hover:text-white"
+                  `${props.selected ? "bg-white cursor-default" : "bg-gray-300 hover:bg-blue-400 hover:text-white"
                   } w-full rounded-t-xl`
                 }
               >
@@ -251,9 +249,8 @@ const DownloadVentasModal = (props: { setModal: Function }) => {
                   {validDate ? (
                     <button
                       disabled={isDownloading}
-                      className={`${
-                        isDownloading ? "bg-blue-400" : "bg-blue-500 hover:bg-blue-600 "
-                      } w-1/2 h-12 rounded-xl shadow-lg`}
+                      className={`${isDownloading ? "bg-blue-400" : "bg-blue-500 hover:bg-blue-600 "
+                        } w-1/2 h-12 rounded-xl shadow-lg`}
                       onClick={DownloadVentas}
                     >
                       {isDownloading ? "Exportando..." : "Exportar"}
@@ -299,9 +296,8 @@ const DownloadVentasModal = (props: { setModal: Function }) => {
                   {validDate ? (
                     <button
                       disabled={isDownloading}
-                      className={`${
-                        isDownloading ? "bg-blue-400" : "bg-blue-500 hover:bg-blue-600 "
-                      } w-1/2 h-12 rounded-xl shadow-lg`}
+                      className={`${isDownloading ? "bg-blue-400" : "bg-blue-500 hover:bg-blue-600 "
+                        } w-1/2 h-12 rounded-xl shadow-lg`}
                       onClick={DownloadProductosVendidos}
                     >
                       {isDownloading ? "Exportando..." : "Exportar"}

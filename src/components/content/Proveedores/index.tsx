@@ -9,11 +9,15 @@ import AuthorizationWrapper from "../../authorizationWrapper";
 import NuevoBoton from "../../elementos/botones/nuevoBoton";
 import { Paginador } from "../../elementos/Forms/paginador";
 import FiltrarInput from "../../elementos/input/filtrarInput";
+import AddProveedorModal from "../../modal/addProveedor";
+import VerProveedor from "../../modal/verProveedor";
 import SkeletonCard from "../../Skeletons/skeletonCard";
 
 const ProveedoresPage = () => {
   const [filtro, setFiltro] = useState<string>("");
   const [proveedores, setProveedores] = useState<Proveedor[]>([]);
+  const [showAddProveedor, setShowAddProveedor] = useState<boolean>(false);
+
   useEffect(() => {
     const GetData = async () => {
       const prov: Proveedor[] = await FetchProveedores();
@@ -21,6 +25,11 @@ const ProveedoresPage = () => {
     }
     GetData()
   }, []);
+
+  const OkCallback = async () => {
+    const p = await FetchProveedores();
+    setProveedores(p)
+  }
 
   const Filtrar = async () => {
     if (filtro === "") {
@@ -38,13 +47,14 @@ const ProveedoresPage = () => {
     <main className="flex flex-col gap-4 w-full h-full max-h-full bg-white border-x border-b sm:rounded-bl-3xl sm:rounded-tr-3xl shadow-lg p-4">
       <section className="flex sm:justify-between justify-end items-start w-full">
         <div className="hidden sm:block">
-          <NuevoBoton accionEvent={() => { }} />
+          <NuevoBoton accionEvent={() => setShowAddProveedor(true)} />
         </div>
         <div className="flex w-full gap-2 items-center justify-end">
           <FiltrarInput filtro={filtro} setFiltro={setFiltro} FiltrarCallback={Filtrar} />
         </div>
       </section>
       <ProveedorTable isLoading={false} setProveedores={() => { }} proveedores={proveedores} />
+      <AnimatePresence>{showAddProveedor && <AddProveedorModal showModal={setShowAddProveedor} okCallback={OkCallback} />}</AnimatePresence>
     </main>
   );
 };
@@ -92,7 +102,7 @@ const ProveedorTable = (props: { isLoading: boolean; proveedores: Proveedor[]; s
             ) : (
               props.proveedores
                 .slice(elementsPerPage * (currentPage - 1), currentPage * elementsPerPage)
-                .map((p, index) => {
+                .map((p) => {
                   return (
                     <div key={`FilaProdTable${p._id}`}>
                       <FilaProveedor proveedor={p} />
@@ -117,7 +127,7 @@ const ProveedorTable = (props: { isLoading: boolean; proveedores: Proveedor[]; s
 
 const FilaProveedor = (props: { proveedor: Proveedor; }) => {
   const [showModal, setModal] = useState<boolean>(false);
-  const [proeveedor, setProveedor] = useState<Proveedor>(props.proveedor);
+  const [proveedor, setProveedor] = useState<Proveedor>(props.proveedor);
   //
   // const SetCurrentProveedor = (p: Proveedor | null) => {
   //   if (p === null) {
@@ -132,6 +142,8 @@ const FilaProveedor = (props: { proveedor: Proveedor; }) => {
   //   setProveedor(p);
   // };
 
+  if (!props.proveedor.nombre) { return null }
+
   return (
     <div className="hover:bg-blue-200">
       <div
@@ -140,13 +152,13 @@ const FilaProveedor = (props: { proveedor: Proveedor; }) => {
           setModal(true);
         }}
       >
-        <div className="text-left truncate">{proeveedor.nombre}</div>
-        <div className="hidden sm:block text-left">{proeveedor.localidad}</div>
-        <div className="text-left truncate">{proeveedor.telefono}</div>
-        <div className="text-right">{proeveedor.email}</div>
+        <div className="text-left truncate">{proveedor.nombre}</div>
+        <div className="hidden sm:block text-left">{proveedor.localidad}</div>
+        <div className="text-left truncate">{proveedor.telefono}</div>
+        <div className="text-right">{proveedor.email}</div>
       </div>
       <AnimatePresence>
-        {/* {showModal && <VerProducto showModal={setModal} producto={proeveedor} setProducto={SetCurrentProveedor} />} */}
+        {showModal && <VerProveedor showModal={setModal} proveedor={proveedor} setProveedor={setProveedor} />}
       </AnimatePresence>
     </div>
   );
