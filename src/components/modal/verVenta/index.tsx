@@ -255,7 +255,7 @@ const VerVenta = (props: { venta: Venta | undefined; setModal: Function }) => {
               {showDevolverModal && (
                 <DevolverVenta venta={props.venta} setModal={setShowDevolverModal} setModalVenta={props.setModal} />
               )}
-              {showEditarVentaModal && <EditarVenta setShowModal={setShowEditarVentaModal} setVenta={() => {}} />}
+              {showEditarVentaModal && <EditarVenta setShowModal={setShowEditarVentaModal} setVenta={() => { }} />}
             </AnimatePresence>
           </div>
         </motion.div>
@@ -265,7 +265,7 @@ const VerVenta = (props: { venta: Venta | undefined; setModal: Function }) => {
 };
 
 const GenerarFilaProducto = (props: { numFila: number; producto: ProductoVendido }) => {
-  const precio = props.producto.precioFinal || Number(props.producto.precioVenta) * ((100 - props.producto.dto) / 100);
+  const precio = Number(props.producto.precioFinal) || Number(props.producto.precioVenta) * ((100 - props.producto.dto) / 100);
 
   return (
     <>
