@@ -121,6 +121,36 @@ export const AddVenta = async (
   }
 };
 
+export const ModificarVenta = async (idVenta: string, tipoVenta: string
+): Promise<{ data: any | undefined; error: boolean }> => {
+  try {
+    const addVentaRespone = await fetch(`/api/ventas/${idVenta}`, {
+      headers: {
+        "Content-Type": "application/json",
+      },
+      method: "PUT",
+      body: JSON.stringify({
+        tipoVenta: tipoVenta
+      }),
+    });
+
+    if (!addVentaRespone.ok) {
+      notifyError("Error al modificar la venta");
+      return { data: undefined, error: true };
+    }
+
+    const response = await addVentaRespone.json();
+
+    const error = addVentaRespone.status === 200 ? false : true;
+    return { data: response.data, error: error };
+  } catch (err) {
+    console.error(err);
+    notifyError("Error de conexión");
+
+    return { data: undefined, error: true };
+  }
+};
+
 export const FetchVentasByTPV = async (TPV: string): Promise<Venta[]> => {
   if (!TPV) {
     throw "ID de la TPV no puede ser undefined";
