@@ -1,7 +1,6 @@
 import { motion } from "framer-motion";
 import React, { useEffect, useRef, useState } from "react";
 import { useReactToPrint } from "react-to-print";
-import { CustomerPaymentInformation } from "../../../tipos/CustomerPayment";
 import { Devolucion } from "../../../tipos/Devolucion";
 import { ProductoDevuelto } from "../../../tipos/ProductoDevuelto";
 import { ITPV } from "../../../tipos/TPV";

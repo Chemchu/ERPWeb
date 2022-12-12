@@ -122,9 +122,9 @@ export const AddVenta = async (
 };
 
 export const ModificarVenta = async (idVenta: string, tipoVenta: string
-): Promise<{ data: any | undefined; error: boolean }> => {
+): Promise<{ data: any | undefined; successful: boolean, message: string }> => {
   try {
-    const addVentaRespone = await fetch(`/api/ventas/${idVenta}`, {
+    const modificarVentaResponse = await fetch(`/api/ventas/tipo/${idVenta}`, {
       headers: {
         "Content-Type": "application/json",
       },
@@ -134,20 +134,18 @@ export const ModificarVenta = async (idVenta: string, tipoVenta: string
       }),
     });
 
-    if (!addVentaRespone.ok) {
-      notifyError("Error al modificar la venta");
-      return { data: undefined, error: true };
+    if (!modificarVentaResponse.ok) {
+      return { data: undefined, successful: false, message: "No se ha podido modificar la venta" };
     }
 
-    const response = await addVentaRespone.json();
+    const response = await modificarVentaResponse.json();
 
-    const error = addVentaRespone.status === 200 ? false : true;
-    return { data: response.data, error: error };
+    const successful = modificarVentaResponse.status === 200 ? true : false;
+    return { data: response.data, successful: successful, message: response.message };
   } catch (err) {
-    console.error(err);
-    notifyError("Error de conexión");
+    notifyError(`Error: ${err}`);
 
-    return { data: undefined, error: true };
+    return { data: undefined, successful: false, message: "No se ha podido modifcar la venta" };
   }
 };
 
