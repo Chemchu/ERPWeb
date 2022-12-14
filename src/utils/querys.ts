@@ -675,6 +675,17 @@ mutation UpdateVenta($id: ID!, $precioVentaTotal: Float!, $tipo: String, $client
 }
 `;
 
+export const UPDATE_TIPO_SALE = `
+mutation UpdateVenta($id: ID!, $precioVentaTotal: Float!, $tipo: String, $dineroEntregadoEfectivo: Float, $descuentoPorcentaje: Float, $cambio: Float, $modificadoPor: EmpleadoInput) {
+  updateVenta(_id: $id, precioVentaTotal: $precioVentaTotal, tipo: $tipo, dineroEntregadoEfectivo: $dineroEntregadoEfectivo, descuentoPorcentaje: $descuentoPorcentaje, cambio: $cambio, modificadoPor: $modificadoPor) {
+    _id
+    createdAt
+    message
+    successful
+  }
+}
+`;
+
 export const DELETE_CIERRE = `
 mutation DeleteCierreTPV($id: ID!) {
   deleteCierreTPV(_id: $id) {

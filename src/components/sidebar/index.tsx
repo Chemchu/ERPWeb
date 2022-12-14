@@ -1,6 +1,6 @@
 import { AnimatePresence, motion } from "framer-motion";
 import Link from "next/dist/client/link";
-import React, { useState } from "react";
+import React from "react";
 import useNotificacionesContext from "../../context/notificaciones";
 import { SidebarOption } from "../../tipos/Enums/SidebarOption";
 import VerNotificacionesModal from "../modal/NotificacionesModal";

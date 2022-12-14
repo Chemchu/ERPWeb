@@ -10,9 +10,9 @@ import { Roles } from "../../tipos/Enums/Roles";
 import { Summary, VentasPorHora } from "../../tipos/Summary";
 import { FetchResumenDiario } from "../../utils/fetches/analisisFetches";
 import { Color } from "../../tipos/Enums/Color";
-import { FetchNotificaciones } from "../../utils/fetches/notificacionesFetches";
-import useNotificacionesContext from "../../context/notificaciones";
 import dynamic from "next/dynamic";
+import useNotificacionesContext from "../../context/notificaciones";
+import { FetchNotificaciones } from "../../utils/fetches/notificacionesFetches";
 
 const VentasDelDia = dynamic(() => import("../../components/dataDisplay/ventasDelDia"), { ssr: false });
 const saludos = ["Bienvenido otra vez", "Hola", "Saludos"];
@@ -44,7 +44,6 @@ const Home = (props: { EmpleadoSesion: SesionEmpleado }) => {
       const notificaciones = await FetchNotificaciones();
       SetMensajes(notificaciones);
     }
-
     GetData();
     GetSummaryData();
     GetNotificaciones();

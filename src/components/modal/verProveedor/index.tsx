@@ -8,9 +8,9 @@ import EditableLabel from "../../elementos/Forms/editableLabel";
 import { Backdrop } from "../backdrop";
 import BorrarButton from "../../elementos/botones/borrarButton";
 import { Proveedor } from "../../../tipos/Proveedor";
-import { DeleteProveedor, UpdateProveedor } from "../../../utils/fetches/proveedorFetches";
+import { UpdateProveedor } from "../../../utils/fetches/proveedorFetches";
 
-export const VerProveedor = (props: { proveedor: Proveedor; setProveedor: Function; showModal: Function }) => {
+export const VerProveedor = (props: { proveedor: Proveedor; setProveedor: Function; deleteCallback: Function, showModal: Function }) => {
   const [Nombre, setNombre] = useState<string>(props.proveedor.nombre || "");
   const [ProveedorAux, setProveedorAux] = useState<Proveedor>();
   const [hayCambios, setHayCambios] = useState<boolean>(false);
@@ -70,14 +70,6 @@ export const VerProveedor = (props: { proveedor: Proveedor; setProveedor: Functi
     }
   };
 
-  const Eliminar = async () => {
-    const deletedCorrectly = await DeleteProveedor(props.proveedor._id);
-
-    if (deletedCorrectly) {
-      props.showModal(false);
-      props.setProveedor(null);
-    }
-  };
 
   return (
     <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}>
@@ -107,7 +99,7 @@ export const VerProveedor = (props: { proveedor: Proveedor; setProveedor: Functi
               <BorrarButton
                 title={`¿Borrar proveedor?`}
                 subtitle={`Algunos productos dejarán de tener este proveedor asociado`}
-                acceptCallback={Eliminar}
+                acceptCallback={props.deleteCallback}
               />
             </div>
             <div className="w-full h-10 grow py-4">
