@@ -2,7 +2,7 @@ import { AnimatePresence } from "framer-motion";
 import { useEffect, useState } from "react";
 import { Roles } from "../../../tipos/Enums/Roles";
 import { Proveedor } from "../../../tipos/Proveedor";
-import { FetchProveedores } from "../../../utils/fetches/proveedorFetches";
+import { DeleteProveedor, FetchProveedores } from "../../../utils/fetches/proveedorFetches";
 import { notifyWarn } from "../../../utils/toastify";
 import { ValidateSearchString } from "../../../utils/validator";
 import AuthorizationWrapper from "../../authorizationWrapper";
@@ -43,6 +43,12 @@ const ProveedoresPage = () => {
     // setProductosFiltradas(await FetchProductoByQuery(f, tipoProductos));
   };
 
+  const EliminarElemento = (id: String) => {
+    const prov = proveedores.filter((proveedor) => proveedor._id !== id)
+
+    setProveedores(prov);
+  }
+
   return (
     <main className="flex flex-col gap-4 w-full h-full max-h-full bg-white border-x border-b sm:rounded-bl-3xl sm:rounded-tr-3xl shadow-lg p-4">
       <section className="flex sm:justify-between justify-end items-start w-full">
@@ -53,7 +59,7 @@ const ProveedoresPage = () => {
           <FiltrarInput filtro={filtro} setFiltro={setFiltro} FiltrarCallback={Filtrar} />
         </div>
       </section>
-      <ProveedorTable isLoading={false} setProveedores={() => { }} proveedores={proveedores} />
+      <ProveedorTable isLoading={false} eliminarFila={EliminarElemento} proveedores={proveedores} />
       <AnimatePresence>{showAddProveedor && <AddProveedorModal showModal={setShowAddProveedor} okCallback={OkCallback} />}</AnimatePresence>
     </main>
   );
@@ -61,7 +67,7 @@ const ProveedoresPage = () => {
 
 const arrayNum = [...Array(8)];
 
-const ProveedorTable = (props: { isLoading: boolean; proveedores: Proveedor[]; setProveedores: Function }) => {
+const ProveedorTable = (props: { isLoading: boolean; proveedores: Proveedor[]; eliminarFila: Function }) => {
   const [currentPage, setCurrentPage] = useState<number>(1);
 
   const elementsPerPage = 50;
@@ -105,7 +111,7 @@ const ProveedorTable = (props: { isLoading: boolean; proveedores: Proveedor[]; s
                 .map((p) => {
                   return (
                     <div key={`FilaProdTable${p._id}`}>
-                      <FilaProveedor proveedor={p} />
+                      <FilaProveedor proveedor={p} eliminarse={() => props.eliminarFila(p._id)} />
                     </div>
                   );
                 })
@@ -125,24 +131,21 @@ const ProveedorTable = (props: { isLoading: boolean; proveedores: Proveedor[]; s
   );
 };
 
-const FilaProveedor = (props: { proveedor: Proveedor; }) => {
+const FilaProveedor = (props: { proveedor: Proveedor, eliminarse: Function }) => {
   const [showModal, setModal] = useState<boolean>(false);
   const [proveedor, setProveedor] = useState<Proveedor>(props.proveedor);
-  //
-  // const SetCurrentProveedor = (p: Proveedor | null) => {
-  //   if (p === null) {
-  //     const provs = props.proveedores.filter((p) => {
-  //       return p._id !== proeveedor._id;
-  //     });
-  //     props.setAllProveedores(provs);
-  //
-  //     return;
-  //   }
-  //
-  //   setProveedor(p);
-  // };
 
   if (!props.proveedor.nombre) { return null }
+
+  const Eliminar = async () => {
+    const deletedCorrectly = await DeleteProveedor(props.proveedor._id);
+
+    if (deletedCorrectly) {
+      setModal(false);
+      props.eliminarse()
+    }
+  };
+
 
   return (
     <div className="hover:bg-blue-200">
@@ -158,7 +161,7 @@ const FilaProveedor = (props: { proveedor: Proveedor; }) => {
         <div className="text-right">{proveedor.email}</div>
       </div>
       <AnimatePresence>
-        {showModal && <VerProveedor showModal={setModal} proveedor={proveedor} setProveedor={setProveedor} />}
+        {showModal && <VerProveedor showModal={setModal} proveedor={proveedor} deleteCallback={Eliminar} setProveedor={setProveedor} />}
       </AnimatePresence>
     </div>
   );

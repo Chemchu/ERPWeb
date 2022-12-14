@@ -42,24 +42,20 @@ const UpdateVenta = async (req: NextApiRequest, res: NextApiResponse) => {
       await GQLMutate({
         mutation: UPDATE_SALE,
         variables: {
-          id: venta._id,
-          precioVentaTotal: venta.precioVentaTotal,
-          tipo: venta.tipo,
-          modificadoPor: {
-            _id: venta.modificadoPor._id,
-            nombre: venta.modificadoPor.nombre,
-            apellidos: venta.modificadoPor.apellidos,
-            rol: venta.modificadoPor.rol,
-            email: venta.modificadoPor.email,
-          },
-          cliente: {
-            _id: venta.cliente._id,
-            nif: venta.cliente.nif,
-            nombre: venta.cliente.nombre,
-            calle: venta.cliente.calle,
-            cp: venta.cliente.cp,
-          },
-        },
+          "id": null,
+          "precioVentaTotal": null,
+          "tipo": null,
+          "dineroEntregadoEfectivo": null,
+          "descuentoPorcentaje": null,
+          "cambio": null,
+          "modificadoPor": {
+            "_id": null,
+            "apellidos": null,
+            "email": null,
+            "nombre": null,
+            "rol": null
+          }
+        }
       })
     ).json();
 
