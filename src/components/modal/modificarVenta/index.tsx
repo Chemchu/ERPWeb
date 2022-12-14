@@ -3,7 +3,7 @@ import { useState } from "react";
 import { Venta } from "../../../tipos/Venta";
 import { In } from "../../../utils/animations";
 import { ModificarVenta } from "../../../utils/fetches/ventasFetches";
-import { notifyError, notifyPromise, notifySuccess } from "../../../utils/toastify";
+import { notifyError, notifySuccess } from "../../../utils/toastify";
 import SimpleListBox from "../../elementos/Forms/simpleListBox";
 import { Backdrop } from "../backdrop";
 

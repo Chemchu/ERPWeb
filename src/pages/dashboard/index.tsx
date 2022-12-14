@@ -11,6 +11,8 @@ import { Summary, VentasPorHora } from "../../tipos/Summary";
 import { FetchResumenDiario } from "../../utils/fetches/analisisFetches";
 import { Color } from "../../tipos/Enums/Color";
 import dynamic from "next/dynamic";
+import useNotificacionesContext from "../../context/notificaciones";
+import { FetchNotificaciones } from "../../utils/fetches/notificacionesFetches";
 
 const VentasDelDia = dynamic(() => import("../../components/dataDisplay/ventasDelDia"), { ssr: false });
 const saludos = ["Bienvenido otra vez", "Hola", "Saludos"];
@@ -20,6 +22,7 @@ const Home = (props: { EmpleadoSesion: SesionEmpleado }) => {
   const { Empleado, SetEmpleado } = useEmpleadoContext();
   const [summaryToday, setSummaryToday] = useState<Summary | undefined>(undefined);
   const [summaryYesterday, setSummaryYesterday] = useState<Summary | undefined>(undefined);
+  const { SetMensajes } = useNotificacionesContext()
 
   useEffect(() => {
     if (Object.keys(Empleado).length === 0) {
@@ -37,8 +40,13 @@ const Home = (props: { EmpleadoSesion: SesionEmpleado }) => {
       setSummaryToday(await FetchResumenDiario(hoy));
       setSummaryYesterday(await FetchResumenDiario(ayer));
     };
+    const GetNotificaciones = async () => {
+      const notificaciones = await FetchNotificaciones();
+      SetMensajes(notificaciones);
+    }
     GetData();
     GetSummaryData();
+    GetNotificaciones();
   }, []);
 
   let maxY = -1;

@@ -3,6 +3,7 @@ import Link from "next/dist/client/link";
 import React from "react";
 import useNotificacionesContext from "../../context/notificaciones";
 import { SidebarOption } from "../../tipos/Enums/SidebarOption";
+import VerNotificacionesModal from "../modal/NotificacionesModal";
 import RequireHigherAuth from "../RequireHigherAuth";
 
 const Sidebar = React.memo(
@@ -27,12 +28,16 @@ const Sidebar = React.memo(
           IndexSeleccionado={props.IndexSeleccionado}
           setIndex={props.setIndex}
         />
+        <AnimatePresence>
+          {ShowModal && <VerNotificacionesModal showModal={SetShowModal} />}
+        </AnimatePresence>
       </>
     );
   }
 );
 
 const OpenedSidebar = (props: { setCollapsed: Function; IndexSeleccionado: SidebarOption; setIndex: Function }) => {
+  const { Mensajes, SetShowModal } = useNotificacionesContext();
   return (
     <motion.div
       initial={{ x: "-10vh", opacity: 0 }}
@@ -51,6 +56,19 @@ const OpenedSidebar = (props: { setCollapsed: Function; IndexSeleccionado: Sideb
             >
               ERPWeb
             </span>
+            {
+              Mensajes.length > 0 ?
+                <div className="relative inline-block cursor-pointer"
+                  onClick={() => { SetShowModal(true) }}>
+                  <span className="absolute top-0 right-0 inline-flex items-center justify-center px-2 py-1 
+              text-xs leading-none text-red-100 transform translate-x-1/2 -translate-y-1/2 
+              bg-red-500 rounded-full animate-pulse">
+                    {Mensajes.length}
+                  </span>
+                </div>
+                :
+                null
+            }
           </div>
         </div>
 
