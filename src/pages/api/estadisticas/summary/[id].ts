@@ -18,6 +18,7 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
     }
 
     return res
+      .setHeader("Cache-Control", "no-store")
       .status(300)
       .json({ message: `Solo se acepta metodo GET`, successful: false });
   } catch (err) {
@@ -29,10 +30,7 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
 const GetSummaryByDate = async (date: string, res: NextApiResponse) => {
   try {
     const apiResponse = await (
-      await fetch(
-        `${process.env.ERPGATEWAY_URL}api/analytics/summary/${date}`,
-        { cache: "no-cache" }
-      )
+      await fetch(`${process.env.ERPGATEWAY_URL}api/analytics/summary/${date}`)
     ).json();
 
     const data = JSON.parse(apiResponse.data);

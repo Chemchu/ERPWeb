@@ -1,7 +1,6 @@
 import "react-datepicker/dist/react-datepicker.css";
 import DatePicker, { registerLocale, setDefaultLocale } from "react-datepicker";
 import es from "date-fns/locale/es";
-import { useEffect } from "react";
 registerLocale("es", es);
 setDefaultLocale("es");
 
