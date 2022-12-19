@@ -34,11 +34,14 @@ const GetSummaryByDate = async (date: string, res: NextApiResponse) => {
     ).json();
 
     const data = JSON.parse(apiResponse.data);
-    return res.status(apiResponse.successful ? 200 : 300).json({
-      message: apiResponse.message,
-      successful: apiResponse.successful,
-      data: data,
-    });
+    return res
+      .setHeader("Cache-Control", "no-store")
+      .status(apiResponse.successful ? 200 : 300)
+      .json({
+        message: apiResponse.message,
+        successful: apiResponse.successful,
+        data: data,
+      });
   } catch (err) {
     console.log(err);
     return res
