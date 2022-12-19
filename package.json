@@ -21,6 +21,8 @@
     "@types/recharts": "^1.8.23",
     "babel-preset-next": "^1.4.0",
     "chart.js": "^3.8.0",
+    "date-fns": "^2.29.3",
+    "dayjs": "^1.11.7",
     "framer-motion": "^7.5.4",
     "graphql": "^16.2.0",
     "js-cookie": "^3.0.1",

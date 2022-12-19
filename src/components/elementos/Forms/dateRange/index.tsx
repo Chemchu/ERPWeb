@@ -1,6 +1,7 @@
 import "react-datepicker/dist/react-datepicker.css";
 import DatePicker, { registerLocale, setDefaultLocale } from "react-datepicker";
 import es from "date-fns/locale/es";
+import { useEffect } from "react";
 registerLocale("es", es);
 setDefaultLocale("es");
 
@@ -16,13 +17,20 @@ const DateRange = (props: {
   const updateDate = (fechas: Date[]): Date[] => {
     if (fechas[1] !== null) {
       const f = fechas[1];
-      f.setHours(f.getHours() + 24);
+      f.setHours(f.getHours() + 23);
+      f.setMinutes(f.getMinutes() + 59);
+      f.setSeconds(f.getSeconds() + 59);
 
       return [fechas[0], f];
     }
 
     return fechas;
   };
+
+  useEffect(() => {
+    console.log(`Start date: ${props.startDate?.getTime()}`)
+    console.log(`End date: ${props.endDate?.getTime()}`)
+  }, [props.endDate, props.startDate])
 
   return (
     <div className="flex gap-2">
