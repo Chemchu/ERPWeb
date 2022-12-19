@@ -29,7 +29,10 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
 const GetSummaryByDate = async (date: string, res: NextApiResponse) => {
   try {
     const apiResponse = await (
-      await fetch(`${process.env.ERPGATEWAY_URL}api/analytics/summary/${date}`)
+      await fetch(
+        `${process.env.ERPGATEWAY_URL}api/analytics/summary/${date}`,
+        { cache: "no-cache" }
+      )
     ).json();
 
     const data = JSON.parse(apiResponse.data);
