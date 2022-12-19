@@ -1,23 +1,39 @@
-import { AnimatePresence } from "framer-motion";
 import { useEffect, useState } from "react";
-import useEmpleadoContext from "../../../context/empleadoContext";
-import { Empleado } from "../../../tipos/Empleado";
 import { Roles } from "../../../tipos/Enums/Roles";
 import { Summary } from "../../../tipos/Summary";
 import AuthorizationWrapper from "../../authorizationWrapper";
 import FinanceCard from "../../dataDisplay/finaceCard";
-import { FetchResumenDiario, FetchResumenRango } from "../../../utils/fetches/analisisFetches";
+import {
+  FetchResumenDiario,
+  FetchResumenRango,
+} from "../../../utils/fetches/analisisFetches";
 import { Color } from "../../../tipos/Enums/Color";
 import SimpleListBox from "../../elementos/Forms/simpleListBox";
 import { Tiempos } from "../../../tipos/Enums/Tiempos";
 import DateRange from "../../elementos/Forms/dateRange";
 import dynamic from "next/dynamic";
+import {
+  GetFirstDayOfTheLastWeek,
+  GetFirstDayOfTheMonth,
+  GetFirstDayOfTheWeek,
+  GetFirstDayTheLastMonth,
+  GetLastDayOfTheLastMonth,
+  GetLastDayOfTheLastWeek,
+  GetLastDayOfTheMonth,
+  GetLastDayOfTheWeek,
+} from "../../../utils/date_functions";
 
-const FamiliasMasVendidasStats = dynamic(() => import("../../dataDisplay/familiasMasVendidasStats"), { ssr: false });
+const FamiliasMasVendidasStats = dynamic(
+  () => import("../../dataDisplay/familiasMasVendidasStats"),
+  { ssr: false }
+);
 const VentasDelDia = dynamic(() => import("../../dataDisplay/ventasDelDia"), {
   ssr: false,
 });
-const ProductosMasVendidosStats = dynamic(() => import("../../dataDisplay/productosMasVendidosStats"), { ssr: false });
+const ProductosMasVendidosStats = dynamic(
+  () => import("../../dataDisplay/productosMasVendidosStats"),
+  { ssr: false }
+);
 
 const EstadisticasPage = () => {
   const [mounted, setMounted] = useState<boolean>(false);
@@ -52,8 +68,8 @@ const EstadisticasPage = () => {
 
         const inicial: Date = dateRange[0];
         const final: Date = dateRange[1];
-        const fechaInicial = new Date(inicial.setHours(inicial.getHours() + 12));
-        const fechaFinal = new Date(final.setHours(final.getHours() - 12));
+        const fechaInicial = new Date(inicial.setHours(inicial.getHours()));
+        const fechaFinal = new Date(final.setHours(final.getHours()));
 
         setSummary(await FetchResumenRango(fechaInicial, fechaFinal));
       }
@@ -85,23 +101,21 @@ const EstadisticasPage = () => {
           setSummary(await FetchResumenDiario(inicial));
           return;
         case Tiempos.EstaSemana:
-          inicial = new Date(inicial.setDate(inicial.getDate() - inicial.getDay() + 1));
-          final = new Date(final.setDate(final.getDate() - final.getDay() + 7));
+          inicial = GetFirstDayOfTheWeek(new Date());
+          final = GetLastDayOfTheWeek(new Date());
           break;
         case Tiempos.SemanaPasada:
-          inicial = new Date(inicial.setDate(inicial.getDate() - 7 - inicial.getDay() + 1));
-          final = new Date(final.setDate(final.getDate() - 7 - final.getDay() + 7));
+          inicial = GetFirstDayOfTheLastWeek();
+          final = GetLastDayOfTheLastWeek();
           break;
         case Tiempos.EsteMes:
-          inicial = new Date(inicial.getFullYear(), inicial.getMonth(), 1);
-          final = new Date(final.getFullYear(), final.getMonth() + 1, 0);
+          inicial = GetFirstDayOfTheMonth(new Date());
+          final = GetLastDayOfTheMonth(new Date());
           break;
-
         case Tiempos.MesPasado:
-          inicial = new Date(inicial.getFullYear(), inicial.getMonth() - 1, 1);
-          final = new Date(final.getFullYear(), final.getMonth(), 0);
+          inicial = GetFirstDayTheLastMonth();
+          final = GetLastDayOfTheLastMonth();
           break;
-
         default:
           break;
       }
@@ -117,7 +131,10 @@ const EstadisticasPage = () => {
 
   return (
     <div className="flex flex-col gap-4 h-full w-full bg-white sm:rounded-bl-3xl sm:rounded-tr-3xl p-4 shadow-lg border-x overflow-y-scroll">
-      <div id="filtros" className="flex flex-col sm:flex-row items-end sm:justify-end w-full z-20 gap-4">
+      <div
+        id="filtros"
+        className="flex flex-col sm:flex-row items-end sm:justify-end w-full z-20 gap-4"
+      >
         <DateRange
           titulo="Fecha"
           dateRange={dateRange}
@@ -231,10 +248,16 @@ const EstadisticasPage = () => {
           {summary && (
             <div className="flex flex-col sm:flex-row gap-4">
               <div className="w-full sm:w-1/2 h-full">
-                <ProductosMasVendidosStats titulo="Productos más vendidos" data={summary?.productosMasVendidos} />
+                <ProductosMasVendidosStats
+                  titulo="Productos más vendidos"
+                  data={summary?.productosMasVendidos}
+                />
               </div>
               <div className="w-full sm:w-1/2 h-full">
-                <FamiliasMasVendidasStats titulo="Familias más vendidas" data={summary?.familiasMasVendidas} />
+                <FamiliasMasVendidasStats
+                  titulo="Familias más vendidas"
+                  data={summary?.familiasMasVendidas}
+                />
               </div>
             </div>
           )}
@@ -255,4 +278,7 @@ const EstadisticasPage = () => {
   );
 };
 
-export default AuthorizationWrapper([Roles.Administrador, Roles.Gerente], true)(EstadisticasPage);
+export default AuthorizationWrapper(
+  [Roles.Administrador, Roles.Gerente],
+  true
+)(EstadisticasPage);

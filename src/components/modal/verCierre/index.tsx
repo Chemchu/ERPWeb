@@ -12,7 +12,12 @@ import CierrePrintable from "../../printable/cierrePrintable";
 import { Backdrop } from "../backdrop";
 import BorrarButton from "../../elementos/botones/borrarButton";
 
-const VerCierre = (props: { showModal: Function; cierre: Cierre; setCierre: Function; tpv: string }) => {
+const VerCierre = (props: {
+  showModal: Function;
+  cierre: Cierre;
+  setCierre: Function;
+  tpv: string;
+}) => {
   const [qrImage, setQrImage] = useState<string>();
   const componentRef = useRef(null);
 
@@ -48,10 +53,16 @@ const VerCierre = (props: { showModal: Function; cierre: Cierre; setCierre: Func
   };
 
   const fechaCierre = new Date(Number(props.cierre.cierre)).toLocaleString();
-  const fechaApertura = new Date(Number(props.cierre.apertura)).toLocaleString();
+  const fechaApertura = new Date(
+    Number(props.cierre.apertura)
+  ).toLocaleString();
 
   return (
-    <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}>
+    <motion.div
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      exit={{ opacity: 0 }}
+    >
       <Backdrop
         onClick={(e) => {
           e.stopPropagation();
@@ -59,7 +70,7 @@ const VerCierre = (props: { showModal: Function; cierre: Cierre; setCierre: Func
         }}
       >
         <motion.div
-          className="h-5/6 w-5/6 flex flex-col gap-10 items-center bg-white rounded-2xl p-6"
+          className="h-5/6 w-5/6 flex flex-col gap-10 items-center bg-white rounded-2xl p-4"
           onClick={(e) => e.stopPropagation()}
           variants={In}
           initial="hidden"
@@ -69,30 +80,49 @@ const VerCierre = (props: { showModal: Function; cierre: Cierre; setCierre: Func
           <div className="flex flex-col gap-4 w-full h-full">
             <div className="flex w-full justify-between">
               <span className="text-2xl">Cierre de {fechaCierre}</span>
-              {AuthorizationWrapper([Roles.Administrador, Roles.Gerente])(() => {
-                return (
-                  <BorrarButton
-                    title="¿Borrar cierre?"
-                    subtitle="¿Seguro que quieres borrar el cierre?"
-                    acceptCallback={Eliminar}
-                  />
-                );
-              })({})}
+              {AuthorizationWrapper([Roles.Administrador, Roles.Gerente])(
+                () => {
+                  return (
+                    <BorrarButton
+                      title="¿Borrar cierre?"
+                      subtitle="¿Seguro que quieres borrar el cierre?"
+                      acceptCallback={Eliminar}
+                    />
+                  );
+                }
+              )({})}
             </div>
             <span className="text-base">ID: {props.cierre._id}</span>
             <div className="flex flex-col sm:flex-row justify-between w-full h-full pt-2 overflow-y-scroll sm:overflow-y-auto">
               <div className="flex flex-col w-full gap-1 text-base">
                 <span>TPV: {props.tpv}</span>
-                <span>Venta total: {props.cierre.ventasTotales.toFixed(2)}€</span>
-                <span>Ventas en efectivo: {props.cierre.ventasEfectivo.toFixed(2)}€</span>
-                <span>Ventas en tarjeta: {props.cierre.ventasTarjeta.toFixed(2)}€</span>
-                <span>Caja inicial: {props.cierre.cajaInicial.toFixed(2)}€</span>
-                <span>Caja final esperada: {props.cierre.dineroEsperadoEnCaja.toFixed(2)}€</span>
-                <span>Caja final real: {props.cierre.dineroRealEnCaja.toFixed(2)}€</span>
+                <span>
+                  Venta total: {props.cierre.ventasTotales.toFixed(2)}€
+                </span>
+                <span>
+                  Ventas en efectivo: {props.cierre.ventasEfectivo.toFixed(2)}€
+                </span>
+                <span>
+                  Ventas en tarjeta: {props.cierre.ventasTarjeta.toFixed(2)}€
+                </span>
+                <span>
+                  Caja inicial: {props.cierre.cajaInicial.toFixed(2)}€
+                </span>
+                <span>
+                  Caja final esperada:{" "}
+                  {props.cierre.dineroEsperadoEnCaja.toFixed(2)}€
+                </span>
+                <span>
+                  Caja final real: {props.cierre.dineroRealEnCaja.toFixed(2)}€
+                </span>
               </div>
               <div className="flex flex-col w-full gap-1 text-base sm:items-end">
-                <span>Dinero retirado: {props.cierre.dineroRetirado.toFixed(2)}€</span>
-                <span>Fondo de caja dejado: {props.cierre.fondoDeCaja.toFixed(2)}€</span>
+                <span>
+                  Dinero retirado: {props.cierre.dineroRetirado.toFixed(2)}€
+                </span>
+                <span>
+                  Fondo de caja dejado: {props.cierre.fondoDeCaja.toFixed(2)}€
+                </span>
                 <span>Abierto por: {props.cierre.abiertoPor.nombre}</span>
                 <span>Fecha de apertura: {fechaApertura}</span>
                 <span>Cerrado por: {props.cierre.cerradoPor.nombre}</span>
@@ -119,7 +149,12 @@ const VerCierre = (props: { showModal: Function; cierre: Cierre; setCierre: Func
             </div>
             {
               <div style={{ display: "none" }}>
-                <CierrePrintable ref={componentRef} cierre={props.cierre} tpv={props.tpv} qrImage={qrImage} />
+                <CierrePrintable
+                  ref={componentRef}
+                  cierre={props.cierre}
+                  tpv={props.tpv}
+                  qrImage={qrImage}
+                />
               </div>
             }
           </div>

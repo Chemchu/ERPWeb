@@ -12,11 +12,14 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
     const method = req.method;
     switch (method) {
       case "GET":
-        const fecha: string = typeof req.query.id === "string" ? req.query.id : req.query.id[0];
+        const fecha: string =
+          typeof req.query.id === "string" ? req.query.id : req.query.id[0];
         return await GetSummaryByDate(fecha, res);
     }
 
-    return res.status(300).json({ message: `Solo se acepta metodo GET`, successful: false });
+    return res
+      .status(300)
+      .json({ message: `Solo se acepta metodo GET`, successful: false });
   } catch (err) {
     console.log(err);
     return res.status(500).json({ message: `${err}` });
@@ -25,7 +28,9 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
 
 const GetSummaryByDate = async (date: string, res: NextApiResponse) => {
   try {
-    const apiResponse = await (await fetch(`${process.env.ERPGATEWAY_URL}api/analytics/summary/${date}`)).json();
+    const apiResponse = await (
+      await fetch(`${process.env.ERPGATEWAY_URL}api/analytics/summary/${date}`)
+    ).json();
 
     const data = JSON.parse(apiResponse.data);
     return res.status(apiResponse.successful ? 200 : 300).json({
@@ -35,7 +40,9 @@ const GetSummaryByDate = async (date: string, res: NextApiResponse) => {
     });
   } catch (err) {
     console.log(err);
-    return res.status(500).json({ message: `Error: ${err}`, successful: false });
+    return res
+      .status(500)
+      .json({ message: `Error: ${err}`, successful: false });
   }
 };
 
