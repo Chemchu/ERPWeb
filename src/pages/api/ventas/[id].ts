@@ -1,5 +1,10 @@
 import { NextApiRequest, NextApiResponse } from "next";
-import { ADD_SALES_FILE, QUERY_SALE, QUERY_SALES, UPDATE_SALE } from "../../../utils/querys";
+import {
+  ADD_SALES_FILE,
+  QUERY_SALE,
+  QUERY_SALES,
+  UPDATE_SALE,
+} from "../../../utils/querys";
 import GQLQuery, { GQLMutate } from "../../../utils/serverFetcher";
 import queryString from "query-string";
 import { Venta } from "../../../tipos/Venta";
@@ -42,25 +47,27 @@ const UpdateVenta = async (req: NextApiRequest, res: NextApiResponse) => {
       await GQLMutate({
         mutation: UPDATE_SALE,
         variables: {
-          "id": null,
-          "precioVentaTotal": null,
-          "tipo": null,
-          "dineroEntregadoEfectivo": null,
-          "descuentoPorcentaje": null,
-          "cambio": null,
-          "modificadoPor": {
-            "_id": null,
-            "apellidos": null,
-            "email": null,
-            "nombre": null,
-            "rol": null
-          }
-        }
+          id: null,
+          precioVentaTotal: null,
+          tipo: null,
+          dineroEntregadoEfectivo: null,
+          descuentoPorcentaje: null,
+          cambio: null,
+          modificadoPor: {
+            _id: null,
+            apellidos: null,
+            email: null,
+            nombre: null,
+            rol: null,
+          },
+        },
       })
     ).json();
 
     const data = JSON.parse(apiResponse.data).updateVenta;
-    return res.status(data.successful ? 200 : 300).json({ message: data.message, successful: data.successful });
+    return res
+      .status(data.successful ? 200 : 300)
+      .json({ message: data.message, successful: data.successful });
   } catch (e) {
     console.log(e);
     return res.status(500).json({
@@ -82,11 +89,14 @@ const AddVentaFromFile = async (req: NextApiRequest, res: NextApiResponse) => {
     ).json();
 
     const data = JSON.parse(apiResponse.data).addVentasFile;
-    return res.status(data.successful ? 200 : 300).json({ message: data.message, successful: data.successful });
+    return res
+      .status(data.successful ? 200 : 300)
+      .json({ message: data.message, successful: data.successful });
   } catch (err) {
     console.log(err);
     return res.status(500).json({
-      message: "Error interno. Si el archivo es muy grande, todavía se estará añadiendo. Espere unos minutos",
+      message:
+        "Error interno. Si el archivo es muy grande, todavía se estará añadiendo. Espere unos minutos",
       successful: false,
     });
   }
@@ -133,33 +143,45 @@ const GetSale = async (req: NextApiRequest, res: NextApiResponse) => {
     });
   } catch (err) {
     console.log(err);
-    return res.status(500).json({ message: `Error: ${err}`, successful: false });
+    return res
+      .status(500)
+      .json({ message: `Error: ${err}`, successful: false });
   }
 };
 
-const GetSalesByQuery = async (userQuery: queryString.ParsedQuery<string>, res: NextApiResponse) => {
-  if (Object.keys(userQuery).length === 0) {
-    res.status(300).json({ message: `La query no puede estar vacía` });
-  }
-  const serverRes = await GQLQuery({
-    query: QUERY_SALES,
-    variables: {
-      find: {
-        query: userQuery.query,
-        fechaInicial: userQuery.fechaInicial ? userQuery.fechaInicial : null,
-        fechaFinal: userQuery.fechaFinal ? userQuery.fechaFinal : null,
+const GetSalesByQuery = async (
+  userQuery: queryString.ParsedQuery<string>,
+  res: NextApiResponse
+) => {
+  try {
+    if (Object.keys(userQuery).length === 0) {
+      res.status(300).json({ message: `La query no puede estar vacía` });
+    }
+    const serverRes = await GQLQuery({
+      query: QUERY_SALES,
+      variables: {
+        find: {
+          query: userQuery.query,
+          fechaInicial: userQuery.fechaInicial ? userQuery.fechaInicial : null,
+          fechaFinal: userQuery.fechaFinal ? userQuery.fechaFinal : null,
+        },
+        limit: 25000,
       },
-      limit: 25000,
-    },
-  });
-  const apiResponse = await serverRes.json();
+    });
+    const apiResponse = await serverRes.json();
 
-  const data = JSON.parse(apiResponse.data);
-  return res.status(serverRes.ok ? 200 : 300).json({
-    message: data.message,
-    data: data.ventas,
-    successful: data.successful,
-  });
+    const data = JSON.parse(apiResponse.data);
+    return res.status(serverRes.ok ? 200 : 300).json({
+      message: data.message,
+      data: data.ventas,
+      successful: data.successful,
+    });
+  } catch (err) {
+    console.log(err);
+    return res
+      .status(500)
+      .json({ message: `Error: ${err}`, successful: false });
+  }
 };
 
 export const config = {
