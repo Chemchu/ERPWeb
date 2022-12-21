@@ -2,7 +2,6 @@ import { NextApiRequest, NextApiResponse } from "next";
 import { Cliente } from "../../../tipos/Cliente";
 import { CustomerPaymentInformation } from "../../../tipos/CustomerPayment";
 import { Empleado } from "../../../tipos/Empleado";
-import { Producto } from "../../../tipos/Producto";
 import { ADD_SALE, QUERY_SALES } from "../../../utils/querys";
 import GQLQuery, { GQLMutate } from "../../../utils/serverFetcher";
 
@@ -55,9 +54,13 @@ const AddSale = async (req: NextApiRequest, res: NextApiResponse) => {
       variables: {
         fields: {
           productos: productosEnCarrito,
-          dineroEntregadoEfectivo: Number(pagoCliente.pagoEnEfectivo.toFixed(2)),
+          dineroEntregadoEfectivo: Number(
+            pagoCliente.pagoEnEfectivo.toFixed(2)
+          ),
           dineroEntregadoTarjeta: Number(pagoCliente.pagoEnTarjeta.toFixed(2)),
-          precioVentaTotalSinDto: Number(pagoCliente.precioTotalSinDto.toFixed(2)),
+          precioVentaTotalSinDto: Number(
+            pagoCliente.precioTotalSinDto.toFixed(2)
+          ),
           precioVentaTotal: Number(pagoCliente.precioTotal.toFixed(2)),
           tipo: pagoCliente.tipo,
           cambio: Number(pagoCliente.cambio.toFixed(2)),
@@ -65,7 +68,8 @@ const AddSale = async (req: NextApiRequest, res: NextApiResponse) => {
           vendidoPor: empleado,
           modificadoPor: empleado,
           descuentoEfectivo: Number(pagoCliente.dtoEfectivo.toFixed(2)) || 0,
-          descuentoPorcentaje: Number(pagoCliente.dtoPorcentaje.toFixed(2)) || 0,
+          descuentoPorcentaje:
+            Number(pagoCliente.dtoPorcentaje.toFixed(2)) || 0,
           tpv: tpv,
         },
       },
@@ -80,7 +84,9 @@ const AddSale = async (req: NextApiRequest, res: NextApiResponse) => {
     });
   } catch (err) {
     console.log(err);
-    return res.status(500).json({ message: `Error: ${err}`, successful: false });
+    return res
+      .status(500)
+      .json({ message: `Error: ${err}`, successful: false });
   }
 };
 
