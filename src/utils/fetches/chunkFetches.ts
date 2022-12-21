@@ -21,11 +21,10 @@ export const FetchChunkedSalesBetweenDates = async (
       ventas = [...ventas, ...ventasDelDia];
 
       if (setProgress) {
-        setProgress(
-          () =>
-            (Math.round(((index + 1) / diasEntreFechas.length) * 100) * 100) /
-            100
-        );
+        setProgress(() => {
+          const num = 100 * ((index + 1) / diasEntreFechas.length);
+          return Math.round(num * 100) / 100;
+        });
       }
     }
     return ventas;
