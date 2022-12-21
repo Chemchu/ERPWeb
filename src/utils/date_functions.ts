@@ -1,4 +1,5 @@
 import {
+  eachDayOfInterval,
   endOfISOWeek,
   endOfMonth,
   startOfISOWeek,
@@ -21,3 +22,14 @@ export const GetFirstDayTheLastMonth = () =>
   startOfMonth(sub(new Date(), { months: 1 }));
 export const GetLastDayOfTheLastMonth = () =>
   endOfMonth(sub(new Date(), { months: 1 }));
+
+export const GetDaysBetweenDateRange = (
+  initDate: Date,
+  finalDate: Date
+): Date[] => {
+  if (initDate.getTime() >= finalDate.getTime()) {
+    throw "La fecha inicial no puede ser posterior a la fecha final";
+  }
+
+  return eachDayOfInterval({ start: initDate, end: finalDate });
+};
