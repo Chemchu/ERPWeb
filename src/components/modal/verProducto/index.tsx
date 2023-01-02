@@ -9,10 +9,17 @@ import Etiqueta from "../../printable/etiqueta";
 import EditableLabel from "../../elementos/Forms/editableLabel";
 import ProductoForm from "../../elementos/Forms/productoForm";
 import { Backdrop } from "../backdrop";
-import { DeleteProducto, UpdateProducto } from "../../../utils/fetches/productosFetches";
+import {
+  DeleteProducto,
+  UpdateProducto,
+} from "../../../utils/fetches/productosFetches";
 import BorrarButton from "../../elementos/botones/borrarButton";
 
-export const VerProducto = (props: { producto: Producto; setProducto: Function; showModal: Function }) => {
+export const VerProducto = (props: {
+  producto: Producto;
+  setProducto: Function;
+  showModal: Function;
+}) => {
   const [Nombre, setNombre] = useState<string>(props.producto.nombre || "");
   const [ProductoAux, setProductoAux] = useState<Producto>();
   const [hayCambios, setHayCambios] = useState<boolean>(false);
@@ -77,7 +84,7 @@ export const VerProducto = (props: { producto: Producto; setProducto: Function; 
       precioVenta: Number(Prod.precioVenta),
       proveedor: Prod.proveedor,
       updatedAt: Prod.updatedAt,
-      createdAt: Prod.createdAt
+      createdAt: Prod.createdAt,
     };
 
     const updatedCorrectly = await UpdateProducto(p);
@@ -97,7 +104,11 @@ export const VerProducto = (props: { producto: Producto; setProducto: Function; 
   };
 
   return (
-    <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}>
+    <motion.div
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      exit={{ opacity: 0 }}
+    >
       <Backdrop
         onClick={(e) => {
           e.stopPropagation();
@@ -128,7 +139,11 @@ export const VerProducto = (props: { producto: Producto; setProducto: Function; 
               />
             </div>
             <div className="w-full h-10 grow py-4">
-              <ProductoForm setProducto={setProductoAux} producto={props.producto} setHayCambios={setHayCambios} />
+              <ProductoForm
+                setProducto={setProductoAux}
+                producto={props.producto}
+                setHayCambios={setHayCambios}
+              />
             </div>
             <div className="flex w-full gap-2 text-white self-end items-end justify-around">
               <button
@@ -146,13 +161,20 @@ export const VerProducto = (props: { producto: Producto; setProducto: Function; 
                   stroke="currentColor"
                   className="w-6 h-6 sm:hidden"
                 >
-                  <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    d="M6 18L18 6M6 6l12 12"
+                  />
                 </svg>
               </button>
               <button
                 disabled={!imprimible}
-                className={`${imprimible ? "bg-orange-500 hover:bg-orange-600" : "bg-orange-400"
-                  } h-10 sm:h-12 w-full rounded-xl shadow-lg flex justify-center items-center`}
+                className={`${
+                  imprimible
+                    ? "bg-orange-500 hover:bg-orange-600"
+                    : "bg-orange-400"
+                } h-10 sm:h-12 w-full rounded-xl shadow-lg flex justify-center items-center`}
                 onClick={Print}
               >
                 <span className="hidden sm:inline-flex">Imprimir</span>
@@ -187,7 +209,11 @@ export const VerProducto = (props: { producto: Producto; setProducto: Function; 
                     stroke="currentColor"
                     className="w-6 h-6 sm:hidden"
                   >
-                    <path strokeLinecap="round" strokeLinejoin="round" d="M4.5 12.75l6 6 9-13.5" />
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      d="M4.5 12.75l6 6 9-13.5"
+                    />
                   </svg>
                 </button>
               ) : (
@@ -203,7 +229,11 @@ export const VerProducto = (props: { producto: Producto; setProducto: Function; 
                     stroke="currentColor"
                     className="w-6 h-6 sm:hidden"
                   >
-                    <path strokeLinecap="round" strokeLinejoin="round" d="M4.5 12.75l6 6 9-13.5" />
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      d="M4.5 12.75l6 6 9-13.5"
+                    />
                   </svg>
                 </div>
               )}

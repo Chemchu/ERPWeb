@@ -1,12 +1,21 @@
 import { useEffect, useState } from "react";
 import { Producto } from "../../../../tipos/Producto";
-import { ValidatePositiveFloatingNumber, ValidatePositiveIntegerNumber } from "../../../../utils/validator";
+import {
+  ValidatePositiveFloatingNumber,
+  ValidatePositiveIntegerNumber,
+} from "../../../../utils/validator";
 import Toggle from "../../botones/toggle";
 
-const ProductoForm = (props: { setProducto: Function; producto?: Producto; setHayCambios?: Function }) => {
+const ProductoForm = (props: {
+  setProducto: Function;
+  producto?: Producto;
+  setHayCambios?: Function;
+}) => {
   const [Nombre, setNombre] = useState<string>(props.producto?.nombre || "");
   const [Familia, setFamilia] = useState<string>(props.producto?.familia || "");
-  const [Proveedor, setProveedor] = useState<string>(props.producto?.proveedor || "");
+  const [Proveedor, setProveedor] = useState<string>(
+    props.producto?.proveedor || ""
+  );
   const [Ean, setEan] = useState<string>(props.producto?.ean || "");
   const [PrecioCompra, setPrecioCompra] = useState<string>(
     props.producto?.precioCompra ? props.producto?.precioCompra.toFixed(2) : ""
@@ -14,12 +23,22 @@ const ProductoForm = (props: { setProducto: Function; producto?: Producto; setHa
   const [PrecioVenta, setPrecioVenta] = useState<string>(
     props.producto?.precioVenta ? props.producto?.precioVenta.toFixed(2) : ""
   );
-  const [Iva, setIva] = useState<string>(props.producto?.iva ? props.producto?.iva.toFixed(2) : "");
-  const [Alta, setAlta] = useState<boolean>(props.producto?.alta !== undefined ? props.producto?.alta : true);
-  const [Margen, setMargen] = useState<string>(props.producto?.margen ? props.producto?.margen.toFixed(2) : "");
-  const [Cantidad, setCantidad] = useState<string>(props.producto?.cantidad ? String(props.producto?.cantidad) : "0");
+  const [Iva, setIva] = useState<string>(
+    props.producto?.iva !== undefined ? props.producto?.iva.toFixed(2) : ""
+  );
+  const [Alta, setAlta] = useState<boolean>(
+    props.producto?.alta !== undefined ? props.producto?.alta : true
+  );
+  const [Margen, setMargen] = useState<string>(
+    props.producto?.margen ? props.producto?.margen.toFixed(2) : ""
+  );
+  const [Cantidad, setCantidad] = useState<string>(
+    props.producto?.cantidad ? String(props.producto?.cantidad) : "0"
+  );
   const [CantidadReestock, setCantidadReestock] = useState<string>(
-    props.producto?.cantidadRestock ? String(props.producto?.cantidadRestock) : "0"
+    props.producto?.cantidadRestock
+      ? String(props.producto?.cantidadRestock)
+      : "0"
   );
 
   const [isMounted, setIsMounted] = useState<boolean>(false);
@@ -55,11 +74,20 @@ const ProductoForm = (props: { setProducto: Function; producto?: Producto; setHa
       margen: Number(Margen),
       proveedor: Proveedor,
       createdAt: Date.now(),
-      updatedAt: Date.now()
+      updatedAt: Date.now(),
     };
     props.setProducto(p);
     props.setHayCambios && props.setHayCambios(true);
-  }, [Nombre, Familia, Proveedor, Ean, Cantidad, CantidadReestock, Margen, Alta]);
+  }, [
+    Nombre,
+    Familia,
+    Proveedor,
+    Ean,
+    Cantidad,
+    CantidadReestock,
+    Margen,
+    Alta,
+  ]);
 
   useEffect(() => {
     if (!isMounted) {
@@ -97,7 +125,9 @@ const ProductoForm = (props: { setProducto: Function; producto?: Producto; setHa
           <div className="w-full">
             {props.producto ? (
               <>
-                <label className="block tracking-wide text-gray-700 font-bold">ID</label>
+                <label className="block tracking-wide text-gray-700 font-bold">
+                  ID
+                </label>
                 <input
                   disabled
                   className="appearance-none block w-full bg-gray-200 text-gray-700 border rounded p-2 leading-tight focus:outline-none focus:bg-white"
@@ -108,7 +138,9 @@ const ProductoForm = (props: { setProducto: Function; producto?: Producto; setHa
               </>
             ) : (
               <>
-                <label className="block tracking-wide text-gray-700 font-bold">Nombre del producto</label>
+                <label className="block tracking-wide text-gray-700 font-bold">
+                  Nombre del producto
+                </label>
                 <input
                   className="appearance-none block w-full bg-gray-200 text-gray-700 border rounded p-2 leading-tight focus:outline-none focus:bg-white ring-blue-500"
                   type="text"
@@ -122,7 +154,9 @@ const ProductoForm = (props: { setProducto: Function; producto?: Producto; setHa
             )}
           </div>
           <div className="w-full">
-            <label className="block tracking-wide text-gray-700 font-bold">Familia</label>
+            <label className="block tracking-wide text-gray-700 font-bold">
+              Familia
+            </label>
             <input
               className="appearance-none ring-blue-500 block w-full bg-gray-200 text-gray-700 border border-gray-200 rounded p-2 leading-tight focus:outline-none focus:bg-white focus:border-gray-500"
               id="grid-last-name"
@@ -135,7 +169,9 @@ const ProductoForm = (props: { setProducto: Function; producto?: Producto; setHa
             />
           </div>
           <div className="w-full">
-            <label className="block tracking-wide text-gray-700 font-bold">Proveedor</label>
+            <label className="block tracking-wide text-gray-700 font-bold">
+              Proveedor
+            </label>
             <input
               className="appearance-none ring-blue-500 block w-full bg-gray-200 text-gray-700 border rounded p-2 leading-tight focus:outline-none focus:bg-white"
               type="text"
@@ -147,7 +183,9 @@ const ProductoForm = (props: { setProducto: Function; producto?: Producto; setHa
             />
           </div>
           <div className="w-full">
-            <label className="block tracking-wide text-gray-700 font-bold">Código EAN</label>
+            <label className="block tracking-wide text-gray-700 font-bold">
+              Código EAN
+            </label>
             <input
               className="appearance-none ring-blue-500 block w-full bg-gray-200 text-gray-700 border border-gray-200 rounded p-2 leading-tight focus:outline-none focus:bg-white focus:border-gray-500"
               id="grid-last-name"
@@ -160,7 +198,9 @@ const ProductoForm = (props: { setProducto: Function; producto?: Producto; setHa
             />
           </div>
           <div className="w-full">
-            <label className="block tracking-wide text-gray-700 font-bold">Cantidad</label>
+            <label className="block tracking-wide text-gray-700 font-bold">
+              Cantidad
+            </label>
             <input
               className="appearance-none ring-blue-500 block w-full bg-gray-200 text-gray-700 border border-gray-200 rounded p-2 leading-tight focus:outline-none focus:bg-white focus:border-gray-500"
               id="grid-last-name"
@@ -175,7 +215,9 @@ const ProductoForm = (props: { setProducto: Function; producto?: Producto; setHa
         </div>
         <div className="flex flex-col gap-2 w-full sm:w-1/2">
           <div className="w-full">
-            <label className="block tracking-wide text-gray-700 font-bold">Precio de compra</label>
+            <label className="block tracking-wide text-gray-700 font-bold">
+              Precio de compra
+            </label>
             <input
               className="appearance-none ring-blue-500 block w-full bg-gray-200 text-gray-700 border border-gray-200 rounded p-2 leading-tight focus:outline-none focus:bg-white focus:border-gray-500"
               id="grid-city"
@@ -188,7 +230,9 @@ const ProductoForm = (props: { setProducto: Function; producto?: Producto; setHa
             />
           </div>
           <div className="w-full">
-            <label className="block tracking-wide text-gray-700 font-bold">IVA</label>
+            <label className="block tracking-wide text-gray-700 font-bold">
+              IVA
+            </label>
             <div className="flex gap-2 items-center">
               <input
                 className="appearance-none ring-blue-500 block w-full bg-gray-200 text-gray-700 border border-gray-200 rounded p-2 leading-tight focus:outline-none focus:bg-white focus:border-gray-500"
@@ -204,7 +248,9 @@ const ProductoForm = (props: { setProducto: Function; producto?: Producto; setHa
             </div>
           </div>
           <div className="w-full">
-            <label className="block tracking-wide text-gray-700 font-bold">Precio de venta</label>
+            <label className="block tracking-wide text-gray-700 font-bold">
+              Precio de venta
+            </label>
             <input
               className="appearance-none ring-blue-500 block w-full bg-gray-200 text-gray-700 border border-gray-200 rounded p-2 leading-tight focus:outline-none focus:bg-white focus:border-gray-500"
               id="grid-zip"
@@ -217,7 +263,9 @@ const ProductoForm = (props: { setProducto: Function; producto?: Producto; setHa
             />
           </div>
           <div className="w-full">
-            <label className="block tracking-wide text-gray-700 font-bold">Margen</label>
+            <label className="block tracking-wide text-gray-700 font-bold">
+              Margen
+            </label>
             <div className="flex gap-2 items-center">
               <input
                 disabled
@@ -231,7 +279,9 @@ const ProductoForm = (props: { setProducto: Function; producto?: Producto; setHa
             </div>
           </div>
           <div className="w-full">
-            <label className="block tracking-wide text-gray-700 font-bold">Cantidad de reestock</label>
+            <label className="block tracking-wide text-gray-700 font-bold">
+              Cantidad de reestock
+            </label>
             <input
               className="appearance-none ring-blue-500 block w-full bg-gray-200 text-gray-700 border border-gray-200 rounded p-2 leading-tight focus:outline-none focus:bg-white focus:border-gray-500"
               id="grid-last-name"
@@ -239,14 +289,18 @@ const ProductoForm = (props: { setProducto: Function; producto?: Producto; setHa
               placeholder="Cantidad mínima recomendada en stock"
               value={CantidadReestock}
               onChange={(e) => {
-                setCantidadReestock(ValidatePositiveIntegerNumber(e.target.value));
+                setCantidadReestock(
+                  ValidatePositiveIntegerNumber(e.target.value)
+                );
               }}
             />
           </div>
         </div>
       </div>
       <div>
-        <label className="block tracking-wide text-gray-700 font-bold">De alta</label>
+        <label className="block tracking-wide text-gray-700 font-bold">
+          De alta
+        </label>
         <Toggle initialValue={Alta} setBooleanValue={setAlta} />
       </div>
     </form>

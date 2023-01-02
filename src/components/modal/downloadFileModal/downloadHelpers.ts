@@ -1,5 +1,13 @@
+import { Venta } from "../../../tipos/Venta";
 import { FetchChunkedSalesBetweenDates } from "../../../utils/fetches/chunkFetches";
-import { CalcularBaseImponiblePorIva } from "../../../utils/typeCreator";
+import {
+  CalcularBaseImponiblePorIva,
+  CalcularIvasVenta,
+} from "../../../utils/typeCreator";
+
+interface IVA {
+  [key: string]: number;
+}
 
 export interface ProdVendidoXlsx {
   _id: string;
@@ -38,43 +46,47 @@ export const DownloadVentas = async (
     endDate,
     setDownloadProgress
   );
-  const formattedData = ventas.map((v) => {
-    const [baseImponible4, iva4] = CalcularBaseImponiblePorIva(
-      v.productos,
-      4.0
-    );
-    const [baseImponible10, iva10] = CalcularBaseImponiblePorIva(
-      v.productos,
-      10.0
-    );
-    const [baseImponible21, iva21] = CalcularBaseImponiblePorIva(
-      v.productos,
-      21.0
-    );
-    setFileName("Ventas");
 
-    return {
+  let tiposIva = new Set<number>();
+  for (let i = 0; i < ventas.length; i++) {
+    const ivas = CalcularIvasVenta(ventas[i]);
+    const ivas1Array: number[] = Array.from(tiposIva.keys());
+    const ivas2Array: number[] = Array.from(ivas.keys());
+
+    tiposIva = new Set<number>([...ivas1Array, ...ivas2Array]);
+  }
+
+  setFileName("Ventas");
+  const formattedData = ventas.map((v: Venta) => {
+    let data: Record<string, string | number> = {};
+    data = {
       _id: v._id,
       dineroEntregadoEfectivo: v.dineroEntregadoEfectivo.toFixed(2),
       dineroEntregadoTarjeta: v.dineroEntregadoTarjeta.toFixed(2),
       precioVentaTotal: v.precioVentaTotal.toFixed(2),
-      baseImponible4: baseImponible4.toFixed(2),
-      iva4: iva4.toFixed(2),
-      baseImponible10: baseImponible10.toFixed(2),
-      iva10: iva10.toFixed(2),
-      baseImponible21: baseImponible21.toFixed(2),
-      iva21: iva21.toFixed(2),
       cambio: v.cambio.toFixed(2),
       tipo: v.tipo,
       fecha: new Date(Number(v.createdAt)).toLocaleString(),
       descuentoEfectivo: v.descuentoEfectivo.toFixed(2),
       descuentoPorcentaje: v.descuentoPorcentaje.toFixed(2),
     };
-  });
 
+    let ivasArray = Array.from(tiposIva.keys()).reverse();
+    for (let i = 0; i < ivasArray.length; i++) {
+      const [baseImponible, iva] = CalcularBaseImponiblePorIva(
+        v.productos,
+        ivasArray[i]
+      );
+      data[`baseImponible${ivasArray[i]}`] =
+        Math.round(baseImponible * 100) / 100;
+      data[`iva${ivasArray[i]}`] = Math.round(iva * 100) / 100;
+    }
+    return data;
+  });
   setData([...formattedData]);
   return;
 };
+
 export const DownloadProductosVendidos = async (
   startDate: Date | null,
   endDate: Date | null,
