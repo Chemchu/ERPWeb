@@ -31,7 +31,7 @@ function CreateProduct(p: any): Producto | undefined {
       proveedor: p.proveedor,
       margen: p.margen,
       createdAt: p.createdAt,
-      updatedAt: p.updatedAt
+      updatedAt: p.updatedAt,
     } as Producto;
 
     return producto;
@@ -164,7 +164,10 @@ export function CreateMermaList(mList: any[]): Merma[] {
   return res;
 }
 
-export function CreateNuevaMerma(empleadoID: string, productos: NuevoProductoMermado[]): NuevaMerma | undefined {
+export function CreateNuevaMerma(
+  empleadoID: string,
+  productos: NuevoProductoMermado[]
+): NuevaMerma | undefined {
   try {
     if (productos.length <= 0) return undefined;
     if (!empleadoID) return undefined;
@@ -398,10 +401,20 @@ export function CreateProveedorList(pList: any[]): Proveedor[] {
   return res;
 }
 
-export function CreateNuevoProveedor(nombre: string, cif: string, email?: string, tel?: string, direccion?: string,
-  localidad?: string, provincia?: string, pais?: string, cp?: string, cNombre?: string, cTel?: string,
-  cEmail?: string): NuevoProveedor | undefined {
-
+export function CreateNuevoProveedor(
+  nombre: string,
+  cif: string,
+  email?: string,
+  tel?: string,
+  direccion?: string,
+  localidad?: string,
+  provincia?: string,
+  pais?: string,
+  cp?: string,
+  cNombre?: string,
+  cTel?: string,
+  cEmail?: string
+): NuevoProveedor | undefined {
   try {
     const proveedor: NuevoProveedor = {
       nombre: nombre,
@@ -416,15 +429,13 @@ export function CreateNuevoProveedor(nombre: string, cif: string, email?: string
       contacto: {
         nombre: cNombre || "Sin contacto",
         telefono: cTel || undefined,
-        email: cEmail || undefined
-      }
-    }
+        email: cEmail || undefined,
+      },
+    };
     return proveedor;
+  } catch (err) {
+    return undefined;
   }
-  catch (err) {
-    return undefined
-  }
-
 }
 
 function CreateProveedor(p: any): Proveedor | undefined {
@@ -529,10 +540,33 @@ function CreateVentasPorHora(s: any): VentasPorHora | undefined {
   }
 }
 
-export const CalcularBaseImponiblePorIva = (productosVendidos: ProductoVendido[], iva: number): [number, number] => {
+export const CalcularBaseImponiblePorIva = (
+  productosVendidos: ProductoVendido[],
+  iva: number
+): [number, number] => {
   const prodsFiltrados = productosVendidos.filter((p) => p.iva === iva);
-  const bImponible = prodsFiltrados.reduce((prev: number, current: ProductoVendido) => {
-    return prev + (Number(current.precioFinal) / (1 + current.iva / 100)) * current.cantidadVendida;
-  }, 0);
+  const bImponible = prodsFiltrados.reduce(
+    (prev: number, current: ProductoVendido) => {
+      return (
+        prev +
+        (Number(current.precioFinal) / (1 + current.iva / 100)) *
+          current.cantidadVendida
+      );
+    },
+    0
+  );
   return [bImponible, bImponible * (iva / 100)];
+};
+
+export const CalcularIvasVenta = (venta: Venta): Set<number> => {
+  const ivas = new Set<number>();
+  const productos = venta.productos;
+  for (let i = 0; i < productos.length; i++) {
+    if (ivas.has(productos[i].iva)) {
+      continue;
+    }
+
+    ivas.add(productos[i].iva);
+  }
+  return ivas;
 };
