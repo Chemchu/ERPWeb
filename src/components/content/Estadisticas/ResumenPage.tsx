@@ -35,7 +35,7 @@ const ProductosMasVendidosStats = dynamic(
   { ssr: false }
 );
 
-const EstadisticasPage = () => {
+const ResumenPage = () => {
   const [mounted, setMounted] = useState<boolean>(false);
   const [titulo, setTitulo] = useState<string>(Tiempos.Hoy);
   const [summary, setSummary] = useState<Summary | undefined>(undefined);
@@ -281,4 +281,4 @@ const EstadisticasPage = () => {
 export default AuthorizationWrapper(
   [Roles.Administrador, Roles.Gerente],
   true
-)(EstadisticasPage);
+)(ResumenPage);

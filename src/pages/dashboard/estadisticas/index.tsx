@@ -1,7 +1,8 @@
 import { Tab } from "@headlessui/react";
 import { GetServerSideProps } from "next";
 import { useEffect, useState } from "react";
-import EstadisticasPage from "../../../components/content/Estadisticas";
+import ProductosEstadisticasPage from "../../../components/content/Estadisticas/ProductosEstadisticasPage";
+import ResumenPage from "../../../components/content/Estadisticas/ResumenPage";
 import SimpleListBox from "../../../components/elementos/Forms/simpleListBox";
 import useEmpleadoContext from "../../../context/empleadoContext";
 import getJwtFromString from "../../../hooks/jwt";
@@ -13,8 +14,14 @@ const renderTabPages = (currentElemento: string) => {
   switch (currentElemento) {
     case "Resumen":
       return (
-        <div key={"Resumen"} className={classNames("h-full w-full", "focus:outline-none ring-white ring-opacity-60")}>
-          <EstadisticasPage />
+        <div
+          key={"Resumen"}
+          className={classNames(
+            "h-full w-full",
+            "focus:outline-none ring-white ring-opacity-60"
+          )}
+        >
+          <ResumenPage />
         </div>
       );
 
@@ -44,29 +51,59 @@ const Stats = (props: { EmpleadoSesion: SesionEmpleado }) => {
             className="w-full h-full p-2 border-b text-xl bg-blue-500 text-white"
           />
         </div>
-        <div className="w-full h-10 grow bg-white">{renderTabPages(currentElemento)}</div>
+        <div className="w-full h-10 grow bg-white">
+          {renderTabPages(currentElemento)}
+        </div>
       </div>
       <Tab.Group as="div" className="hidden sm:flex sm:flex-col w-full h-full">
         <Tab.List className="flex sm:gap-1 h-10 grow-0 sm:pr-10">
           <Tab
-            key={"Ventas"}
+            key={"Resumen"}
             className={(props: { selected: any }) =>
               classNames(
                 "w-2/5 sm:w-1/4 h-full text-sm sm:rounded-t-3xl border-t border-x border-gray-300 px-1",
                 "focus:outline-none ring-white ring-opacity-60",
-                props.selected ? "bg-white shadow-lg" : "bg-gray-200 hover:bg-blue-400 hover:text-white"
+                props.selected
+                  ? "bg-white shadow-lg"
+                  : "bg-gray-200 hover:bg-blue-400 hover:text-white"
               )
             }
           >
             <span className="text-xl">Resumen</span>
           </Tab>
+          <Tab
+            key={"Productos"}
+            className={(props: { selected: any }) =>
+              classNames(
+                "w-2/5 sm:w-1/4 h-full text-sm sm:rounded-t-3xl border-t border-x border-gray-300 px-1",
+                "focus:outline-none ring-white ring-opacity-60",
+                props.selected
+                  ? "bg-white shadow-lg"
+                  : "bg-gray-200 hover:bg-blue-400 hover:text-white"
+              )
+            }
+          >
+            <span className="text-xl">Por productos</span>
+          </Tab>
         </Tab.List>
         <Tab.Panels className="flex flex-col h-10 grow w-full">
           <Tab.Panel
             key={"Resumen"}
-            className={classNames("h-full w-full", "focus:outline-none ring-white ring-opacity-60")}
+            className={classNames(
+              "h-full w-full",
+              "focus:outline-none ring-white ring-opacity-60"
+            )}
           >
-            <EstadisticasPage />
+            <ResumenPage />
+          </Tab.Panel>
+          <Tab.Panel
+            key={"Productos"}
+            className={classNames(
+              "h-full w-full",
+              "focus:outline-none ring-white ring-opacity-60"
+            )}
+          >
+            <ProductosEstadisticasPage />
           </Tab.Panel>
         </Tab.Panels>
       </Tab.Group>
@@ -77,7 +114,9 @@ const Stats = (props: { EmpleadoSesion: SesionEmpleado }) => {
 Stats.PageLayout = DashboardLayout;
 
 export const getServerSideProps: GetServerSideProps = async (context) => {
-  const [jwt, isValidCookie] = getJwtFromString(context.req.cookies.authorization);
+  const [jwt, isValidCookie] = getJwtFromString(
+    context.req.cookies.authorization
+  );
 
   if (!isValidCookie) {
     return {
