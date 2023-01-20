@@ -4,8 +4,8 @@ import { Summary } from "../../../tipos/Summary";
 import AuthorizationWrapper from "../../authorizationWrapper";
 import FinanceCard from "../../dataDisplay/finaceCard";
 import {
-  FetchResumenDiario,
-  FetchResumenRango,
+  FetchResumenVentasDiario,
+  FetchResumenVentasRango,
 } from "../../../utils/fetches/analisisFetches";
 import { Color } from "../../../tipos/Enums/Color";
 import SimpleListBox from "../../elementos/Forms/simpleListBox";
@@ -51,7 +51,7 @@ const ProductosEstadisticasPage = () => {
       const fechaInicial = new Date();
       fechaInicial.setDate(fechaInicial.getDate());
 
-      setSummary(await FetchResumenDiario(fechaInicial));
+      setSummary(await FetchResumenVentasDiario(fechaInicial));
     };
 
     GetSummaryData();
@@ -73,11 +73,11 @@ const ProductosEstadisticasPage = () => {
         const fechaInicial = new Date(inicial.setHours(inicial.getHours()));
         const fechaFinal = new Date(final.setHours(final.getHours()));
 
-        setSummary(await FetchResumenRango(fechaInicial, fechaFinal));
+        setSummary(await FetchResumenVentasRango(fechaInicial, fechaFinal));
       }
 
       if (dateRange[0] == null && dateRange[1] == null) {
-        setSummary(await FetchResumenDiario(new Date()));
+        setSummary(await FetchResumenVentasDiario(new Date()));
       }
     };
 
@@ -96,11 +96,11 @@ const ProductosEstadisticasPage = () => {
 
       switch (timeRange) {
         case Tiempos.Hoy:
-          setSummary(await FetchResumenDiario(inicial));
+          setSummary(await FetchResumenVentasDiario(inicial));
           return;
         case Tiempos.Ayer:
           inicial.setDate(inicial.getDate() - 1);
-          setSummary(await FetchResumenDiario(inicial));
+          setSummary(await FetchResumenVentasDiario(inicial));
           return;
         case Tiempos.EstaSemana:
           inicial = GetFirstDayOfTheWeek(new Date());
@@ -122,7 +122,7 @@ const ProductosEstadisticasPage = () => {
           break;
       }
       setTitulo(timeRange);
-      setSummary(await FetchResumenRango(inicial, final));
+      setSummary(await FetchResumenVentasRango(inicial, final));
     };
     GetSummaryData();
   }, [timeRange]);
@@ -145,7 +145,7 @@ const ProductosEstadisticasPage = () => {
           <div className="w-full">Familia</div>
           <SimpleListBox
             elementos={["Todos", "Alimentación", "Bebidas"]}
-            setElemento={() => {}}
+            setElemento={() => { }}
           />
         </div>
         <div className="flex flex-col sm:flex-row items-end sm:justify-end w-full z-20 gap-4">

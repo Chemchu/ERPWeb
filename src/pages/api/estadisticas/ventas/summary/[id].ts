@@ -14,7 +14,7 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
       case "GET":
         const fecha: string =
           typeof req.query.id === "string" ? req.query.id : req.query.id[0];
-        return await GetSummaryByDate(fecha, res);
+        return await GetSalesSummaryByDate(fecha, res);
     }
 
     return res
@@ -27,10 +27,12 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
   }
 };
 
-const GetSummaryByDate = async (date: string, res: NextApiResponse) => {
+const GetSalesSummaryByDate = async (date: string, res: NextApiResponse) => {
   try {
     const apiResponse = await (
-      await fetch(`${process.env.ERPGATEWAY_URL}api/analytics/summary/${date}`)
+      await fetch(
+        `${process.env.ERPGATEWAY_URL}api/analytics/ventas/summary/${date}`
+      )
     ).json();
 
     const data = JSON.parse(apiResponse.data);

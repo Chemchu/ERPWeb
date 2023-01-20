@@ -8,21 +8,28 @@ import DashboardLayout from "../../layout";
 import { SesionEmpleado } from "../../tipos/Empleado";
 import { Roles } from "../../tipos/Enums/Roles";
 import { Summary, VentasPorHora } from "../../tipos/Summary";
-import { FetchResumenDiario } from "../../utils/fetches/analisisFetches";
+import { FetchResumenVentasDiario } from "../../utils/fetches/analisisFetches";
 import { Color } from "../../tipos/Enums/Color";
 import dynamic from "next/dynamic";
 import useNotificacionesContext from "../../context/notificaciones";
 import { FetchNotificaciones } from "../../utils/fetches/notificacionesFetches";
 
-const VentasDelDia = dynamic(() => import("../../components/dataDisplay/ventasDelDia"), { ssr: false });
+const VentasDelDia = dynamic(
+  () => import("../../components/dataDisplay/ventasDelDia"),
+  { ssr: false }
+);
 const saludos = ["Bienvenido otra vez", "Hola", "Saludos"];
 
 const Home = (props: { EmpleadoSesion: SesionEmpleado }) => {
   const [saludo, setSaludo] = useState<string>();
   const { Empleado, SetEmpleado } = useEmpleadoContext();
-  const [summaryToday, setSummaryToday] = useState<Summary | undefined>(undefined);
-  const [summaryYesterday, setSummaryYesterday] = useState<Summary | undefined>(undefined);
-  const { SetMensajes } = useNotificacionesContext()
+  const [summaryToday, setSummaryToday] = useState<Summary | undefined>(
+    undefined
+  );
+  const [summaryYesterday, setSummaryYesterday] = useState<Summary | undefined>(
+    undefined
+  );
+  const { SetMensajes } = useNotificacionesContext();
 
   useEffect(() => {
     if (Object.keys(Empleado).length === 0) {
@@ -37,13 +44,13 @@ const Home = (props: { EmpleadoSesion: SesionEmpleado }) => {
       const ayer = new Date();
       ayer.setDate(ayer.getDate() - 1);
 
-      setSummaryToday(await FetchResumenDiario(hoy));
-      setSummaryYesterday(await FetchResumenDiario(ayer));
+      setSummaryToday(await FetchResumenVentasDiario(hoy));
+      setSummaryYesterday(await FetchResumenVentasDiario(ayer));
     };
     const GetNotificaciones = async () => {
       const notificaciones = await FetchNotificaciones();
       SetMensajes(notificaciones);
-    }
+    };
     GetData();
     GetSummaryData();
     GetNotificaciones();
@@ -52,7 +59,10 @@ const Home = (props: { EmpleadoSesion: SesionEmpleado }) => {
   let maxY = -1;
   const offset = 10;
   if (summaryToday && summaryYesterday) {
-    const ventasHora = [...summaryToday.ventasPorHora, ...summaryYesterday.ventasPorHora];
+    const ventasHora = [
+      ...summaryToday.ventasPorHora,
+      ...summaryYesterday.ventasPorHora,
+    ];
     for (let index = 0; index < ventasHora.length; index++) {
       const ventaHora: VentasPorHora = ventasHora[index];
 
@@ -73,7 +83,9 @@ const Home = (props: { EmpleadoSesion: SesionEmpleado }) => {
       sm:rounded-l-3xl border sm:shadow-lg"
     >
       <h1 className="text-3xl lg:text-4xl text-gray-700">
-        {`${saludo},  ${Empleado.nombre.charAt(0).toUpperCase() + Empleado.nombre.slice(1)}`}
+        {`${saludo},  ${
+          Empleado.nombre.charAt(0).toUpperCase() + Empleado.nombre.slice(1)
+        }`}
       </h1>
       <div className="flex flex-col w-full gap-3">
         <SummaryCard titulo="Ventas totales" data={summaryToday} />
@@ -114,8 +126,13 @@ const Home = (props: { EmpleadoSesion: SesionEmpleado }) => {
             <FinanceCard
               titulo="Productos"
               unidad="uds"
-              dataActual={summaryToday && String(summaryToday?.cantidadProductosVendidos)}
-              dataPrevio={summaryYesterday && String(summaryYesterday?.cantidadProductosVendidos)}
+              dataActual={
+                summaryToday && String(summaryToday?.cantidadProductosVendidos)
+              }
+              dataPrevio={
+                summaryYesterday &&
+                String(summaryYesterday?.cantidadProductosVendidos)
+              }
             />
           </div>
         </div>
@@ -153,7 +170,9 @@ const Home = (props: { EmpleadoSesion: SesionEmpleado }) => {
 Home.PageLayout = DashboardLayout;
 
 export const getServerSideProps: GetServerSideProps = async (context) => {
-  const [jwt, isValidCookie] = getJwtFromString(context.req.cookies.authorization);
+  const [jwt, isValidCookie] = getJwtFromString(
+    context.req.cookies.authorization
+  );
 
   if (!isValidCookie) {
     return {
