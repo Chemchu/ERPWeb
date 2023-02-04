@@ -32,7 +32,11 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
         .status(200)
         .setHeader(
           "Set-Cookie",
-          `authorization=${data.token}; HttpOnly; Secure=${productionEnv}; Max-Age=${token.exp - token.iat}; Path=/`
+          `authorization=${
+            data.token
+          }; HttpOnly; Secure=${productionEnv}; Max-Age=${
+            token.exp - token.iat
+          }; Path=/`
         )
         .json({
           message: `Éxito al iniciar sesión`,
@@ -46,14 +50,18 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
     });
   } catch (err) {
     console.log(err);
-    return res.status(500).json({ message: `Fallo al iniciar sesión: ${err}`, successful: false });
+    return res
+      .status(500)
+      .json({ message: `Fallo al iniciar sesión: ${err}`, successful: false });
   }
 };
 
 const getJwt = (jwt: string) => {
   const base64Url = jwt.split(" ")[1].split(".")[1];
   const base64 = base64Url.replace(/-/g, "+").replace(/_/g, "/");
-  const jsonPayload = JSON.parse(Buffer.from(base64, "base64").toString("ascii"));
+  const jsonPayload = JSON.parse(
+    Buffer.from(base64, "base64").toString("utf-8")
+  );
 
   return jsonPayload;
 };
