@@ -31,6 +31,7 @@ const GetSalesSummaryByDate = async (date: string, res: NextApiResponse) => {
   try {
     const apiResponse = await (
       await fetch(
+        // TODO: Falta hacer este endpoint en ERPGateway y ERPAnalytics
         `${process.env.ERPGATEWAY_URL}api/analytics/ventas/summary/${date}`
       )
     ).json();
