@@ -1,6 +1,5 @@
-<!-- src/routes/+layout.svelte -->
 <script lang="ts">
-	import '../styles.css';
+  import "../app.css"
 	import { invalidate } from '$app/navigation'
 	import { onMount } from 'svelte'
 	import type { LayoutData } from './$types'
@@ -19,9 +18,11 @@
 </script>
 
 <svelte:head>
-	<title>User Management</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="true">
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300&display=swap" rel="stylesheet">
 </svelte:head>
 
-<div class="container" style="padding: 50px 0 100px 0">
+<div>
 	<slot />
 </div>
