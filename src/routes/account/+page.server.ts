@@ -52,6 +52,7 @@ export const actions = {
       avatarUrl,
     };
   },
+
   signout: async ({ locals: { supabase, getSession } }) => {
     const session = await getSession();
     if (session) {

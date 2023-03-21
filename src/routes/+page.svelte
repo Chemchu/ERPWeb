@@ -12,6 +12,10 @@
       href="/login">
       Iniciar sesion
     </a>
+    <a class="hover:bg-white hover:text-black rounded-lg p-2"
+      href="/dashboard">
+      Dashboard
+    </a>
   </nav>
   <div class="flex grow justify-center items-center">
     <span class="text-9xl">ERPWeb!</span>
