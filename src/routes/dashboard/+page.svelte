@@ -1,7 +1,3 @@
-<script>
-    import LateralNav from "./LateralNav.svelte";
-
-</script>
 <div>
-  <LateralNav />
+  <span> Hola! </span>
 </div>

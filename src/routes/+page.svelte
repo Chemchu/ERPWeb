@@ -1,19 +1,18 @@
 <script>
-
 </script>
 
 <svelte:head>
-  <title>ERPWeb - Home page</title> 
+  <title>ERPWeb - Home page</title>
 </svelte:head>
 
-<div class="flex flex-col items-stretch w-full h-screen bg-blue-900 text-white py-2 px-10">
+<div
+  class="flex flex-col items-stretch w-full h-screen bg-blue-900 text-white py-2 px-10"
+>
   <nav class="flex flex-row-reverse">
-    <a class="hover:bg-white hover:text-black rounded-lg p-2"
-      href="/login">
+    <a class="hover:bg-white hover:text-black rounded-lg p-2" href="/login">
       Iniciar sesion
     </a>
-    <a class="hover:bg-white hover:text-black rounded-lg p-2"
-      href="/dashboard">
+    <a class="hover:bg-white hover:text-black rounded-lg p-2" href="/dashboard">
       Dashboard
     </a>
   </nav>
