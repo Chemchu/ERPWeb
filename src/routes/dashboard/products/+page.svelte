@@ -1,3 +1,1 @@
-<span>
-  Productos!
-</span>
+<span> Productos! </span>

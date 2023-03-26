@@ -1,54 +1,229 @@
 <script lang="ts">
-  let user = {
-    nombre: "Gustavo Lee",
-    rol: "Admin",
-  };
+  import {SidebarProfile} from "../../lib/components/sidebar/sidebarProfile/index.ts"
+  import {SidebarSearch} from "../../lib/components/sidebar/sidebarSearch/index.ts"
 
-  let path = "Inicio";
-  let active = true;
+  let profileActive: boolean = false;
 </script>
 
-<body class="bg-gray-100 dark:bg-gray-900">
-  <aside
-    class="fixed top-0 z-10 ml-[-100%] flex h-screen w-full flex-col justify-between border-r bg-white px-6 pb-3 transition duration-300 md:w-4/12 lg:ml-0 lg:w-[20%] xl:w-[15%] 2xl:w-[10%] dark:bg-gray-800 dark:border-gray-700"
-  >
-    <div>
-      <div class="-mx-6 px-6 py-4">
-        <a href="/dashboard" title="home">
-          <img src="images/logo.svg" class="w-32" alt="ERPWeb logo" />
-        </a>
-      </div>
+<div class="min-h-full">
+  <!-- Off-canvas menu for mobile, show/hide based on off-canvas menu state. -->
+  <div class="relative z-40 lg:hidden" role="dialog" aria-modal="true">
+    <!--
+      Off-canvas menu backdrop, show/hide based on off-canvas menu state.
 
-      <div class="mt-8 text-center">
-        <img
-          src="https://www.pexels.com/photo/man-smiling-behind-wall-220453"
-          alt="Profile photo"
-          class="m-auto h-10 w-10 rounded-full object-cover lg:h-28 lg:w-28"
-        />
-        <h5
-          class="mt-4 hidden text-xl font-semibold text-gray-600 lg:block dark:text-gray-300"
-        >
-          {user.nombre}
-        </h5>
-        <span class="hidden text-gray-400 lg:block">{user.rol}</span>
-      </div>
+      Entering: "transition-opacity ease-linear duration-300"
+        From: "opacity-0"
+        To: "opacity-100"
+      Leaving: "transition-opacity ease-linear duration-300"
+        From: "opacity-100"
+        To: "opacity-0"
+    -->
+    <div class="fixed inset-0 bg-gray-600 bg-opacity-75" />
 
-      <ul class="mt-8 space-y-2 tracking-wide">
-        <li>
-          <a
-            href="/dashboard"
-            aria-label="dashboard"
-            class="relative flex items-center space-x-4 rounded-xl px-4 py-3 text-white"
-            class:bg-sky-500={active}
-            class:bg-gray-500={!active}
+    <div class="fixed inset-0 z-40 flex">
+      <!--
+        Off-canvas menu, show/hide based on off-canvas menu state.
+
+        Entering: "transition ease-in-out duration-300 transform"
+          From: "-translate-x-full"
+          To: "translate-x-0"
+        Leaving: "transition ease-in-out duration-300 transform"
+          From: "translate-x-0"
+          To: "-translate-x-full"
+      -->
+      <div
+        class="relative flex w-full max-w-xs flex-1 flex-col bg-white pt-5 pb-4"
+      >
+        <!--
+          Close button, show/hide based on off-canvas menu state.
+
+          Entering: "ease-in-out duration-300"
+            From: "opacity-0"
+            To: "opacity-100"
+          Leaving: "ease-in-out duration-300"
+            From: "opacity-100"
+            To: "opacity-0"
+        -->
+        <div class="absolute top-0 right-0 -mr-12 pt-2">
+          <button
+            type="button"
+            class="ml-1 flex h-10 w-10 items-center justify-center rounded-full focus:outline-none focus:ring-2 focus:ring-inset focus:ring-white"
           >
+            <span class="sr-only">Close sidebar</span>
             <svg
-              xmlns="http://www.w3.org/2000/svg"
+              class="h-6 w-6 text-white"
               fill="none"
               viewBox="0 0 24 24"
               stroke-width="1.5"
               stroke="currentColor"
-              class="w-6 h-6"
+              aria-hidden="true"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                d="M6 18L18 6M6 6l12 12"
+              />
+            </svg>
+          </button>
+        </div>
+
+        <div class="flex flex-shrink-0 items-center px-4 text-2xl">
+          <h1>ERPWeb</h1>
+        </div>
+        <div class="mt-5 h-0 flex-1 overflow-y-auto">
+          <nav class="px-2">
+            <div class="space-y-1">
+              <!-- Current: "bg-gray-100 text-gray-900", Default: "text-gray-600 hover:bg-gray-50 hover:text-gray-900" -->
+              <a
+                href="#"
+                class="bg-gray-100 text-gray-900 group flex items-center rounded-md px-2 py-2 text-base font-medium leading-5"
+                aria-current="page"
+              >
+                <!-- Current: "text-gray-500", Default: "text-gray-400 group-hover:text-gray-500" -->
+                <svg
+                  class="text-gray-500 mr-3 h-6 w-6 flex-shrink-0"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke-width="1.5"
+                  stroke="currentColor"
+                  aria-hidden="true"
+                >
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    d="M2.25 12l8.954-8.955c.44-.439 1.152-.439 1.591 0L21.75 12M4.5 9.75v10.125c0 .621.504 1.125 1.125 1.125H9.75v-4.875c0-.621.504-1.125 1.125-1.125h2.25c.621 0 1.125.504 1.125 1.125V21h4.125c.621 0 1.125-.504 1.125-1.125V9.75M8.25 21h8.25"
+                  />
+                </svg>
+                Home
+              </a>
+
+              <a
+                href="#"
+                class="text-gray-600 hover:bg-gray-50 hover:text-gray-900 group flex items-center rounded-md px-2 py-2 text-base font-medium leading-5"
+              >
+                <svg
+                  class="text-gray-400 group-hover:text-gray-500 mr-3 h-6 w-6 flex-shrink-0"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke-width="1.5"
+                  stroke="currentColor"
+                  aria-hidden="true"
+                >
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    d="M3.75 5.25h16.5m-16.5 4.5h16.5m-16.5 4.5h16.5m-16.5 4.5h16.5"
+                  />
+                </svg>
+                My tasks
+              </a>
+
+              <a
+                href="#"
+                class="text-gray-600 hover:bg-gray-50 hover:text-gray-900 group flex items-center rounded-md px-2 py-2 text-base font-medium leading-5"
+              >
+                <svg
+                  class="text-gray-400 group-hover:text-gray-500 mr-3 h-6 w-6 flex-shrink-0"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke-width="1.5"
+                  stroke="currentColor"
+                  aria-hidden="true"
+                >
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    d="M12 6v6h4.5m4.5 0a9 9 0 11-18 0 9 9 0 0118 0z"
+                  />
+                </svg>
+                Recent
+              </a>
+            </div>
+            <div class="mt-8">
+              <h3
+                class="px-3 text-sm font-medium text-gray-500"
+                id="mobile-teams-headline"
+              >
+                Teams
+              </h3>
+              <div
+                class="mt-1 space-y-1"
+                role="group"
+                aria-labelledby="mobile-teams-headline"
+              >
+                <a
+                  href="#"
+                  class="group flex items-center rounded-md px-3 py-2 text-base font-medium leading-5 text-gray-600 hover:bg-gray-50 hover:text-gray-900"
+                >
+                  <span
+                    class="mr-4 h-2.5 w-2.5 bg-indigo-500 rounded-full"
+                    aria-hidden="true"
+                  />
+                  <span class="truncate">Engineering</span>
+                </a>
+
+                <a
+                  href="#"
+                  class="group flex items-center rounded-md px-3 py-2 text-base font-medium leading-5 text-gray-600 hover:bg-gray-50 hover:text-gray-900"
+                >
+                  <span
+                    class="mr-4 h-2.5 w-2.5 bg-green-500 rounded-full"
+                    aria-hidden="true"
+                  />
+                  <span class="truncate">Human Resources</span>
+                </a>
+
+                <a
+                  href="#"
+                  class="group flex items-center rounded-md px-3 py-2 text-base font-medium leading-5 text-gray-600 hover:bg-gray-50 hover:text-gray-900"
+                >
+                  <span
+                    class="mr-4 h-2.5 w-2.5 bg-yellow-500 rounded-full"
+                    aria-hidden="true"
+                  />
+                  <span class="truncate">Customer Success</span>
+                </a>
+              </div>
+            </div>
+          </nav>
+        </div>
+      </div>
+
+      <div class="w-14 flex-shrink-0" aria-hidden="true">
+        <!-- Dummy element to force sidebar to shrink to fit close icon -->
+      </div>
+    </div>
+  </div>
+
+  <!-- Static sidebar for desktop -->
+  <div
+    class="hidden lg:fixed lg:inset-y-0 lg:flex lg:w-64 lg:flex-col lg:border-r lg:border-gray-200 lg:bg-gray-100 lg:pt-5 lg:pb-4"
+  >
+    <!-- Sidebar component, swap this element with another sidebar if you like -->
+    <div class="flex h-0 flex-1 flex-col overflow-y-auto">
+      <!-- User account dropdown -->
+      <SidebarProfile />
+      
+      <!-- Sidebar Search -->
+      <SidebarSearch />
+      
+      <!-- Navigation -->
+      <nav class="mt-6 px-3">
+        <div class="space-y-1">
+          <!-- Current: "bg-gray-200 text-gray-900", Default: "text-gray-700 hover:bg-gray-50 hover:text-gray-900" -->
+          <a
+            href="#"
+            class="bg-gray-200 text-gray-900 group flex items-center rounded-md px-2 py-2 text-sm font-medium"
+            aria-current="page"
+          >
+            <!-- Current: "text-gray-500", Default: "text-gray-400 group-hover:text-gray-500" -->
+            <svg
+              class="text-gray-500 mr-3 h-6 w-6 flex-shrink-0"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke-width="1.5"
+              stroke="currentColor"
+              aria-hidden="true"
             >
               <path
                 stroke-linecap="round"
@@ -56,260 +231,104 @@
                 d="M2.25 12l8.954-8.955c.44-.439 1.152-.439 1.591 0L21.75 12M4.5 9.75v10.125c0 .621.504 1.125 1.125 1.125H9.75v-4.875c0-.621.504-1.125 1.125-1.125h2.25c.621 0 1.125.504 1.125 1.125V21h4.125c.621 0 1.125-.504 1.125-1.125V9.75M8.25 21h8.25"
               />
             </svg>
+            Home
+          </a>
 
-            <span class="-mr-1 font-medium">Inicio</span>
-          </a>
-        </li>
-        <li>
           <a
-            href="/dashboard/tpv"
-            class="group flex items-center space-x-4 rounded-md px-4 py-3 text-gray-600 dark:text-gray-300"
+            href="#"
+            class="text-gray-700 hover:bg-gray-50 hover:text-gray-900 group flex items-center rounded-md px-2 py-2 text-sm font-medium"
           >
             <svg
-              xmlns="http://www.w3.org/2000/svg"
+              class="text-gray-400 group-hover:text-gray-500 mr-3 h-6 w-6 flex-shrink-0"
               fill="none"
               viewBox="0 0 24 24"
               stroke-width="1.5"
               stroke="currentColor"
-              class="w-6 h-6"
+              aria-hidden="true"
             >
               <path
                 stroke-linecap="round"
                 stroke-linejoin="round"
-                d="M2.25 3h1.386c.51 0 .955.343 1.087.835l.383 1.437M7.5 14.25a3 3 0 00-3 3h15.75m-12.75-3h11.218c1.121-2.3 2.1-4.684 2.924-7.138a60.114 60.114 0 00-16.536-1.84M7.5 14.25L5.106 5.272M6 20.25a.75.75 0 11-1.5 0 .75.75 0 011.5 0zm12.75 0a.75.75 0 11-1.5 0 .75.75 0 011.5 0z"
+                d="M3.75 5.25h16.5m-16.5 4.5h16.5m-16.5 4.5h16.5m-16.5 4.5h16.5"
               />
             </svg>
-            <span
-              class="group-hover:text-gray-700 dark:group-hover:text-gray-50"
-              >TPV</span
-            >
+            My tasks
           </a>
-        </li>
-        <li>
-          <a
-            href="/dashboard/products"
-            class="group flex items-center space-x-4 rounded-md px-4 py-3 text-gray-600 dark:text-gray-300"
-          >
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              fill="none"
-              viewBox="0 0 24 24"
-              stroke-width="1.5"
-              stroke="currentColor"
-              class="w-6 h-6"
-            >
-              <path
-                stroke-linecap="round"
-                stroke-linejoin="round"
-                d="M15.75 10.5V6a3.75 3.75 0 10-7.5 0v4.5m11.356-1.993l1.263 12c.07.665-.45 1.243-1.119 1.243H4.25a1.125 1.125 0 01-1.12-1.243l1.264-12A1.125 1.125 0 015.513 7.5h12.974c.576 0 1.059.435 1.119 1.007zM8.625 10.5a.375.375 0 11-.75 0 .375.375 0 01.75 0zm7.5 0a.375.375 0 11-.75 0 .375.375 0 01.75 0z"
-              />
-            </svg>
-            <span
-              class="group-hover:text-gray-700 dark:group-hover:text-gray-50"
-              >Productos</span
-            >
-          </a>
-        </li>
-        <li>
-          <a
-            href="/dashboard/sales"
-            class="group flex items-center space-x-4 rounded-md px-4 py-3 text-gray-600 dark:text-gray-300"
-          >
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              fill="none"
-              viewBox="0 0 24 24"
-              stroke-width="1.5"
-              stroke="currentColor"
-              class="w-6 h-6"
-            >
-              <path
-                stroke-linecap="round"
-                stroke-linejoin="round"
-                d="M2.25 18.75a60.07 60.07 0 0115.797 2.101c.727.198 1.453-.342 1.453-1.096V18.75M3.75 4.5v.75A.75.75 0 013 6h-.75m0 0v-.375c0-.621.504-1.125 1.125-1.125H20.25M2.25 6v9m18-10.5v.75c0 .414.336.75.75.75h.75m-1.5-1.5h.375c.621 0 1.125.504 1.125 1.125v9.75c0 .621-.504 1.125-1.125 1.125h-.375m1.5-1.5H21a.75.75 0 00-.75.75v.75m0 0H3.75m0 0h-.375a1.125 1.125 0 01-1.125-1.125V15m1.5 1.5v-.75A.75.75 0 003 15h-.75M15 10.5a3 3 0 11-6 0 3 3 0 016 0zm3 0h.008v.008H18V10.5zm-12 0h.008v.008H6V10.5z"
-              />
-            </svg>
-            <span
-              class="group-hover:text-gray-700 dark:group-hover:text-gray-50"
-              >Ventas</span
-            >
-          </a>
-        </li>
-        <li>
-          <a
-            href="/dashboard/closures"
-            class="group flex items-center space-x-4 rounded-md px-4 py-3 text-gray-600 dark:text-gray-300"
-          >
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              fill="none"
-              viewBox="0 0 24 24"
-              stroke-width="1.5"
-              stroke="currentColor"
-              class="w-6 h-6"
-            >
-              <path
-                stroke-linecap="round"
-                stroke-linejoin="round"
-                d="M12 7.5h1.5m-1.5 3h1.5m-7.5 3h7.5m-7.5 3h7.5m3-9h3.375c.621 0 1.125.504 1.125 1.125V18a2.25 2.25 0 01-2.25 2.25M16.5 7.5V18a2.25 2.25 0 002.25 2.25M16.5 7.5V4.875c0-.621-.504-1.125-1.125-1.125H4.125C3.504 3.75 3 4.254 3 4.875V18a2.25 2.25 0 002.25 2.25h13.5M6 7.5h3v3H6v-3z"
-              />
-            </svg>
-            <span class="group-hover:text-gray-700 dark:group-hover:text-white"
-              >Cierres</span
-            >
-          </a>
-        </li>
-      </ul>
-    </div>
 
-    <div
-      class="-mx-6 flex items-center justify-between border-t px-6 pt-4 dark:border-gray-700"
-    >
-      <button
-        class="group flex items-center space-x-4 rounded-md px-4 py-3 text-gray-600 dark:text-gray-300"
-      >
-        <svg
-          xmlns="http://www.w3.org/2000/svg"
-          fill="none"
-          viewBox="0 0 24 24"
-          stroke-width="1.5"
-          stroke="currentColor"
-          class="w-6 h-6"
-        >
-          <path
-            stroke-linecap="round"
-            stroke-linejoin="round"
-            d="M15.75 9V5.25A2.25 2.25 0 0013.5 3h-6a2.25 2.25 0 00-2.25 2.25v13.5A2.25 2.25 0 007.5 21h6a2.25 2.25 0 002.25-2.25V15m3 0l3-3m0 0l-3-3m3 3H9"
-          />
-        </svg>
-        <span class="group-hover:text-gray-700 dark:group-hover:text-white"
-          >Cerrar sesion (tilde)</span
-        >
-      </button>
-    </div>
-  </aside>
-  <div class="ml-auto mb-6 lg:w-[80%] xl:w-[85%] 2xl:w-[90%]">
-    <div
-      class="sticky top-0 h-16 border-b bg-white dark:bg-gray-800 dark:border-gray-700 lg:py-2.5"
-    >
-      <div
-        class="flex items-center justify-between space-x-4 px-6 2xl:container"
-      >
-        <h5
-          hidden
-          class="text-2xl font-medium text-gray-600 lg:block dark:text-white"
-        >
-          {path}
-        </h5>
-        <button
-          class="-mr-2 h-16 w-12 border-r lg:hidden dark:border-gray-700 dark:text-gray-300"
-        >
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            class="my-auto h-6 w-6"
-            fill="none"
-            viewBox="0 0 24 24"
-            stroke="currentColor"
+          <a
+            href="#"
+            class="text-gray-700 hover:bg-gray-50 hover:text-gray-900 group flex items-center rounded-md px-2 py-2 text-sm font-medium"
           >
-            <path
-              stroke-linecap="round"
-              stroke-linejoin="round"
-              stroke-width="2"
-              d="M4 6h16M4 12h16M4 18h16"
-            />
-          </svg>
-        </button>
-        <div class="flex space-x-4">
-          <!--search bar -->
-          <div hidden class="md:block">
-            <div
-              class="relative flex items-center text-gray-400 focus-within:text-cyan-400"
+            <svg
+              class="text-gray-400 group-hover:text-gray-500 mr-3 h-6 w-6 flex-shrink-0"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke-width="1.5"
+              stroke="currentColor"
+              aria-hidden="true"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                d="M12 6v6h4.5m4.5 0a9 9 0 11-18 0 9 9 0 0118 0z"
+              />
+            </svg>
+            Recent
+          </a>
+        </div>
+        <div class="mt-8">
+          <!-- Secondary navigation -->
+          <h3
+            class="px-3 text-sm font-medium text-gray-500"
+            id="desktop-teams-headline"
+          >
+            Teams
+          </h3>
+          <div
+            class="mt-1 space-y-1"
+            role="group"
+            aria-labelledby="desktop-teams-headline"
+          >
+            <a
+              href="#"
+              class="group flex items-center rounded-md px-3 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50 hover:text-gray-900"
             >
               <span
-                class="absolute left-4 flex h-6 items-center border-r border-gray-300 pr-3 dark:border-gray-700"
-              >
-                <svg
-                  xmlns="http://ww50w3.org/2000/svg"
-                  class="w-4 fill-current"
-                  viewBox="0 0 35.997 36.004"
-                >
-                  <path
-                    id="Icon_awesome-search"
-                    data-name="search"
-                    d="M35.508,31.127l-7.01-7.01a1.686,1.686,0,0,0-1.2-.492H26.156a14.618,14.618,0,1,0-2.531,2.531V27.3a1.686,1.686,0,0,0,.492,1.2l7.01,7.01a1.681,1.681,0,0,0,2.384,0l1.99-1.99a1.7,1.7,0,0,0,.007-2.391Zm-20.883-7.5a9,9,0,1,1,9-9A8.995,8.995,0,0,1,14.625,23.625Z"
-                  />
-                </svg>
-              </span>
-              <input
-                type="search"
-                name="leadingIcon"
-                id="leadingIcon"
-                placeholder="Search here"
-                class="outline-none w-full rounded-xl border border-gray-300 py-2.5 pl-14 pr-4 text-sm text-gray-600 transition focus:border-cyan-300 dark:bg-gray-900 dark:border-gray-700"
+                class="mr-4 h-2.5 w-2.5 bg-indigo-500 rounded-full"
+                aria-hidden="true"
               />
-            </div>
-          </div>
-          <!--/search bar -->
-          <button
-            aria-label="search"
-            class="h-10 w-10 rounded-xl border bg-gray-100 active:bg-gray-200 md:hidden dark:bg-gray-700 dark:border-gray-600 dark:active:bg-gray-800"
-          >
-            <svg
-              xmlns="http://ww50w3.org/2000/svg"
-              class="mx-auto w-4 fill-current text-gray-600 dark:text-gray-300"
-              viewBox="0 0 35.997 36.004"
-            >
-              <path
-                id="Icon_awesome-search"
-                data-name="search"
-                d="M35.508,31.127l-7.01-7.01a1.686,1.686,0,0,0-1.2-.492H26.156a14.618,14.618,0,1,0-2.531,2.531V27.3a1.686,1.686,0,0,0,.492,1.2l7.01,7.01a1.681,1.681,0,0,0,2.384,0l1.99-1.99a1.7,1.7,0,0,0,.007-2.391Zm-20.883-7.5a9,9,0,1,1,9-9A8.995,8.995,0,0,1,14.625,23.625Z"
-              />
-            </svg>
-          </button>
-          <button
-            aria-label="chat"
-            class="h-10 w-10 rounded-xl border bg-gray-100 active:bg-gray-200 dark:bg-gray-700 dark:border-gray-600 dark:active:bg-gray-800"
-          >
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              class="m-auto h-5 w-5 text-gray-600 dark:text-gray-300"
-              fill="none"
-              viewBox="0 0 24 24"
-              stroke="currentColor"
-            >
-              <path
-                stroke-linecap="round"
-                stroke-linejoin="round"
-                stroke-width="2"
-                d="M7 8h10M7 12h4m1 8l-4-4H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-3l-4 4z"
-              />
-            </svg>
-          </button>
-          <button
-            aria-label="notification"
-            class="h-10 w-10 rounded-xl border bg-gray-100 active:bg-gray-200 dark:bg-gray-700 dark:border-gray-600 dark:active:bg-gray-800"
-          >
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              class="m-auto h-5 w-5 text-gray-600 dark:text-gray-300"
-              viewBox="0 0 20 20"
-              fill="currentColor"
-            >
-              <path
-                d="M10 2a6 6 0 00-6 6v3.586l-.707.707A1 1 0 004 14h12a1 1 0 00.707-1.707L16 11.586V8a6 6 0 00-6-6zM10 18a3 3 0 01-3-3h6a3 3 0 01-3 3z"
-              />
-            </svg>
-          </button>
-        </div>
-      </div>
-    </div>
+              <span class="truncate">Engineering</span>
+            </a>
 
-    <div class="px-6 pt-6 2xl:container">
-      <div
-        class="flex h-[80vh] items-center justify-center rounded-xl border-2 border-dashed border-gray-300 dark:border-gray-600"
-      >
-        <slot />
-      </div>
+            <a
+              href="#"
+              class="group flex items-center rounded-md px-3 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50 hover:text-gray-900"
+            >
+              <span
+                class="mr-4 h-2.5 w-2.5 bg-green-500 rounded-full"
+                aria-hidden="true"
+              />
+              <span class="truncate">Human Resources</span>
+            </a>
+
+            <a
+              href="#"
+              class="group flex items-center rounded-md px-3 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50 hover:text-gray-900"
+            >
+              <span
+                class="mr-4 h-2.5 w-2.5 bg-yellow-500 rounded-full"
+                aria-hidden="true"
+              />
+              <span class="truncate">Customer Success</span>
+            </a>
+          </div>
+        </div>
+      </nav>
     </div>
   </div>
-</body>
+</div>
+  <!-- Main column -->
+<div class="flex flex-col lg:pl-64">
+  <slot/>
+</div>
+

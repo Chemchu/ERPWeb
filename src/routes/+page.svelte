@@ -1,6 +1,3 @@
-<script>
-</script>
-
 <svelte:head>
   <title>ERPWeb - Home page</title>
 </svelte:head>

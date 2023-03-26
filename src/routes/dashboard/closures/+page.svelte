@@ -1,3 +1,1 @@
-<span>
-  Cierres!
-</span>
+<span> Cierres! </span>

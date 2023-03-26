@@ -29,6 +29,4 @@
   />
 </svelte:head>
 
-<div>
-  <slot />
-</div>
+<slot />

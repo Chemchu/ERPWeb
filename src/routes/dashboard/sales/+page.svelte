@@ -1,3 +1,1 @@
-<span>
-  Ventas!
-</span>
+<span> Ventas! </span>
