@@ -1,12 +1,21 @@
 <script lang="ts">
+  import { dashboardOpenerStore } from "$lib/stores/dashboard";
+  import { onDestroy } from "svelte";
   import { scale } from "svelte/transition";
-  let profileActive: boolean = false;
+
+  let profileOpen: boolean = false;
+
+  const unsubscribe = dashboardOpenerStore.subscribe(
+    (isOpen) => (profileOpen = isOpen)
+  );
+
+  onDestroy(unsubscribe);
 </script>
 
 <div class="relative inline-block px-3 pt-1 text-left">
   <div>
     <button
-      on:click={() => (profileActive = !profileActive)}
+      on:click={() => (profileOpen = !profileOpen)}
       type="button"
       class="group w-full rounded-md bg-gray-100 px-3.5 py-2 text-left text-sm font-medium text-gray-700 hover:bg-gray-200 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:ring-offset-2 focus:ring-offset-gray-100"
       id="options-menu-button"
@@ -43,7 +52,7 @@
     </button>
   </div>
 
-  {#if profileActive}
+  {#if profileOpen}
     <div
       class="absolute right-0 left-0 z-10 mx-3 mt-1 origin-top divide-y divide-gray-200 rounded-md bg-white shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none"
       role="menu"
@@ -55,7 +64,7 @@
       <div class="py-1" role="none">
         <a
           href="/dashboard/profile"
-          class="{profileActive
+          class="{profileOpen
             ? 'bg-gray-100 text-gray-900'
             : 'text-gray-700'} text-gray-700 hover:bg-gray-100 hover:text-gray-900 block px-4 py-2 text-sm"
           role="menuitem"

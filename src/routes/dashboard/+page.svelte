@@ -1,8 +1,18 @@
 <script lang="ts">
-  cc;
+  import SmallProfile from "$lib/components/profile/SmallProfile.svelte";
+  import { dashboardOpenerStore } from "$lib/stores/dashboard";
+  import { onDestroy } from "svelte";
 
   let paginaActual = "Inicio";
-  let mobileSidebarActive = false;
+  let sidebarOpen = false;
+
+  let unsubscribeDashboard = dashboardOpenerStore.subscribe(
+    (isOpen) => (sidebarOpen = isOpen)
+  );
+
+  onDestroy(() => {
+    unsubscribeDashboard();
+  });
 </script>
 
 <div class="flex flex-col">
@@ -14,7 +24,7 @@
     <button
       type="button"
       class="border-r border-gray-200 px-4 text-gray-500 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-purple-500 lg:hidden"
-      on:click={() => (mobileSidebarActive = true)}
+      on:click={() => dashboardOpenerStore.toggle()}
     >
       <span class="sr-only">Open sidebar</span>
       <svg

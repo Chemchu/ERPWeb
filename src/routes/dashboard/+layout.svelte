@@ -1,16 +1,31 @@
 <script lang="ts">
-  import SidebarProfile from "$lib/components/sidebar/sidebarProfile/SidebarProfile.svelte";
-  import SidebarSearch from "$lib/components/sidebar/sidebarSearch/SidebarSearch.svelte";
+  import SidebarProfile from "$lib/components/sidebar/SidebarProfile.svelte";
+  import SidebarSearch from "$lib/components/sidebar/SidebarSearch.svelte";
+  import { dashboardOpenerStore } from "$lib/stores/dashboard";
+  import { profileDropdownStore } from "$lib/stores/profile";
+  import { onDestroy } from "svelte";
+  import { fade, fly } from "svelte/transition";
 
-  let mobileSidebarActive: boolean = false;
+  let sidebarOpen: boolean = false;
+
+  const unsubscribeDashboard = dashboardOpenerStore.subscribe(
+    (isOpen) => (sidebarOpen = isOpen)
+  );
+
+  onDestroy(() => {
+    unsubscribeDashboard();
+  });
 </script>
 
 <div class="min-h-full">
   <!-- Off-canvas menu for mobile, show/hide based on off-canvas menu state. -->
-  {#if mobileSidebarActive}
+  {#if sidebarOpen}
     <div class="relative z-40 lg:hidden" role="dialog" aria-modal="true">
-      <div class="fixed inset-0 bg-gray-600 bg-opacity-75" />
-      <div class="fixed inset-0 z-40 flex">
+      <div class="fixed inset-0 bg-gray-600 bg-opacity-75" transition:fade />
+      <div
+        class="fixed inset-0 z-40 flex"
+        transition:fly={{ x: -100, duration: 250, opacity: 0 }}
+      >
         <div
           class="relative flex w-full max-w-xs flex-1 flex-col bg-white pt-5 pb-4"
         >
@@ -18,7 +33,7 @@
             <button
               type="button"
               class="ml-1 flex h-10 w-10 items-center justify-center rounded-full focus:outline-none focus:ring-2 focus:ring-inset focus:ring-white"
-              on:click={() => (mobileSidebarActive = false)}
+              on:click={() => dashboardOpenerStore.close()}
             >
               <span class="sr-only">Close sidebar</span>
               <svg
