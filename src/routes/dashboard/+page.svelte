@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { SmallProfile } from "$lib/components/profile/smallProfile/index";
+  cc;
 
   let paginaActual = "Inicio";
   let mobileSidebarActive = false;

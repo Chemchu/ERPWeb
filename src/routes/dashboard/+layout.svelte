@@ -1,6 +1,6 @@
 <script lang="ts">
-  import { SidebarProfile } from "$lib/components/sidebar/sidebarProfile/index";
-  import { SidebarSearch } from "$lib/components/sidebar/sidebarSearch/index";
+  import SidebarProfile from "$lib/components/sidebar/sidebarProfile/SidebarProfile.svelte";
+  import SidebarSearch from "$lib/components/sidebar/sidebarSearch/SidebarSearch.svelte";
 
   let mobileSidebarActive: boolean = false;
 </script>
