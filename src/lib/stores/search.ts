@@ -5,7 +5,7 @@ function createSearch() {
 
   return {
     subscribe,
-    write: (text: string) => set(text),
+    set: (text: string) => set(text),
     clear: () => set(""),
   };
 }
