@@ -3,9 +3,10 @@ import {
   PUBLIC_SUPABASE_ANON_KEY,
 } from "$env/static/public";
 import { createSupabaseServerClient } from "@supabase/auth-helpers-sveltekit";
-import { redirect, type Handle, type RequestEvent } from "@sveltejs/kit";
+import { redirect, type Handle } from "@sveltejs/kit";
+import { sequence } from "@sveltejs/kit/hooks";
 
-export const handle: Handle = async ({ event, resolve }) => {
+const handleSupabase: Handle = async ({ event, resolve }) => {
   event.locals.supabase = createSupabaseServerClient({
     supabaseUrl: PUBLIC_SUPABASE_URL,
     supabaseKey: PUBLIC_SUPABASE_ANON_KEY,
@@ -23,8 +24,6 @@ export const handle: Handle = async ({ event, resolve }) => {
     return session;
   };
 
-  await protectRoutes(event);
-
   return resolve(event, {
     /**
      * There´s an issue with `filterSerializedResponseHeaders` not working when using `sequence`
@@ -37,9 +36,7 @@ export const handle: Handle = async ({ event, resolve }) => {
   });
 };
 
-const protectRoutes = async (
-  event: RequestEvent<Partial<Record<string, string>>, string | null>
-) => {
+const handleAuth: Handle = async ({ event, resolve }) => {
   if (event.url.pathname.startsWith("/dashboard")) {
     const session = await event.locals.getSession();
 
@@ -48,4 +45,8 @@ const protectRoutes = async (
       throw redirect(303, "/");
     }
   }
+
+  return resolve(event);
 };
+
+export const handle = sequence(handleSupabase, handleAuth);

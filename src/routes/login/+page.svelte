@@ -1,3 +1,7 @@
+<script>
+  import { enhance } from "$app/forms";
+</script>
+
 <div class="flex min-h-full h-screen">
   <div
     class="flex flex-1 flex-col justify-center px-4 py-12 sm:px-6 lg:flex-none lg:px-20 xl:px-24"
@@ -22,7 +26,7 @@
 
       <div class="mt-8">
         <div class="mt-6">
-          <form action="#" method="POST" class="space-y-6">
+          <form action="?/login" method="POST" class="space-y-6" use:enhance>
             <div>
               <label
                 for="email"

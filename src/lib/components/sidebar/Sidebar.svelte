@@ -1,10 +1,13 @@
 <script lang="ts">
-  import SidebarProfile from "$lib/components/sidebar/SidebarProfile.svelte";
   import SidebarSearch from "$lib/components/sidebar/SidebarSearch.svelte";
   import { dashboardOpenerStore } from "$lib/stores/dashboard";
   import { onDestroy } from "svelte";
   import { fade, fly } from "svelte/transition";
+  import type { PageData } from "../../../routes/$types";
+  import Profile from "../profile/Profile.svelte";
   import SidebarNav from "./SidebarNav.svelte";
+
+  export let data: PageData;
 
   let sidebarOpen: boolean = false;
   const unsubscribeDashboard = dashboardOpenerStore.subscribe(
@@ -72,7 +75,7 @@
     <!-- Sidebar component, swap this element with another sidebar if you like -->
     <div class="flex h-0 flex-1 flex-col overflow-y-auto">
       <!-- User account dropdown -->
-      <SidebarProfile />
+      <Profile {data} />
       <!-- Sidebar Search -->
       <SidebarSearch />
       <!-- Navigation -->

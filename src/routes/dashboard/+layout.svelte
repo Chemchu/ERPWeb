@@ -6,6 +6,9 @@
   import { GenerarGrupo } from "$lib/functions/paths";
   import Sidebar from "$lib/components/sidebar/Sidebar.svelte";
   import { onDestroy } from "svelte";
+  import type { PageData } from "../$types";
+
+  export let data: PageData;
 
   let paginaActual = "Inicio";
   let unsuscribe = page.subscribe((p) => {
@@ -15,7 +18,7 @@
   onDestroy(unsuscribe);
 </script>
 
-<Sidebar />
+<Sidebar {data} />
 <!-- Main column -->
 <div class="flex flex-col lg:pl-64">
   <div class="flex flex-col">

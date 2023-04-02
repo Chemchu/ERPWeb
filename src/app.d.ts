@@ -9,6 +9,7 @@ declare global {
     interface Locals {
       supabase: SupabaseClient<Database>;
       getSession(): Promise<Session | null>;
+      // profile: Promise<Database.empleados | null>;
     }
     interface PageData {
       session: Session | null;

@@ -1,4 +1,5 @@
 <script lang="ts">
+  import { enhance } from "$app/forms";
   import { profileDropdownStore } from "$lib/stores/profile";
   import { onDestroy } from "svelte";
   import { scale } from "svelte/transition";
@@ -60,13 +61,14 @@
         >
       </div>
       <div class="py-1" role="none">
-        <a
-          href="/dashboard/logout"
-          class="text-gray-700 block px-4 py-2 text-sm"
-          role="menuitem"
-          tabindex="-1"
-          id="options-menu-item-5">Cerrar sesion</a
-        >
+        <form action="/logout" method="post" use:enhance>
+          <button
+            type="submit"
+            class="text-gray-700 block px-4 py-2 text-sm"
+            tabindex="-1"
+            id="options-menu-item-5">Cerrar sesion</button
+          >
+        </form>
       </div>
     </div>
   {/if}
