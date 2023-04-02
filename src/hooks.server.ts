@@ -1,16 +1,15 @@
-// src/hooks.server.ts
 import {
   PUBLIC_SUPABASE_URL,
-  PUBLIC_SUPABASE_ANON_KEY
-} from '$env/static/public';
-import { createSupabaseServerClient } from '@supabase/auth-helpers-sveltekit';
-import type { Handle } from '@sveltejs/kit';
+  PUBLIC_SUPABASE_ANON_KEY,
+} from "$env/static/public";
+import { createSupabaseServerClient } from "@supabase/auth-helpers-sveltekit";
+import { redirect, type Handle, type RequestEvent } from "@sveltejs/kit";
 
 export const handle: Handle = async ({ event, resolve }) => {
   event.locals.supabase = createSupabaseServerClient({
     supabaseUrl: PUBLIC_SUPABASE_URL,
     supabaseKey: PUBLIC_SUPABASE_ANON_KEY,
-    event
+    event,
   });
 
   /**
@@ -18,10 +17,13 @@ export const handle: Handle = async ({ event, resolve }) => {
    */
   event.locals.getSession = async () => {
     const {
-      data: { session }
+      data: { session },
     } = await event.locals.supabase.auth.getSession();
+
     return session;
   };
+
+  await protectRoutes(event);
 
   return resolve(event, {
     /**
@@ -30,7 +32,20 @@ export const handle: Handle = async ({ event, resolve }) => {
      * https://github.com/sveltejs/kit/issues/8061
      */
     filterSerializedResponseHeaders(name) {
-      return name === 'content-range';
-    }
+      return name === "content-range";
+    },
   });
+};
+
+const protectRoutes = async (
+  event: RequestEvent<Partial<Record<string, string>>, string | null>
+) => {
+  if (event.url.pathname.startsWith("/dashboard")) {
+    const session = await event.locals.getSession();
+
+    if (!session) {
+      // the user is not signed in
+      throw redirect(303, "/");
+    }
+  }
 };

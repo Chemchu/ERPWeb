@@ -6,11 +6,13 @@
 
   export let data: LayoutData;
 
-  $: ({ supabase } = data);
+  $: ({ supabase, session } = data);
 
   onMount(() => {
-    const { data } = supabase.auth.onAuthStateChange(() => {
-      invalidate("supabase:auth");
+    const { data } = supabase.auth.onAuthStateChange((_, _session) => {
+      if (_session?.expires_at !== session?.expires_at) {
+        invalidate("supabase:auth");
+      }
     });
 
     return () => data.subscription.unsubscribe();
