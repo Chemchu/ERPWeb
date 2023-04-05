@@ -7,6 +7,7 @@
   import Sidebar from "$lib/components/sidebar/Sidebar.svelte";
   import { onDestroy } from "svelte";
   import type { PageData } from "../$types";
+  import AutoLogout from "$lib/components/autoLogout/AutoLogout.svelte";
 
   export let data: PageData;
 
@@ -16,8 +17,11 @@
   });
 
   onDestroy(unsuscribe);
+
+  const logoutTime = 1000 * 60 * 60 * 3; // 3 horas
 </script>
 
+<AutoLogout supabase={data.supabase} {logoutTime} />
 <Sidebar {data} />
 <!-- Main column -->
 <div class="flex flex-col lg:pl-64">
