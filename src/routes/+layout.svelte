@@ -29,6 +29,6 @@
   />
 </svelte:head>
 
-<PageTransition {data}>
+<PageTransition {data} excludedPaths={["/dashboard"]}>
   <slot />
 </PageTransition>

@@ -3,25 +3,30 @@ export const GenerarGrupo = (path: string | null): string => {
     return "Inicio";
   }
 
-  switch (path) {
-    case "/dashboard/employees":
-      return "Terceros";
-    case "/dashboard/clients":
-      return "Terceros";
-    case "/dashboard/suppliers":
-      return "Terceros";
-    case "/dashboard/products":
-      return "Dia a dia";
-    case "/dashboard/tpv":
-      return "Dia a dia";
-    case "/dashboard/sales":
-      return "Dia a dia";
-    case "/dashboard/closures":
-      return "Dia a dia";
-    case "/dashboard/statistics":
-      return "Analisis";
-
-    default:
-      return "Inicio";
+  if (path.includes("/dashboard/employees")) {
+    return "Terceros";
   }
+  if (path.includes("/dashboard/clients")) {
+    return "Terceros";
+  }
+  if (path.includes("/dashboard/suppliers")) {
+    return "Terceros";
+  }
+  if (path.includes("/dashboard/products")) {
+    return "Dia a dia";
+  }
+  if (path.includes("/dashboard/tpv")) {
+    return "Dia a dia";
+  }
+  if (path.includes("/dashboard/sales")) {
+    return "Dia a dia";
+  }
+  if (path.includes("/dashboard/clousures")) {
+    return "Dia a dia";
+  }
+  if (path.includes("/dashboard/statistics")) {
+    return "Analisis";
+  }
+
+  return "Inicio";
 };

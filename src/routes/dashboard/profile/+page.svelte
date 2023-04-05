@@ -1,5 +1,8 @@
-<script>
+<script lang="ts">
+  import SimpleCombobox from "$lib/components/combobox/SimpleCombobox.svelte";
   import { fade } from "svelte/transition";
+
+  const paises: string[] = ["Espanya", "Portugal", "Brasil"];
 </script>
 
 <div in:fade={{ delay: 500 }} out:fade>
@@ -173,7 +176,7 @@
             <label
               for="country"
               class="block text-sm font-medium leading-6 text-gray-900"
-              >Country</label
+              >Pais</label
             >
             <div class="mt-2">
               <select
@@ -182,10 +185,14 @@
                 autocomplete="country-name"
                 class="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:max-w-xs sm:text-sm sm:leading-6"
               >
-                <option>United States</option>
-                <option>Canada</option>
-                <option>Mexico</option>
+                {#each paises as pais}
+                  <option>{pais}</option>
+                {/each}
               </select>
+            </div>
+
+            <div class="mt-2">
+              <SimpleCombobox items={paises} titulo={"Pais"} />
             </div>
           </div>
 
@@ -193,7 +200,7 @@
             <label
               for="street-address"
               class="block text-sm font-medium leading-6 text-gray-900"
-              >Street address</label
+              >Direccion</label
             >
             <div class="mt-2">
               <input
@@ -210,7 +217,7 @@
             <label
               for="city"
               class="block text-sm font-medium leading-6 text-gray-900"
-              >City</label
+              >Ciudad</label
             >
             <div class="mt-2">
               <input
@@ -227,7 +234,7 @@
             <label
               for="region"
               class="block text-sm font-medium leading-6 text-gray-900"
-              >State / Province</label
+              >Estado / Provincia</label
             >
             <div class="mt-2">
               <input
@@ -244,7 +251,7 @@
             <label
               for="postal-code"
               class="block text-sm font-medium leading-6 text-gray-900"
-              >ZIP / Postal code</label
+              >Codigo postal</label
             >
             <div class="mt-2">
               <input
@@ -263,12 +270,12 @@
     <div class="mt-6 flex items-center justify-end gap-x-6 py-4">
       <button
         type="button"
-        class="text-sm font-semibold leading-6 text-gray-900">Cancel</button
+        class="text-sm font-semibold leading-6 text-gray-900">Cancelar</button
       >
       <button
         type="submit"
         class="rounded-md bg-indigo-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
-        >Save</button
+        >Guardar cambios</button
       >
     </div>
   </form>

@@ -38,8 +38,10 @@
 
   // cleanup event listeners on component unmount
   onDestroy(() => {
-    clearTimeout(logoutTimer);
-    window.removeEventListener("mousemove", resetLogoutTimer);
-    window.removeEventListener("keydown", resetLogoutTimer);
+    if (window) {
+      clearTimeout(logoutTimer);
+      window.removeEventListener("mousemove", resetLogoutTimer);
+      window.removeEventListener("keydown", resetLogoutTimer);
+    }
   });
 </script>
