@@ -2,4 +2,4 @@
   import { fade } from "svelte/transition";
 </script>
 
-<div in:fade={{ delay: 500 }} out:fade>Ventas</div>
+<div>Ventas</div>

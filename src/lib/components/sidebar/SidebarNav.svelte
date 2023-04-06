@@ -1,7 +1,11 @@
 <script lang="ts">
   import { fade } from "svelte/transition";
+  import type { PageData } from "../../../routes/$types";
 
   let currentOpened = "";
+  export let data: PageData;
+
+  $: ({ pathname } = data);
 
   const setCurrentlyOpened = (id: string) => {
     if (currentOpened == id) {
@@ -17,7 +21,10 @@
     <!-- Current: "bg-gray-200 text-gray-900", Default: "text-gray-700 hover:bg-gray-50 hover:text-gray-900" -->
     <a
       href="/dashboard"
-      class="bg-gray-200 text-gray-900 group flex items-center rounded-md px-2 py-2 text-sm font-medium"
+      class={"group flex items-center rounded-md px-2 py-2 text-sm font-medium" +
+        (pathname == "/dashboard"
+          ? " bg-gray-200 text-gray-900"
+          : " text-gray-700 hover:bg-gray-50 hover:text-gray-900")}
       aria-current="page"
     >
       <!-- Current: "text-gray-500", Default: "text-gray-400 group-hover:text-gray-500" -->
@@ -39,7 +46,10 @@
     </a>
     <button
       id="Dia a dia"
-      class="text-gray-700 hover:bg-gray-50 hover:text-gray-900 group flex items-center rounded-md px-2 py-2 text-sm font-medium w-full"
+      class={"group flex items-center rounded-md px-2 py-2 text-sm font-medium w-full" +
+        (currentOpened == "Dia a dia"
+          ? " bg-gray-200 text-gray-900"
+          : " text-gray-700 hover:bg-gray-50 hover:text-gray-900")}
       on:click={(e) => setCurrentlyOpened(e.currentTarget.id)}
     >
       <svg
@@ -96,25 +106,37 @@
       >
         <a
           href="/dashboard/tpv"
-          class="text-gray-700 hover:bg-gray-50 hover:text-gray-900 pl-4 rounded-md px-2 py-2 text-sm font-medium"
+          class={"pl-4 rounded-md px-2 py-2 text-sm font-medium" +
+            (pathname == "/dashboard/tpv"
+              ? " bg-gray-200 text-gray-900"
+              : " text-gray-700 hover:bg-gray-50 hover:text-gray-900")}
         >
           TPV
         </a>
         <a
           href="/dashboard/products"
-          class="text-gray-700 hover:bg-gray-50 hover:text-gray-900 pl-4 rounded-md px-2 py-2 text-sm font-medium"
+          class={"pl-4 rounded-md px-2 py-2 text-sm font-medium" +
+            (pathname == "/dashboard/products"
+              ? " bg-gray-200 text-gray-900"
+              : " text-gray-700 hover:bg-gray-50 hover:text-gray-900")}
         >
           Productos
         </a>
         <a
           href="/dashboard/sales"
-          class="text-gray-700 hover:bg-gray-50 hover:text-gray-900 pl-4 rounded-md px-2 py-2 text-sm font-medium"
+          class={"pl-4 rounded-md px-2 py-2 text-sm font-medium" +
+            (pathname == "/dashboard/sales"
+              ? " bg-gray-200 text-gray-900"
+              : " text-gray-700 hover:bg-gray-50 hover:text-gray-900")}
         >
           Ventas
         </a>
         <a
           href="/dashboard/closures"
-          class="text-gray-700 hover:bg-gray-50 hover:text-gray-900 pl-4 rounded-md px-2 py-2 text-sm font-medium"
+          class={"pl-4 rounded-md px-2 py-2 text-sm font-medium" +
+            (pathname == "/dashboard/closures"
+              ? " bg-gray-200 text-gray-900"
+              : " text-gray-700 hover:bg-gray-50 hover:text-gray-900")}
         >
           Cierres
         </a>
@@ -122,7 +144,10 @@
     {/if}
     <a
       href="/dashboard/statistics"
-      class="text-gray-700 hover:bg-gray-50 hover:text-gray-900 group flex items-center rounded-md px-2 py-2 text-sm font-medium"
+      class={"group flex items-center rounded-md px-2 py-2 text-sm font-medium" +
+        (pathname == "/dashboard/statistics"
+          ? " bg-gray-200 text-gray-900"
+          : " text-gray-700 hover:bg-gray-50 hover:text-gray-900")}
     >
       <svg
         class="text-gray-500 group-hover:text-gray-600 mr-3 h-6 w-6 flex-shrink-0"
@@ -143,7 +168,10 @@
 
     <button
       id="Terceros"
-      class="text-gray-700 hover:bg-gray-50 hover:text-gray-900 group flex items-center rounded-md px-2 py-2 text-sm font-medium w-full"
+      class={"group flex items-center rounded-md px-2 py-2 text-sm font-medium w-full" +
+        (currentOpened == "Terceros"
+          ? " bg-gray-200 text-gray-900"
+          : " text-gray-700 hover:bg-gray-50 hover:text-gray-900")}
       on:click={(e) => setCurrentlyOpened(e.currentTarget.id)}
     >
       <svg
@@ -200,19 +228,28 @@
       >
         <a
           href="/dashboard/employees"
-          class="text-gray-700 hover:bg-gray-50 hover:text-gray-900 pl-4 rounded-md px-2 py-2 text-sm font-medium"
+          class={"pl-4 rounded-md px-2 py-2 text-sm font-medium" +
+            (pathname == "/dashboard/employees"
+              ? " bg-gray-200 text-gray-900"
+              : " text-gray-700 hover:bg-gray-50 hover:text-gray-900")}
         >
           Empleados
         </a>
         <a
           href="/dashboard/clients"
-          class="text-gray-700 hover:bg-gray-50 hover:text-gray-900 pl-4 rounded-md px-2 py-2 text-sm font-medium"
+          class={"pl-4 rounded-md px-2 py-2 text-sm font-medium" +
+            (pathname == "/dashboard/clients"
+              ? " bg-gray-200 text-gray-900"
+              : " text-gray-700 hover:bg-gray-50 hover:text-gray-900")}
         >
           Clientes
         </a>
         <a
           href="/dashboard/suppliers"
-          class="text-gray-700 hover:bg-gray-50 hover:text-gray-900 pl-4 rounded-md px-2 py-2 text-sm font-medium"
+          class={"pl-4 rounded-md px-2 py-2 text-sm font-medium" +
+            (pathname == "/dashboard/suppliers"
+              ? " bg-gray-200 text-gray-900"
+              : " text-gray-700 hover:bg-gray-50 hover:text-gray-900")}
         >
           Proveedores
         </a>

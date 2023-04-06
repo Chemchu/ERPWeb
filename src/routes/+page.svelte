@@ -1,5 +1,6 @@
 <script lang="ts">
-  import { fade, fly } from "svelte/transition";
+  import { fade } from "svelte/transition";
+  import landingPage from "$lib/assets/landingPage.jpeg";
 
   let sidebarOpen = false;
 </script>
@@ -141,7 +142,7 @@
 
   <div class="relative">
     <div class="mx-auto max-w-7xl">
-      <div class="relative z-10 pt-14 lg:w-full lg:max-w-2xl">
+      <div class="relative z-10 pt-14 lg:w-full lg:max-w-2xl h-screen">
         <svg
           class="absolute inset-y-0 right-8 hidden h-full w-80 translate-x-1/2 transform fill-white lg:block"
           viewBox="0 0 100 100"
@@ -182,8 +183,8 @@
     <div class="bg-gray-50 lg:absolute lg:inset-y-0 lg:right-0 lg:w-1/2">
       <img
         class="aspect-[3/2] object-cover lg:aspect-auto lg:h-full lg:w-full"
-        src="https://source.unsplash.com/39-6dSUrlyg"
-        alt=""
+        src={landingPage}
+        alt="Two breads"
       />
     </div>
   </div>

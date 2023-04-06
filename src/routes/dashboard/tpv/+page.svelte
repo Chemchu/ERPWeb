@@ -2,4 +2,4 @@
   import { fade } from "svelte/transition";
 </script>
 
-<span in:fade={{ delay: 500 }} out:fade> TPV! </span>
+<span> TPV! </span>

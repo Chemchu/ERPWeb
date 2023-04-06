@@ -7,7 +7,7 @@
 
   export let data: LayoutData;
 
-  $: ({ supabase, session } = data);
+  $: ({ supabase, session, pathname } = data);
 
   onMount(() => {
     const { data } = supabase.auth.onAuthStateChange((_, _session) => {
@@ -29,6 +29,6 @@
   />
 </svelte:head>
 
-<PageTransition {data} excludedPaths={["/dashboard"]}>
+<PageTransition {pathname} excludedPaths={["/dashboard"]}>
   <slot />
 </PageTransition>

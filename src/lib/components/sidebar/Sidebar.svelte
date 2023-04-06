@@ -58,7 +58,7 @@
             <h1>ERPWeb</h1>
           </div>
           <div class="mt-5 h-0 flex-1 overflow-y-auto">
-            <SidebarNav />
+            <SidebarNav {data} />
           </div>
         </div>
         <div class="w-14 flex-shrink-0" aria-hidden="true">
@@ -79,7 +79,7 @@
       <!-- Sidebar Search -->
       <SidebarSearch />
       <!-- Navigation -->
-      <SidebarNav />
+      <SidebarNav {data} />
     </div>
   </div>
 </div>

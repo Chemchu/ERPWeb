@@ -1,8 +1,10 @@
 <script lang="ts">
   import EmployeeTable from "$lib/components/tables/EmployeeTable.svelte";
-  import { fade } from "svelte/transition";
+  import type { LayoutData } from "../$types";
+
+  export let data: LayoutData;
 </script>
 
-<div in:fade={{ delay: 500 }} out:fade>
-  <EmployeeTable />
+<div>
+  <EmployeeTable supabase={data.supabase} />
 </div>
