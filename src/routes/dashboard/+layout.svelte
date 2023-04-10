@@ -9,7 +9,7 @@
   import type { PageData } from "../$types";
   import AutoLogout from "$lib/components/autoLogout/AutoLogout.svelte";
   import PageTransition from "$lib/components/pageTransition/PageTransition.svelte";
-  import { fade } from "svelte/transition";
+  import { fade, fly } from "svelte/transition";
 
   export let data: PageData;
 
@@ -109,7 +109,7 @@
         </div>
       </div>
       <div class="mt-6 px-4 sm:px-6 lg:px-8">
-        <PageTransition {pathname} svelteTransition={fade}>
+        <PageTransition {pathname}>
           <slot />
         </PageTransition>
       </div>

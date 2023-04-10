@@ -1,3 +1,5 @@
+import { RouteNestedLevels } from "$lib/enums/nestedLevels";
+
 export const GenerarGrupo = (path: string | null): string => {
   if (path == null) {
     return "Inicio";
@@ -29,4 +31,21 @@ export const GenerarGrupo = (path: string | null): string => {
   }
 
   return "Inicio";
+};
+
+export const GetNestedLevel = (path: string | null): RouteNestedLevels => {
+  if (path == null) {
+    throw "Path is null";
+  }
+
+  const level = path.split("/").length - 2;
+
+  if (level >= 2) {
+    return RouteNestedLevels.Page;
+  }
+  if (level == 1) {
+    return RouteNestedLevels.Group;
+  }
+
+  return RouteNestedLevels.Root;
 };
