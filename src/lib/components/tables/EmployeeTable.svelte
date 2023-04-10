@@ -25,7 +25,7 @@
 <div>
   <div class="sm:flex sm:items-center">
     <div class="sm:flex-auto">
-      <h1 class="text-base font-semibold leading-6 text-gray-900">Empleados</h1>
+      <h1 class="text-lg font-semibold leading-6 text-gray-900">Empleados</h1>
       <p class="mt-2 text-sm text-gray-700">
         Una lista con todos los empleados incluyendo sus nombres, roles y
         correos electronicos

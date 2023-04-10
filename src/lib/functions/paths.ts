@@ -49,3 +49,27 @@ export const GetNestedLevel = (path: string | null): RouteNestedLevels => {
 
   return RouteNestedLevels.Root;
 };
+
+export const checkPathsSameGroup = (
+  previousPath: string,
+  currentPath: string
+): boolean => {
+  if (previousPath == null) {
+    return false;
+  }
+  if (currentPath == null) {
+    return false;
+  }
+
+  console.log("previousPath:" + previousPath);
+  console.log("currentPath:" + currentPath);
+
+  if (
+    previousPath.includes(currentPath) ||
+    currentPath.includes(previousPath)
+  ) {
+    return true;
+  }
+
+  return false;
+};

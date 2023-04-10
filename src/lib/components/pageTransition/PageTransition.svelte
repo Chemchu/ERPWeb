@@ -1,8 +1,8 @@
 <script lang="ts">
   import { fade, fly } from "svelte/transition";
   import { cubicIn, cubicOut } from "svelte/easing";
-  import { GetNestedLevel } from "$lib/functions/paths";
   import { RouteNestedLevels } from "$lib/enums/nestedLevels";
+  import { GetNestedLevel } from "$lib/functions/paths";
 
   const duration = 300;
   const delay = duration + 100;
@@ -41,7 +41,6 @@
       svelteTransition = fly;
     }
   }
-
   const isExcludedPath = (path: string) =>
     excludedPaths.some((excludedPath) => {
       return path.includes(excludedPath);

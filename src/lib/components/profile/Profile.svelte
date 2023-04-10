@@ -1,21 +1,43 @@
 <script lang="ts">
   import { enhance } from "$app/forms";
   import { dashboardOpenerStore } from "$lib/stores/dashboard";
-  import { onDestroy } from "svelte";
+  import { onDestroy, onMount } from "svelte";
   import { scale } from "svelte/transition";
   import type { PageData } from "../../../routes/$types";
+  import type { Empleado } from "$lib/types/types";
 
-  export let data: PageData;
+  export let pageData: PageData;
   let profileOpen: boolean = false;
+  let currentProfile: Empleado | null = null;
 
   const unsubscribe = dashboardOpenerStore.subscribe(
     (isOpen) => (profileOpen = isOpen)
   );
 
+  const fetchCurrentEmpleado = async (): Promise<Empleado> => {
+    if (!pageData.session) {
+      throw "PageData is null";
+    }
+    const { data, error } = await pageData.supabase
+      .from("empleados")
+      .select("*")
+      .eq("id", pageData.session.user.id);
+
+    if (error) {
+      throw error;
+    }
+
+    return data[0] as Empleado;
+  };
+
+  onMount(async () => {
+    currentProfile = await fetchCurrentEmpleado();
+  });
+
   onDestroy(unsubscribe);
 </script>
 
-{#if !data.session}
+{#if !pageData.session}
   <div>Cargando...</div>
 {:else}
   <div class="relative inline-block px-3 pt-1 text-left">
@@ -37,9 +59,11 @@
             />
             <span class="flex min-w-0 flex-1 flex-col">
               <span class="truncate text-sm font-medium text-gray-900"
-                >{data.session.user.email}</span
+                >{currentProfile?.nombre || "Cargando..."}</span
               >
-              <span class="truncate text-sm text-gray-500">@</span>
+              <span class="truncate text-sm text-gray-500"
+                >{currentProfile?.rol || "Cargando..."}</span
+              >
             </span>
           </span>
           <svg

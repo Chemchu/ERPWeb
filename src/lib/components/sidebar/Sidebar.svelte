@@ -75,7 +75,7 @@
     <!-- Sidebar component, swap this element with another sidebar if you like -->
     <div class="flex h-0 flex-1 flex-col overflow-y-auto">
       <!-- User account dropdown -->
-      <Profile {data} />
+      <Profile pageData={data} />
       <!-- Sidebar Search -->
       <SidebarSearch />
       <!-- Navigation -->
