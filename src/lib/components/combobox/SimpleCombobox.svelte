@@ -10,6 +10,8 @@
 
   $: if (!isOpen) {
     AutoSelectItem();
+  } else {
+    renderedItems = items;
   }
 
   $: renderedItems = items.filter((item) => {
@@ -17,6 +19,10 @@
   });
 
   const AutoSelectItem = () => {
+    const itemAlreadySelected = renderedItems.find((item) => item == value);
+    if (itemAlreadySelected) {
+      return;
+    }
     if (renderedItems.length > 0) {
       value = renderedItems[0];
     } else {
@@ -38,12 +44,11 @@
       role="combobox"
       aria-controls="options"
       aria-expanded="false"
-      on:blur={() => {
-        isOpen = false;
-      }}
+      autocomplete="off"
       on:input={() => {
-        if (!isOpen) isOpen = true;
+        isOpen = true;
       }}
+      on:blur={() => (isOpen = false)}
       bind:value
     />
     <button
@@ -70,11 +75,6 @@
         id="options"
         role="listbox"
       >
-        <!--
-          Combobox option, manage highlight styles based on mouseenter/mouseleave and keyboard navigation.
-  
-          Active: "text-white bg-indigo-600", Not Active: "text-gray-900"
-        -->
         {#each renderedItems as item, index}
           <li
             class={"relative cursor-default select-none py-2 pl-8 pr-4" +
@@ -85,18 +85,17 @@
             role="option"
             aria-selected={item == value}
             tabindex="-1"
+            on:mousedown={() => {
+              if (item != value) {
+                value = item;
+                isOpen = false;
+              }
+            }}
           >
-            <!-- Selected: "font-semibold" -->
             <span
               class={"block truncate" + item == value ? "font-semibold" : ""}
               >{item}</span
             >
-
-            <!--
-            Checkmark, only display for selected option.
-  
-            Active: "text-white", Not Active: "text-indigo-600"
-          -->
             <span
               class={"absolute inset-y-0 left-0 flex items-center pl-1.5" +
                 (item == value ? " text-white" : " text-indigo-600")}

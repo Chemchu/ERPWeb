@@ -1,3 +1,5 @@
+import { ERPWEB_URL } from "$env/static/private";
+
 export const actions = {
   createEmployee: async ({ request, locals }) => {
     const supabase = locals.supabase;
@@ -58,7 +60,7 @@ export const actions = {
           rol: rol.toString(),
           dni: dni.toString(),
         },
-        redirectTo: "http://localhost:3000/welcome",
+        redirectTo: `${ERPWEB_URL}/welcome`,
       }
     );
 
