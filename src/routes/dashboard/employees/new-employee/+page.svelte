@@ -1,7 +1,7 @@
 <script lang="ts">
+  import { enhance } from "$app/forms";
   import SimpleCombobox from "$lib/components/combobox/SimpleCombobox.svelte";
   import { onMount } from "svelte";
-  import type { PageData } from "./$types";
 
   let history: History;
   onMount(() => {
@@ -46,6 +46,7 @@
     class="px-2 pb-16 pt-4 sm:px-6 lg:px-0 lg:pb-10 lg:pt-0 w-full"
     method="post"
     action="?/createEmployee"
+    use:enhance
   >
     <div class="mx-auto max-w-lg lg:max-w-none">
       <section aria-labelledby="payment-heading">

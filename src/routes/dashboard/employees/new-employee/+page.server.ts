@@ -1,8 +1,8 @@
 import { ERPWEB_URL } from "$env/static/private";
+import { error as Error } from "@sveltejs/kit";
 
 export const actions = {
   createEmployee: async ({ request, locals }) => {
-    const supabase = locals.supabase;
     const formData = await request.formData();
     const nombre = formData.get("nombre");
     const apellidos = formData.get("apellidos");
@@ -51,29 +51,45 @@ export const actions = {
       };
     }
 
-    const { error } = await supabase.auth.admin.inviteUserByEmail(
-      email.toString(),
-      {
+    const session = await locals.supabase.auth.getSession();
+    if (!session.data.session) {
+      return {
+        status: 401,
+        body: {
+          message: "Unauthorized",
+        },
+      };
+    }
+
+    const { error } = await locals.supabase.auth.signInWithOtp({
+      email: email.toString(),
+      options: {
         data: {
           nombre: nombre.toString(),
           apellidos: apellidos.toString(),
           rol: rol.toString(),
           dni: dni.toString(),
         },
-        redirectTo: `${ERPWEB_URL}/welcome`,
-      }
-    );
+        emailRedirectTo: `${ERPWEB_URL}/welcome`,
+      },
+    });
 
     if (error) {
       console.log(error);
 
-      return {
-        status: error.status,
-        body: {
-          message: error.message,
-          name: error.name,
-        },
-      };
+      throw Error(error.status || 400, error.message);
     }
+
+    await locals.supabase.auth.setSession({
+      access_token: session.data.session.access_token,
+      refresh_token: session.data.session.refresh_token,
+    });
+
+    return new Response(
+      String({
+        message:
+          "Invitation sent, please check your email for a link to complete your registration.",
+      })
+    );
   },
 };
