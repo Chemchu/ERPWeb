@@ -1,4 +1,4 @@
-import { error as Error, fail } from "@sveltejs/kit";
+import { fail } from "@sveltejs/kit";
 import { z } from "zod";
 
 const newPasswordSchema = z.object({
@@ -53,15 +53,14 @@ export const actions = {
 
     if (error) {
       console.log(error);
-      throw Error(error.status || 400, error.message);
+      fail(400, { error: true, message: error.message });
     }
 
     return {
       status: 200,
-      body: {
-        message:
-          "Invitation sent, please check your email for a link to complete your registration.",
-      },
+      error: false,
+      message:
+        "Invitation sent, please check your email for a link to complete your registration.",
     };
   },
 };

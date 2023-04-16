@@ -1,4 +1,4 @@
-import { error as Error, fail } from "@sveltejs/kit";
+import { fail } from "@sveltejs/kit";
 import { z } from "zod";
 
 const newEployeeSchema = z.object({
@@ -70,7 +70,7 @@ export const actions = {
 
     if (error) {
       console.log(error);
-      throw Error(error.status || 400, error.message);
+      return fail(400, { error: true, message: error.message });
     }
 
     await locals.supabase.auth.setSession({
@@ -79,6 +79,8 @@ export const actions = {
     });
 
     return {
+      status: 200,
+      error: false,
       message:
         "Invitation sent, please check your email for a link to complete your registration.",
     };

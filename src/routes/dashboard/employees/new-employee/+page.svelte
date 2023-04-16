@@ -2,6 +2,11 @@
   import { enhance } from "$app/forms";
   import SimpleCombobox from "$lib/components/combobox/SimpleCombobox.svelte";
   import { onMount } from "svelte";
+  import type { ActionData } from "./$types";
+
+  export let form: ActionData;
+
+  $: console.log(form);
 
   let history: History;
   onMount(() => {
