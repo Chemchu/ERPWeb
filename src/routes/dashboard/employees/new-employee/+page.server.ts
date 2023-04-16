@@ -44,6 +44,17 @@ export const actions = {
       return fail(400, { error: true, errors });
     }
 
+    // Create a regex that mathes the url of the current request with a given pattern
+    const regex = new RegExp(
+      `^(?:https?:\/\/)?(?:[^@\/\n]+@)?(?:www\.)?([^:\/?\n]+)`,
+      "g"
+    );
+    const matches = regex.exec(request.url);
+    if (matches === null) {
+      return fail(400, { error: true, message: "Invalid url" });
+    }
+    const url = matches[0];
+
     const { error } = await locals.supabase.auth.signInWithOtp({
       email: employeeData.data.email,
       options: {
@@ -53,7 +64,7 @@ export const actions = {
           rol: employeeData.data.rol,
           dni: employeeData.data.dni,
         },
-        emailRedirectTo: `${window.location.href}/welcome`,
+        emailRedirectTo: `${url}/welcome`,
       },
     });
 
