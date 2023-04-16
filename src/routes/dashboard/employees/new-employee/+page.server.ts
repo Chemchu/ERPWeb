@@ -85,11 +85,9 @@ export const actions = {
       refresh_token: session.data.session.refresh_token,
     });
 
-    return new Response(
-      String({
-        message:
-          "Invitation sent, please check your email for a link to complete your registration.",
-      })
-    );
+    return JSON.stringify({
+      message:
+        "Invitation sent, please check your email for a link to complete your registration.",
+    });
   },
 };
