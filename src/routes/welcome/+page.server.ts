@@ -1,26 +1,40 @@
-import { error as Error } from "@sveltejs/kit";
+import { error as Error, fail } from "@sveltejs/kit";
+import { z } from "zod";
+
+const newPasswordSchema = z.object({
+  password: z
+    .string()
+    .trim()
+    .min(8, { message: "El tamanyo minimo es de 8 caracteres" }),
+  repeatedPassword: z
+    .string()
+    .trim()
+    .min(8, { message: "El tamanyo minimo es de 8 caracteres" }),
+});
 
 export const actions = {
   createPassword: async ({ request, locals }) => {
-    const formData = await request.formData();
-    const password = formData.get("password");
-    const repeatedPassword = formData.get("repeat-password");
+    const formData = Object.fromEntries(await request.formData());
+    const passwordData = newPasswordSchema.safeParse(formData);
 
-    if (!password) {
-      return {
-        status: 400,
-        body: {
-          message: "Password is required",
-        },
-      };
+    if (!passwordData.success) {
+      const errors = passwordData.error.errors.map((error) => {
+        return {
+          field: error.path[0],
+          message: error.message,
+        };
+      });
+
+      return fail(400, { error: true, errors });
     }
-    if (!repeatedPassword) {
-      return {
-        status: 400,
-        body: {
-          message: "Password is required",
-        },
+
+    if (passwordData.data.password !== passwordData.data.repeatedPassword) {
+      const err = {
+        field: "repeatedPassword",
+        message: "Las contraseñas no coinciden",
       };
+
+      return fail(400, { error: true, erros: [err] });
     }
 
     const session = await locals.supabase.auth.getSession();
@@ -34,7 +48,7 @@ export const actions = {
     }
 
     const { error } = await locals.supabase.auth.updateUser({
-      password: password.toString(),
+      password: passwordData.data.password,
     });
 
     if (error) {
@@ -42,9 +56,12 @@ export const actions = {
       throw Error(error.status || 400, error.message);
     }
 
-    return JSON.stringify({
-      message:
-        "Invitation sent, please check your email for a link to complete your registration.",
-    });
+    return {
+      status: 200,
+      body: {
+        message:
+          "Invitation sent, please check your email for a link to complete your registration.",
+      },
+    };
   },
 };

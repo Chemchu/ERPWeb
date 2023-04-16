@@ -32,11 +32,12 @@
           />
         </div>
         <div>
-          <label for="repeat-password" class="sr-only">Repetir contraseña</label
+          <label for="repeatedPassword" class="sr-only"
+            >Repetir contraseña</label
           >
           <input
-            id="repeat-password"
-            name="repeat-password"
+            id="repeatedPassword"
+            name="repeatedPassword"
             type="password"
             autocomplete="current-password"
             required

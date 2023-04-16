@@ -1,56 +1,26 @@
 import { ERPWEB_URL } from "$env/static/private";
-import { error as Error } from "@sveltejs/kit";
+import { error as Error, fail } from "@sveltejs/kit";
+import { z } from "zod";
+
+const newEployeeSchema = z.object({
+  nombre: z
+    .string()
+    .trim()
+    .min(3, { message: "El tamanyo minimo es de 3 caracteres" }),
+  apellidos: z
+    .string()
+    .trim()
+    .min(3, { message: "El tamanyo minimo es de 3 caracteres" }),
+  email: z.string().trim().email({ message: "El email no es valido" }),
+  rol: z.enum(["Administrador", "Gerente", "Cajero"]),
+  dni: z
+    .string()
+    .trim()
+    .min(3, { message: "El tamanyo minimo es de 3 caracteres" }),
+});
 
 export const actions = {
   createEmployee: async ({ request, locals }) => {
-    const formData = await request.formData();
-    const nombre = formData.get("nombre");
-    const apellidos = formData.get("apellidos");
-    const email = formData.get("email");
-    const rol = formData.get("rol");
-    const dni = formData.get("dni");
-
-    if (!email) {
-      return {
-        status: 400,
-        body: {
-          message: "Email is required",
-        },
-      };
-    }
-    if (!nombre) {
-      return {
-        status: 400,
-        body: {
-          message: "Nombre is required",
-        },
-      };
-    }
-    if (!apellidos) {
-      return {
-        status: 400,
-        body: {
-          message: "Apellidos is required",
-        },
-      };
-    }
-    if (!rol) {
-      return {
-        status: 400,
-        body: {
-          message: "Rol is required",
-        },
-      };
-    }
-    if (!dni) {
-      return {
-        status: 400,
-        body: {
-          message: "DNI is required",
-        },
-      };
-    }
-
     const session = await locals.supabase.auth.getSession();
     if (!session.data.session) {
       return {
@@ -61,14 +31,28 @@ export const actions = {
       };
     }
 
+    const formData = Object.fromEntries(await request.formData());
+    const employeeData = newEployeeSchema.safeParse(formData);
+
+    if (!employeeData.success) {
+      const errors = employeeData.error.errors.map((error) => {
+        return {
+          field: error.path[0],
+          message: error.message,
+        };
+      });
+
+      return fail(400, { error: true, errors });
+    }
+
     const { error } = await locals.supabase.auth.signInWithOtp({
-      email: email.toString(),
+      email: employeeData.data.email,
       options: {
         data: {
-          nombre: nombre.toString(),
-          apellidos: apellidos.toString(),
-          rol: rol.toString(),
-          dni: dni.toString(),
+          nombre: employeeData.data.nombre,
+          apellidos: employeeData.data.apellidos,
+          rol: employeeData.data.rol,
+          dni: employeeData.data.dni,
         },
         emailRedirectTo: `${ERPWEB_URL}/welcome`,
       },
@@ -76,7 +60,6 @@ export const actions = {
 
     if (error) {
       console.log(error);
-
       throw Error(error.status || 400, error.message);
     }
 
@@ -85,9 +68,9 @@ export const actions = {
       refresh_token: session.data.session.refresh_token,
     });
 
-    return JSON.stringify({
+    return {
       message:
         "Invitation sent, please check your email for a link to complete your registration.",
-    });
+    };
   },
 };
