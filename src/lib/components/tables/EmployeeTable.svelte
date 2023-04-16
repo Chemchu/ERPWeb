@@ -88,8 +88,6 @@
                 >
               </td>
             </tr>
-
-            <!-- More people... -->
           </tbody>
         {/each}
       </table>
