@@ -30,7 +30,7 @@
               >
                 <span
                   class="flex select-none items-center pl-3 text-gray-500 sm:text-sm"
-                  >erpweb.com/</span
+                  >{window.location.origin}/</span
                 >
                 <input
                   type="text"

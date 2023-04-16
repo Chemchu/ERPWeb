@@ -1,4 +1,3 @@
-import { ERPWEB_URL } from "$env/static/private";
 import { error as Error, fail } from "@sveltejs/kit";
 import { z } from "zod";
 
@@ -54,7 +53,7 @@ export const actions = {
           rol: employeeData.data.rol,
           dni: employeeData.data.dni,
         },
-        emailRedirectTo: `${ERPWEB_URL}/welcome`,
+        emailRedirectTo: `${window.location.href}/welcome`,
       },
     });
 
