@@ -9,7 +9,6 @@
   import type { PageData } from "../$types";
   import AutoLogout from "$lib/components/autoLogout/AutoLogout.svelte";
   import PageTransition from "$lib/components/pageTransition/PageTransition.svelte";
-  import { fade, fly } from "svelte/transition";
 
   export let data: PageData;
 
@@ -25,6 +24,9 @@
   const logoutTime = 1000 * 60 * 60 * 3; // 3 horas
 </script>
 
+<svelte:head>
+  <title>ERPWeb - {paginaActual}</title>
+</svelte:head>
 <AutoLogout supabase={data.supabase} {logoutTime} />
 <Sidebar {data} />
 <!-- Main column -->
@@ -92,7 +94,7 @@
         </div>
         <div class="flex items-center">
           <!-- Profile dropdown -->
-          <SmallProfile />
+          <SmallProfile pageData={data} />
         </div>
       </div>
     </div>

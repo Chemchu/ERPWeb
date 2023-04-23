@@ -1,5 +1,9 @@
 import type { Empleado } from "$lib/types/types";
 
+type Image = {
+  imageSrc: string;
+};
+
 export async function load({ params, locals }) {
   const { data, error } = await locals.supabase
     .from("empleados")
@@ -11,9 +15,12 @@ export async function load({ params, locals }) {
     throw error;
   }
 
+  const res = await locals.supabase.storage.from("avatars").list();
+  console.log(res);
+
   return {
     props: {
-      empleado: data[0] as Empleado,
+      empleado: data[0] as Empleado & Image,
     },
   };
 }

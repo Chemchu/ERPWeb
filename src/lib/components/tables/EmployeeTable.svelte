@@ -2,13 +2,35 @@
   import type { Empleado } from "$lib/types/types";
   import type { SupabaseClient } from "@supabase/supabase-js";
   import { onMount } from "svelte";
+  import defaultProfileIcon from "$lib/assets/profile.jpg";
 
   export let supabase: SupabaseClient;
+  export let paginaSize: number = 10;
+  export let pagina = 1;
 
   let empleados: Empleado[] = [];
+  let empleadosIcons: Map<string, string> = new Map();
+
+  $: {
+    empleados.forEach(async (empleado) => {
+      const res = await supabase.storage
+        .from("avatars")
+        .download(empleado.id + "/profile");
+
+      empleadosIcons.set(
+        empleado.id,
+        res.data ? URL.createObjectURL(res.data) : defaultProfileIcon
+      );
+      empleadosIcons = empleadosIcons; // Infinite loop calling itself.
+    });
+  }
 
   const fetchEmpleados = async (): Promise<Empleado[]> => {
-    const { data, error } = await supabase.from("empleados").select("*");
+    const { data, error } = await supabase
+      .from("empleados")
+      .select("*")
+      .range(pagina * paginaSize - paginaSize, pagina * paginaSize);
+
     if (error) {
       console.log(error);
       return [];
@@ -19,6 +41,7 @@
 
   onMount(async () => {
     empleados = await fetchEmpleados();
+    console.log(empleadosIcons);
   });
 </script>
 
@@ -56,7 +79,7 @@
                   <div class="h-10 w-10 flex-shrink-0">
                     <img
                       class="h-10 w-10 rounded-full"
-                      src="https://images.unsplash.com/photo-1517841905240-472988babdf9?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80"
+                      src={empleadosIcons.get(empleado.id)}
                       alt=""
                     />
                   </div>

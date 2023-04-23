@@ -1,14 +1,49 @@
 <script lang="ts">
   import { enhance } from "$app/forms";
   import { profileDropdownStore } from "$lib/stores/profile";
-  import { onDestroy } from "svelte";
+  import type { Empleado } from "$lib/types/types";
+  import { onDestroy, onMount } from "svelte";
   import { scale } from "svelte/transition";
+  import type { PageData } from "../../../routes/$types";
+  import defaultProfileIcon from "$lib/assets/profile.jpg";
+
+  export let pageData: PageData;
 
   let profileOpen = false;
+  let profile: Empleado | null = null;
+  let profileImage: string | null = null;
 
   let unsubscribeProfile = profileDropdownStore.subscribe(
     (isOpen) => (profileOpen = isOpen)
   );
+
+  const fetchCurrentEmpleado = async (): Promise<[Empleado, string | null]> => {
+    if (!pageData.session) {
+      throw "PageData is null";
+    }
+    const { data, error } = await pageData.supabase
+      .from("empleados")
+      .select("*")
+      .eq("id", pageData.session.user.id);
+
+    if (error) {
+      throw error;
+    }
+
+    const iconResponse = await pageData.supabase.storage
+      .from("avatars")
+      .download(pageData.session.user.id + "/profile");
+
+    const profileImage = iconResponse.data
+      ? URL.createObjectURL(iconResponse.data)
+      : null;
+
+    return [data[0] as Empleado, profileImage];
+  };
+
+  onMount(async () => {
+    [profile, profileImage] = await fetchCurrentEmpleado();
+  });
 
   onDestroy(() => {
     unsubscribeProfile();
@@ -28,7 +63,7 @@
       <span class="sr-only">Open user menu</span>
       <img
         class="h-8 w-8 rounded-full"
-        src="https://images.unsplash.com/photo-1502685104226-ee32379fefbe?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80"
+        src={profileImage || defaultProfileIcon}
         alt=""
       />
     </button>

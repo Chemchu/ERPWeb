@@ -5,16 +5,18 @@
   import { scale } from "svelte/transition";
   import type { PageData } from "../../../routes/$types";
   import type { Empleado } from "$lib/types/types";
+  import defaultProfileIcon from "$lib/assets/profile.jpg";
 
   export let pageData: PageData;
   let profileOpen: boolean = false;
-  let currentProfile: Empleado | null = null;
+  let profile: Empleado | null = null;
+  let profileImage: string | null = null;
 
   const unsubscribe = dashboardOpenerStore.subscribe(
     (isOpen) => (profileOpen = isOpen)
   );
 
-  const fetchCurrentEmpleado = async (): Promise<Empleado> => {
+  const fetchCurrentEmpleado = async (): Promise<[Empleado, string | null]> => {
     if (!pageData.session) {
       throw "PageData is null";
     }
@@ -27,11 +29,19 @@
       throw error;
     }
 
-    return data[0] as Empleado;
+    const iconResponse = await pageData.supabase.storage
+      .from("avatars")
+      .download(pageData.session.user.id + "/profile");
+
+    const profileImage = iconResponse.data
+      ? URL.createObjectURL(iconResponse.data)
+      : null;
+
+    return [data[0] as Empleado, profileImage];
   };
 
   onMount(async () => {
-    currentProfile = await fetchCurrentEmpleado();
+    [profile, profileImage] = await fetchCurrentEmpleado();
   });
 
   onDestroy(unsubscribe);
@@ -54,15 +64,15 @@
           <span class="flex min-w-0 items-center justify-between space-x-3">
             <img
               class="h-10 w-10 flex-shrink-0 rounded-full bg-gray-300"
-              src="https://images.unsplash.com/photo-1502685104226-ee32379fefbe?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=3&w=256&h=256&q=80"
+              src={profileImage || defaultProfileIcon}
               alt=""
             />
             <span class="flex min-w-0 flex-1 flex-col">
               <span class="truncate text-sm font-medium text-gray-900"
-                >{currentProfile?.nombre || "Cargando..."}</span
+                >{profile?.nombre || "Cargando..."}</span
               >
               <span class="truncate text-sm text-gray-500"
-                >{currentProfile?.rol || "Cargando..."}</span
+                >{profile?.rol || "Cargando..."}</span
               >
             </span>
           </span>
