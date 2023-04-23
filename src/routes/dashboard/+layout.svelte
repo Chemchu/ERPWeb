@@ -30,7 +30,7 @@
 <AutoLogout supabase={data.supabase} {logoutTime} />
 <Sidebar {data} />
 <!-- Main column -->
-<div class="flex flex-col lg:pl-64">
+<div class="flex flex-col lg:pl-64 min-h-full">
   <div class="flex flex-col">
     <!-- Search header -->
     <div

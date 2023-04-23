@@ -1,7 +1,7 @@
 <script lang="ts">
   import type { Empleado } from "$lib/types/types";
   import type { SupabaseClient } from "@supabase/supabase-js";
-  import { onMount } from "svelte";
+  import { onDestroy, onMount } from "svelte";
   import defaultProfileIcon from "$lib/assets/profile.jpg";
 
   export let supabase: SupabaseClient;
@@ -9,23 +9,9 @@
   export let pagina = 1;
 
   let empleados: Empleado[] = [];
-  let empleadosIcons: Map<string, string> = new Map();
+  let empleadosIcons: Map<string, string | undefined> = new Map();
 
-  $: {
-    empleados.forEach(async (empleado) => {
-      const res = await supabase.storage
-        .from("avatars")
-        .download(empleado.id + "/profile");
-
-      empleadosIcons.set(
-        empleado.id,
-        res.data ? URL.createObjectURL(res.data) : defaultProfileIcon
-      );
-      empleadosIcons = empleadosIcons; // Infinite loop calling itself.
-    });
-  }
-
-  const fetchEmpleados = async (): Promise<Empleado[]> => {
+  const fetchEmpleados = async (): Promise<void> => {
     const { data, error } = await supabase
       .from("empleados")
       .select("*")
@@ -33,15 +19,28 @@
 
     if (error) {
       console.log(error);
-      return [];
+    }
+    empleados = data as Empleado[];
+
+    for await (const emp of empleados) {
+      const { data } = await supabase.storage
+        .from("avatars")
+        .download(emp.id + "/profile");
+      const img = data ? URL.createObjectURL(data) : undefined;
+      empleadosIcons.set(emp.id, img);
     }
 
-    return data as Empleado[];
+    empleadosIcons = empleadosIcons;
   };
 
   onMount(async () => {
-    empleados = await fetchEmpleados();
-    console.log(empleadosIcons);
+    await fetchEmpleados();
+  });
+
+  onDestroy(() => {
+    empleadosIcons.forEach((img) => {
+      if (img) URL.revokeObjectURL(img);
+    });
   });
 </script>
 
@@ -79,8 +78,9 @@
                   <div class="h-10 w-10 flex-shrink-0">
                     <img
                       class="h-10 w-10 rounded-full"
-                      src={empleadosIcons.get(empleado.id)}
-                      alt=""
+                      src={empleadosIcons.get(empleado.id) ||
+                        defaultProfileIcon}
+                      alt="Profile icon for {empleado.nombre} {empleado.apellidos}"
                     />
                   </div>
                   <div class="ml-4">
