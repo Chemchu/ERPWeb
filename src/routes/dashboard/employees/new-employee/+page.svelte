@@ -6,8 +6,6 @@
 
   export let form: ActionData;
 
-  $: console.log(form);
-
   let history: History;
   onMount(() => {
     history = window.history;

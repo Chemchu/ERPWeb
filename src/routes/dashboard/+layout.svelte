@@ -19,6 +19,17 @@
     paginaActual = GenerarGrupo(p.route.id);
   });
 
+  const fullTextSearch = async (event: KeyboardEvent) => {
+    if (event.code !== "Enter") return;
+
+    const { data: textSearchResponse } = await data.supabase
+      .from("productos")
+      .select()
+      .textSearch("nombre", $searchStore);
+
+    console.log(textSearchResponse);
+  };
+
   onDestroy(unsuscribe);
 
   const logoutTime = 1000 * 60 * 60 * 3; // 3 horas
@@ -88,6 +99,7 @@
                 placeholder="Buscar"
                 type="search"
                 bind:value={$searchStore}
+                on:keydown={fullTextSearch}
               />
             </div>
           </form>

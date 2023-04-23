@@ -1,5 +1,19 @@
 <script lang="ts">
   import { searchStore } from "$lib/stores/search";
+  import type { LayoutData } from "../../../routes/$types";
+
+  export let data: LayoutData;
+
+  const fullTextSearch = async (event: KeyboardEvent) => {
+    if (event.code !== "Enter") return;
+
+    const { data: textSearchResponse } = await data.supabase
+      .from("productos")
+      .select()
+      .textSearch("nombre", $searchStore);
+
+    console.log(textSearchResponse);
+  };
 </script>
 
 <div class="mt-5 px-3">
@@ -29,6 +43,7 @@
       class="block w-full rounded-md border-0 py-1.5 pl-9 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
       placeholder="Buscar"
       bind:value={$searchStore}
+      on:keydown={fullTextSearch}
     />
   </div>
 </div>

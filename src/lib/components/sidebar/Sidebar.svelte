@@ -77,7 +77,7 @@
       <!-- User account dropdown -->
       <Profile pageData={data} />
       <!-- Sidebar Search -->
-      <SidebarSearch />
+      <SidebarSearch {data} />
       <!-- Navigation -->
       <SidebarNav {data} />
     </div>
