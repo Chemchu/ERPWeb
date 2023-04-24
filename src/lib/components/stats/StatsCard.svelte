@@ -1,25 +1,31 @@
 <script lang="ts">
-  import type { PageData } from "../../../routes/$types";
-
   export let titulo: string = "Titulo";
-  export let valorActual: number = 10;
-  export let valorPrevio: number = 20;
+  export let valorActual: number = 100000.5;
+  export let valorPrevio: number = 200000.33;
+  export let simbolo: string = "";
 
   let crecimiento: number = (valorActual / valorPrevio) * 100;
 </script>
 
 <div class="px-4 py-5 sm:p-6">
   <dt class="text-base font-normal text-gray-900">{titulo}</dt>
-  <dd class="mt-1 flex items-baseline justify-between md:block lg:flex">
-    <div class="flex items-baseline text-2xl font-semibold text-indigo-600">
-      {valorActual}
-      <span class="ml-2 text-sm font-medium text-gray-500"
-        >de {valorPrevio}</span
+  <dd
+    class="mt-1 flex items-baseline justify-between md:block md:justify-around xl:flex"
+  >
+    <div class="flex flex-col text-2xl font-semibold text-indigo-600">
+      <div class="flex">
+        {valorActual.toFixed(2)}
+        <span class="text-sm font-thin">
+          {simbolo}
+        </span>
+      </div>
+      <span class="text-sm font-medium text-gray-500"
+        >de {valorPrevio.toFixed(2)}{simbolo}</span
       >
     </div>
     {#if crecimiento > 0}
       <div
-        class="inline-flex items-baseline rounded-full px-2.5 py-0.5 text-sm font-medium bg-green-100 text-green-800 md:mt-2 lg:mt-0"
+        class="inline-flex items-baseline rounded-full px-2.5 py-0.5 text-sm font-medium bg-green-100 text-green-800 md:mt-2"
       >
         <svg
           class="-ml-1 mr-0.5 h-5 w-5 flex-shrink-0 self-center text-green-500"
@@ -34,11 +40,11 @@
           />
         </svg>
         <span class="sr-only"> Aumento de</span>
-        {crecimiento}%
+        {crecimiento.toFixed(2)}%
       </div>
     {:else}
       <div
-        class="inline-flex items-baseline rounded-full px-2.5 py-0.5 text-sm font-medium bg-red-100 text-red-800 md:mt-2 lg:mt-0"
+        class="inline-flex items-baseline rounded-full px-2.5 py-0.5 text-sm font-medium bg-red-100 text-red-800 md:mt-2"
       >
         <svg
           class="-ml-1 mr-0.5 h-5 w-5 flex-shrink-0 self-center text-red-500"
