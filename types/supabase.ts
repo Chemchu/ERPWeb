@@ -152,31 +152,31 @@ export interface Database {
         Row: {
           apellidos: string
           created_at: string
-          dni: string
+          dni: string | null
           email: string
           id: string
           nombre: string
-          rol: string
+          rol: string | null
           updated_at: string
         }
         Insert: {
           apellidos: string
           created_at?: string
-          dni: string
+          dni?: string | null
           email: string
           id?: string
           nombre: string
-          rol: string
+          rol?: string | null
           updated_at?: string
         }
         Update: {
           apellidos?: string
           created_at?: string
-          dni?: string
+          dni?: string | null
           email?: string
           id?: string
           nombre?: string
-          rol?: string
+          rol?: string | null
           updated_at?: string
         }
       }
@@ -536,6 +536,20 @@ export interface Database {
       [_ in never]: never
     }
     Functions: {
+      crear_producto: {
+        Args: {
+          nombre: string
+          familia: string
+          preciocompra: number
+          precio: number
+          iva: number
+          margen: number
+          cantidad: number
+          proveedorid: string
+          codigos_de_barra: string[]
+        }
+        Returns: string
+      }
       crear_venta: {
         Args: {
           venta: Database["public"]["CompositeTypes"]["venta_a_procesar"]

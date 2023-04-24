@@ -15,7 +15,7 @@
     <div class="flex flex-col text-2xl font-semibold text-indigo-600">
       <div class="flex">
         {valorActual.toFixed(2)}
-        <span class="text-sm font-thin">
+        <span class="flex items-center text-base font-thin">
           {simbolo}
         </span>
       </div>

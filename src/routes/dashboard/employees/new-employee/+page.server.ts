@@ -1,7 +1,7 @@
 import { fail } from "@sveltejs/kit";
 import { z } from "zod";
 
-const newEployeeSchema = z.object({
+const newEmployeeSchema = z.object({
   nombre: z
     .string()
     .trim()
@@ -31,7 +31,7 @@ export const actions = {
     }
 
     const formData = Object.fromEntries(await request.formData());
-    const employeeData = newEployeeSchema.safeParse(formData);
+    const employeeData = newEmployeeSchema.safeParse(formData);
 
     if (!employeeData.success) {
       const errors = employeeData.error.errors.map((error) => {

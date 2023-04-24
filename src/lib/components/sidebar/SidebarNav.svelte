@@ -102,7 +102,7 @@
     {#if currentOpened == "Dia a dia"}
       <div
         class="flex flex-col justify-center border-l ml-4 hover:border-gray-300"
-        transition:fade={{ duration: 300 }}
+        in:fade={{ duration: 300 }}
       >
         <a
           href="/dashboard/tpv"
@@ -224,7 +224,7 @@
     {#if currentOpened == "Terceros"}
       <div
         class="flex flex-col justify-center border-l ml-4 hover:border-gray-300"
-        transition:fade={{ duration: 300 }}
+        in:fade={{ duration: 300 }}
       >
         <a
           href="/dashboard/employees"
