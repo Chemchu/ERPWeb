@@ -35,7 +35,7 @@
   <label for={id} class="block text-sm font-medium leading-6 text-gray-900"
     >{titulo}</label
   >
-  <div class="relative mt-2">
+  <div class="relative">
     <input
       {id}
       {name}

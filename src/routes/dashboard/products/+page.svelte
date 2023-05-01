@@ -1,9 +1,8 @@
 <script lang="ts">
   import SlideOverProductForm from "$lib/components/productos/SlideOverProductForm.svelte";
   import ProductTable from "$lib/components/tables/ProductTable.svelte";
-  import type { LayoutData } from "../$types";
 
-  export let data: LayoutData;
+  export let data;
 
   let showForm = false;
 </script>
@@ -25,7 +24,15 @@
     >
   </div>
 </div>
-<ProductTable {data} />
+<ProductTable
+  {data}
+  familias={data.body?.data?.familias}
+  proveedores={data.body?.data?.proveedores}
+/>
 {#if showForm}
-  <SlideOverProductForm bind:showForm />
+  <SlideOverProductForm
+    bind:showForm
+    familias={data.body?.data?.familias}
+    proveedores={data.body?.data?.proveedores}
+  />
 {/if}

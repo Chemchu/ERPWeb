@@ -4,15 +4,16 @@
   import { BannerType } from "$lib/customEnums";
   import { enhance } from "$app/forms";
   import SimpleCombobox from "../combobox/SimpleCombobox.svelte";
-  import type { Proveedor } from "$lib/types/types";
+  import type { Producto, Proveedor } from "$lib/types/types";
 
-  export let showForm: boolean = false;
+  export let showDetail: boolean = false;
+  export let producto: Producto;
   export let familias: string[] = [];
   export let proveedores: Proveedor[] = [];
 
-  let precioCompra: number = 0;
-  let precioVenta: number = 0;
-  let iva: number = 10;
+  let precioCompra: number = producto.precio_compra;
+  let precioVenta: number = producto.precio_venta;
+  let iva: number = producto.iva;
 
   $: margen = (): number => {
     const precioCompraConIva =
@@ -59,7 +60,7 @@
       class="absolute inset-0 overflow-hidden"
       on:click={(e) => {
         e.stopPropagation();
-        showForm = false;
+        showDetail = false;
       }}
       on:keydown={() => {}}
     >
@@ -89,10 +90,10 @@
                       class="text-base font-semibold leading-6 text-gray-900"
                       id="slide-over-title"
                     >
-                      Nuevo producto
+                      {producto.nombre}
                     </h2>
                     <p class="text-sm text-gray-500">
-                      Agrega información sobre el producto que deseas agregar.
+                      {producto.id}
                     </p>
                   </div>
                   <div class="flex h-7 items-center">
@@ -100,7 +101,7 @@
                       type="button"
                       class="text-gray-400 hover:text-gray-500"
                       on:click={() => {
-                        showForm = false;
+                        showDetail = false;
                       }}
                     >
                       <span class="sr-only">Cerrar panel</span>
@@ -143,6 +144,7 @@
                       type="text"
                       name="nombreProducto"
                       id="nombreProducto"
+                      value={producto.nombre}
                       autocomplete="off"
                       class="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
                     />
@@ -301,6 +303,7 @@
                       type="text"
                       name="cantidad"
                       id="cantidad"
+                      value={producto.cantidad}
                       class="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
                     />
                   </div>
@@ -315,12 +318,12 @@
                   <button
                     type="button"
                     class="rounded-md bg-white px-3 py-2 text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50"
-                    on:click={() => (showForm = !showForm)}>Cancelar</button
+                    on:click={() => (showDetail = !showDetail)}>Cancelar</button
                   >
                   <button
                     type="submit"
                     class="inline-flex justify-center rounded-md bg-indigo-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
-                    >Crear</button
+                    >Actualizar</button
                   >
                 </div>
               </div>

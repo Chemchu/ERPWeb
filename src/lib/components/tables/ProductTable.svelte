@@ -1,12 +1,17 @@
 <script lang="ts">
   import { onMount } from "svelte";
-  import type { Producto } from "$lib/types/types";
-  import type { LayoutData } from "../../../routes/$types";
+  import type { Producto, Proveedor } from "$lib/types/types";
+  import type { PageData } from "../../../routes/$types";
+  import { goto } from "$app/navigation";
+  import SlideOverProductDetail from "../productos/SlideOverProductDetail.svelte";
 
-  export let data: LayoutData;
+  export let data: PageData;
   export let paginaSize: number = 10;
   export let pagina = 1;
+  export let proveedores: Proveedor[] = [];
+  export let familias: string[] = [];
 
+  let showDetail = false;
   let productos: Producto[] = [];
 
   onMount(async () => {
@@ -14,7 +19,6 @@
       .from("productos")
       .select("*")
       .range(pagina * paginaSize - paginaSize, pagina * paginaSize);
-
     productos = productosData as Producto[];
   });
 </script>
@@ -55,7 +59,13 @@
         </thead>
         <tbody>
           {#each productos as producto}
-            <tr>
+            <tr
+              class="hover:bg-gray-100 cursor-pointer"
+              on:click={(e) => {
+                e.stopPropagation();
+                goto(`/dashboard/products/${producto.id}`);
+              }}
+            >
               <td
                 class="whitespace-nowrap border-b border-gray-200 py-4 pl-4 pr-3 text-sm font-medium text-gray-900 sm:pl-6 lg:pl-8"
                 >{producto.nombre}</td
@@ -75,12 +85,24 @@
               <td
                 class="relative whitespace-nowrap border-b border-gray-200 py-4 pr-4 pl-3 text-right text-sm font-medium sm:pr-8 lg:pr-8"
               >
-                <a
-                  href={`/dashboard/products/${producto.id}`}
+                <button
                   class="text-indigo-600 hover:text-indigo-900"
-                  >Editar<span class="sr-only">, {producto.nombre}</span></a
+                  on:click={(e) => {
+                    e.stopPropagation();
+                    showDetail = true;
+                  }}
+                  >Editar<span class="sr-only">, {producto.nombre}</span
+                  ></button
                 >
               </td>
+              {#if showDetail}
+                <SlideOverProductDetail
+                  bind:showDetail
+                  {producto}
+                  {familias}
+                  {proveedores}
+                />
+              {/if}
             </tr>
           {/each}
         </tbody>
