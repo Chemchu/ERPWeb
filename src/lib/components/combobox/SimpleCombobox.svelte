@@ -1,11 +1,11 @@
 <script lang="ts">
   export let titulo: string = "";
+  export let defaultItem: string = "";
   export let items: string[] = [];
   export let id: string = "combobox";
   export let name: string = "combobox";
 
   let isOpen = false;
-  let value: string = "";
   let renderedItems = items;
 
   $: if (!isOpen) {
@@ -15,18 +15,20 @@
   }
 
   $: renderedItems = items.filter((item) => {
-    return item.toLowerCase().startsWith(value.toLowerCase());
+    return item.toLowerCase().startsWith(defaultItem.toLowerCase());
   });
 
   const AutoSelectItem = () => {
-    const itemAlreadySelected = renderedItems.find((item) => item == value);
+    const itemAlreadySelected = renderedItems.find(
+      (item) => item == defaultItem
+    );
     if (itemAlreadySelected) {
       return;
     }
     if (renderedItems.length > 0) {
-      value = renderedItems[0];
+      defaultItem = renderedItems[0];
     } else {
-      value = items[0];
+      defaultItem = items[0];
     }
   };
 </script>
@@ -45,11 +47,11 @@
       aria-controls="options"
       aria-expanded="false"
       autocomplete="off"
+      bind:value={defaultItem}
       on:input={() => {
         isOpen = true;
       }}
       on:blur={() => (isOpen = false)}
-      bind:value
     />
     <button
       type="button"
@@ -78,29 +80,30 @@
         {#each renderedItems as item, index}
           <li
             class={"relative cursor-default select-none py-2 pl-8 pr-4" +
-              (item == value
+              (item == defaultItem
                 ? " text-white bg-indigo-600"
                 : " text-gray-900 cursor-pointer hover:bg-gray-100")}
             id={"option-" + index}
             role="option"
-            aria-selected={item == value}
+            aria-selected={item == defaultItem}
             tabindex="-1"
             on:mousedown={() => {
-              if (item != value) {
-                value = item;
+              if (item != defaultItem) {
+                defaultItem = item;
                 isOpen = false;
               }
             }}
           >
             <span
-              class={"block truncate" + item == value ? "font-semibold" : ""}
-              >{item}</span
+              class={"block truncate" + item == defaultItem
+                ? "font-semibold"
+                : ""}>{item}</span
             >
             <span
               class={"absolute inset-y-0 left-0 flex items-center pl-1.5" +
-                (item == value ? " text-white" : " text-indigo-600")}
+                (item == defaultItem ? " text-white" : " text-indigo-600")}
             >
-              {#if item == value}
+              {#if item == defaultItem}
                 <svg
                   class="h-5 w-5"
                   viewBox="0 0 20 20"

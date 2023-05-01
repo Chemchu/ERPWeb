@@ -5,6 +5,7 @@
   import { enhance } from "$app/forms";
   import SimpleCombobox from "../combobox/SimpleCombobox.svelte";
   import type { Proveedor } from "$lib/types/types";
+  import BarcodeInput from "../barcode/BarcodeInput.svelte";
 
   export let showForm: boolean = false;
   export let familias: string[] = [];
@@ -47,7 +48,7 @@
 </script>
 
 <div
-  class="relative z-10"
+  class="relative z-10 cursor-default"
   aria-labelledby="slide-over-title"
   role="dialog"
   aria-modal="true"
@@ -259,7 +260,7 @@
                       canBeClosed={false}
                       title={`Margen de ${margen().toFixed(2)}%`}
                       subtitle={bannerType()[1] +
-                        ". El Beneficio es de " +
+                        ". El beneficio es de " +
                         ganancia().toFixed(2) +
                         "€ por cada unidad vendida."}
                       bannerType={bannerType()[0]}
@@ -277,13 +278,7 @@
                     >
                   </div>
                   <div class="sm:col-span-2">
-                    <input
-                      type="text"
-                      name="codigosDeBarra"
-                      id="codigosDeBarra"
-                      autocomplete="off"
-                      class="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
-                    />
+                    <BarcodeInput id="codigoDeBarras" name="codigoDeBarras" />
                   </div>
                 </div>
                 <div
