@@ -21,13 +21,12 @@
     <input
       class="appearance-none outline-none border-0 w-full text-gray-900 placeholder-gray-400 focus:ring-0"
       type="text"
-      {name}
-      {id}
       bind:value
       autocomplete="off"
     />
     <button
       class="pr-2"
+      type="button"
       on:click={() => {
         if (!value) return;
 
@@ -54,15 +53,21 @@
   </div>
   {#if eans.length > 0}
     <div class="overflow-hidden rounded-md border border-gray-300 bg-white">
-      <ul role="list" class="divide-y divide-gray-300">
-        {#each eans as ean}
-          <li class="flex px-2 py-2 gap-1 items-center">
+      <ul class="divide-y divide-gray-300">
+        {#each eans as ean, i}
+          <li class="flex px-0.5 py-0.5 gap-1 items-center">
             <!-- Your content -->
             {#if producto}
               <Etiqueta {ean} {producto} />
             {/if}
-            <span class="w-full pl-1">{ean}</span>
-            <button on:click={() => removeEan(ean)}>
+            <input
+              class="appearance-none outline-none border-0 w-full text-gray-900 placeholder-gray-400 focus:ring-0"
+              id={`${id}[${i}].ean`}
+              name={`${name}[${i}]`}
+              type="text"
+              bind:value={ean}
+            />
+            <button class="pr-2" on:click={() => removeEan(ean)}>
               <svg
                 xmlns="http://www.w3.org/2000/svg"
                 fill="none"

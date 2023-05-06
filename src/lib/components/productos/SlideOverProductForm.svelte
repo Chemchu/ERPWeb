@@ -278,7 +278,7 @@
                     >
                   </div>
                   <div class="sm:col-span-2">
-                    <BarcodeInput id="codigoDeBarras" name="codigoDeBarras" />
+                    <BarcodeInput id="codigosDeBarras" name="codigosDeBarras" />
                   </div>
                 </div>
                 <div

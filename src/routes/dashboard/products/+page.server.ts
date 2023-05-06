@@ -1,19 +1,27 @@
 import { fail } from "@sveltejs/kit";
 import { z } from "zod";
 
-const newProductSchema = z.object({
-  nombre: z
+const codigosDeBarraSchema = z.array(
+  z
+    .string()
+    .array()
+    .min(1, { message: "Debe de haber al menos 1 codigo de barras" })
+);
+
+const productSchema = z.object({
+  nombreProducto: z
     .string()
     .trim()
     .min(3, { message: "El tamanyo minimo es de 3 caracteres" }),
-  familia: z
+  familiaProducto: z
     .string()
     .trim()
     .min(3, { message: "El tamanyo minimo es de 3 caracteres" }),
   proveedorId: z
     .string()
     .trim()
-    .uuid({ message: "El id del proveedor debe ser un uuid" }),
+    .uuid({ message: "El id del proveedor debe ser un uuid" })
+    .optional(),
   precioCompra: z
     .number()
     .min(0, { message: "El precio de compra no puede ser inferior a 0" }),
@@ -24,12 +32,6 @@ const newProductSchema = z.object({
     .number()
     .min(0, { message: "El IVA no puede ser inferior al 0%" })
     .max(100, { message: "El IVA no puede ser superior al 100%" }),
-  codigosDeBarra: z.array(
-    z
-      .string()
-      .trim()
-      .min(1, { message: "Debe de haber al menos 1 codigo de barras" })
-  ),
   cantidad: z
     .number()
     .min(0, { message: "La cantidad no puede ser inferior a 0" }),
@@ -50,8 +52,21 @@ export const actions = {
       };
     }
 
-    const formData = Object.fromEntries(await request.formData());
-    const productData = newProductSchema.safeParse(formData);
+    const formData = await request.formData();
+    const data = Object.fromEntries(formData.entries());
+
+    const entries = [...formData.entries()];
+    const codigosDeBarra: string[] = [];
+    for (const [key, value] of entries) {
+      if (key.startsWith("codigosDeBarras[")) {
+        const index = Number(key.match(/\[(\d+)\]/)![1]);
+        codigosDeBarra[index] = value as string;
+      }
+    }
+
+    console.log(data);
+
+    let productData = productSchema.safeParse(data);
 
     if (!productData.success) {
       const errors = productData.error.errors.map((error) => {
@@ -61,17 +76,20 @@ export const actions = {
         };
       });
 
+      console.log(errors);
       return fail(400, { error: true, errors });
     }
 
+    console.log(productData.data);
+
     const { error } = await locals.supabase.rpc("crear_producto", {
-      nombre: productData.data.nombre,
-      familia: productData.data.familia,
-      proveedorid: productData.data.proveedorId,
+      nombre: productData.data.nombreProducto,
+      familia: productData.data.familiaProducto,
+      proveedorid: productData.data.proveedorId || undefined,
       preciocompra: productData.data.precioCompra,
       precio: productData.data.precioVenta,
       iva: productData.data.iva,
-      codigos_de_barra: productData.data.codigosDeBarra,
+      codigos_de_barra: codigosDeBarra,
       cantidad: productData.data.cantidad,
       margen: productData.data.margen,
     });

@@ -40,12 +40,14 @@
           <h1 class="text-2xl font-bold text-gray-900">
             {data.props.empleado.nombre}
           </h1>
-          <p class="text-sm font-medium text-gray-500">
-            Trabajando como {data.props.empleado.rol.toLocaleLowerCase()} desde
-            <time datetime="2020-08-25"
-              >{new Date(data.props.empleado.created_at).toLocaleDateString()}
-            </time>
-          </p>
+          {#if data.props.empleado.rol}
+            <p class="text-sm font-medium text-gray-500">
+              Trabajando como {data.props.empleado.rol.toLocaleLowerCase()} desde
+              <time datetime="2020-08-25"
+                >{new Date(data.props.empleado.created_at).toLocaleDateString()}
+              </time>
+            </p>
+          {/if}
         </div>
       </div>
     </div>

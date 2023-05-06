@@ -284,8 +284,8 @@
                   </div>
                   <div class="sm:col-span-2">
                     <BarcodeInput
-                      id="codigoDeBarras"
-                      name="codigoDeBarras"
+                      id="codigosDeBarras"
+                      name="codigosDeBarras"
                       {producto}
                     />
                   </div>

@@ -27,12 +27,12 @@
   your content from being obscured when the user scrolls to the bottom of the page.
 -->
 <div
-  class="pointer-events-none sm:flex sm:justify-center sm:px-6 sm:pb-5 lg:px-8"
+  class="pointer-events-none sm:flex sm:justify-center w-full pt-2.5 sm:pt-0"
 >
   <div
-    class={`pointer-events-auto flex items-center justify-between gap-x-6 ${bannerColor()} px-6 py-2.5 sm:rounded-xl sm:py-3 sm:pl-4 sm:pr-3.5`}
+    class={`pointer-events-auto flex items-center justify-between w-full gap-x-6 ${bannerColor()} px-6 py-2.5 sm:py-3 sm:pl-4 sm:pr-3.5`}
   >
-    <p class="text-sm leading-6 text-white">
+    <p class="text-sm leading-6 text-white text-center w-full">
       <span>
         <strong class="font-semibold">{title}</strong><svg
           viewBox="0 0 2 2"

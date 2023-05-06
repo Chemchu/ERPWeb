@@ -545,8 +545,8 @@ export interface Database {
           iva: number
           margen: number
           cantidad: number
-          proveedorid: string
           codigos_de_barra: string[]
+          proveedorid?: string
         }
         Returns: string
       }
