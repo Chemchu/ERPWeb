@@ -57,18 +57,18 @@
     <div class="overflow-hidden rounded-md border border-gray-300 bg-white">
       <ul class="divide-y divide-gray-300">
         {#each codigosDeBarra as ean, i}
-          <li class="flex px-0.5 py-0.5 gap-1 items-center">
+          <li class="flex px-0.5 py-0.5 gap-2 items-center">
             <!-- Your content -->
-            {#if producto}
-              <Etiqueta {ean} {producto} />
-            {/if}
             <input
               class="appearance-none outline-none border-0 w-full text-gray-900 placeholder-gray-400 focus:ring-0"
-              id={`${id}[${i}].ean`}
+              id={`${id}[${i + 1}].ean`}
               name={`${name}[${i + 1}]`}
               type="text"
               bind:value={ean}
             />
+            {#if producto}
+              <Etiqueta {ean} {producto} />
+            {/if}
             <button class="pr-2" on:click={() => removeEan(ean)}>
               <svg
                 xmlns="http://www.w3.org/2000/svg"

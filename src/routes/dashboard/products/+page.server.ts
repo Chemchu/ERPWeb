@@ -86,13 +86,23 @@ export const actions = {
     const codigosDeBarra: string[] = [];
     for (const [key, value] of entries) {
       if (key.startsWith("codigosDeBarras[")) {
-        const index = Number(key.match(/\[(\d+)\]/)![1]);
-        codigosDeBarra[index] = value as string;
+        try {
+          const index = Number(key.match(/\[(\d+)\]/)![1]);
+          if (index == 0) {
+            codigosDeBarra[0] = (value as string) || "";
+          } else {
+            codigosDeBarra[index] = (value as string) || "";
+          }
+        } catch (e) {
+          continue;
+        }
       }
     }
 
     let productData = productSchema.safeParse(data);
-    let codigosDeBarraData = codigosDeBarraSchema.safeParse(codigosDeBarra);
+    let codigosDeBarraData = codigosDeBarraSchema.safeParse(
+      codigosDeBarra.filter((codigo) => codigo !== "")
+    );
 
     if (!productData.success) {
       const errors = productData.error.errors.map((error) => {

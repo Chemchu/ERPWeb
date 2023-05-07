@@ -43,7 +43,7 @@
 </div>
 
 <!-- Add a button to trigger the print method -->
-<button on:click={print}>
+<button type="button" on:click={print}>
   <svg
     xmlns="http://www.w3.org/2000/svg"
     fill="none"
