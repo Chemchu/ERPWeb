@@ -9,6 +9,7 @@
   import type { PageData } from "../$types";
   import AutoLogout from "$lib/components/autoLogout/AutoLogout.svelte";
   import PageTransition from "$lib/components/pageTransition/PageTransition.svelte";
+  import Toast from "$lib/components/notifications/Toast.svelte";
 
   export let data: PageData;
 
@@ -125,6 +126,7 @@
       </div>
       <div class="mt-6 px-4 sm:px-6 lg:px-8">
         <PageTransition {pathname}>
+          <Toast />
           <slot />
         </PageTransition>
       </div>

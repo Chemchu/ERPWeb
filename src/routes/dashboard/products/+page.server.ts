@@ -1,4 +1,4 @@
-import { fail } from "@sveltejs/kit";
+import { fail, json } from "@sveltejs/kit";
 import { z } from "zod";
 
 const codigosDeBarraSchema = z.array(
@@ -102,7 +102,6 @@ export const actions = {
         };
       });
 
-      console.log(errors);
       return fail(400, { error: true, errors });
     }
 
@@ -114,7 +113,6 @@ export const actions = {
         };
       });
 
-      console.log(errors);
       return fail(400, { error: true, errors });
     }
 
@@ -150,12 +148,10 @@ export const actions = {
 export const load = async ({ locals }) => {
   const session = await locals.supabase.auth.getSession();
   if (!session.data.session) {
-    return {
-      status: 401,
-      body: {
-        message: "Unauthorized",
-      },
-    };
+    return fail(401, {
+      error: true,
+      message: "Unauthorized",
+    });
   }
 
   const { data: proveedorData, error: proveedorError } = await locals.supabase
@@ -165,10 +161,8 @@ export const load = async ({ locals }) => {
   if (proveedorError) {
     console.log(proveedorError);
     return fail(400, {
-      body: {
-        error: true,
-        message: proveedorError.message,
-      },
+      error: true,
+      message: proveedorError.message,
     });
   }
 
@@ -184,10 +178,8 @@ export const load = async ({ locals }) => {
   return {
     status: 200,
     body: {
-      data: {
-        proveedores: proveedorData,
-        familias: familiaData,
-      },
+      proveedores: proveedorData,
+      familias: familiaData,
     },
   };
 };

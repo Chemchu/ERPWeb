@@ -5,17 +5,37 @@
   import { enhance } from "$app/forms";
   import SimpleCombobox from "../combobox/SimpleCombobox.svelte";
   import type { Producto, Proveedor } from "$lib/types/types";
-  import Etiqueta from "../printable/Etiqueta.svelte";
   import BarcodeInput from "../barcode/BarcodeInput.svelte";
+  import { onMount } from "svelte";
+  import type { PageData } from "../../../routes/$types";
+  import { tableProductsStore } from "$lib/stores/tableProducts";
+
+  export let data: PageData;
 
   export let showDetail: boolean = false;
   export let producto: Producto;
   export let familias: string[] = [];
   export let proveedores: Proveedor[] = [];
 
+  let codigosDeBarra: string[] = [];
   let precioCompra: number = producto.precio_compra;
   let precioVenta: number = producto.precio_venta;
   let iva: number = producto.iva;
+
+  onMount(async () => {
+    const response = await data.supabase
+      .from("codigos_de_barra")
+      .select("*")
+      .eq("producto_id", producto.id);
+
+    if (response.error) {
+      console.log(response.error);
+      codigosDeBarra = [];
+      return;
+    }
+
+    codigosDeBarra = response.data?.map((c) => c.ean) || [];
+  });
 
   $: margen = (): number => {
     const precioCompraConIva =
@@ -46,6 +66,20 @@
       Number(precioCompra) + Number(precioCompra) * (Number(iva) / 100);
 
     return Number(precioVenta) - precioCompraConIva;
+  };
+
+  const deleteProduct = async () => {
+    const response = await data.supabase.rpc("eliminar_producto", {
+      productoid: producto.id,
+    });
+
+    if (response.error) {
+      console.log(response.error);
+      return;
+    }
+
+    tableProductsStore.delete(producto.id);
+    showDetail = false;
   };
 </script>
 
@@ -287,6 +321,7 @@
                       id="codigosDeBarras"
                       name="codigosDeBarras"
                       {producto}
+                      {codigosDeBarra}
                     />
                   </div>
                 </div>
@@ -321,6 +356,11 @@
                     type="button"
                     class="rounded-md bg-white px-3 py-2 text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50"
                     on:click={() => (showDetail = !showDetail)}>Cancelar</button
+                  >
+                  <button
+                    type="button"
+                    class="inline-flex justify-center rounded-md bg-red-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-red-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-red-600"
+                    on:click={deleteProduct}>Eliminar</button
                   >
                   <button
                     type="submit"

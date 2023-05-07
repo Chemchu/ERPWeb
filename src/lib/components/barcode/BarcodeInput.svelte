@@ -5,12 +5,12 @@
   export let name: string = "";
   export let id: string = "";
   export let producto: Producto | undefined = undefined;
+  export let codigosDeBarra: string[] = [];
 
   let value = "";
-  let eans: string[] = [];
 
   const removeEan = (ean: string) => {
-    eans = eans.filter((e) => e !== ean);
+    codigosDeBarra = codigosDeBarra.filter((e) => e !== ean);
   };
 </script>
 
@@ -19,6 +19,8 @@
     class="flex px-0.5 w-full rounded-md border-0 py-0.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
   >
     <input
+      {id}
+      name={`${name}[0]`}
       class="appearance-none outline-none border-0 w-full text-gray-900 placeholder-gray-400 focus:ring-0"
       type="text"
       bind:value
@@ -30,8 +32,8 @@
       on:click={() => {
         if (!value) return;
 
-        eans.push(value);
-        eans = eans;
+        codigosDeBarra.push(value);
+        codigosDeBarra = codigosDeBarra;
         value = "";
       }}
     >
@@ -51,10 +53,10 @@
       </svg>
     </button>
   </div>
-  {#if eans.length > 0}
+  {#if codigosDeBarra.length > 0}
     <div class="overflow-hidden rounded-md border border-gray-300 bg-white">
       <ul class="divide-y divide-gray-300">
-        {#each eans as ean, i}
+        {#each codigosDeBarra as ean, i}
           <li class="flex px-0.5 py-0.5 gap-1 items-center">
             <!-- Your content -->
             {#if producto}
@@ -63,7 +65,7 @@
             <input
               class="appearance-none outline-none border-0 w-full text-gray-900 placeholder-gray-400 focus:ring-0"
               id={`${id}[${i}].ean`}
-              name={`${name}[${i}]`}
+              name={`${name}[${i + 1}]`}
               type="text"
               bind:value={ean}
             />

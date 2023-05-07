@@ -1,8 +1,32 @@
 <script lang="ts">
   import SlideOverProductForm from "$lib/components/productos/SlideOverProductForm.svelte";
   import ProductTable from "$lib/components/tables/ProductTable.svelte";
+  import { toastNotificationStore } from "$lib/stores/toastNotifications.js";
+  import type { PageData } from "./$types.js";
 
-  export let data;
+  export let data: PageData;
+  export let form;
+
+  $: {
+    if (form?.errors) {
+      form.errors.forEach((error) => {
+        toastNotificationStore.add({
+          type: "error",
+          title: `Campo inválido`,
+          message: `${error.message}`,
+        });
+      });
+    }
+
+    if (!form?.error && form?.error !== undefined) {
+      toastNotificationStore.add({
+        type: "success",
+        title: `Producto creado`,
+        message: form?.message || "El producto se ha creado correctamente",
+      });
+      showForm = false;
+    }
+  }
 
   let showForm = false;
 </script>
@@ -26,13 +50,13 @@
 </div>
 <ProductTable
   {data}
-  familias={data.body?.data?.familias}
-  proveedores={data.body?.data?.proveedores}
+  familias={data.body?.familias}
+  proveedores={data.body?.proveedores}
 />
 {#if showForm}
   <SlideOverProductForm
     bind:showForm
-    familias={data.body?.data?.familias}
-    proveedores={data.body?.data?.proveedores}
+    familias={data.body?.familias}
+    proveedores={data.body?.proveedores}
   />
 {/if}

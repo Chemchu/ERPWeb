@@ -4,6 +4,7 @@
   import type { PageData } from "../../../routes/$types";
   import { goto } from "$app/navigation";
   import SlideOverProductDetail from "../productos/SlideOverProductDetail.svelte";
+  import { tableProductsStore } from "$lib/stores/tableProducts";
 
   export let data: PageData;
   export let paginaSize: number = 10;
@@ -12,15 +13,19 @@
   export let familias: string[] = [];
 
   let showDetail = false;
-  let productos: Producto[] = [];
+  let currentDetailProduct: Producto;
 
   onMount(async () => {
+    await fetchProductos();
+  });
+
+  const fetchProductos = async () => {
     const { data: productosData } = await data.supabase
       .from("productos")
       .select("*")
       .range(pagina * paginaSize - paginaSize, pagina * paginaSize);
-    productos = productosData as Producto[];
-  });
+    tableProductsStore.set(productosData as Producto[]);
+  };
 </script>
 
 <div class="mt-8 flow-root">
@@ -58,7 +63,7 @@
           </tr>
         </thead>
         <tbody>
-          {#each productos as producto}
+          {#each $tableProductsStore as producto}
             <tr
               class="hover:bg-gray-100 cursor-pointer"
               on:click={(e) => {
@@ -90,21 +95,23 @@
                   on:click={(e) => {
                     e.stopPropagation();
                     showDetail = true;
+                    currentDetailProduct = producto;
                   }}
                   >Editar<span class="sr-only">, {producto.nombre}</span
                   ></button
                 >
               </td>
-              {#if showDetail}
-                <SlideOverProductDetail
-                  bind:showDetail
-                  {producto}
-                  {familias}
-                  {proveedores}
-                />
-              {/if}
             </tr>
           {/each}
+          {#if showDetail}
+            <SlideOverProductDetail
+              bind:showDetail
+              {data}
+              producto={currentDetailProduct}
+              {familias}
+              {proveedores}
+            />
+          {/if}
         </tbody>
       </table>
     </div>
