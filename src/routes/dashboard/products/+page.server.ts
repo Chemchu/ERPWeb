@@ -2,10 +2,7 @@ import { fail } from "@sveltejs/kit";
 import { z } from "zod";
 
 const codigosDeBarraSchema = z.array(
-  z
-    .string()
-    .array()
-    .min(1, { message: "Debe de haber al menos 1 codigo de barras" })
+  z.string().min(1, { message: "Debe de haber al menos 1 codigo de barras" })
 );
 
 const productSchema = z.object({
@@ -22,23 +19,53 @@ const productSchema = z.object({
     .trim()
     .uuid({ message: "El id del proveedor debe ser un uuid" })
     .optional(),
-  precioCompra: z
-    .number()
-    .min(0, { message: "El precio de compra no puede ser inferior a 0" }),
-  precioVenta: z
-    .number()
-    .min(0, { message: "El precio de venta no puede ser inferior a 0" }),
-  iva: z
-    .number()
-    .min(0, { message: "El IVA no puede ser inferior al 0%" })
-    .max(100, { message: "El IVA no puede ser superior al 100%" }),
-  cantidad: z
-    .number()
-    .min(0, { message: "La cantidad no puede ser inferior a 0" }),
-  margen: z
-    .number()
-    .min(0, { message: "El margen no puede ser inferior al 0%" }),
+  precioCompra: z.preprocess(
+    Number,
+    z
+      .number()
+      .refine((precioCompra) => !Number.isNaN(precioCompra), {
+        message: "El precio de compra debe ser un numero",
+      })
+      .refine((precioCompra) => Number(precioCompra) > 0, {
+        message: "El precio de compra debe ser superior a 0",
+      })
+  ),
+  precioVenta: z.preprocess(
+    Number,
+    z
+      .number()
+      .refine((precioVenta) => !Number.isNaN(precioVenta), {
+        message: "El precio de venta debe ser un numero",
+      })
+      .refine((precioVenta) => Number(precioVenta) > 0, {
+        message: "El precio de venta debe ser superior a 0",
+      })
+  ),
+  iva: z.preprocess(
+    Number,
+    z
+      .number()
+      .min(0, { message: "El IVA no puede ser inferior al 0%" })
+      .max(100, { message: "El IVA no puede ser superior al 100%" })
+  ),
+  cantidad: z.preprocess(
+    Number,
+    z.number().min(0, { message: "La cantidad no puede ser inferior a 0" })
+  ),
 });
+
+const margen = (
+  precioCompra: number,
+  precioVenta: number,
+  iva: number
+): number => {
+  const precioCompraConIva =
+    Number(precioCompra) + Number(precioCompra) * (Number(iva) / 100);
+
+  return (
+    ((Number(precioVenta) - precioCompraConIva) / precioCompraConIva) * 100 || 0
+  );
+};
 
 export const actions = {
   createProduct: async ({ request, locals }) => {
@@ -64,9 +91,8 @@ export const actions = {
       }
     }
 
-    console.log(data);
-
     let productData = productSchema.safeParse(data);
+    let codigosDeBarraData = codigosDeBarraSchema.safeParse(codigosDeBarra);
 
     if (!productData.success) {
       const errors = productData.error.errors.map((error) => {
@@ -80,18 +106,32 @@ export const actions = {
       return fail(400, { error: true, errors });
     }
 
-    console.log(productData.data);
+    if (!codigosDeBarraData.success) {
+      const errors = codigosDeBarraData.error.errors.map((error) => {
+        return {
+          field: error.path[0],
+          message: error.message,
+        };
+      });
+
+      console.log(errors);
+      return fail(400, { error: true, errors });
+    }
 
     const { error } = await locals.supabase.rpc("crear_producto", {
       nombre: productData.data.nombreProducto,
       familia: productData.data.familiaProducto,
-      proveedorid: productData.data.proveedorId || undefined,
+      proveedorid: productData.data.proveedorId,
       preciocompra: productData.data.precioCompra,
       precio: productData.data.precioVenta,
       iva: productData.data.iva,
-      codigos_de_barra: codigosDeBarra,
+      codigos_de_barra: codigosDeBarraData.data,
       cantidad: productData.data.cantidad,
-      margen: productData.data.margen,
+      margen: margen(
+        productData.data.precioCompra,
+        productData.data.precioVenta,
+        productData.data.iva
+      ),
     });
 
     if (error) {
