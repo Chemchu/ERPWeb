@@ -1,4 +1,4 @@
-import { fail } from "@sveltejs/kit";
+import { getPaises } from "$lib/functions/backendFunctions.js";
 
 export const load = async ({ locals }) => {
   const session = await locals.supabase.auth.getSession();
@@ -11,18 +11,13 @@ export const load = async ({ locals }) => {
     };
   }
 
-  const { data, error } = await locals.supabase.rpc("get_pais_enum_values");
-
-  if (error) {
-    console.log(error);
-    return fail(400, { body: { error: true, message: error.message } });
-  }
+  const paises = await getPaises(locals.supabase);
 
   return {
     status: 200,
     body: {
       data: {
-        paises: data,
+        paises: paises,
       },
     },
   };

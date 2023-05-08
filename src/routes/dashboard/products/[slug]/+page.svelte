@@ -4,13 +4,14 @@
   import BarcodeInput from "$lib/components/barcode/BarcodeInput.svelte";
   import SimpleCombobox from "$lib/components/combobox/SimpleCombobox.svelte";
   import { BannerType } from "$lib/customEnums.js";
+  import { deleteProduct } from "$lib/functions/backendFunctions.js";
   import { onMount } from "svelte";
 
   export let data;
 
-  let precioCompra: number = data.props.producto.precio_compra;
-  let precioVenta: number = data.props.producto.precio_venta;
-  let iva: number = data.props.producto.iva;
+  let precioCompra: number = data.producto.precio_compra;
+  let precioVenta: number = data.producto.precio_venta;
+  let iva: number = data.producto.iva;
 
   let history: History;
 
@@ -62,19 +63,17 @@
 >
   <div class="flex-1">
     <!-- Header -->
-    <div>
-      <div class="flex items-start justify-between space-x-3">
-        <div class="space-y-1">
-          <h2
-            class="text-base font-semibold leading-6 text-gray-900"
-            id="slide-over-title"
-          >
-            {data.props.producto.nombre}
-          </h2>
-          <p class="text-sm text-gray-500">
-            {data.props.producto.id}
-          </p>
-        </div>
+    <div class="bg-gray-50 px-4 py-6 sm:px-6">
+      <div class="space-y-1">
+        <h2
+          class="text-base font-semibold leading-6 text-gray-900"
+          id="slide-over-title"
+        >
+          {data.producto.nombre}
+        </h2>
+        <p class="text-sm text-gray-500">
+          {data.producto.id}
+        </p>
       </div>
     </div>
 
@@ -98,7 +97,7 @@
             type="text"
             name="nombreProducto"
             id="nombreProducto"
-            value={data.props.producto.nombre}
+            value={data.producto.nombre}
             autocomplete="off"
             class="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
           />
@@ -120,8 +119,8 @@
           <SimpleCombobox
             id="familiaProducto"
             name="familiaProducto"
-            defaultItem={data.props.producto.familia || ""}
-            items={data.props.familias}
+            defaultItem={data.producto.familia || ""}
+            items={data.familias}
           />
         </div>
       </div>
@@ -136,7 +135,7 @@
           >
         </div>
         <div class="sm:col-span-2">
-          {#if data.props.proveedores.length == 0}
+          {#if data.proveedores.length == 0}
             <span class="text-gray-500 italic text-sm"
               >No hay registro de proveedores</span
             >
@@ -144,8 +143,8 @@
             <SimpleCombobox
               id="provedor"
               name="proveedor"
-              defaultItem={data.props.producto.proveedor_id || ""}
-              items={data.props.proveedores.map((p) => p.nombre)}
+              defaultItem={data.producto.proveedor_id || ""}
+              items={data.proveedores.map((p) => p.nombre)}
             />
           {/if}
         </div>
@@ -236,9 +235,10 @@
         </div>
         <div class="sm:col-span-2">
           <BarcodeInput
-            id="codigoDeBarras"
-            name="codigoDeBarras"
-            producto={data.props.producto}
+            id="codigosDeBarras"
+            name="codigosDeBarras"
+            producto={data.producto}
+            codigosDeBarra={data.codigosDeBarra}
           />
         </div>
       </div>
@@ -257,7 +257,7 @@
             type="text"
             name="cantidad"
             id="cantidad"
-            value={data.props.producto.cantidad}
+            value={data.producto.cantidad}
             class="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
           />
         </div>
@@ -270,7 +270,16 @@
         <button
           type="button"
           class="rounded-md bg-white px-3 py-2 text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50"
-          on:click={goBack}>Cancelar</button
+          on:click={() => {
+            goBack();
+          }}>Volver</button
+        >
+        <button
+          type="button"
+          class="inline-flex justify-center rounded-md bg-red-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-red-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-red-600"
+          on:click={() => {
+            deleteProduct(data.supabase, data.producto);
+          }}>Eliminar</button
         >
         <button
           type="submit"

@@ -1,3 +1,7 @@
+import {
+  getFamilias,
+  getProveedores,
+} from "$lib/functions/backendFunctions.js";
 import { fail, json } from "@sveltejs/kit";
 import { z } from "zod";
 
@@ -164,32 +168,14 @@ export const load = async ({ locals }) => {
     });
   }
 
-  const { data: proveedorData, error: proveedorError } = await locals.supabase
-    .from("proveedores")
-    .select("*");
-
-  if (proveedorError) {
-    console.log(proveedorError);
-    return fail(400, {
-      error: true,
-      message: proveedorError.message,
-    });
-  }
-
-  const { data: familiaData, error: familiaError } = await locals.supabase.rpc(
-    "get_familia_enum_values"
-  );
-
-  if (familiaError) {
-    console.log(familiaError);
-    return fail(400, { body: { error: true, message: familiaError.message } });
-  }
+  const proveedores = await getProveedores(locals.supabase);
+  const familias = await getFamilias(locals.supabase);
 
   return {
     status: 200,
     body: {
-      proveedores: proveedorData,
-      familias: familiaData,
+      proveedores,
+      familias,
     },
   };
 };

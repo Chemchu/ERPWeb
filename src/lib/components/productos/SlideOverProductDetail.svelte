@@ -9,6 +9,7 @@
   import { onMount } from "svelte";
   import type { PageData } from "../../../routes/$types";
   import { tableProductsStore } from "$lib/stores/tableProducts";
+  import { deleteProduct } from "$lib/functions/backendFunctions";
 
   export let data: PageData;
 
@@ -66,20 +67,6 @@
       Number(precioCompra) + Number(precioCompra) * (Number(iva) / 100);
 
     return Number(precioVenta) - precioCompraConIva;
-  };
-
-  const deleteProduct = async () => {
-    const response = await data.supabase.rpc("eliminar_producto", {
-      productoid: producto.id,
-    });
-
-    if (response.error) {
-      console.log(response.error);
-      return;
-    }
-
-    tableProductsStore.delete(producto.id);
-    showDetail = false;
   };
 </script>
 
@@ -360,7 +347,11 @@
                   <button
                     type="button"
                     class="inline-flex justify-center rounded-md bg-red-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-red-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-red-600"
-                    on:click={deleteProduct}>Eliminar</button
+                    on:click={() =>
+                      deleteProduct(data.supabase, producto, () => {
+                        tableProductsStore.delete(producto.id);
+                        showDetail = false;
+                      })}>Eliminar</button
                   >
                   <button
                     type="submit"
