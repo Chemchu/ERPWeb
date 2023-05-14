@@ -1,45 +1,39 @@
 <script lang="ts">
   import type { Empleado } from "$lib/types/types";
-  import type { SupabaseClient } from "@supabase/supabase-js";
   import { onDestroy, onMount } from "svelte";
   import defaultProfileIcon from "$lib/assets/profile.jpg";
 
-  export let supabase: SupabaseClient;
-  export let paginaSize: number = 10;
-  export let pagina = 1;
-
-  let empleados: Empleado[] = [];
-  let empleadosIcons: Map<string, string | undefined> = new Map();
-
-  const fetchEmpleados = async (): Promise<void> => {
-    const { data, error } = await supabase
-      .from("empleados")
-      .select("*")
-      .range(pagina * paginaSize - paginaSize, pagina * paginaSize);
-
-    if (error) {
-      console.log(error);
-    }
-    empleados = data as Empleado[];
-
-    for await (const emp of empleados) {
-      const { data } = await supabase.storage
-        .from("avatars")
-        .download(emp.id + "/profile");
-      const img = data ? URL.createObjectURL(data) : undefined;
-      empleadosIcons.set(emp.id, img);
-    }
-
-    empleadosIcons = empleadosIcons;
-  };
+  export let data: any;
+  let empleados: { empleado: Empleado; icono: string }[] = [];
 
   onMount(async () => {
-    await fetchEmpleados();
+    const empData: { empleado: Empleado; icono: string | null }[] = await data
+      .body.empleados;
+    for (let index = 0; index < empData.length; index++) {
+      const emp = empData[index];
+      if (!emp.icono) {
+        empleados.push({
+          empleado: emp.empleado,
+          icono: defaultProfileIcon,
+        });
+        continue;
+      }
+      const blob = new Blob([new Uint8Array(JSON.parse(emp.icono)).buffer], {
+        type: "image/jpeg",
+      });
+      empleados.push({
+        empleado: emp.empleado,
+        icono: URL.createObjectURL(blob),
+      });
+    }
+    empleados = [...empleados];
   });
 
   onDestroy(() => {
-    empleadosIcons.forEach((img) => {
-      if (img) URL.revokeObjectURL(img);
+    empleados.forEach((emp) => {
+      if (emp.icono !== defaultProfileIcon) {
+        URL.revokeObjectURL(emp.icono);
+      }
     });
   });
 </script>
@@ -70,7 +64,7 @@
             </th>
           </tr>
         </thead>
-        {#each empleados as empleado}
+        {#each empleados as empleadoData}
           <tbody class="divide-y divide-gray-200 bg-white">
             <tr>
               <td class="whitespace-nowrap py-4 pl-4 pr-3 text-sm sm:pl-0">
@@ -78,35 +72,36 @@
                   <div class="h-10 w-10 flex-shrink-0">
                     <img
                       class="h-10 w-10 rounded-full"
-                      src={empleadosIcons.get(empleado.id) ||
-                        defaultProfileIcon}
-                      alt="Profile icon for {empleado.nombre} {empleado.apellidos}"
+                      src={empleadoData.icono}
+                      alt="Profile icon for {empleadoData.empleado
+                        .nombre} {empleadoData.empleado.apellidos}"
                     />
                   </div>
                   <div class="ml-4">
                     <div class="font-medium text-gray-900">
-                      {empleado.nombre}
+                      {empleadoData.empleado.nombre}
                     </div>
                     <div class="text-gray-500">
-                      {empleado.email}
+                      {empleadoData.empleado.email}
                     </div>
                   </div>
                 </div>
               </td>
               <td class="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
-                <div class="text-gray-900">{empleado.dni}</div>
+                <div class="text-gray-900">{empleadoData.empleado.dni}</div>
               </td>
               <td class="whitespace-nowrap px-3 py-4 text-sm text-gray-500"
-                >{empleado.rol}</td
+                >{empleadoData.empleado.rol}</td
               >
               <td
                 class="relative whitespace-nowrap py-4 pl-3 pr-4 text-right text-sm font-medium sm:pr-0"
               >
                 <a
-                  href={`/dashboard/employees/${empleado.email}`}
+                  href={`/dashboard/employees/${empleadoData.empleado.email}`}
                   class="text-indigo-600 hover:text-indigo-900"
                   >Editar<span class="sr-only"
-                    >, {empleado.nombre} {empleado.apellidos}</span
+                    >, {empleadoData.empleado.nombre}
+                    {empleadoData.empleado.apellidos}</span
                   ></a
                 >
               </td>

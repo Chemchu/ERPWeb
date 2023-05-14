@@ -1,4 +1,4 @@
-import type { Producto, Proveedor } from "$lib/types/types";
+import type { Empleado, Producto, Proveedor } from "$lib/types/types";
 import type { SupabaseClient } from "@supabase/supabase-js";
 
 export const deleteProduct = async (
@@ -70,4 +70,36 @@ export const getProveedores = async (
   }
 
   return data as Proveedor[];
+};
+
+export const getEmpleados = async (
+  supabase: SupabaseClient
+): Promise<
+  Map<string, { empleado: Empleado; pictures: string | undefined }>
+> => {
+  const empleadosMap = new Map<
+    string,
+    { empleado: Empleado; pictures: string | undefined }
+  >();
+  const { data, error } = await supabase.from("empleados").select("*");
+
+  if (error) {
+    console.log(error);
+    return empleadosMap;
+  }
+
+  const empleados = data as Empleado[];
+
+  for await (const emp of empleados) {
+    const { data: blob } = await supabase.storage
+      .from("avatars")
+      .download(emp.id + "/profile");
+
+    const img = await blob?.text();
+
+    const empleado: Empleado = emp;
+    empleadosMap.set(emp.id, { empleado, pictures: img });
+  }
+
+  return empleadosMap;
 };

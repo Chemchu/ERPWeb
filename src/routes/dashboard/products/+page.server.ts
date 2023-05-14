@@ -2,7 +2,7 @@ import {
   getFamilias,
   getProveedores,
 } from "$lib/functions/backendFunctions.js";
-import { fail, json } from "@sveltejs/kit";
+import { fail } from "@sveltejs/kit";
 import { z } from "zod";
 
 const codigosDeBarraSchema = z.array(
