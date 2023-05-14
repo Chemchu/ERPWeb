@@ -1,6 +1,7 @@
 <script lang="ts">
   import { fade } from "svelte/transition";
   import type { PageData } from "../../../routes/$types";
+  import { dashboardOpenerStore } from "$lib/stores/dashboard";
 
   let currentOpened = "";
   export let data: PageData;
@@ -20,6 +21,7 @@
   <div class="space-y-1">
     <!-- Current: "bg-gray-200 text-gray-900", Default: "text-gray-700 hover:bg-gray-50 hover:text-gray-900" -->
     <a
+      on:click={() => dashboardOpenerStore.close()}
       href="/dashboard"
       class={"group flex items-center rounded-md px-2 py-2 text-sm font-medium" +
         (pathname == "/dashboard"
@@ -105,6 +107,7 @@
         in:fade={{ duration: 300 }}
       >
         <a
+          on:click={() => dashboardOpenerStore.close()}
           href="/dashboard/tpv"
           class={"pl-4 rounded-md px-2 py-2 text-sm font-medium" +
             (pathname == "/dashboard/tpv"
@@ -114,6 +117,7 @@
           TPV
         </a>
         <a
+          on:click={() => dashboardOpenerStore.close()}
           href="/dashboard/products"
           class={"pl-4 rounded-md px-2 py-2 text-sm font-medium" +
             (pathname == "/dashboard/products"
@@ -123,6 +127,7 @@
           Productos
         </a>
         <a
+          on:click={() => dashboardOpenerStore.close()}
           href="/dashboard/sales"
           class={"pl-4 rounded-md px-2 py-2 text-sm font-medium" +
             (pathname == "/dashboard/sales"
@@ -132,6 +137,7 @@
           Ventas
         </a>
         <a
+          on:click={() => dashboardOpenerStore.close()}
           href="/dashboard/closures"
           class={"pl-4 rounded-md px-2 py-2 text-sm font-medium" +
             (pathname == "/dashboard/closures"
@@ -143,6 +149,7 @@
       </div>
     {/if}
     <a
+      on:click={() => dashboardOpenerStore.close()}
       href="/dashboard/statistics"
       class={"group flex items-center rounded-md px-2 py-2 text-sm font-medium" +
         (pathname == "/dashboard/statistics"
@@ -227,6 +234,7 @@
         in:fade={{ duration: 300 }}
       >
         <a
+          on:click={() => dashboardOpenerStore.close()}
           href="/dashboard/employees"
           class={"pl-4 rounded-md px-2 py-2 text-sm font-medium" +
             (pathname == "/dashboard/employees"
@@ -236,6 +244,7 @@
           Empleados
         </a>
         <a
+          on:click={() => dashboardOpenerStore.close()}
           href="/dashboard/clients"
           class={"pl-4 rounded-md px-2 py-2 text-sm font-medium" +
             (pathname == "/dashboard/clients"
@@ -245,6 +254,7 @@
           Clientes
         </a>
         <a
+          on:click={() => dashboardOpenerStore.close()}
           href="/dashboard/suppliers"
           class={"pl-4 rounded-md px-2 py-2 text-sm font-medium" +
             (pathname == "/dashboard/suppliers"
@@ -256,9 +266,10 @@
       </div>
     {/if}
     <a
+      on:click={() => dashboardOpenerStore.close()}
       href="/dashboard/audit"
       class={"group flex items-center rounded-md px-2 py-2 text-sm font-medium" +
-        (pathname == "/dashboard/statistics"
+        (pathname == "/dashboard/audit"
           ? " bg-gray-200 text-gray-900"
           : " text-gray-700 hover:bg-gray-50 hover:text-gray-900")}
     >
