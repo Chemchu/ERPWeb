@@ -157,6 +157,91 @@ export const actions = {
       message: "Producto creado correctamente",
     };
   },
+  updateProduct: async ({ request, locals }) => {
+    const session = await locals.supabase.auth.getSession();
+    if (!session.data.session) {
+      return {
+        status: 401,
+        body: {
+          message: "Unauthorized",
+        },
+      };
+    }
+
+    const formData = await request.formData();
+    const data = Object.fromEntries(formData.entries());
+
+    const entries = [...formData.entries()];
+    const codigosDeBarra: string[] = [];
+    for (const [key, value] of entries) {
+      if (key.startsWith("codigosDeBarras[")) {
+        try {
+          const index = Number(key.match(/\[(\d+)\]/)![1]);
+          if (index == 0) {
+            codigosDeBarra[0] = (value as string) || "";
+          } else {
+            codigosDeBarra[index] = (value as string) || "";
+          }
+        } catch (e) {
+          continue;
+        }
+      }
+    }
+
+    let productData = productSchema.safeParse(data);
+    let codigosDeBarraData = codigosDeBarraSchema.safeParse(
+      codigosDeBarra.filter((codigo) => codigo !== "")
+    );
+
+    if (!productData.success) {
+      const errors = productData.error.errors.map((error) => {
+        return {
+          field: error.path[0],
+          message: error.message,
+        };
+      });
+
+      return fail(400, { error: true, errors });
+    }
+
+    if (!codigosDeBarraData.success) {
+      const errors = codigosDeBarraData.error.errors.map((error) => {
+        return {
+          field: error.path[0],
+          message: error.message,
+        };
+      });
+
+      return fail(400, { error: true, errors });
+    }
+
+    const { error } = await locals.supabase.rpc("crear_producto", {
+      nombre: productData.data.nombreProducto,
+      familia: productData.data.familiaProducto,
+      proveedorid: productData.data.proveedorId,
+      preciocompra: productData.data.precioCompra,
+      precio: productData.data.precioVenta,
+      iva: productData.data.iva,
+      codigos_de_barra: codigosDeBarraData.data,
+      cantidad: productData.data.cantidad,
+      margen: margen(
+        productData.data.precioCompra,
+        productData.data.precioVenta,
+        productData.data.iva
+      ),
+    });
+
+    if (error) {
+      console.log(error);
+      return fail(400, { error: true, message: error.message });
+    }
+
+    return {
+      status: 200,
+      error: false,
+      message: "Producto creado correctamente",
+    };
+  },
 };
 
 export const load = async ({ locals }) => {

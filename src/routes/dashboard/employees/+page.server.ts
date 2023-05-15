@@ -1,15 +1,6 @@
 import { redis } from "$lib/server/redis.js";
 import type { Empleado } from "$lib/types/types.js";
 import { fail } from "@sveltejs/kit";
-import fs from "fs";
-
-const blobToBase64 = async (blob: Blob | null): Promise<ArrayBuffer | null> => {
-  if (blob == null) {
-    return null;
-  }
-
-  return blob.arrayBuffer();
-};
 
 export const load = async ({ url, locals, setHeaders }) => {
   const session = await locals.supabase.auth.getSession();
@@ -29,7 +20,7 @@ export const load = async ({ url, locals, setHeaders }) => {
   const getEmpleados = async (
     page: string,
     size: string
-  ): Promise<{ empleado: Empleado; icono: string | null }[]> => {
+  ): Promise<Empleado[]> => {
     const pagina = Number(page);
     const tamanyo = Number(size);
     const redisKey = `empleados-page${pagina}-size${tamanyo}`;
@@ -49,12 +40,27 @@ export const load = async ({ url, locals, setHeaders }) => {
     if (error) {
       console.log(error);
     }
-    const empleados = data as Empleado[];
+    return data as Empleado[];
+  };
 
-    const res: {
-      empleado: Empleado;
-      icono: string | null;
-    }[] = [];
+  const getIconos = async (
+    page: string,
+    size: string
+  ): Promise<(string | null)[]> => {
+    const pagina = Number(page);
+    const tamanyo = Number(size);
+    const redisKey = `empleados-icons-page${pagina}-size${tamanyo}`;
+
+    const cached = await redis.get(redisKey);
+    if (cached) {
+      const ttl = await redis.ttl(redisKey);
+      setHeaders({ "cache-control": `max-age=${ttl}` });
+      return JSON.parse(cached);
+    }
+
+    const empleados = await getEmpleados(page, size);
+
+    const iconos: (string | null)[] = [];
     for await (const emp of empleados) {
       try {
         const { data } = await locals.supabase.storage
@@ -62,31 +68,29 @@ export const load = async ({ url, locals, setHeaders }) => {
           .download(emp.id + "/profile");
 
         if (!data) {
-          res.push({ empleado: emp, icono: null });
+          iconos.push(null);
           continue;
         }
         const buf = await data.arrayBuffer();
         const uint8Array = new Uint8Array(buf);
         const serialized = Array.from(uint8Array);
 
-        res.push({
-          empleado: emp,
-          icono: data ? JSON.stringify(serialized) : null,
-        });
+        iconos.push(data ? JSON.stringify(serialized) : null);
       } catch (err) {
         console.log(err);
-        res.push({ empleado: emp, icono: null });
+        iconos.push(null);
       }
     }
 
-    redis.set(redisKey, JSON.stringify(res), "EX", 60 * 10);
-    return res;
+    redis.set(redisKey, JSON.stringify(iconos), "EX", 60 * 10);
+    return iconos;
   };
 
   return {
     status: 200,
     body: {
       empleados: getEmpleados(page, size),
+      iconos: getIconos(page, size),
     },
   };
 };
