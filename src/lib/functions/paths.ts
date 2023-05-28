@@ -29,6 +29,9 @@ export const GenerarGrupo = (path: string | null): string => {
   if (path.includes("/dashboard/statistics")) {
     return "Analisis";
   }
+  if (path.includes("/dashboard/settings")) {
+    return "Ajustes";
+  }
 
   return "Inicio";
 };
