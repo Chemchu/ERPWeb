@@ -31,10 +31,6 @@
         {#if i + $paginatorStore.range.start === $paginatorStore.currentPage}
           <button
             type="button"
-            on:click={() =>
-              paginatorStore.updateCurrentPage(
-                i + 1 + $paginatorStore.range.start
-              )}
             class="inline-flex items-center border-b-2 border-indigo-500 px-4 pt-4 pb-2 text-sm font-medium text-indigo-600"
             aria-current="page">{i + $paginatorStore.range.start}</button
           >

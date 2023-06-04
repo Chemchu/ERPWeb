@@ -1,21 +1,16 @@
 import { writable } from "svelte/store";
 
 export interface PaginatorFilter {
-  range: { start: number; length: number };
+  range: { start: number; length: number; elementsPerPage: number };
   currentPage: number;
   numberOfPages: number;
 }
 
-export interface PaginatorRange {
-  start: number;
-  end: number;
-}
-
 function createPaginator() {
   const { subscribe, update } = writable<PaginatorFilter>({
-    range: { start: 1, length: 5 },
+    range: { start: 1, length: 5, elementsPerPage: 10 },
     currentPage: 1,
-    numberOfPages: 10,
+    numberOfPages: 20,
   });
 
   return {
@@ -48,6 +43,22 @@ function createPaginator() {
         }
 
         page.currentPage = pageNumber;
+        return page;
+      }),
+    setTableSize: (numberOfElements: number) =>
+      update((page) => {
+        const numberOfPages = Math.ceil(
+          numberOfElements / page.range.elementsPerPage
+        );
+
+        page.numberOfPages = numberOfPages;
+        if (page.range.length > numberOfPages) {
+          page.range.length = numberOfPages;
+        }
+        if (page.currentPage > numberOfPages) {
+          page.currentPage = numberOfPages;
+        }
+
         return page;
       }),
   };

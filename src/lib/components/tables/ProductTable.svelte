@@ -5,10 +5,9 @@
   import { goto } from "$app/navigation";
   import SlideOverProductDetail from "../productos/SlideOverProductDetail.svelte";
   import { tableProductsStore } from "$lib/stores/tableProducts";
+  import { paginatorStore } from "$lib/stores/paginator";
 
   export let data: PageData;
-  export let paginaSize: number = 10;
-  export let pagina = 1;
   export let proveedores: Proveedor[] = [];
   export let familias: string[] = [];
 
@@ -16,14 +15,37 @@
   let currentDetailProduct: Producto;
 
   onMount(async () => {
+    await fetchTableSize();
     await fetchProductos();
   });
 
+  $: if ($paginatorStore.currentPage > 0) {
+    fetchProductos();
+  }
+
+  const fetchTableSize = async () => {
+    const { count } = await data.supabase
+      .from("productos")
+      .select("*", { count: "exact", head: true });
+    paginatorStore.setTableSize(count || 0);
+  };
+
   const fetchProductos = async () => {
-    const { data: productosData } = await data.supabase
+    const firstElement =
+      $paginatorStore.currentPage * $paginatorStore.range.start - 1;
+
+    const lastElement =
+      $paginatorStore.currentPage *
+        ($paginatorStore.range.start +
+          $paginatorStore.range.elementsPerPage -
+          1) -
+      1;
+
+    const { data: productosData, count } = await data.supabase
       .from("productos")
       .select("*")
-      .range(pagina * paginaSize - paginaSize, pagina * paginaSize);
+      .range(firstElement, lastElement);
+
     tableProductsStore.set(productosData as Producto[]);
   };
 </script>
