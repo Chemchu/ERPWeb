@@ -1,4 +1,5 @@
 <script lang="ts">
+  import Paginator from "$lib/components/pagination/Paginator.svelte";
   import SlideOverProductForm from "$lib/components/productos/SlideOverProductForm.svelte";
   import ProductTable from "$lib/components/tables/ProductTable.svelte";
   import { toastNotificationStore } from "$lib/stores/toastNotifications.js";
@@ -53,6 +54,7 @@
   familias={data.body?.familias}
   proveedores={data.body?.proveedores}
 />
+<Paginator />
 {#if showForm}
   <SlideOverProductForm
     bind:showForm
